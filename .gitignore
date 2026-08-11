@@ -9,11 +9,30 @@ Thumbs.db
 # Editors
 .vscode/
 .idea/
+*.swp
 
 # Secrets / local environment (never commit credentials or API keys)
 .env
 .env.*
 *.local
+*.pem
+*.key
+*.p12
+*.pfx
+secrets.json
+credentials.json
 
-# Logs
+# Claude Code local/machine-specific settings (not shared project config)
+.claude/settings.local.json
+
+# Logs, temp files, runtime data, local databases, caches
 *.log
+*.tmp
+*.temp
+*.bak
+*~
+*.pid
+*.sqlite
+*.sqlite3
+*.db
+.cache/
