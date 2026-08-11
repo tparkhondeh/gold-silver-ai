@@ -1,0 +1,19 @@
+# This file is intentionally minimal.
+# Technology stack has not been chosen yet (see docs/02-architecture/SYSTEM_ARCHITECTURE.md).
+# Extend this file only when a stack decision introduces real build artifacts.
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editors
+.vscode/
+.idea/
+
+# Secrets / local environment (never commit credentials or API keys)
+.env
+.env.*
+*.local
+
+# Logs
+*.log
