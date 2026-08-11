@@ -33,6 +33,12 @@ even experimentally, even if the owner asks for a quick preview — see
   historical windows to check that performance isn't an artifact of one lucky period.
 - **Failure case:** a historical scenario where the model would have given a
   misleading or wrong signal — these must be found and documented, not hidden.
+- **Look-ahead bias:** letting a backtest use data that would not actually have
+  been available at the simulated decision time. Prevented structurally by the
+  Point-in-Time Data requirement in
+  `docs/02-architecture/DATA_ARCHITECTURE.md` § Point-in-Time Data — data not yet
+  published/collected as of a given historical moment must never feed a backtest
+  of a decision made at that moment, under any methodology.
 
 ## Status
 

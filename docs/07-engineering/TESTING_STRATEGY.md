@@ -31,3 +31,4 @@ the technology stack (`docs/02-architecture/SYSTEM_ARCHITECTURE.md`).
 - Quality gates: `docs/00-governance/QUALITY_GATES.md`
 - Historical validation: `docs/03-market/HISTORICAL_ANALYSIS.md`
 - AI boundaries being tested for: `docs/06-ai/AI_ROLE.md`
+- Financial Engine Contract (testable + versioned requirement): `docs/02-architecture/AI_ARCHITECTURE.md`

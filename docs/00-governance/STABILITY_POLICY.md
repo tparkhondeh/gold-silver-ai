@@ -18,8 +18,9 @@ turns out to be wrong, that's treated as an incident, not a normal edit (see
 - No history rewriting on `main`.
 
 Enforcement mechanism (branch protection rules, CI checks, etc.):
-`STATUS: TBD` — `DECISION REQUIRED: YES`, deferred until a Git hosting platform and
-CI approach are chosen (see `docs/02-architecture/SYSTEM_ARCHITECTURE.md`).
+`STATUS: TBD` — Tier B / Implementation decision
+(`docs/00-governance/PROJECT_RULES.md` § 3), decided by Claude Code once a Git
+remote is actually set up (see `docs/10-project-state/OPEN_DECISIONS.md` item B8).
 
 ## 3. Tags and Releases
 

@@ -64,6 +64,6 @@ implementation, not just on Claude Code's own conduct while building the project
 ## Related Documents
 
 - Architectural placement: `docs/02-architecture/AI_ARCHITECTURE.md`
-- Decision audit trail: `DECISION_ENGINE.md`
+- Decision audit trail, provenance, and assumption tracking: `DECISION_ENGINE.md`
 - Agent design: `AGENT_ARCHITECTURE.md`
 - Prompt design principles: `PROMPT_ARCHITECTURE.md`

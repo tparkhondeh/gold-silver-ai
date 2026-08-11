@@ -5,8 +5,12 @@
 ## Status
 
 No specific security tooling, hosting, or authentication mechanism has been chosen.
-`STATUS: TBD` — `DECISION REQUIRED: YES`, deferred until an implementation phase
-requires it.
+`STATUS: TBD` — Tier B / Implementation decision
+(`docs/00-governance/PROJECT_RULES.md` § 3): Claude Code selects baseline
+tooling following standard security practice when an implementation phase
+requires it, escalating to the owner only if it would involve handling real user
+credentials or PII beyond baseline secret hygiene (see
+`docs/10-project-state/OPEN_DECISIONS.md` item B7).
 
 ## Principles (apply from day one, regardless of stack)
 

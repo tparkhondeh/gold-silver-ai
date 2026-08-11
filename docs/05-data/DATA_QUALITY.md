@@ -32,7 +32,11 @@ Every data point entering the system must be checked for:
 ## Status
 
 `STATUS: TBD` for specific thresholds, anomaly-detection methodology, and how
-flags are surfaced/resolved. `DECISION REQUIRED: YES` at design time.
+flags are surfaced/resolved. Tier B / Implementation decision
+(`docs/00-governance/PROJECT_RULES.md` § 3): Claude Code proposes standard
+statistical practice at design time, escalating only if a threshold choice would
+materially change what counts as valid financial data (see
+`docs/10-project-state/OPEN_DECISIONS.md` item B3).
 
 ## Related Documents
 

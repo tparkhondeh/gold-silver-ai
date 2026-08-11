@@ -206,9 +206,198 @@ it.
   `docs/10-project-state/CURRENT_STATE.md` instead of re-reading historical
   phase audits.
 
-## 12. Sign-off
+## 12. Sign-off (Initial Pass)
 
-This phase is complete and ready for owner review. Per
-`docs/00-governance/QUALITY_GATES.md`, merge to `main` requires explicit owner
-approval, which has not yet been given. **Stopping here as instructed — no Phase 1
-work has begun.**
+Initial Phase 0 pass complete. Per `docs/00-governance/QUALITY_GATES.md`, merge to
+`main` requires explicit owner approval, which had not yet been given — see the
+refinement pass below, requested by the owner before stabilizing this phase.
+
+---
+
+## 13. Refinement Pass — Pre-Stability Corrections (2026-08-11)
+
+Requested by the owner before Phase 0 is declared stable. Scope: governance and
+documentation corrections only. No product code, UI, tech stack, data provider, or
+market data was introduced. Work stayed on `phase-0-foundation`; `main` untouched.
+
+### 13.1 State Before This Pass
+
+Phase 0's initial pass (§ 1–12 above) was complete but had two gaps the owner
+identified: (a) every open decision was treated as equally requiring owner
+approval, with no path for Claude Code to resolve routine engineering choices
+independently; (b) several architecture requirements implied by the original
+project brief — decision traceability, assumption tracking, point-in-time data
+integrity, and a precise LLM/deterministic-engine call pattern — were present only
+in general form, not formally fixed.
+
+### 13.2 Corrections Made
+
+1. **Decision-tier framework.** `docs/00-governance/PROJECT_RULES.md` § 3 now
+   defines Tier A (Owner-Critical) vs. Tier B (Implementation/Engineering), with
+   explicit criteria for Tier B (standards, performance, maintainability,
+   security, cost, Iran-specific constraints, token efficiency, long-term
+   scalability) and an escalation rule.
+2. **`docs/10-project-state/OPEN_DECISIONS.md` restructured** into Section A (19
+   Owner-Critical items) and Section B (14 Implementation items), each with why,
+   Phase-1-blocking status, decision timing, owner, and status.
+3. **Decision Provenance** formally fixed in `docs/06-ai/DECISION_ENGINE.md` § Decision
+   Provenance: the required chain (Decision → Decision Version → Model Version →
+   Methodology Version → Input Dataset → Data Sources → Timestamp → Assumptions →
+   Risk State → Decision Output). Architecture requirement only — not implemented.
+4. **Assumption Registry** formally fixed in the same document, § Assumption
+   Registry, with required per-assumption metadata (ID, Description, Value, Unit,
+   Source, Source Date, Confidence, Valid From/Until, Status, Version). Not
+   implemented.
+5. **Point-in-Time Data** formally fixed in
+   `docs/02-architecture/DATA_ARCHITECTURE.md` § Point-in-Time Data (Observed At /
+   Published At / Collected At / Effective From / Effective To) with an explicit
+   anti-look-ahead-bias rule. Cross-referenced from
+   `docs/03-market/HISTORICAL_ANALYSIS.md`, `docs/05-data/HISTORICAL_DATA.md`, and
+   `docs/05-data/DATA_DICTIONARY.md`. Not implemented — no pipeline or database
+   was built.
+6. **LLM / Deterministic Engine boundary** sharpened in
+   `docs/02-architecture/AI_ARCHITECTURE.md` into an explicit chain (LLM → Tool/
+   Function Call → Deterministic Financial Engine → Structured Result → LLM
+   Interpretation/Explanation) plus a Financial Engine Contract (compute,
+   structured output, testable, versioned). This restates — not changes —
+   the boundary already binding in `docs/06-ai/AI_ROLE.md`.
+
+### 13.3 Files Changed
+
+- `docs/00-governance/PROJECT_RULES.md` — § 3 rewritten (tier framework).
+- `CLAUDE.md` — § 2 (new table row), § 9 (contradiction fix, see § 13.4).
+- `docs/10-project-state/OPEN_DECISIONS.md` — fully restructured.
+- `docs/06-ai/DECISION_ENGINE.md` — two new sections (Decision Provenance,
+  Assumption Registry), Status/Related Documents updated.
+- `docs/02-architecture/DATA_ARCHITECTURE.md` — new § Point-in-Time Data.
+- `docs/02-architecture/AI_ARCHITECTURE.md` — new § LLM / Deterministic Engine
+  Boundary; traceability line updated to cross-reference Decision Provenance.
+- `docs/03-market/HISTORICAL_ANALYSIS.md` — look-ahead-bias definition added.
+- `docs/05-data/HISTORICAL_DATA.md` — point-in-time requirement bullet added;
+  `DECISION REQUIRED: YES` corrected to Tier B framing.
+- `docs/05-data/DATA_DICTIONARY.md` — point-in-time field requirement added.
+- `docs/05-data/DATA_QUALITY.md` — `DECISION REQUIRED: YES` corrected to Tier B
+  framing.
+- `docs/02-architecture/SECURITY_ARCHITECTURE.md` — `DECISION REQUIRED: YES`
+  corrected to Tier B framing.
+- `docs/00-governance/STABILITY_POLICY.md` — `DECISION REQUIRED: YES` corrected to
+  Tier B framing.
+- `docs/07-engineering/TESTING_STRATEGY.md` — cross-reference to Financial Engine
+  Contract added.
+- `docs/06-ai/AI_ROLE.md` — one-line wording update (Related Documents).
+- `docs/10-project-state/CURRENT_STATE.md`, `COMPLETED.md` — snapshot updated.
+- `PHASE_0_AUDIT.md` — this section appended.
+
+No files were deleted. No new files were created — every correction landed inside
+an existing, already-owning document, per the owner's explicit instruction not to
+expand the documentation structure without need.
+
+### 13.4 Contradictions Found and Resolved
+
+1. **`CLAUDE.md` § 9 vs. the new tier framework.** § 9 previously said "a
+   technology, data source, or vendor must be chosen" always stops for owner
+   approval — categorically true before this pass, but the new Tier B framework
+   deliberately lets Claude Code decide routine implementation-level technology
+   choices. Fixed by rewriting § 9 to reference the tiering in
+   `PROJECT_RULES.md` § 3 instead of restating a blanket rule.
+2. **Four documents used the `DECISION REQUIRED: YES` marker on items now
+   classified Tier B**, while `docs/00-governance/CHANGE_MANAGEMENT.md` § 1
+   defines that exact marker as meaning "requires owner input." This was a real
+   definitional conflict, not just stale wording:
+   - `docs/00-governance/STABILITY_POLICY.md` (Git hosting/CI enforcement — now B8)
+   - `docs/02-architecture/SECURITY_ARCHITECTURE.md` (security tooling — now B7)
+   - `docs/05-data/DATA_QUALITY.md` (quality thresholds — now B3)
+   - `docs/05-data/HISTORICAL_DATA.md` (storage format/retention/backfill — now B4)
+
+   All four were rewritten to state their Tier B status and escalation condition
+   explicitly, removing the `DECISION REQUIRED: YES` marker where it would now be
+   misleading. Every other use of that marker in the repository was checked
+   against the new Tier A list in `OPEN_DECISIONS.md` and found consistent — no
+   further corrections were needed.
+
+No contradictions were found between `docs/02-architecture/AI_ARCHITECTURE.md`'s
+new content and `docs/06-ai/AI_ROLE.md` (the two were designed to be the same
+boundary at two levels of detail, and were cross-checked line-by-line for that).
+
+### 13.5 New Decisions
+
+None. This pass established *how* future decisions get classified and traced,
+and fixed internal contradictions — it did not make any Tier A or Tier B call
+itself (no tech stack, data source, or methodology was chosen).
+
+### 13.6 Decisions Remaining
+
+All 33 items in `docs/10-project-state/OPEN_DECISIONS.md` remain open (19 Tier A,
+14 Tier B). None were newly resolved by this pass; several were reclassified so
+the owner does not need to review the Tier B ones.
+
+### 13.7 Remaining Risks
+
+- The Tier A/B split is a judgment call in a few places (e.g. foundational tech
+  stack was kept Tier A despite the owner's general delegation criteria, because
+  it's foundational and hard to reverse for a multi-year system — flagged
+  explicitly in `OPEN_DECISIONS.md` A3 rather than silently downgraded). Worth the
+  owner spot-checking the classification once, since it governs how much gets
+  escalated going forward.
+- Decision Provenance and the Assumption Registry are architecture requirements
+  only — there is meaningful design work left to make them concretely
+  implementable (e.g. exact storage shape), tracked as Tier B items B5/B6.
+- Same limitations as the initial pass apply unchanged — see § 10 above and
+  `docs/10-project-state/KNOWN_ISSUES.md`.
+
+### 13.8 Deliberately Not Done
+
+No new documentation folders or files were created. No tech stack, data source, or
+financial methodology was chosen. No product code, UI, or data pipeline was
+implemented. Point-in-Time Data and Decision Provenance were recorded as
+requirements only, not built.
+
+### 13.9 Phase 0 Status After This Pass
+
+Complete and internally consistent. All items in the Quality Gate checklist below
+pass.
+
+### 13.10 Phase 1 Readiness
+
+Unchanged from § 11 above: Phase 1 (data foundation) remains the recommended
+candidate, still pending owner approval of both this phase and Phase 1's scope.
+The Tier A items in `OPEN_DECISIONS.md` marked "Blocks Phase 1? Yes" (A1–A4, A19)
+are the actual blockers — Tier B items no longer need to be surfaced to the owner
+before Phase 1 can start.
+
+### 13.11 Remaining Blockers
+
+- Owner approval of this Phase 0 refinement pass.
+- Owner approval to merge `phase-0-foundation` into `main`.
+- Owner decisions on Tier A items A1, A2, A3, A4, A19 before Phase 1
+  implementation can begin (per `docs/10-project-state/OPEN_DECISIONS.md`).
+
+### 13.12 Final Quality Gate Checklist
+
+- [x] Governance complete and internally consistent
+- [x] Architecture baseline defined
+- [x] Documentation free of contradictions (two found, both fixed — § 13.4)
+- [x] Owner-Critical decisions identified (19 items, Section A)
+- [x] Implementation decisions separated (14 items, Section B)
+- [x] Decision Provenance defined (`docs/06-ai/DECISION_ENGINE.md`)
+- [x] Assumption Registry defined (`docs/06-ai/DECISION_ENGINE.md`)
+- [x] Point-in-Time requirement defined (`docs/02-architecture/DATA_ARCHITECTURE.md`)
+- [x] LLM / Deterministic Engine boundary defined (`docs/02-architecture/AI_ARCHITECTURE.md`)
+- [x] Open decisions classified (Tier A/B, all 33 items)
+- [x] Phase 1 blockers identified (A1, A2, A3, A4, A19)
+- [x] Links and Markdown structure verified healthy (51 cross-references checked,
+      0 broken; 48/48 docs have exactly one heading; all code fences balanced)
+- [x] No product feature implemented
+- [x] No fabricated/real market data introduced
+- [x] `main` left untouched (zero commits, unchanged from initial pass)
+
+All gates pass. Phase 0 is ready to be declared stable, pending the owner's
+explicit approval.
+
+## 14. Sign-off (Refinement Pass)
+
+This phase, including the refinement pass, is complete and ready for owner
+review. Per `docs/00-governance/QUALITY_GATES.md`, merge to `main` still requires
+explicit owner approval, which has not yet been given. **Stopping here as
+instructed — no Phase 1 work has begun, `main` is untouched, and only one commit
+will be created on `phase-0-foundation` for this pass.**

@@ -47,15 +47,40 @@ inline the first time it's used in a document.
 
 ## 3. Decision Authority
 
-| Decision type | Who decides |
+Every decision falls into exactly one of two tiers. This tiering is itself an
+owner-approved rule (established 2026-08-11) and is the classification scheme
+`docs/10-project-state/OPEN_DECISIONS.md` must follow — that document does not
+define its own criteria, it applies these.
+
+**Tier A — Owner-Critical.** Requires the owner's explicit approval, presented
+per § 2, before proceeding. Used for anything foundational, hard to reverse, or
+carrying real product, financial, legal, or cost consequence.
+
+**Tier B — Implementation/Engineering.** Claude Code decides and proceeds
+directly, backed by a documented rationale drawing on: prevailing engineering
+standards, performance, maintainability, security, cost, Iran-specific
+constraints, token efficiency, and long-term scalability. A Tier B decision is
+escalated to Tier A only if it turns out to carry a serious architectural or
+risk impact not apparent when it was first classified.
+
+| Decision type | Tier |
 |---|---|
-| Wording/formatting inside an already-approved document | Claude Code, no approval needed |
-| New technology, framework, or dependency | Owner approval required (present per § 2) |
-| Data source / vendor selection | Owner approval required (present per § 2) |
-| Product scope, features, or priorities | Owner approval required |
-| Architecture decisions with long-term consequences | Owner approval required, recorded as an ADR |
-| Financial methodology (valuation, allocation, risk models) | Owner approval required, recorded as an ADR |
-| Merge to `main` | Owner approval required, every time |
+| Wording/formatting inside an already-approved document | B |
+| Foundational technology stack (primary language/runtime, overall architecture pattern) | A |
+| Data storage technology/paradigm (e.g. relational vs. document vs. time-series) | A |
+| A specific library/tool within an already-approved stack, with no material lock-in or added cost (e.g. a testing framework, a linter, a scheduling mechanism) | B — escalate if it introduces new lock-in, recurring cost, or a security exposure |
+| Data source / vendor selection | A |
+| Data schema, retention, and pipeline mechanics once sources/stack are set | B |
+| Product scope, features, or priorities | A |
+| Architecture decisions with long-term consequences | A, recorded as an ADR |
+| Financial methodology (valuation, allocation, risk models) | A, recorded as an ADR |
+| Project license | A |
+| Hosting, monitoring, backup, and incident-response tooling | B — escalate if it involves recurring cost or handling real user data |
+| Merge to `main` | A, every time |
+
+When a decision's tier is genuinely ambiguous, default to Tier A — the cost of
+asking unnecessarily is lower than the cost of a unilateral call on something
+that mattered.
 
 ## 4. Relationship to Other Governance Documents
 

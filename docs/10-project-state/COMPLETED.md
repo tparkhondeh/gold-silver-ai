@@ -24,4 +24,21 @@ Delivered:
 - All unresolved decisions explicitly marked and centralized in
   `OPEN_DECISIONS.md`.
 
+**Pre-stability refinement pass (2026-08-11):**
+- Split all open decisions into Tier A (Owner-Critical) / Tier B
+  (Implementation/Engineering) per a new decision-tiering framework in
+  `docs/00-governance/PROJECT_RULES.md` § 3.
+- Fixed a contradiction this introduced in `CLAUDE.md` § 9 (it previously said
+  any technology/vendor choice always stops for owner approval).
+- Established Decision Provenance and the Assumption Registry as fixed
+  architecture requirements in `docs/06-ai/DECISION_ENGINE.md`.
+- Established Point-in-Time Data as a fixed architecture requirement in
+  `docs/02-architecture/DATA_ARCHITECTURE.md`, with cross-references from
+  `docs/03-market/HISTORICAL_ANALYSIS.md`, `docs/05-data/HISTORICAL_DATA.md`, and
+  `docs/05-data/DATA_DICTIONARY.md`.
+- Sharpened the LLM/Deterministic Engine boundary in
+  `docs/02-architecture/AI_ARCHITECTURE.md` into an explicit call chain and
+  Financial Engine Contract.
+- Full details: `PHASE_0_AUDIT.md` refinement-pass addendum.
+
 Nothing else has been completed. No data, no code, no technology choices.

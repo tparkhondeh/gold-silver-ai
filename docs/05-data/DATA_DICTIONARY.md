@@ -23,6 +23,12 @@ Each field entry must specify:
 | Nullable? | Whether missing values are valid, and what they mean |
 | Historical availability | How far back this field is expected to be available |
 
+Any field carrying a historical value must additionally define its point-in-time
+attributes (Observed At, Published At, Collected At, Effective From, Effective To)
+per `docs/02-architecture/DATA_ARCHITECTURE.md` § Point-in-Time Data — this is not
+optional per-field; it's how the field stays usable for backtesting without
+look-ahead bias.
+
 ## Rule
 
 A field is added here at the same time it is added to the data model — not

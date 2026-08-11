@@ -26,6 +26,36 @@ Raw ingested data → Validation → Normalized/validated data → Derived/analy
   computed from normalized data by deterministic code and is reproducible — it is
   never a second, independent source of truth.
 
+## Point-in-Time Data
+
+**Architecture requirement, established 2026-08-11. Not implemented in Phase 0; no
+data pipeline or database is being built by this requirement being recorded.**
+
+Every historical data point must be able to distinguish, once implemented:
+
+| Concept | Meaning |
+|---|---|
+| Observed At | When the underlying market event/value actually occurred |
+| Published At | When the source made that value public |
+| Collected At | When this system actually ingested it |
+| Effective From | When this value should be considered valid from, for analysis |
+| Effective To | When this value stopped being valid (e.g. superseded by a correction) |
+
+**Why this is required — the anti-look-ahead-bias rule:** a backtest or historical
+analysis must only use data that was *actually available* at the simulated
+decision time (i.e. `Published At` / `Collected At`, not `Observed At` or a later
+correction). Data that was not yet known at a given historical moment must never
+be fed into a backtest of a decision made at that moment — doing so silently
+inflates backtested performance and produces a validation result that cannot be
+trusted. This is the mechanism that makes the Historical Validation Principle in
+`docs/03-market/HISTORICAL_ANALYSIS.md` actually trustworthy rather than
+theoretical.
+
+This requirement applies regardless of which specific backtesting methodology is
+eventually chosen (`docs/10-project-state/OPEN_DECISIONS.md` item A12) — capturing
+these distinctions is a data-architecture prerequisite, not a methodology choice,
+so it does not block Phase 1 on that methodology being decided first.
+
 ## Integrity Principles
 
 1. **Immutability of history.** Once a historical data point is validated and

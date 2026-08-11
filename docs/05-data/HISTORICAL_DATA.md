@@ -11,6 +11,10 @@ The system must maintain a historical dataset per instrument that is:
   overwritten in place, so past analysis remains reproducible and the correction
   itself is auditable. See `docs/02-architecture/DATA_ARCHITECTURE.md` § Integrity
   Principles.
+- **Point-in-time aware** — every record carries the temporal distinctions
+  (Observed/Published/Collected/Effective From/Effective To) required by
+  `docs/02-architecture/DATA_ARCHITECTURE.md` § Point-in-Time Data, so backtests
+  never leak future knowledge into a past decision.
 - **Long enough to be useful** — sufficient history to support the bubble/premium
   and backtesting requirements in `docs/03-market/BUBBLE_MODEL.md` and
   `docs/03-market/HISTORICAL_ANALYSIS.md`. Minimum required length:
@@ -27,9 +31,11 @@ available.
 
 ## Status
 
-`STATUS: TBD` for storage format, retention policy, and backfill approach.
-`DECISION REQUIRED: YES` once a data source is chosen and its historical coverage
-is known.
+`STATUS: TBD` for storage format, retention policy, and backfill approach. Tier B
+/ Implementation decision (`docs/00-governance/PROJECT_RULES.md` § 3): Claude Code
+decides once a data source is chosen and its historical coverage is known,
+escalating only if a source's licensing terms restrict backfill (see
+`docs/10-project-state/OPEN_DECISIONS.md` item B4).
 
 ## Related Documents
 
