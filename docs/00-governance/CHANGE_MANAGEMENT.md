@@ -43,7 +43,39 @@ ADRs move through statuses: `Proposed → Accepted → (later) Superseded/Deprec
 An ADR is never deleted; superseding decisions get a new ADR that references the
 old one. See `docs/08-decisions/ADR/README.md` for the template and rules.
 
-## 5. What This Document Does Not Cover
+## 5. Breaking vs. Non-Breaking Architecture & Contract Changes
+
+**Architecture requirement, established 2026-08-11.** Once real components exist,
+a **contract** is any interface one part of the system relies on another to keep
+stable — e.g. the call shape between the AI layer and the Financial Engine
+(`docs/02-architecture/AI_ARCHITECTURE.md`), a data schema
+(`docs/05-data/DATA_DICTIONARY.md`), or the layering rules in
+`docs/02-architecture/SYSTEM_ARCHITECTURE.md`.
+
+- **Non-breaking change** — existing callers/consumers keep working unmodified
+  (e.g. adding an optional field). Follows the normal change process in § 2.
+- **Breaking change** — an existing caller/consumer would behave incorrectly or
+  fail unless it's also updated (e.g. removing a field, changing a decision's
+  output shape, changing what a stored value means). Requires this cycle before
+  implementation:
+
+  ```
+  Impact Analysis → Migration Plan → Testing → Approval (if Tier A per
+  docs/00-governance/PROJECT_RULES.md § 3) → Implementation → Validation →
+  Rollback capability confirmed
+  ```
+
+  A breaking change to a contract bumps that contract's version (see
+  `docs/02-architecture/SYSTEM_ARCHITECTURE.md` § Component / Feature Lifecycle
+  for how components themselves version and retire). It is never shipped silently
+  inside what looks like a routine update.
+
+This is what keeps `docs/00-governance/QUALITY_GATES.md` gate 5 (architecture
+review) and gate 7 (regression check) meaningful as the system grows past Phase 0
+— "consistency with `docs/02-architecture/`" specifically means: no breaking
+change skipped this cycle.
+
+## 6. What This Document Does Not Cover
 
 - The mechanics of branching/merging: `DEVELOPMENT_WORKFLOW.md`.
 - What must be true before a merge: `QUALITY_GATES.md`.

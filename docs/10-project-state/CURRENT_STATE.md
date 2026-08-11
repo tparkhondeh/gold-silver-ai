@@ -3,15 +3,17 @@
 **Source of truth for:** where the project stands right now. Read this (and
 `NEXT_TASK.md`) before re-reading anything else — do not re-scan the whole repo.
 
-_Last updated: 2026-08-11 (Phase 0, refinement pass)_
+_Last updated: 2026-08-11 (Phase 0, Pre-Stable audit)_
 
 ## Snapshot
 
-- **Phase:** Phase 0 — Foundation & Governance. Initial pass complete; a
-  pre-stability refinement pass (decision tiering, Decision Provenance,
-  Assumption Registry, Point-in-Time Data, sharpened LLM/deterministic boundary)
-  has also been applied. Still awaiting owner review; nothing has been merged to
-  `main`.
+- **Phase:** Phase 0 — Foundation & Governance. Initial pass, a refinement pass
+  (decision tiering, Decision Provenance, Assumption Registry, Point-in-Time
+  Data, sharpened LLM/deterministic boundary), and a final Pre-Stable Foundation
+  audit (reversibility, breaking-change/lifecycle governance, data lineage,
+  operational safety states, Iran operational constraints, backup/restore
+  rigor — see `PHASE_0_AUDIT.md` § 15) are all complete. No known fundamental
+  gap remains. Still awaiting owner review; nothing has been merged to `main`.
 - **Branch:** all Phase 0 work is on `phase-0-foundation`. `main` has zero commits
   (clean, empty, stable baseline).
 - **Application code:** none exists. No UI, no financial calculations, no data

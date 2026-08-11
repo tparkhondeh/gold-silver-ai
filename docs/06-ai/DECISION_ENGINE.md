@@ -53,7 +53,11 @@ Decision
 audited — if it turns out to have been wrong, there's no way to tell whether the
 data was bad, the methodology was flawed, an assumption expired, or the model
 changed. This directly extends the Decision History Requirement above from "what
-happened" to "exactly why, and against which version of everything."
+happened" to "exactly why, and against which version of everything." Concretely,
+the goal is **reproducibility**: given a past decision's provenance record, it
+must be possible to re-run it against the same data, model version, methodology
+version, and assumptions and get the same output — that reproducibility is what
+"auditable" actually means here, not just "logged."
 
 **How this should eventually be implemented (not now):** each decision-producing
 component should emit its output already attached to this chain (e.g. as
@@ -92,6 +96,34 @@ calibration rule in `docs/03-market/IRAN_MARKET_MODEL.md` — every hypothesis l
 there becomes a registry entry once validated, with its own confidence and
 validity window, rather than a permanent hard-coded belief.
 
+## Operational Safety States
+
+**Architecture requirement, established 2026-08-11. Not implemented in Phase 0.**
+Once the decision engine and any future automation exist, the system must be able
+to be in exactly one of these states, and the state must be checkable, not
+implicit:
+
+| State | Meaning |
+|---|---|
+| Automation On | Scheduled/automatic analysis and recommendation generation runs normally |
+| Automation Paused | No new automatic runs; existing recommendations remain visible; resumes without data loss |
+| Execution Disabled | (Once an execution capability exists — see `docs/06-ai/AI_ROLE.md` § Analysis → Recommendation → Approval → Execution) recommendations may still be produced, but nothing can be executed from them |
+| Safe Mode | Triggered by a critical data failure or insufficient confidence — see below |
+
+**Entering Safe Mode:** on a critical data-quality failure (e.g. a source
+contradicts itself, required data is missing beyond an acceptable staleness
+threshold — see `docs/05-data/DATA_QUALITY.md`) or when confidence in an input is
+too low to trust, the system must:
+
+1. Stop producing new recommendations (not produce one anyway on bad data).
+2. Preserve the last known-good state (nothing already valid is lost or hidden).
+3. Log the condition that triggered Safe Mode.
+4. Raise an alert (`docs/09-operations/MONITORING.md`).
+
+This is the same "fail visibly, never guess" principle as
+`docs/07-engineering/ERROR_HANDLING.md`, applied specifically to the point where
+a bad decision could otherwise reach the owner looking like a normal one.
+
 ## Status
 
 `STATUS: TBD` for storage format and retention of decision history, the internal
@@ -111,3 +143,6 @@ deterministic output.
 - Agent layer that will present these decisions conversationally: `AGENT_ARCHITECTURE.md`
 - Point-in-time data feeding Decision Provenance: `docs/02-architecture/DATA_ARCHITECTURE.md`
 - Iran-specific hypotheses that become registry entries: `docs/03-market/IRAN_MARKET_MODEL.md`
+- Data conditions that trigger Safe Mode: `docs/05-data/DATA_QUALITY.md`
+- Alerting for Safe Mode / Operational Safety States: `docs/09-operations/MONITORING.md`
+- General fail-visibly principle: `docs/07-engineering/ERROR_HANDLING.md`

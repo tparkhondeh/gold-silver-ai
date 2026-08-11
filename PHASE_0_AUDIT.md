@@ -398,6 +398,211 @@ explicit approval.
 
 This phase, including the refinement pass, is complete and ready for owner
 review. Per `docs/00-governance/QUALITY_GATES.md`, merge to `main` still requires
-explicit owner approval, which has not yet been given. **Stopping here as
-instructed — no Phase 1 work has begun, `main` is untouched, and only one commit
-will be created on `phase-0-foundation` for this pass.**
+explicit owner approval, which has not yet been given.
+
+---
+
+## 15. PRE-STABLE AUDIT (2026-08-11)
+
+Final general-Foundation audit, requested by the owner before Phase 0 can be
+declared stable, so a fundamental gap doesn't force redesigning the base
+structure later. Scope: governance/architecture documentation only — no product
+code, UI, tech stack, data provider, or market data. `phase-0-foundation` only;
+`main` untouched.
+
+### 15.1 Executive Summary
+
+Reviewed the Foundation against ten governance dimensions (decision governance,
+architecture governance, data governance, financial safety, engineering
+governance, long-term maintainability, Iran-specific constraints, operational
+safety, documentation architecture, owner interaction model). Found 14 real,
+concrete gaps — not missing polish, but genuine absent requirements a multi-year
+financial system needs. Fixed all 14 as edits to existing owning documents; no
+new files created. No contradictions found beyond what the fixes themselves
+required to stay consistent (none). **No fundamental gap remains.**
+
+### 15.2 PASS
+
+Confirmed already adequately covered before this audit, no change needed:
+Source of Truth discipline (every doc has one, cross-checked project-wide);
+dependency boundaries and layering (`SYSTEM_ARCHITECTURE.md`); Deterministic
+Financial Engine concept; Decision Provenance and Assumption Registry (previous
+pass); Point-in-Time Data (previous pass); testing strategy and CI/CD gating
+(`TESTING_STRATEGY.md` + `QUALITY_GATES.md`); logging/monitoring baseline
+(`MONITORING.md`); multi-source cross-consistency checking (`DATA_QUALITY.md`);
+regulatory uncertainty (already correctly Tier A, item A9 — not something
+Claude Code can resolve architecturally); Decision Ownership (the Owner column
+already in `OPEN_DECISIONS.md`); Multi-Asset extensibility
+(`ASSET_UNIVERSE.md`/`SYSTEM_ARCHITECTURE.md`).
+
+**Deliberate no-change decision:** the owner asked the classification scheme be
+*able* to cover Advisory/Automatic states "if it creates real value." Judgment:
+it doesn't, currently — Tier B already spans near-automatic (wording/formatting,
+no rationale required) to substantial (choosing tooling, rationale required),
+and nothing in the product yet needs a distinct "recommend but don't decide"
+governance state beyond what `docs/06-ai/AI_ROLE.md` already defines for AI
+behavior specifically. Not adding these tiers; flagging the reasoning here so
+it's a recorded decision, not a silent omission.
+
+### 15.3 GAPS (Found and Fixed)
+
+| # | Gap | Section | Fix |
+|---|---|---|---|
+| 1 | No reversibility axis in decision-tiering; a Tier B call could be irreversible with no forced escalation | A | `PROJECT_RULES.md` § 3 — Reversibility taxonomy (Reversible/Partially/Expensive/Irreversible) + rule: Expensive-to-Reverse or Irreversible is always Tier A regardless of tier row |
+| 2 | No Breaking vs. Non-Breaking change process; no Impact Analysis → Migration → Rollback cycle | B | `CHANGE_MANAGEMENT.md` § 5 — full cycle defined |
+| 3 | No Component/Feature Lifecycle; no pre-build checklist for new capabilities | B, F | `SYSTEM_ARCHITECTURE.md` — Component/Feature Lifecycle + New Capability Checklist |
+| 4 | Data Lineage (transformation-level traceability) not distinguished from reproducibility | C | `DATA_ARCHITECTURE.md` § Integrity Principles, new principle 5 |
+| 5 | Correction policy didn't require a Correction Reason or explicit chain | C | `DATA_ARCHITECTURE.md` § Integrity Principles, principle 1 rewritten with full chain |
+| 6 | "Flagged data retained" wasn't named as a Quarantine state excluded from analysis | C | `DATA_QUALITY.md` |
+| 7 | No Schema Evolution rule for the (future) data dictionary | C | `DATA_DICTIONARY.md` |
+| 8 | No requirement against single-point-of-failure on one data source | C, G | `DATA_SOURCES.md` § Source Failure / No Single Point of Failure |
+| 9 | Analysis/Recommendation/Approval/Execution boundary was implicit across two docs, not one explicit, protected pipeline | D | `AI_ROLE.md` § Analysis → Recommendation → Approval → Execution |
+| 10 | No Safe Mode / automation-state concept for future automation | D, H | `DECISION_ENGINE.md` § Operational Safety States |
+| 11 | Recommendation Reproducibility wasn't stated as the explicit goal of Decision Provenance | D | `DECISION_ENGINE.md` § Decision Provenance, one sentence added |
+| 12 | Iran's *operational* constraints (sanctions, IP, payment, licensing instability) weren't distinguished from Iran's *market-behavior* calibration | G | `INTEGRATION_ARCHITECTURE.md` § Iran-Specific Operational Constraints |
+| 13 | No Environment Separation principle (dev/test/prod) | E | `SECURITY_ARCHITECTURE.md`, principle 7 |
+| 14 | Backup existed without a Restore-testing requirement or RPO/RTO placeholders | E | `BACKUP.md` |
+
+Two smaller consistency touches rode along with these: a one-line Iran
+timezone/calendar note in `DATA_PIPELINE.md` (G), and a Dependency Registry
+clarification in `DEPENDENCY_POLICY.md` tying it to the ecosystem's own manifest
+rather than a duplicate hand-maintained list (E).
+
+### 15.4 CONTRADICTIONS
+
+None found this pass. Every new section was written to cross-reference, not
+restate, existing content (verified: no duplicate "Source of truth for" claims,
+no duplicate definitions of the same concept — checked explicitly for
+"quarantine" and "Original Observation" chain, each appears in exactly one file).
+
+### 15.5 DUPLICATIONS
+
+None introduced. Two concepts that could easily have become duplicates were
+deliberately merged into single homes instead: Feature Lifecycle (asked for from
+both Section B and Section F) lives only in `SYSTEM_ARCHITECTURE.md`; Iran
+operational constraints (asked for from Section G, related to Section C's
+fallback requirement) live only in `INTEGRATION_ARCHITECTURE.md`, with
+`DATA_SOURCES.md` cross-referencing rather than restating.
+
+### 15.6 OWNER-CRITICAL DECISIONS
+
+Unchanged from `docs/10-project-state/OPEN_DECISIONS.md` Section A (19 items,
+A1–A19) — this audit did not add or remove any. The Reversibility rule (15.3 #1)
+reinforces *why* several of them are Tier A (e.g. A3 tech stack, A4 storage
+paradigm are Expensive-to-Reverse by nature) but did not reclassify anything.
+
+### 15.7 IMPLEMENTATION DECISIONS
+
+Unchanged, Section B (14 items, B1–B14). All now additionally subject to the
+Reversibility override — reviewed each of the 14 against it (§ 15.3 fix #1's
+criteria); none currently warrant reclassification to Tier A, since none are
+Expensive-to-Reverse/Irreversible as currently scoped. This is stated as a
+general rule in `PROJECT_RULES.md` § 3 rather than annotated per-row, so it
+applies automatically without needing `OPEN_DECISIONS.md` edited every time.
+
+### 15.8 HIGH-COST / IRREVERSIBLE DECISIONS
+
+Explicitly identified as such by this audit:
+- Foundational technology stack (A3) and data storage paradigm (A4) — Expensive
+  to Reverse once real historical data accumulates.
+- Any future execution capability (placing real trades/transfers) — Irreversible
+  by nature; always Tier A with its own ADR, never a byproduct of another change
+  (`AI_ROLE.md` § Analysis → Recommendation → Approval → Execution).
+- Sending the owner's real portfolio/financial data to an external AI provider
+  (A17) — effectively irreversible once sent.
+- Deleting or overwriting a historical data record — structurally prevented
+  (immutability principle), not just discouraged.
+
+### 15.9 ARCHITECTURE RISKS
+
+- The Breaking Change cycle and Component Lifecycle are requirements, not yet
+  exercised — their first real use (an actual breaking change) will be the real
+  test of whether the process is practical or just documentation. Worth revisiting
+  after the first one happens.
+- Layering (`SYSTEM_ARCHITECTURE.md`) is sound on paper; nothing has been built
+  against it yet to confirm it holds up.
+
+### 15.10 FINANCIAL SAFETY RISKS
+
+- Confidence methodology (how confident a given recommendation is, and how that's
+  computed) remains undefined — correctly deferred to each methodology's own
+  design (Tier A items A10–A16), not a Phase 0 gap, but flagged so it isn't
+  forgotten when those phases start.
+- Safe Mode (15.3 #10) is a requirement, not a tested mechanism — real risk
+  reduction only happens once it's implemented and actually exercised by a
+  simulated failure.
+
+### 15.11 DATA RISKS
+
+- Iran-specific data-source availability is fundamentally uncertain until A2 is
+  decided — the No-Single-Point-of-Failure rule (15.3 #8) reduces but cannot
+  eliminate this risk given how few sources may realistically exist for some
+  instruments.
+- Data Lineage and Schema Evolution are requirements against future mistakes;
+  they don't retroactively help since no data exists yet — low current risk,
+  meaningful future risk if skipped when implementation starts.
+
+### 15.12 SECURITY / OPERATIONAL RISKS
+
+- No technically enforced `main` branch protection yet (no remote configured) —
+  unchanged from `docs/10-project-state/KNOWN_ISSUES.md`, still policy-only.
+- Environment Separation (15.3 #13) and Restore-testing (15.3 #14) are
+  requirements with no infrastructure yet to apply them to — real risk starts
+  once a second environment or a real backup exists and these aren't followed.
+
+### 15.13 REMAINING BLOCKERS
+
+- Owner approval of this Pre-Stable audit.
+- Owner approval to merge `phase-0-foundation` into `main`.
+- Owner decisions on Tier A items A1, A2, A3, A4, A19 before Phase 1
+  implementation can begin.
+
+No new blockers were introduced by this audit — all 14 fixes are standing
+requirements for *when* relevant work happens, none of them block Phase 0 itself
+or add a new precondition to Phase 1 starting.
+
+### 15.14 FIXES APPLIED
+
+`docs/00-governance/PROJECT_RULES.md`, `docs/00-governance/CHANGE_MANAGEMENT.md`,
+`docs/02-architecture/SYSTEM_ARCHITECTURE.md`,
+`docs/02-architecture/DATA_ARCHITECTURE.md`,
+`docs/02-architecture/INTEGRATION_ARCHITECTURE.md`,
+`docs/02-architecture/SECURITY_ARCHITECTURE.md`, `docs/05-data/DATA_QUALITY.md`,
+`docs/05-data/DATA_DICTIONARY.md`, `docs/05-data/DATA_SOURCES.md`,
+`docs/05-data/DATA_PIPELINE.md`, `docs/06-ai/AI_ROLE.md`,
+`docs/06-ai/DECISION_ENGINE.md`, `docs/07-engineering/DEPENDENCY_POLICY.md`,
+`docs/09-operations/BACKUP.md`, `docs/10-project-state/CURRENT_STATE.md`,
+`docs/10-project-state/COMPLETED.md`, this file. 17 files, 0 created, 0 deleted.
+
+### 15.15 FINAL QUALITY GATE
+
+- [x] Decision governance: tiering + reversibility + ownership + approval gate
+- [x] Architecture governance: drift control, breaking-change cycle, lifecycle,
+      SoT, versioning, migration, rollback, deprecation
+- [x] Data governance: immutability, point-in-time, provenance, lineage, quality,
+      quarantine, correction policy, schema evolution, source fallback
+- [x] Financial safety: Analysis≠Recommendation≠Approval≠Execution, deterministic
+      engine, versioning, backtest integrity, reproducibility, safe mode
+- [x] Engineering governance: dependencies, secrets, environments, testing,
+      observability, backup/restore/RPO/RTO
+- [x] Long-term maintainability: feature lifecycle, extensibility, lock-in
+      awareness, future-execution governance
+- [x] Iran-specific constraints: market behavior (existing) + operational
+      constraints (new) + fallback requirement
+- [x] Operational safety: automation states, safe-mode entry procedure
+- [x] Documentation architecture: no contradictions, no duplications, no broken
+      references, single owner per topic, no new Phase-1 blockers introduced
+- [x] Owner interaction model: Tier A/B + reversibility keeps unnecessary
+      questions off the owner's plate
+- [x] `main` untouched; no product code, UI, or data introduced
+
+All gates pass.
+
+### 15.16 STABLE READINESS
+
+**PHASE 0 READY FOR STABLE APPROVAL.**
+
+No known fundamental gap remains in the Foundation. Stopping here as instructed —
+no Phase 1 work has begun, `main` is untouched, and only one commit will be
+created on `phase-0-foundation` for this audit. Waiting for the owner's explicit
+approval before any merge.

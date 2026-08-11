@@ -36,6 +36,17 @@ requirement; no source currently exists to populate it:
 - Cost and terms of use.
 - Redundancy potential (can it be cross-checked against another source?).
 
+## Source Failure / No Single Point of Failure
+
+**Requirement, established 2026-08-11.** The system must not become dependent on
+exactly one provider (foreign or domestic) in a way that provider's outage or
+loss ends analysis entirely — see
+`docs/02-architecture/INTEGRATION_ARCHITECTURE.md` § Iran-Specific Operational
+Constraints for why this is a real, not hypothetical, risk in this project's
+context. For any instrument category with only one viable source at selection
+time, that single-source status is recorded here explicitly (not left implicit)
+so it's a known risk, not a discovered one.
+
 ## Related Documents
 
 - Field-level schema: `DATA_DICTIONARY.md`

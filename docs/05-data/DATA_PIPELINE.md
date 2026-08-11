@@ -33,7 +33,12 @@ Both paths feed the same validation step (`DATA_QUALITY.md`) — there is no
 ## Status
 
 `STATUS: TBD` for scheduling mechanism, operator tooling for manual updates, and
-alerting approach. Deferred until an implementation phase requires it.
+alerting approach (Tier B — `docs/10-project-state/OPEN_DECISIONS.md` item B2).
+Deferred until an implementation phase requires it. Whatever scheduling is chosen
+must account for Iran's timezone and market calendar rather than assuming a
+Western trading week or timezone by default — see
+`docs/02-architecture/INTEGRATION_ARCHITECTURE.md` § Iran-Specific Operational
+Constraints.
 
 ## Related Documents
 

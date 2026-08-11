@@ -11,11 +11,32 @@ backed up, not just stored once. Code itself is protected via git history and th
 `main` branch policy (`docs/00-governance/STABILITY_POLICY.md`); it does not need a
 separate backup mechanism beyond normal git remotes.
 
+## Restore Must Be Tested, Not Assumed
+
+A backup that has never been restored is not a verified backup — it's an
+unverified assumption. Once a real backup mechanism exists, restoring from it
+must be tested periodically, not only relied upon at the moment of an actual
+incident. This is required regardless of which specific mechanism is chosen.
+
+## Recovery Objectives
+
+Once real infrastructure exists, this document should state:
+
+- **RPO (Recovery Point Objective)** — the maximum data loss acceptable if a
+  failure happens right now (e.g. "at most the last successful backup").
+- **RTO (Recovery Time Objective)** — the maximum acceptable time to be back up
+  and running after a failure.
+
+Both are `STATUS: TBD` — meaningless to set numerically before there's real
+infrastructure to measure against, but the requirement to define them, once there
+is, is fixed now so it isn't forgotten later.
+
 ## Status
 
-`STATUS: TBD` for backup mechanism, frequency, and retention — depends on where
-data ends up being stored (`docs/02-architecture/DATA_ARCHITECTURE.md`), which is
-not yet decided.
+`STATUS: TBD` for backup mechanism, frequency, retention, and the RPO/RTO values
+above — depends on where data ends up being stored
+(`docs/02-architecture/DATA_ARCHITECTURE.md`), which is not yet decided. Tier B
+(`docs/10-project-state/OPEN_DECISIONS.md` item B12) once a mechanism is chosen.
 
 ## Related Documents
 

@@ -21,6 +21,14 @@ non-negotiable #7.
    verifiable, or does it become an unverified black box in a place that must be
    deterministic and auditable (`docs/06-ai/AI_ROLE.md`, `docs/00-governance/QUALITY_GATES.md`)?
 
+## Dependency Registry
+
+Once dependencies exist, the actual list in use (name, version, why it was added,
+license) must be visible from the ecosystem's own manifest/lockfile — that
+manifest *is* the registry; this policy does not require a second, hand-maintained
+list duplicating it. What this policy requires is that nothing appears in that
+manifest without having gone through § Before Adding a Dependency above.
+
 ## Status
 
 No package manager or ecosystem has been chosen yet — depends on the technology

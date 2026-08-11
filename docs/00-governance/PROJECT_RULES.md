@@ -82,6 +82,28 @@ When a decision's tier is genuinely ambiguous, default to Tier A — the cost of
 asking unnecessarily is lower than the cost of a unilateral call on something
 that mattered.
 
+### Reversibility
+
+Independent of tier, every decision — especially Tier B ones — should be checked
+against how hard it would be to undo:
+
+- **Reversible** — changed later at negligible cost (e.g. a linter config).
+- **Partially Reversible** — changeable, but with real rework cost (e.g. swapping
+  a library once several components depend on it).
+- **Expensive to Reverse** — technically possible but costly (e.g. a storage
+  format once significant historical data has accumulated in it).
+- **Irreversible** — cannot be meaningfully undone (e.g. an executed financial
+  transaction, a deleted historical record, data sent to a third party).
+
+**Rule: a decision that is Expensive to Reverse or Irreversible is treated as
+Tier A regardless of how technical it looks**, even if the row above would
+otherwise classify it as Tier B. This is what makes the escalation clause above
+concrete rather than a vague "use judgment" — reversibility is the test. A future
+automated-execution capability (see `docs/06-ai/AI_ROLE.md` § Analysis →
+Recommendation → Approval → Execution) is Irreversible by definition and is
+always Tier A, requiring a new ADR, never introduced as a byproduct of an
+unrelated Tier B change.
+
 ## 4. Relationship to Other Governance Documents
 
 - **How we work day to day:** `DEVELOPMENT_WORKFLOW.md`

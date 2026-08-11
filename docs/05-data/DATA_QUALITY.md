@@ -23,9 +23,11 @@ Every data point entering the system must be checked for:
 
 - Validation logic is deterministic code, not an AI judgment call, for anything
   that determines whether a number is trustworthy. See `docs/06-ai/AI_ROLE.md`.
-- Flagged data is not deleted — it's retained with its flag, so provenance and
-  history stay intact (`docs/02-architecture/DATA_ARCHITECTURE.md` § Integrity
-  Principles).
+- Flagged data enters **quarantine**, not deletion and not silent acceptance:
+  it's retained (so provenance and history stay intact — see
+  `docs/02-architecture/DATA_ARCHITECTURE.md` § Integrity Principles) but excluded
+  from normal analysis until a human or a documented rule resolves the flag. This
+  is the concrete meaning of "flagged, not discarded" throughout this document.
 - No fabricated or interpolated replacement values are inserted for missing data
   unless an explicit, documented, owner-approved methodology says otherwise.
 

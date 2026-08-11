@@ -41,4 +41,20 @@ Delivered:
   Financial Engine Contract.
 - Full details: `PHASE_0_AUDIT.md` refinement-pass addendum.
 
+**Pre-Stable Foundation audit (2026-08-11):** final general-Foundation audit
+across decision governance, architecture governance, data governance, financial
+safety, engineering governance, long-term maintainability, Iran-specific
+constraints, operational safety, and documentation architecture. Real gaps found
+and fixed (all as edits to existing documents, no new files): reversibility
+classification tied to decision tiering; a Breaking vs. Non-Breaking Architecture
+& Contract Change cycle; a Component/Feature Lifecycle and New Capability
+Checklist; Data Lineage and an explicit correction-provenance chain; an explicit
+Quarantine state for flagged data; Schema Evolution rules; a No-Single-Point-of-
+Failure requirement for data sources; explicit Iran operational constraints
+(sanctions, IP/payment/licensing instability); an explicit Analysis →
+Recommendation → Approval → Execution boundary; Operational Safety States
+(Automation On/Paused, Execution Disabled, Safe Mode); a Dependency Registry
+clarification; Environment Separation; and Backup Restore-testing + RPO/RTO
+requirements. Full details: `PHASE_0_AUDIT.md` § 15.
+
 Nothing else has been completed. No data, no code, no technology choices.

@@ -35,6 +35,17 @@ A field is added here at the same time it is added to the data model — not
 retroactively, and not before it's actually implemented. This keeps the dictionary
 authoritative rather than aspirational.
 
+## Schema Evolution
+
+The schema this dictionary describes is a **contract** in the sense defined by
+`docs/00-governance/CHANGE_MANAGEMENT.md` § 5: adding an optional field is
+non-breaking; removing a field, changing its meaning, or changing its unit is
+breaking and follows that section's Breaking Change cycle. Historical data written
+under an earlier schema version is never silently reinterpreted under a newer
+one — old records keep the meaning they were written with, which is exactly what
+the immutability and lineage principles in
+`docs/02-architecture/DATA_ARCHITECTURE.md` § Integrity Principles already require.
+
 ## Related Documents
 
 - Source-level metadata: `DATA_SOURCES.md`

@@ -52,6 +52,39 @@ for later phases.
 - The architecture must remain extensible to additional precious-metal instruments
   beyond gold and silver — see `docs/03-market/ASSET_UNIVERSE.md`.
 
+## Component / Feature Lifecycle
+
+**Architecture requirement, established 2026-08-11.** Every component (an
+Engine, a pipeline stage, an interface, an integration) moves through:
+
+```
+Proposed → Active → Deprecated → Retired
+```
+
+A component in **Deprecated** state still runs but must not gain new dependents;
+its replacement (if any) and removal plan are stated at the moment it's
+deprecated, not left implicit. **Retired** means removed — which, for anything
+touching a data or decision contract, follows the Breaking Change cycle in
+`docs/00-governance/CHANGE_MANAGEMENT.md` § 5 rather than being deleted outright.
+
+## New Capability Checklist
+
+Before any future feature is added to the system (not just Phase 0 documentation
+— an actual implementation), it must be answerable in these terms:
+
+- Which layer does it belong to (per the diagram above)?
+- What is its Source of Truth document?
+- What are its inputs and outputs?
+- What does it depend on, and what would depend on it?
+- Which quality gates apply (`docs/00-governance/QUALITY_GATES.md`)?
+- Does it change an existing architecture or contract? If yes, it follows the
+  Breaking Change cycle in `docs/00-governance/CHANGE_MANAGEMENT.md` § 5, not a
+  routine change.
+
+A feature is never added to the shared core "because it's convenient" without
+this being answered — that's exactly how architecture drift accumulates
+unnoticed over a multi-year project.
+
 ## Non-Functional Requirements
 
 The system must remain, throughout its life: modular, maintainable, testable,

@@ -42,6 +42,34 @@ does not autonomously execute financial actions, and any output that reads like
 `docs/04-portfolio/ROTATION_ENGINE.md`) and presented for the owner's own review and
 judgment, not as an instruction to act on unreviewed.
 
+## Analysis → Recommendation → Approval → Execution
+
+**Architecture boundary, established 2026-08-11.** These four stages are
+distinct and must never be collapsed into each other by a future feature without
+a formal governance change (an ADR, per
+`docs/00-governance/PROJECT_RULES.md` § 3 — a stage-collapsing change is
+Irreversible in effect and therefore always Tier A):
+
+1. **Analysis** — deterministic output about the world as it is (a valuation, a
+   risk figure). No opinion about what to do.
+2. **Recommendation** — a proposed action derived from analysis (see
+   `docs/04-portfolio/ROTATION_ENGINE.md`), still just a proposal.
+3. **Approval** — the owner's explicit, informed decision to accept a
+   recommendation. Only the owner can do this (see
+   `docs/00-governance/PROJECT_RULES.md` § 2-3).
+4. **Execution** — actually acting on an approved recommendation (e.g. placing a
+   trade). **No execution capability exists in this system, and none is planned
+   for the current roadmap** (`docs/01-product/ROADMAP.md`). If one is ever
+   proposed, it is Irreversible by nature, is always Tier A, and requires its own
+   ADR before any implementation — never introduced as a side effect of an
+   unrelated change.
+
+A future feature that, for example, made a "recommendation" that was really an
+analysis with opinion baked in, or that let approval and execution happen in the
+same step, would be quietly erasing this boundary — the checklist in
+`docs/02-architecture/SYSTEM_ARCHITECTURE.md` § New Capability Checklist exists
+partly to catch exactly that before it ships.
+
 ## Anti-Fabrication Rule
 
 The AI layer must never fabricate market data, historical data, or analytical

@@ -59,14 +59,31 @@ so it does not block Phase 1 on that methodology being decided first.
 ## Integrity Principles
 
 1. **Immutability of history.** Once a historical data point is validated and
-   stored, it is not overwritten in place; corrections are recorded as corrections
-   (with the original preserved), preserving auditability.
+   stored, it is not overwritten in place; a correction is recorded as its own
+   entry, preserving this exact chain:
+
+   ```
+   Original Observation → Correction → Correction Reason → Corrected Version → Timestamp
+   ```
+
+   The original is never deleted; the correction and its reason are both stored
+   and both attributable, so a past analysis that used the original value stays
+   explainable rather than silently "wrong" after a correction lands.
 2. **Provenance is mandatory.** Every stored data point carries where it came from
    and when — see `docs/05-data/DATA_SOURCES.md`.
 3. **No silent gaps.** Missing data is represented as missing, not interpolated or
    guessed, unless an explicit, documented, and approved methodology says otherwise.
 4. **Single canonical store per data type.** Analysis code reads from one
    normalized source per data type, not from ad hoc copies.
+5. **Data lineage is mandatory for derived data.** Reproducibility (Data Flow
+   Principle above) means a derived value is *computable* from its inputs; lineage
+   means it also *records* which specific raw/normalized records and which
+   transformation (and transformation version) actually produced it. A derived
+   number without a recorded lineage is not trustworthy for audit even if it
+   happens to be reproducible — the two are related but not the same guarantee.
+   The dataset snapshot a lineage record points to is exactly the "Input Dataset"
+   node in `docs/06-ai/DECISION_ENGINE.md` § Decision Provenance, so a snapshot
+   must be identifiable (versioned), not just "the data as of some vague date."
 
 ## Related Documents
 

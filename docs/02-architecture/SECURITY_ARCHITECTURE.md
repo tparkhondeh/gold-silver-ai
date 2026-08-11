@@ -33,6 +33,11 @@ credentials or PII beyond baseline secret hygiene (see
    `docs/06-ai/AI_ROLE.md`.
 6. **No unreviewed weakening of controls.** A security control is never disabled or
    bypassed to move faster without an explicit, owner-visible decision.
+7. **Environment separation.** Development, test, and any eventual production
+   environment use separate configuration and separate secrets — a development
+   credential is never a production one, and test runs never touch production
+   data. Concrete environment tooling is Tier B (`docs/10-project-state/OPEN_DECISIONS.md`
+   item B7), decided when there's an actual second environment to separate from.
 
 ## Threats to Design Against (identified now, addressed when relevant work begins)
 
