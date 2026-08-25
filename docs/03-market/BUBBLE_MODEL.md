@@ -5,6 +5,12 @@ historically cheap, normal, or expensive. This is a core, eventual product
 capability. **Not implemented in Phase 0** — this document records the requirement
 only, per the project's explicit instruction to document, not build, this logic now.
 
+Phase 1 now includes a deliberately limited UI diagnostic for **current raw
+metal-content premium** on supported gram-based gold and silver holdings. It runs
+only when the domestic quote, USD/IRR quote, and global ounce quote are all valid.
+This diagnostic is not the historical bubble model described below, excludes coins
+until their exact reference specification is approved, and cannot issue a decision.
+
 ## Target Question
 
 The system must eventually be able to answer, for a given instrument (gold, silver,
@@ -43,7 +49,8 @@ Once implemented, this capability must support:
 
 ## Status
 
-`STATUS: TBD` for methodology, exact statistical definitions (e.g. what counts as
+`STATUS: PARTIAL UI DIAGNOSTIC / HISTORICAL MODEL TBD` for methodology, exact
+statistical definitions (e.g. what counts as
 "comparable conditions"), lookback windows, and data requirements. `DECISION
 REQUIRED: YES` at design time for this capability, which should be presented to the
 owner per `docs/00-governance/PROJECT_RULES.md` § 2 before implementation begins.

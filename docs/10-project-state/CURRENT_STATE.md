@@ -12,8 +12,14 @@ _Last updated in the product calendar: ۱۴۰۵/۰۶/۰۳ (Phase 1 started)_
 - **Application:** a Persian RTL personal-wealth dashboard exists in `apps/web` with
   portfolio session entry with asset-specific units and purchase dates, market watch,
   deterministic per-holding and total profit/loss calculation, market watch,
-  scenario calculation, risk/data
-  readiness surfaces, and explicit source/freshness labels. An opt-in, clearly labelled
+  sortable holdings and market tables (numeric columns default descending), a daily
+  decision desk with fail-closed action gates, risk/data readiness surfaces, and
+  explicit source/freshness labels. The analysis workspace now separates summary,
+  geopolitical, political/policy, macroeconomic, industry/supply-demand, technical,
+  bubble/valuation, and portfolio/risk lenses across short- and long-term horizons.
+  A deterministic, version-labelled multi-driver what-if engine reports per-holding
+  and portfolio impacts, but its disclosed UI sensitivities are not calibrated or
+  approved as forecasts. An opt-in, clearly labelled
   ten-position, cross-asset demo portfolio spans precious metals, currency, cash/deposit,
   equities, ETF, crypto, property, and private business. It supports realistic UI
   evaluation without presenting synthetic holdings or cost basis as user or market data.
@@ -28,6 +34,13 @@ _Last updated in the product calendar: ۱۴۰۵/۰۶/۰۳ (Phase 1 started)_
   conversion rate comes from the labelled `USD_IRR` observation; demo portfolio values
   use an explicit synthetic rate, and a missing rate yields an unknown counterpart
   instead of a fabricated conversion.
+- **Bubble boundary:** for supported gram-based gold and silver holdings, the UI can
+  compute a raw current metal-content premium only when the domestic quote, global
+  ounce quote, and USD/IRR quote are all present and valid. Historical minimum,
+  average, and maximum remain explicitly unavailable until Iranian point-in-time
+  history and an owner-approved, backtested methodology exist. Coins are excluded
+  from this interim calculation because their exact reference specification is not
+  yet approved.
 - **Calendar boundary:** all user-facing dates use the Persian calendar and Tehran
   time. New purchase dates are entered as Jalali `YYYY/MM/DD`. Provider timestamps and
   audit storage remain ISO-8601 UTC so ingestion, ordering, and provenance stay

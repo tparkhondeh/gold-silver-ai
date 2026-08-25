@@ -26,6 +26,9 @@ test("renders the Persian wealth and market dashboard", async () => {
   assert.match(html, /تحلیل و سناریو/);
   assert.match(html, /هیئت بررسی/);
   assert.match(html, /داشبورد ثروت شخصی/);
+  assert.match(html, /میز تصمیم روزانه/);
+  assert.match(html, /تصمیم معاملاتی صادر نشد/);
+  assert.match(html, /مرکز تحلیل چندلایه/);
   assert.match(html, /آخرین قیمت \(ریال · دلار\)/);
   assert.doesNotMatch(html, /تصمیم بهتر، از/);
   assert.doesNotMatch(html, /Your site is taking shape/);

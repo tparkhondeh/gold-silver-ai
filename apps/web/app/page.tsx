@@ -1,6 +1,16 @@
 "use client";
 
 import { FormEvent, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  calculatePortfolioScenario,
+  calculatePremiumPercent,
+  emptyScenarioShocks,
+  scenarioDrivers,
+  scenarioMethodology,
+  scenarioPresets,
+  type ScenarioDriver,
+  type ScenarioShocks,
+} from "./scenario-engine";
 
 type View = "overview" | "portfolio" | "market" | "analysis" | "risk" | "data" | "agents";
 
@@ -46,6 +56,12 @@ type FeedResponse = {
 
 type NotificationKind = "volatility" | "opportunity" | "data";
 type NotificationFilter = "all" | NotificationKind;
+type SortDirection = "asc" | "desc";
+type HoldingSortKey = "name" | "amount" | "cost" | "current" | "profit";
+type MarketSortKey = "instrument" | "market" | "price" | "freshness" | "source";
+type BubbleSortKey = "name" | "current" | "minimum" | "average" | "maximum";
+type AnalysisHorizon = "short" | "long";
+type AnalysisCategory = "summary" | "geopolitical" | "political" | "economic" | "industry" | "technical" | "bubble" | "portfolio";
 
 type MarketNotification = {
   id: string;
@@ -170,6 +186,23 @@ const navItems: Array<{ id: View; label: string; icon: string }> = [
   { id: "agents", label: "هیئت بررسی", icon: "◇" },
 ];
 
+const analysisCategories: Array<{ id: AnalysisCategory; label: string; icon: string; short: string; long: string; evidence: string }> = [
+  { id: "summary", label: "خلاصهٔ جامع", icon: "◎", short: "جمع‌بندی وضعیت داده، بازار و سبد برای افق روزانه تا یک‌ماهه.", long: "جمع‌بندی ساختاری برای افق فصلی تا چندساله، بدون تبدیل فرضیه به پیش‌بینی.", evidence: "تمام خروجی‌های قابل اتکا" },
+  { id: "geopolitical", label: "ژئوپلیتیک", icon: "◇", short: "رویداد، مسیر انتقال شوک و اثر محتمل بر ارز، فلز و نقدشوندگی.", long: "تغییرات ساختاری در تحریم، تجارت، دسترسی به ارز و زنجیرهٔ تأمین.", evidence: "نیازمند خوراک رویداد زمان‌مند و طبقه‌بندی‌شده" },
+  { id: "political", label: "سیاسی و سیاست‌گذاری", icon: "◫", short: "تصمیم‌های پولی، ارزی، معاملاتی و مقرراتی با زمان اثر مشخص.", long: "پایداری سیاست، تغییر رژیم مقررات و پیامدهای سناریویی برای بازار ایران.", evidence: "نیازمند منبع رسمی، تاریخ اثر و نسخهٔ مصوبه" },
+  { id: "economic", label: "اقتصادی و کلان", icon: "⌁", short: "تورم، نقدینگی، نرخ ارز، نرخ بهره و انتظارات در افق کوتاه.", long: "روندهای حقیقی/اسمی، چرخهٔ کلان و قدرت خرید در افق بلند.", evidence: "نیازمند سری زمانی point-in-time اقتصاد ایران" },
+  { id: "industry", label: "صنعت و عرضه/تقاضا", icon: "▦", short: "موجودی، عرضهٔ فیزیکی، اسپرد و اختلال بازار هر ابزار.", long: "ظرفیت، هزینهٔ تولید، جانشینی و تغییر ساختار تقاضای طلا و نقره.", evidence: "نیازمند دادهٔ صنعت، موجودی و نقدشوندگی" },
+  { id: "technical", label: "تکنیکال و رفتار قیمت", icon: "⌁", short: "روند، مومنتوم، دامنه، نوسان و سطوح فقط بر تاریخچهٔ معتبر.", long: "رژیم‌های روند/بازگشت و شکست‌های تاریخی با آزمون خارج از نمونه.", evidence: "نیازمند OHLCV تاریخی، بک‌تست و walk-forward" },
+  { id: "bubble", label: "ارزش‌گذاری و حباب", icon: "◉", short: "حباب جاری و رتبهٔ آن نسبت به توزیع تاریخی همان ابزار.", long: "حداقل، میانگین، میانه، حداکثر، دوام و پیامدهای تاریخی شرایط مشابه.", evidence: "نیازمند قیمت مرجع، فرمول مصوب و تاریخچهٔ ایران" },
+  { id: "portfolio", label: "سبد، ریسک و نقدشوندگی", icon: "△", short: "تمرکز، پوشش قیمت، نقدشوندگی و اثر سناریو بر هر موقعیت.", long: "محدودیت‌ها، هزینهٔ تبدیل، ریسک تجمعی و تاب‌آوری سبد در رژیم‌های مختلف.", evidence: "نیازمند ارزش روز کامل، محدودیت مالک و مدل‌های اعتبارسنجی‌شده" },
+];
+
+const bubbleSpecifications: Record<string, { instrumentCode: string; referenceCode: "XAU_USD" | "XAG_USD"; pureGrams: number }> = {
+  "طلای ۱۸ عیار": { instrumentCode: "GOLD_18K_IRR", referenceCode: "XAU_USD", pureGrams: 0.75 },
+  "طلای ۲۴ عیار": { instrumentCode: "GOLD_24K_IRR", referenceCode: "XAU_USD", pureGrams: 1 },
+  "شمش نقره ۹۹۹": { instrumentCode: "SILVER_999_IRR", referenceCode: "XAG_USD", pureGrams: 0.999 },
+};
+
 const demoUsdIrrRate = 1_600_000;
 
 function formatIrr(value: number) {
@@ -262,8 +295,12 @@ export default function Home() {
   const [holdingsLoaded, setHoldingsLoaded] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedAssetName, setSelectedAssetName] = useState("");
-  const [baseValue, setBaseValue] = useState("");
-  const [marketMove, setMarketMove] = useState("-10");
+  const [analysisCategory, setAnalysisCategory] = useState<AnalysisCategory>("summary");
+  const [analysisHorizon, setAnalysisHorizon] = useState<AnalysisHorizon>("short");
+  const [decisionHorizon, setDecisionHorizon] = useState<AnalysisHorizon>("short");
+  const [scenarioShocks, setScenarioShocks] = useState<ScenarioShocks>({ ...emptyScenarioShocks });
+  const [activeScenarioPreset, setActiveScenarioPreset] = useState("neutral");
+  const [holdingSort, setHoldingSort] = useState<{ key: HoldingSortKey; direction: SortDirection }>({ key: "current", direction: "desc" });
   const [stressMove, setStressMove] = useState("-18");
   const [feed, setFeed] = useState<FeedResponse | null>(null);
   const [feedLoading, setFeedLoading] = useState(true);
@@ -412,7 +449,6 @@ export default function Home() {
 
   const knownCost = useMemo(() => holdings.reduce((sum, item) => sum + (item.costToman ?? 0), 0), [holdings]);
   const costCoverage = holdings.length ? Math.round((holdings.filter((item) => item.costToman !== null).length / holdings.length) * 100) : 0;
-  const scenarioValue = Number(baseValue) > 0 ? Number(baseValue) * (1 + Number(marketMove || 0) / 100) : null;
   const quoteMap = useMemo(() => new Map((feed?.quotes ?? []).map((quote) => [quote.instrumentCode, quote])), [feed]);
   const usdIrrQuote = quoteMap.get("USD_IRR");
   const marketUsdIrrRate = usdIrrQuote?.currency === "TOMAN" && usdIrrQuote.value > 0 ? usdIrrQuote.value * 10 : null;
@@ -420,8 +456,26 @@ export default function Home() {
   const marketRateStatus = !isUsableUsdIrrRate(marketUsdIrrRate) ? "نرخ دلار ناموجود" : `۱ دلار = ${formatIrr(marketUsdIrrRate)} (${usdIrrQuote?.status === "valid" ? "تازه" : "منقضی"})`;
   const portfolioRateStatus = portfolioMode === "demo" ? `۱ دلار = ${formatIrr(demoUsdIrrRate)} (نرخ ساختگی سبد نمایشی)` : marketRateStatus;
   const formatPortfolioMoney = (valueToman: number) => formatTomanInIrrAndUsd(valueToman, portfolioUsdIrrRate);
-  const formatScenarioMoney = (valueToman: number) => formatTomanInIrrAndUsd(valueToman, marketUsdIrrRate);
+  const formatScenarioMoney = (valueToman: number) => formatTomanInIrrAndUsd(valueToman, portfolioUsdIrrRate);
   const holdingValues = useMemo(() => new Map(holdings.map((holding) => [holding.id, portfolioMode === "demo" ? (demoCurrentValuesToman[holding.id] ?? null) : calculateHoldingValue(holding, quoteMap)])), [holdings, portfolioMode, quoteMap]);
+  const sortedHoldings = useMemo(() => [...holdings].sort((left, right) => {
+    const leftCurrent = holdingValues.get(left.id) ?? null;
+    const rightCurrent = holdingValues.get(right.id) ?? null;
+    const leftProfit = leftCurrent !== null && left.costToman !== null ? leftCurrent - left.costToman : null;
+    const rightProfit = rightCurrent !== null && right.costToman !== null ? rightCurrent - right.costToman : null;
+    const values: Record<HoldingSortKey, [string | number | null, string | number | null]> = {
+      name: [left.name, right.name], amount: [left.amount, right.amount], cost: [left.costToman, right.costToman], current: [leftCurrent, rightCurrent], profit: [leftProfit, rightProfit],
+    };
+    const [a, b] = values[holdingSort.key];
+    if (a === null) return 1;
+    if (b === null) return -1;
+    const result = typeof a === "string" && typeof b === "string" ? a.localeCompare(b, "fa") : Number(a) - Number(b);
+    return holdingSort.direction === "desc" ? -result : result;
+  }), [holdingSort, holdingValues, holdings]);
+  const scenarioPortfolio = useMemo(() => calculatePortfolioScenario(holdings.map((holding) => ({ id: holding.id, name: holding.name, valueToman: holdingValues.get(holding.id) ?? null })), scenarioShocks), [holdingValues, holdings, scenarioShocks]);
+  const scenarioRowsByImpact = useMemo(() => [...scenarioPortfolio.rows].sort((a, b) => Math.abs(b.impactToman) - Math.abs(a.impactToman)), [scenarioPortfolio.rows]);
+  const bubbleRows = useMemo(() => holdings.map((holding) => ({ holding, current: calculateHoldingBubble(holding.name, quoteMap), minimum: null, average: null, maximum: null })), [holdings, quoteMap]);
+  const bubbleAvailableCount = bubbleRows.filter((row) => row.current !== null).length;
   const valuedHoldingCount = Array.from(holdingValues.values()).filter((value) => value !== null).length;
   const portfolioMarketValue = holdings.length > 0 && valuedHoldingCount === holdings.length
     ? Array.from(holdingValues.values()).reduce((sum, value) => sum + (value ?? 0), 0)
@@ -433,6 +487,7 @@ export default function Home() {
   const largestAllocationPercent = largestAllocation && portfolioMarketValue ? Math.round((largestAllocation.value / portfolioMarketValue) * 100) : null;
   const stressScenarioValue = portfolioMarketValue === null ? null : portfolioMarketValue * (1 + Number(stressMove) / 100);
   const liveQuoteCount = feed?.quotes.filter((quote) => quote.status === "valid").length ?? 0;
+  const staleQuoteCount = feed?.quotes.filter((quote) => quote.status === "stale").length ?? 0;
   const displayQuoteCount = feed?.quotes.length ?? 0;
   const coverage = Math.round((liveQuoteCount / instruments.length) * 100);
   const connectedSourceCount = feed?.sources.filter((source) => source.status === "connected" || source.status === "fallback" || source.status === "snapshot").length ?? 0;
@@ -441,6 +496,24 @@ export default function Home() {
   const availableUnits = selectedAssetName ? (assetUnitOptions[selectedAssetName] ?? ["واحد"]) : [];
   const unreadNotificationCount = notifications.filter((notification) => !notification.read).length;
   const visibleNotifications = notificationFilter === "all" ? notifications : notifications.filter((notification) => notification.kind === notificationFilter);
+  const selectedAnalysis = analysisCategories.find((category) => category.id === analysisCategory) ?? analysisCategories[0];
+  const decisionAssets = holdings.length ? holdings.map((holding) => ({ id: holding.id, name: holding.name, priced: holdingValues.get(holding.id) !== null, bubble: bubbleRows.find((row) => row.holding.id === holding.id)?.current ?? null })) : marketPreviewInstruments.map((instrument) => ({ id: instrument.code, name: instrument.name, priced: quoteMap.get(instrument.code)?.status === "valid", bubble: null }));
+
+  function toggleHoldingSort(key: HoldingSortKey) {
+    setHoldingSort((current) => ({ key, direction: current.key === key && current.direction === "desc" ? "asc" : "desc" }));
+  }
+
+  function applyScenarioPreset(id: string) {
+    const preset = scenarioPresets.find((item) => item.id === id);
+    if (!preset) return;
+    setScenarioShocks({ ...preset.shocks });
+    setActiveScenarioPreset(id);
+  }
+
+  function updateScenarioShock(driver: ScenarioDriver, value: number) {
+    setScenarioShocks((current) => ({ ...current, [driver]: value }));
+    setActiveScenarioPreset("custom");
+  }
 
   function addHolding(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -471,7 +544,6 @@ export default function Home() {
   function activateDemoPortfolio(destination: View) {
     setHoldings(demoHoldings.map((holding) => ({ ...holding })));
     setPortfolioMode("demo");
-    setBaseValue(String(Object.values(demoCurrentValuesToman).reduce((sum, value) => sum + value, 0)));
     const createdAt = new Date().toISOString();
     pushNotifications([
       { id: "demo-volatility-silver", kind: "volatility", title: "نوسان شدید نقره · نمایشی", message: "افت ساختگی ۷٫۲٪ در سه ساعت؛ این اعلان فقط برای آزمون تجربهٔ کاربری است.", createdAt, read: false, demo: true },
@@ -483,7 +555,6 @@ export default function Home() {
   function clearDemoPortfolio() {
     setHoldings([]);
     setPortfolioMode("personal");
-    setBaseValue("");
     setNotifications((current) => current.filter((notification) => !notification.demo));
   }
 
@@ -531,6 +602,23 @@ export default function Home() {
               <article><span className="metric-icon neutral">⌁</span><div><small>پوشش قیمت بازار</small><strong>{coverage.toLocaleString("fa-IR")}٪</strong><p>{liveQuoteCount.toLocaleString("fa-IR")} از {instruments.length.toLocaleString("fa-IR")} نماد تازه</p></div></article>
             </section>
 
+            <section className="panel decision-desk">
+              <div className="panel-head decision-head">
+                <SectionTitle eyebrow="DAILY DECISION DESK" title="میز تصمیم روزانه" text="بهترین اقدام مجاز برای هر دارایی، با تفکیک افق و دلیل قابل‌ردیابی؛ تا پیش از اعتبارسنجی مدل هیچ دستور خرید یا فروشی صادر نمی‌شود."/>
+                <HorizonToggle value={decisionHorizon} onChange={setDecisionHorizon}/>
+              </div>
+              <div className="decision-gate"><span>!</span><div><strong>خروجی امروز: تصمیم معاملاتی صادر نشد</strong><p>قیمت به‌تنهایی برای اقدام کافی نیست؛ مدل حباب تاریخی، رژیم بازار، نقدشوندگی و آزمون خارج از نمونه هنوز دروازهٔ تأیید را نگرفته‌اند.</p></div></div>
+              <div className="decision-grid">
+                {decisionAssets.slice(0, 5).map((asset) => <article key={asset.id}>
+                  <div><span>{asset.name}</span><b>پایش · تصمیم غیرفعال</b></div>
+                  <p>{decisionHorizon === "short"
+                    ? !asset.priced ? "قیمت تازهٔ کافی در دسترس نیست؛ ابتدا خوراک معتبر تکمیل شود." : asset.bubble !== null ? `حباب خام لحظه‌ای ${formatPercent(asset.bubble)} است؛ بدون توزیع تاریخی به اقدام تبدیل نمی‌شود.` : "قیمت موجود است، اما حباب/رژیم/نقدشوندگی برای اقدام کامل نیست."
+                    : "برای تصمیم بلندمدت به تاریخچهٔ point-in-time، هزینهٔ معامله، نقدشوندگی و پایداری مدل در چند رژیم نیاز است."}</p>
+                </article>)}
+              </div>
+              <button className="text-button decision-link" onClick={() => setView("analysis")}>بازکردن مرکز تحلیل چندلایه ←</button>
+            </section>
+
             <section className="split-grid">
               <article className="panel portfolio-panel"><div className="panel-head"><SectionTitle eyebrow="PORTFOLIO" title="دارایی‌های من"/><button className="text-button" onClick={() => setView("portfolio")}>مشاهده همه ←</button></div>
                 {holdings.length === 0 ? <EmptyLock title="سبد شما هنوز خالی است" text="نوع دارایی، مقدار و بهای خرید را ثبت کن تا پایهٔ تحلیل شخصی ساخته شود."/> : <div className="mini-holdings">{holdings.slice(0, 4).map((item) => { const currentValue = holdingValues.get(item.id); return <div key={item.id}><span className="asset-dot">◈</span><span><strong>{item.name}</strong><small>{item.amount.toLocaleString("fa-IR")} {item.unit} · {formatPurchaseDate(item.purchaseDate)}</small></span><b>{currentValue === null || currentValue === undefined ? "بدون قیمت تازه" : formatPortfolioMoney(currentValue)}</b></div>; })}</div>}
@@ -545,19 +633,52 @@ export default function Home() {
             {portfolioMode === "demo" && <section className="guardrail"><span>i</span><div><b>این سبد کاملاً ساختگی است</b><p>مقدار دارایی‌ها و بهای خرید فقط برای تجربه و بررسی رابط کاربری ساخته شده‌اند. قیمت‌های بازار همچنان از منابع واقعی و دارای برچسب تازگی می‌آیند و این سبد هیچ پیشنهاد خرید یا فروشی نیست.</p></div></section>}
             <section className="conversion-strip"><b>مبنای نمایش دوارزی</b><span>{portfolioRateStatus}</span></section>
             <section className="panel"><div className="portfolio-summary"><div><small>تعداد موقعیت‌ها</small><strong>{holdings.length.toLocaleString("fa-IR")}</strong></div><div><small>جمع بهای خرید ثبت‌شده</small><strong>{knownCost ? formatPortfolioMoney(knownCost) : "—"}</strong></div><div><small>ارزش روز</small><strong className={portfolioMarketValue === null ? "muted-value" : ""}>{portfolioMarketValue === null ? "پوشش ناقص" : formatPortfolioMoney(portfolioMarketValue)}</strong></div><div><small>سود و زیان</small><strong className={portfolioProfitLoss === null ? "muted-value" : portfolioProfitLoss < 0 ? "negative" : "positive"}>{portfolioProfitLoss === null ? "محاسبه نشده" : formatPortfolioMoney(portfolioProfitLoss)}</strong></div></div>
-              {holdings.length === 0 ? <EmptyLock title="هنوز دارایی ثبت نشده است" text="افزودن دارایی به معنی پیشنهاد خرید نیست؛ فقط اطلاعاتی است که خودتان وارد می‌کنید."/> : <div className="holdings-table"><div className="table-row table-head"><span>دارایی</span><span>مقدار</span><span>بهای خرید (ریال · دلار)</span><span>ارزش فعلی (ریال · دلار)</span><span>سود/زیان (ریال · دلار)</span><span /></div>{holdings.map((item) => { const currentValue = holdingValues.get(item.id); const holdingProfitLoss = typeof currentValue === "number" && item.costToman !== null ? currentValue - item.costToman : null; const holdingProfitPercent = holdingProfitLoss !== null && item.costToman !== null && item.costToman > 0 ? (holdingProfitLoss / item.costToman) * 100 : null; return <div className="table-row" key={item.id}><span><b>{item.name}</b><small>{formatPurchaseDate(item.purchaseDate)} · {item.note || "ثبت‌شده توسط شما"}</small></span><span>{item.amount.toLocaleString("fa-IR")} {item.unit}</span><span>{item.costToman !== null ? formatPortfolioMoney(item.costToman) : "—"}</span><span className={currentValue === null || currentValue === undefined ? "no-data" : "positive"}>{currentValue === null || currentValue === undefined ? "—" : formatPortfolioMoney(currentValue)}</span><span className={`holding-profit ${holdingProfitLoss === null ? "muted-value" : holdingProfitLoss < 0 ? "negative" : "positive"}`}><b>{holdingProfitLoss === null ? "نامشخص" : formatPortfolioMoney(holdingProfitLoss)}</b><small>{holdingProfitPercent === null ? "—" : `${holdingProfitPercent > 0 ? "+" : ""}${holdingProfitPercent.toLocaleString("fa-IR", { maximumFractionDigits: 1 })}٪`}</small></span><button className="remove-button" onClick={() => setHoldings((current) => current.filter((row) => row.id !== item.id))} aria-label={`حذف ${item.name}`}>حذف</button></div>; })}</div>}
+              {holdings.length === 0 ? <EmptyLock title="هنوز دارایی ثبت نشده است" text="افزودن دارایی به معنی پیشنهاد خرید نیست؛ فقط اطلاعاتی است که خودتان وارد می‌کنید."/> : <div className="holdings-table"><div className="table-row table-head"><SortButton label="دارایی" active={holdingSort.key === "name"} direction={holdingSort.direction} onClick={() => toggleHoldingSort("name")}/><SortButton label="مقدار" active={holdingSort.key === "amount"} direction={holdingSort.direction} onClick={() => toggleHoldingSort("amount")}/><SortButton label="بهای خرید (ریال · دلار)" active={holdingSort.key === "cost"} direction={holdingSort.direction} onClick={() => toggleHoldingSort("cost")}/><SortButton label="ارزش فعلی (ریال · دلار)" active={holdingSort.key === "current"} direction={holdingSort.direction} onClick={() => toggleHoldingSort("current")}/><SortButton label="سود/زیان (ریال · دلار)" active={holdingSort.key === "profit"} direction={holdingSort.direction} onClick={() => toggleHoldingSort("profit")}/><span /></div>{sortedHoldings.map((item) => { const currentValue = holdingValues.get(item.id); const holdingProfitLoss = typeof currentValue === "number" && item.costToman !== null ? currentValue - item.costToman : null; const holdingProfitPercent = holdingProfitLoss !== null && item.costToman !== null && item.costToman > 0 ? (holdingProfitLoss / item.costToman) * 100 : null; return <div className="table-row" key={item.id}><span><b>{item.name}</b><small>{formatPurchaseDate(item.purchaseDate)} · {item.note || "ثبت‌شده توسط شما"}</small></span><span>{item.amount.toLocaleString("fa-IR")} {item.unit}</span><span>{item.costToman !== null ? formatPortfolioMoney(item.costToman) : "—"}</span><span className={currentValue === null || currentValue === undefined ? "no-data" : "positive"}>{currentValue === null || currentValue === undefined ? "—" : formatPortfolioMoney(currentValue)}</span><span className={`holding-profit ${holdingProfitLoss === null ? "muted-value" : holdingProfitLoss < 0 ? "negative" : "positive"}`}><b>{holdingProfitLoss === null ? "نامشخص" : formatPortfolioMoney(holdingProfitLoss)}</b><small>{holdingProfitPercent === null ? "—" : `${holdingProfitPercent > 0 ? "+" : ""}${holdingProfitPercent.toLocaleString("fa-IR", { maximumFractionDigits: 1 })}٪`}</small></span><button className="remove-button" onClick={() => setHoldings((current) => current.filter((row) => row.id !== item.id))} aria-label={`حذف ${item.name}`}>حذف</button></div>; })}</div>}
+            </section>
+            <section className="panel bubble-monitor">
+              <div className="panel-head"><SectionTitle eyebrow="PREMIUM MONITOR" title="حباب و پریمیوم دارایی‌ها" text="حباب جاری نسبت به ارزش خام فلز محاسبه می‌شود؛ آمار تاریخی فقط پس از ورود تاریخچهٔ معتبر نمایش داده خواهد شد."/><span className={bubbleAvailableCount ? "status-chip safe" : "status-chip warning"}>{bubbleAvailableCount.toLocaleString("fa-IR")} محاسبهٔ معتبر</span></div>
+              {holdings.length === 0
+                ? <EmptyLock title="دارایی برای محاسبه وجود ندارد" text="طلا یا نقرهٔ پشتیبانی‌شده ثبت کن تا حباب خام در صورت وجود سه قیمت تازه محاسبه شود."/>
+                : <BubbleTable rows={bubbleRows}/>}
+              <div className="method-note"><b>روش فعلی:</b> قیمت داخلی منهای ارزش فلز خالص بر پایهٔ اونس جهانی و دلار آزاد. هزینهٔ ساخت، مالیات، وزن دقیق سکه، نقدشوندگی و توزیع تاریخی هنوز وارد مدل نشده‌اند؛ بنابراین خروجی سیگنال معامله نیست.</div>
             </section>
           </section>}
 
           {view === "market" && <section className="view-stack"><div className="view-hero"><SectionTitle eyebrow="MARKET INTELLIGENCE" title="فلزات و بازارهای مرجع" text="هر قیمت با منبع، زمان انتشار، زمان دریافت و وضعیت اعتبارسنجی نمایش داده می‌شود."/><div className="market-actions"><span className={liveQuoteCount ? "status-chip safe" : "status-chip warning"}>{feedLoading ? "در حال بروزرسانی" : `${liveQuoteCount.toLocaleString("fa-IR")} قیمت تازه`}</span><button className="ghost-button refresh-button" onClick={() => void refreshMarket()} disabled={feedLoading}>{feedLoading ? "لطفاً صبر کنید" : "بروزرسانی منابع آنلاین"}</button></div></div>{feedError && <div className="feed-error">{feedError}</div>}<section className="conversion-strip"><b>مبنای تبدیل قیمت‌ها</b><span>{marketRateStatus}</span></section><section className="guardrail snapshot-note"><span>i</span><div><b>رهاورد فعلاً Snapshot دستی است</b><p>اعداد رهاورد از نشست مرورگر شما ثبت شده‌اند و با این دکمه خودکار تازه نمی‌شوند. پس از تهیه API، همین مرز داده بدون تغییر ظاهری به خوراک مستقیم متصل می‌شود.</p></div></section><section className="panel"><MarketTable rows={instruments} quotes={quoteMap} usdIrrRate={marketUsdIrrRate}/></section><section className="source-grid">{(feed?.sources ?? []).map((source) => <article key={source.id}><div><strong>{source.name}</strong><span className={`source-status ${source.status}`}>{sourceLabel(source.status)}</span></div><p>{source.message}</p>{source.id === "tgju" && <a className="source-action" href="https://www.tgju.org/form/api" target="_blank" rel="noreferrer">درخواست رسمی API از TGJU ↗</a>}</article>)}</section><section className="info-grid"><article><span>۱</span><h3>قیمت خام</h3><p>دریافت بدون تغییر همراه با زمان و شناسهٔ منبع.</p></article><article><span>۲</span><h3>اعتبارسنجی</h3><p>کنترل نوع، دامنه، تازگی و سازگاری رکورد.</p></article><article><span>۳</span><h3>قرنطینه</h3><p>عدد مشکوک هیچ‌وقت وارد تحلیل نمی‌شود.</p></article><article><span>۴</span><h3>نمایش</h3><p>فقط دادهٔ معتبر و قابل‌ردیابی نمایش داده می‌شود.</p></article></section></section>}
 
           {view === "analysis" && <section className="view-stack">
-            <div className="view-hero"><SectionTitle eyebrow="SCENARIO LAB" title="آزمایش سناریو، بدون پیش‌بینی" text="این ابزار اثر یک فرض عددی را محاسبه می‌کند؛ آینده را پیش‌بینی و خرید یا فروش پیشنهاد نمی‌کند."/><div className="market-actions">{portfolioMode === "demo" ? <span className="status-chip warning">آزمایش با دادهٔ ساختگی</span> : <button className="primary-button" onClick={() => activateDemoPortfolio("analysis")}>فعال‌سازی ابزارهای نمایشی</button>}<span className="status-chip safe">محاسبهٔ قطعی</span></div></div>
-            <div className="split-grid analysis-grid">
-              <section className="panel scenario-card"><h3>اگر بازار تغییر کند چه می‌شود؟</h3><p>یک ارزش مبنا و درصد تغییر فرضی وارد کن.</p><label>ارزش مبنا (ورودی تومان؛ خروجی ریال و دلار)<input inputMode="numeric" value={baseValue} onChange={(event) => setBaseValue(event.target.value.replace(/[^0-9]/g, ""))} placeholder="مثلاً ۵۰۰٬۰۰۰٬۰۰۰"/></label><label>تغییر فرضی بازار<input type="range" min="-40" max="40" step="1" value={marketMove} onChange={(event) => setMarketMove(event.target.value)}/><span className={Number(marketMove) < 0 ? "negative" : "positive"}>{Number(marketMove).toLocaleString("fa-IR")}٪</span></label><div className="scenario-presets" aria-label="سناریوهای سریع">{[-30, -20, -10, 10, 20, 30].map((move) => <button type="button" className={marketMove === String(move) ? "active" : ""} key={move} onClick={() => setMarketMove(String(move))}>{move > 0 ? "+" : ""}{move.toLocaleString("fa-IR")}٪</button>)}</div><div className="scenario-result"><small>ارزش پس از سناریو</small><strong>{scenarioValue === null ? "—" : formatScenarioMoney(scenarioValue)}</strong><p>{scenarioValue === null ? "برای محاسبه، ارزش مبنا را وارد کنید." : `تغییر: ${formatScenarioMoney(scenarioValue - Number(baseValue))}`}</p></div></section>
-              <section className="panel locked-models"><h3>مدل‌های تحلیلی</h3>{portfolioMode === "demo" ? <><div><span>بازده سبد نسبت به بهای خرید</span><b>{portfolioProfitPercent === null ? "—" : `${portfolioProfitPercent.toLocaleString("fa-IR", { maximumFractionDigits: 1 })}٪ نمایشی`}</b></div><div><span>حباب و پریمیوم بازار ایران</span><b>۷٫۴٪ ساختگی</b></div><div><span>رژیم بازار نمونه</span><b>نوسانی</b></div><div><span>سطوح مواجهه در رابط</span><b>۳ پلهٔ آزمایشی</b></div><p>این خروجی‌ها فقط برای بررسی تجربهٔ کاربری ساخته شده‌اند و مدل مالی، سیگنال یا پیشنهاد سرمایه‌گذاری نیستند.</p></> : <><div><span>صدک تاریخی و محدوده ارزش‌گذاری</span><b>قفل</b></div><div><span>حباب و پریمیوم بازار ایران</span><b>قفل</b></div><div><span>تشخیص رژیم بازار</span><b>قفل</b></div><div><span>نقاط افزایش یا کاهش مواجهه</span><b>قفل</b></div><p>برای تجربهٔ همهٔ ابزارها، حالت نمایشی را فعال کن. فعال‌سازی واقعی همچنان نیازمند دادهٔ point-in-time، بک‌تست و اعتبارسنجی walk-forward است.</p></>}</section>
-            </div>
-            <section className="guardrail"><span>!</span><div><b>{portfolioMode === "demo" ? "تمام خروجی‌های این صفحه آزمایشی‌اند" : "محدودهٔ امن با «نقطهٔ تضمینی» فرق دارد"}</b><p>{portfolioMode === "demo" ? "مقادیر ساختگی فقط برای کلیک، مقایسه و اعلام تغییرات رابط هستند؛ از آن‌ها برای تصمیم مالی استفاده نکن." : "هیچ قیمت یا زمان ورود تضمین‌شده‌ای وجود ندارد. نسخهٔ نهایی باید محدوده‌ها را همراه با عدم‌قطعیت، سناریوی خلاف و کیفیت داده توضیح دهد."}</p></div></section>
+            <div className="view-hero"><SectionTitle eyebrow="MULTI-LENS ANALYSIS" title="مرکز تحلیل چندلایه و سناریو" text="از رویداد و اقتصاد تا رفتار قیمت، حباب و اثر سبد؛ هر نتیجه با افق، شواهد لازم و مرز عدم‌قطعیت جدا می‌شود."/><div className="market-actions">{portfolioMode === "demo" ? <span className="status-chip warning">سبد ساختگی فعال</span> : <button className="primary-button" onClick={() => activateDemoPortfolio("analysis")}>بارگذاری سبد نمایشی</button>}<HorizonToggle value={analysisHorizon} onChange={setAnalysisHorizon}/></div></div>
+
+            <section className="analysis-summary-grid">
+              <article><small>قیمت تازه</small><strong>{liveQuoteCount.toLocaleString("fa-IR")}</strong><p>{staleQuoteCount.toLocaleString("fa-IR")} رکورد منقضی</p></article>
+              <article><small>پوشش ارزش‌گذاری سبد</small><strong>{valuedHoldingCount.toLocaleString("fa-IR")} / {holdings.length.toLocaleString("fa-IR")}</strong><p>{portfolioRateStatus}</p></article>
+              <article><small>حباب خام قابل محاسبه</small><strong>{bubbleAvailableCount.toLocaleString("fa-IR")}</strong><p>آمار تاریخی هنوز قفل است</p></article>
+              <article className="gate-card"><small>دروازهٔ تصمیم</small><strong>غیرفعال</strong><p>نیازمند بک‌تست و walk-forward</p></article>
+            </section>
+
+            <section className="panel analysis-catalogue">
+              <div className="analysis-tabs" role="tablist" aria-label="دسته‌بندی تحلیل‌ها">{analysisCategories.map((category) => <button key={category.id} role="tab" aria-selected={analysisCategory === category.id} className={analysisCategory === category.id ? "active" : ""} onClick={() => setAnalysisCategory(category.id)}><i>{category.icon}</i>{category.label}</button>)}</div>
+              <div className="analysis-category-panel" role="tabpanel">
+                <div className="analysis-category-title"><span>{selectedAnalysis.icon}</span><div><small>{analysisHorizon === "short" ? "افق کوتاه‌مدت" : "افق بلندمدت"}</small><h3>{selectedAnalysis.label}</h3></div><b className="evidence-badge">شواهد ناکافی برای تصمیم</b></div>
+                <p className="analysis-lead">{selectedAnalysis[analysisHorizon]}</p>
+                <div className="analysis-category-body">
+                  <article><small>آنچه اکنون قابل اثبات است</small><strong>{analysisCategory === "summary" ? `${liveQuoteCount.toLocaleString("fa-IR")} قیمت تازه و ${staleQuoteCount.toLocaleString("fa-IR")} قیمت منقضی` : analysisCategory === "portfolio" ? `${valuedHoldingCount.toLocaleString("fa-IR")} از ${holdings.length.toLocaleString("fa-IR")} موقعیت ارزش‌گذاری شده` : analysisCategory === "bubble" ? `${bubbleAvailableCount.toLocaleString("fa-IR")} حباب خام لحظه‌ای` : "خوراک تخصصی این لایه هنوز متصل نیست"}</strong></article>
+                  <article><small>شواهد لازم برای نتیجه</small><strong>{selectedAnalysis.evidence}</strong></article>
+                </div>
+                <div className="analysis-brief"><b>خلاصهٔ تحلیل</b><p>در وضعیت فعلی می‌توان کیفیت و پوشش داده را گزارش و اثر سناریوهای ورودی کاربر را محاسبه کرد؛ اما برای توصیهٔ خرید، فروش یا «نقطهٔ امن» شواهد و اعتبارسنجی کافی وجود ندارد.</p></div>
+              </div>
+            </section>
+
+            <section className="panel scenario-workbench">
+              <div className="panel-head"><SectionTitle eyebrow="WHAT-IF ENGINE" title="مهندسی سناریوی چندمحرکی" text="شوک‌های فرضی را جداگانه تنظیم کن؛ موتور اثر را با ضرایب نسخه‌دار روی هر موقعیت محاسبه و سهم اثر را مرتب می‌کند."/><div className="method-version"><span>{scenarioMethodology.id}</span><b>نسخه {scenarioMethodology.version}</b></div></div>
+              <div className="scenario-preset-grid">{scenarioPresets.map((preset) => <button key={preset.id} className={activeScenarioPreset === preset.id ? "active" : ""} onClick={() => applyScenarioPreset(preset.id)}><strong>{preset.label}</strong><small>{preset.description}</small></button>)}</div>
+              <div className="scenario-driver-grid">{scenarioDrivers.map((driver) => <label key={driver.key}><span><b>{driver.label}</b><small>{driver.hint}</small></span><output className={scenarioShocks[driver.key] < 0 ? "negative" : scenarioShocks[driver.key] > 0 ? "positive" : ""}>{scenarioShocks[driver.key] > 0 ? "+" : ""}{scenarioShocks[driver.key].toLocaleString("fa-IR")}٪</output><input type="range" min="-40" max="40" step="1" value={scenarioShocks[driver.key]} onChange={(event) => updateScenarioShock(driver.key, Number(event.target.value))}/></label>)}</div>
+              <div className="scenario-output-grid"><article><small>ارزش مبنای پوشش‌داده‌شده</small><strong>{scenarioPortfolio.coverageCount ? formatScenarioMoney(scenarioPortfolio.baseValueToman) : "—"}</strong></article><article><small>ارزش پس از سناریو</small><strong>{scenarioPortfolio.coverageCount ? formatScenarioMoney(scenarioPortfolio.projectedValueToman) : "—"}</strong></article><article><small>اثر کل فرضی</small><strong className={scenarioPortfolio.impactToman < 0 ? "negative" : scenarioPortfolio.impactToman > 0 ? "positive" : ""}>{scenarioPortfolio.coverageCount ? formatScenarioMoney(scenarioPortfolio.impactToman) : "—"}<small>{scenarioPortfolio.coverageCount ? formatPercent(scenarioPortfolio.impactPercent) : "بدون پوشش"}</small></strong></article><article><small>پوشش سناریو</small><strong>{scenarioPortfolio.coverageCount.toLocaleString("fa-IR")} / {scenarioPortfolio.totalCount.toLocaleString("fa-IR")}</strong></article></div>
+              {scenarioRowsByImpact.length === 0 ? <EmptyLock title="سبد قابل ارزش‌گذاری وجود ندارد" text="سبد نمایشی را فعال یا دارایی دارای قیمت تازه ثبت کن تا ماتریس اثر ساخته شود."/> : <div className="scenario-impact-table"><div className="scenario-impact-row head"><span>دارایی</span><span>ارزش مبنا</span><span>تغییر فرضی</span><span>ارزش سناریو</span><span>سهم اثر</span></div>{scenarioRowsByImpact.map((row) => <div className="scenario-impact-row" key={row.id}><b>{row.name}</b><span>{formatScenarioMoney(row.valueToman)}</span><span className={row.movePercent < 0 ? "negative" : row.movePercent > 0 ? "positive" : ""}>{formatPercent(row.movePercent)}</span><span>{formatScenarioMoney(row.projectedValueToman)}</span><span className={row.impactToman < 0 ? "negative" : row.impactToman > 0 ? "positive" : ""}>{formatScenarioMoney(row.impactToman)}</span></div>)}</div>}
+              <div className="method-note"><b>محدودیت روش:</b> {scenarioMethodology.limitation} این محاسبه پیش‌بینی، تحلیل همبستگی تجربی یا توصیهٔ سرمایه‌گذاری نیست.</div>
+            </section>
+
+            <section className="guardrail"><span>!</span><div><b>محدودهٔ محتمل با نقطهٔ تضمینی فرق دارد</b><p>خروجی واقعی باید علاوه بر سناریوی پایه، سناریوی خلاف، کیفیت داده، عدم‌قطعیت، هزینه و نقدشوندگی را نشان دهد؛ تا آن زمان دروازهٔ اقدام بسته می‌ماند.</p></div></section>
           </section>}
 
           {view === "risk" && <section className="view-stack">
@@ -606,16 +727,69 @@ export default function Home() {
   );
 }
 
+function SortButton({ label, active, direction, onClick }: { label: string; active: boolean; direction: SortDirection; onClick: () => void }) {
+  return <button type="button" className={active ? "sort-button active" : "sort-button"} onClick={onClick} aria-label={`${label}؛ مرتب‌سازی ${active && direction === "desc" ? "نزولی" : "صعودی"}`}><span>{label}</span><i aria-hidden="true">{active ? direction === "desc" ? "↓" : "↑" : "↕"}</i></button>;
+}
+
+function HorizonToggle({ value, onChange }: { value: AnalysisHorizon; onChange: (value: AnalysisHorizon) => void }) {
+  return <div className="horizon-toggle" role="group" aria-label="افق تحلیل"><button type="button" className={value === "short" ? "active" : ""} onClick={() => onChange("short")}>کوتاه‌مدت</button><button type="button" className={value === "long" ? "active" : ""} onClick={() => onChange("long")}>بلندمدت</button></div>;
+}
+
 function MarketTable({ rows, quotes, usdIrrRate }: { rows: Instrument[]; quotes: Map<string, LiveQuote>; usdIrrRate: number | null }) {
-  return <div className="market-table"><div className="market-row market-head"><span>نماد</span><span>بازار</span><span>آخرین قیمت (ریال · دلار)</span><span>تازگی</span><span>منشأ</span></div>{rows.map((row) => {
+  const [sort, setSort] = useState<{ key: MarketSortKey; direction: SortDirection }>({ key: "price", direction: "desc" });
+  const toggleSort = (key: MarketSortKey) => setSort((current) => ({ key, direction: current.key === key && current.direction === "desc" ? "asc" : "desc" }));
+  const sortedRows = useMemo(() => [...rows].sort((left, right) => {
+    const leftQuote = quotes.get(left.code);
+    const rightQuote = quotes.get(right.code);
+    const values: Record<MarketSortKey, [string | number | null, string | number | null]> = {
+      instrument: [left.name, right.name],
+      market: [left.market, right.market],
+      price: [quoteComparableIrr(leftQuote, usdIrrRate), quoteComparableIrr(rightQuote, usdIrrRate)],
+      freshness: [leftQuote ? new Date(quoteObservedAt(leftQuote)).getTime() : null, rightQuote ? new Date(quoteObservedAt(rightQuote)).getTime() : null],
+      source: [leftQuote?.sourceName ?? null, rightQuote?.sourceName ?? null],
+    };
+    const [a, b] = values[sort.key];
+    if (a === null) return 1;
+    if (b === null) return -1;
+    const result = typeof a === "string" && typeof b === "string" ? a.localeCompare(b, "fa") : Number(a) - Number(b);
+    return sort.direction === "desc" ? -result : result;
+  }), [quotes, rows, sort, usdIrrRate]);
+  return <div className="market-table"><div className="market-row market-head"><SortButton label="نماد" active={sort.key === "instrument"} direction={sort.direction} onClick={() => toggleSort("instrument")}/><SortButton label="بازار" active={sort.key === "market"} direction={sort.direction} onClick={() => toggleSort("market")}/><SortButton label="آخرین قیمت (ریال · دلار)" active={sort.key === "price"} direction={sort.direction} onClick={() => toggleSort("price")}/><SortButton label="تازگی" active={sort.key === "freshness"} direction={sort.direction} onClick={() => toggleSort("freshness")}/><SortButton label="منشأ" active={sort.key === "source"} direction={sort.direction} onClick={() => toggleSort("source")}/></div>{sortedRows.map((row) => {
     const quote = quotes.get(row.code);
     return <div className="market-row" key={row.code}><span className="instrument"><i className={row.tone}>{row.icon}</i><span><strong>{row.name}</strong><small>{row.code}</small></span></span><span>{row.market}</span>{quote ? <strong className="live-value">{formatQuote(quote, usdIrrRate)}</strong> : <strong className="no-data">—</strong>}{quote ? <span className={quote.status === "valid" ? "fresh" : "pending"}>{formatFreshness(quote.publishedAt ?? quote.collectedAt)}</span> : <span className="pending">در انتظار</span>}{quote ? <a className="source-link" href={quote.sourceUrl} target="_blank" rel="noreferrer"><span>{quote.sourceName}</span><small>{sourceQualityLabel(quote.quality)}</small></a> : <span className="source-none">تعریف نشده</span>}</div>;
   })}</div>;
 }
 
+function BubbleTable({ rows }: { rows: Array<{ holding: Holding; current: number | null; minimum: null; average: null; maximum: null }> }) {
+  const [sort, setSort] = useState<{ key: BubbleSortKey; direction: SortDirection }>({ key: "current", direction: "desc" });
+  const toggleSort = (key: BubbleSortKey) => setSort((current) => ({ key, direction: current.key === key && current.direction === "desc" ? "asc" : "desc" }));
+  const sortedRows = useMemo(() => [...rows].sort((left, right) => {
+    const values: Record<BubbleSortKey, [string | number | null, string | number | null]> = {
+      name: [left.holding.name, right.holding.name], current: [left.current, right.current], minimum: [left.minimum, right.minimum], average: [left.average, right.average], maximum: [left.maximum, right.maximum],
+    };
+    const [a, b] = values[sort.key];
+    if (a === null && b === null) return left.holding.name.localeCompare(right.holding.name, "fa");
+    if (a === null) return 1;
+    if (b === null) return -1;
+    const result = typeof a === "string" && typeof b === "string" ? a.localeCompare(b, "fa") : Number(a) - Number(b);
+    return sort.direction === "desc" ? -result : result;
+  }), [rows, sort]);
+  return <div className="bubble-table"><div className="bubble-row bubble-head"><SortButton label="دارایی" active={sort.key === "name"} direction={sort.direction} onClick={() => toggleSort("name")}/><SortButton label="حباب فعلی" active={sort.key === "current"} direction={sort.direction} onClick={() => toggleSort("current")}/><SortButton label="کمترین حباب" active={sort.key === "minimum"} direction={sort.direction} onClick={() => toggleSort("minimum")}/><SortButton label="میانگین حباب" active={sort.key === "average"} direction={sort.direction} onClick={() => toggleSort("average")}/><SortButton label="بیشترین حباب" active={sort.key === "maximum"} direction={sort.direction} onClick={() => toggleSort("maximum")}/></div>{sortedRows.map((row) => <div className="bubble-row" key={row.holding.id}><b>{row.holding.name}</b><span className={row.current === null ? "no-data" : row.current < 0 ? "negative" : "positive"}>{row.current === null ? "قابل محاسبه نیست" : formatPercent(row.current)}</span><span className="history-pending">نیازمند تاریخچه</span><span className="history-pending">نیازمند تاریخچه</span><span className="history-pending">نیازمند تاریخچه</span></div>)}</div>;
+}
+
 function formatQuote(quote: LiveQuote, usdIrrRate: number | null) {
   if (quote.currency === "USD") return `${formatUsd(quote.value)} · ${isUsableUsdIrrRate(usdIrrRate) ? formatIrr(quote.value * usdIrrRate) : "معادل ریالی نامشخص"}`;
   return formatTomanInIrrAndUsd(quote.value, usdIrrRate);
+}
+
+function formatPercent(value: number) {
+  return `${value > 0 ? "+" : ""}${value.toLocaleString("fa-IR", { maximumFractionDigits: 2 })}٪`;
+}
+
+function quoteComparableIrr(quote: LiveQuote | undefined, usdIrrRate: number | null) {
+  if (!quote || quote.status !== "valid") return null;
+  if (quote.currency === "TOMAN") return quote.value * 10;
+  return isUsableUsdIrrRate(usdIrrRate) ? quote.value * usdIrrRate : null;
 }
 
 function formatFreshness(value: string) {
@@ -657,6 +831,18 @@ function calculateHoldingValue(holding: Holding, quotes: Map<string, LiveQuote>)
   if (!quote || quote.currency !== "TOMAN" || quote.status !== "valid") return null;
   const value = holding.amount * quote.value;
   return Number.isFinite(value) && value >= 0 ? value : null;
+}
+
+function calculateHoldingBubble(name: string, quotes: Map<string, LiveQuote>) {
+  const specification = bubbleSpecifications[name];
+  if (!specification) return null;
+  const marketQuote = quotes.get(specification.instrumentCode);
+  const referenceQuote = quotes.get(specification.referenceCode);
+  const usdQuote = quotes.get("USD_IRR");
+  if (!marketQuote || marketQuote.status !== "valid" || marketQuote.currency !== "TOMAN") return null;
+  if (!referenceQuote || referenceQuote.status !== "valid" || referenceQuote.currency !== "USD") return null;
+  if (!usdQuote || usdQuote.status !== "valid" || usdQuote.currency !== "TOMAN") return null;
+  return calculatePremiumPercent(marketQuote.value, referenceQuote.value, usdQuote.value, specification.pureGrams);
 }
 
 function normalizePublicXaus(payload: PublicXausPayload): LiveQuote[] {
