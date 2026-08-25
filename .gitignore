@@ -36,3 +36,11 @@ credentials.json
 *.sqlite3
 *.db
 .cache/
+
+# JavaScript / web build artifacts
+node_modules/
+.next/
+.vinext/
+dist/
+.wrangler/
+coverage/

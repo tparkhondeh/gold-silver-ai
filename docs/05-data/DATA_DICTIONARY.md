@@ -1,13 +1,28 @@
 # Data Dictionary
 
 **Source of truth for:** field-level definitions of every data point the system
-stores. No schema exists yet — this document currently holds the requirement and
-the template it must follow, not actual field definitions.
+exposes or stores.
 
 ## Status
 
-`STATUS: TBD`. No data model has been designed. This file is created empty of real
-fields deliberately, so it does not imply a schema decision that hasn't been made.
+`STATUS: PARTIAL`. The Phase 1 read-only normalized quote contract is implemented at
+`/api/market`. A durable observation/persistence schema is not implemented yet.
+
+## Normalized Quote Contract (schema version 1)
+
+| Field | Type / nullability | Meaning and unit |
+|---|---|---|
+| `instrumentCode` | string, required | Canonical instrument identifier defined by the application registry. |
+| `value` | positive number, required | Value in `currency` per `unit`; plausible-range validated before exposure. |
+| `currency` | `USD` or `TOMAN`, required | Display currency. IRR source values are divided by exactly 10 before becoming `TOMAN`. |
+| `unit` | `troy_ounce`, `gram`, `unit`, or `usd`, required | Denominator/basis of the value. |
+| `publishedAt` | UTC ISO-8601 string or null | Provider publication time. Null means the source page did not expose a row-level publication time. |
+| `collectedAt` | UTC ISO-8601 string, required | Time the project collected or manually captured the observation. This is the fallback freshness basis when `publishedAt` is null. |
+| `sourceId` | string, required | Stable ID matching `DATA_SOURCES.md`. |
+| `sourceName` | string, required | Human-readable provider name. |
+| `sourceUrl` | HTTPS URL, required | Exact source/product page used for provenance. |
+| `quality` | `primary`, `informational`, or `manual_snapshot` | Permitted use class; manual/informational observations cannot unlock recommendations or execution. |
+| `status` | `valid` or `stale` | Deterministic freshness result. Current UI threshold is 60 minutes. |
 
 ## Required Format (once fields exist)
 

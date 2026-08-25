@@ -1,8 +1,7 @@
 # Architecture Decision Records (ADRs)
 
 **Source of truth for:** why significant architecture and product decisions were
-made. This folder currently contains no ADRs — no such decisions have been made
-yet. Do not create an ADR for a decision that hasn't actually been made; see
+made. Do not create an ADR for a decision that hasn't actually been made; see
 `docs/00-governance/PROJECT_RULES.md` § 1, non-negotiable #8.
 
 ## When to Write One
@@ -56,5 +55,8 @@ What this decision implies for future work — including what it forecloses.
 
 ## Current State
 
-No ADRs exist yet. The first ADRs are expected once Phase 1 makes its first real
-technology or data-source decision (see `docs/01-product/ROADMAP.md`).
+- ADR 0001: Phase 1 foundation
+- ADR 0002: personal wealth scope
+- ADR 0003: live-market source boundary
+- ADR 0004: temporary Rahavard manual snapshot
+- ADR 0005: notification and opportunity-alert safety boundary

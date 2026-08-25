@@ -1,35 +1,56 @@
 # Current State
 
-**Source of truth for:** where the project stands right now. Read this (and
-`NEXT_TASK.md`) before re-reading anything else — do not re-scan the whole repo.
+**Source of truth for:** where the project stands right now.
 
-_Last updated: 2026-08-11 (Phase 0, Pre-Stable audit)_
+_Last updated in the product calendar: ۱۴۰۵/۰۶/۰۳ (Phase 1 started)_
 
 ## Snapshot
 
-- **Phase:** Phase 0 — Foundation & Governance. Initial pass, a refinement pass
-  (decision tiering, Decision Provenance, Assumption Registry, Point-in-Time
-  Data, sharpened LLM/deterministic boundary), and a final Pre-Stable Foundation
-  audit (reversibility, breaking-change/lifecycle governance, data lineage,
-  operational safety states, Iran operational constraints, backup/restore
-  rigor — see `PHASE_0_AUDIT.md` § 15) are all complete. No known fundamental
-  gap remains. Still awaiting owner review; nothing has been merged to `main`.
-- **Branch:** all Phase 0 work is on `phase-0-foundation`. `main` has zero commits
-  (clean, empty, stable baseline).
-- **Application code:** none exists. No UI, no financial calculations, no data
-  connections, no chosen technology stack.
-- **Repository:** git-initialized locally in this session. No remote configured.
-- **What exists:** `CLAUDE.md`, `README.md`, `CHANGELOG.md`, the full `docs/`
-  governance and documentation architecture, and `PHASE_0_AUDIT.md` (including its
-  refinement-pass addendum).
-- **Decision framework:** open decisions are now split into Tier A (Owner-Critical)
-  and Tier B (Implementation/Engineering) per
-  `docs/00-governance/PROJECT_RULES.md` § 3 — see
-  `docs/10-project-state/OPEN_DECISIONS.md`.
-
-## What To Read For What
-
-Use the table in `CLAUDE.md` § 2 — don't re-read this whole document tree per task.
+- **Phase:** Phase 0 is owner-approved. Phase 1 — Data Foundation — is active.
+- **Branch:** Phase 1 work is isolated on `codex/phase-1-data-ui`; `main` remains
+  untouched pending a separate owner-approved merge.
+- **Application:** a Persian RTL personal-wealth dashboard exists in `apps/web` with
+  portfolio session entry with asset-specific units and purchase dates, market watch,
+  deterministic per-holding and total profit/loss calculation, market watch,
+  scenario calculation, risk/data
+  readiness surfaces, and explicit source/freshness labels. An opt-in, clearly labelled
+  ten-position, cross-asset demo portfolio spans precious metals, currency, cash/deposit,
+  equities, ETF, crypto, property, and private business. It supports realistic UI
+  evaluation without presenting synthetic holdings or cost basis as user or market data.
+  In demo mode, scenario
+  presets, sample analytical states, portfolio weights, concentration, return display,
+  and an adjustable stress test are interactive; each remains explicitly non-operational
+  and synthetic. The UI uses a warm boho
+  system of cream, pastel olive, natural gold, organic radii, and accessible contrast.
+  The oversized overview slogan has been replaced by a compact command bar; card,
+  table, panel, and guardrail spacing is tightened to reduce scrolling without hiding
+  provenance or safety state. Every monetary UI output is paired as IRR and USD. The
+  conversion rate comes from the labelled `USD_IRR` observation; demo portfolio values
+  use an explicit synthetic rate, and a missing rate yields an unknown counterpart
+  instead of a fabricated conversion.
+- **Calendar boundary:** all user-facing dates use the Persian calendar and Tehran
+  time. New purchase dates are entered as Jalali `YYYY/MM/DD`. Provider timestamps and
+  audit storage remain ISO-8601 UTC so ingestion, ordering, and provenance stay
+  interoperable; they are converted only at the presentation boundary.
+- **Notifications:** a session-local notification center detects severe moves only by
+  comparing two newer, valid, same-unit observations within 24 hours. Instrument-specific
+  thresholds are deterministic. Stale-data alerts fail closed. Opportunity alerts are
+  available as clearly synthetic demo content only; real opportunity claims remain
+  disabled until an approved, backtested, walk-forward-validated methodology exists.
+- **Live data:** the normalized `/api/market` boundary supports keyed Navasan and
+  GoldAPI.io adapters. XAUS is enabled as an informational browser fallback for global
+  XAU/XAG. An owner-approved Rahavard browser capture supplies a local-only manual
+  snapshot for 13 instruments; raw IRR provenance is retained, display values use an
+  exact IRR/10 conversion, and every observation becomes stale after 60 minutes. It is
+  not an automated feed and stale values are excluded from portfolio valuation. No
+  fabricated market values are present.
+  The official TGJU web-service/order path is exposed as a pending licensed source;
+  no page scraping, credential reuse, hidden endpoint abuse, or third-party script
+  injection is used.
+- **Repository:** private GitHub origin is configured. Remote authentication and
+  branch publication must be verified before claiming this branch is stored.
+- **Decision record:** Phase 1 scope, wealth UI scope, live-source boundary, and the
+  temporary Rahavard manual-snapshot boundary are in ADR 0001 through ADR 0004.
 
 ## Immediate Next Step
 

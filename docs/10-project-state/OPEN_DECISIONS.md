@@ -22,7 +22,7 @@ that the owner has to start from a blank page.
 | # | Decision | Detail Doc | Why This Is Owner-Critical | Blocks Phase 1? | Decide By | Status |
 |---|---|---|---|---|---|---|
 | A1 | Final asset universe (which gold/silver instruments are in scope) | `docs/03-market/ASSET_UNIVERSE.md` | Defines product scope against the owner's real financial interests | Yes | Before Phase 1 data work begins | Open |
-| A2 | Data source(s) / vendor(s) selection | `docs/05-data/DATA_SOURCES.md` | Cost, trust, and legal terms of use; every downstream number depends on this | Yes | Start of Phase 1 | Open |
+| A2 | Data source(s) / vendor(s) selection | `docs/05-data/DATA_SOURCES.md` | Cost, trust, and legal terms of use; every downstream number depends on this | Partially — the Phase 1 adapter set is accepted in ADR 0003; Iranian unit/credentials and licensed redundancy remain open | Before operational analysis | Partially resolved |
 | A3 | Foundational technology stack (primary language/runtime, overall architecture pattern) | `docs/02-architecture/SYSTEM_ARCHITECTURE.md` | Foundational and hard to reverse for a multi-year system; real long-term maintainability/hiring impact | Yes | Before Phase 1 implementation starts | Open |
 | A4 | Data storage technology/paradigm | `docs/02-architecture/DATA_ARCHITECTURE.md` | Foundational infrastructure choice, hard to reverse once historical data accumulates | Yes | Before Phase 1 implementation starts | Open |
 | A5 | Single-user vs. multi-user | `docs/01-product/USER_REQUIREMENTS.md` | Shapes access control and data-isolation architecture long-term | No | Before interface/access-layer design | Open |
