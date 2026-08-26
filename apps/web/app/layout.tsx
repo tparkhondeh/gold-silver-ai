@@ -3,8 +3,8 @@ import "./globals.css";
 import "./boho-theme.css";
 
 export const metadata: Metadata = {
-  title: "دیدبان زر و سیم | هوش ثروت و بازار",
-  description: "سامانهٔ خصوصی و ایران‌محور برای مشاهدهٔ بازار، ثبت دارایی، تحلیل سناریو و کنترل کیفیت داده",
+  title: "اشا | دستیار تصمیم زر و سیم",
+  description: "اشا؛ دستیار خصوصی و ایران‌محور برای مشاهدهٔ سبد، بازار، سناریو و کیفیت داده",
   icons: { icon: "/favicon.svg", shortcut: "/favicon.svg" },
 };
 

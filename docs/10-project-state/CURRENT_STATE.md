@@ -34,6 +34,18 @@ _Last updated in the product calendar: ۱۴۰۵/۰۶/۰۳ (Phase 1 started)_
   conversion rate comes from the labelled `USD_IRR` observation; demo portfolio values
   use an explicit synthetic rate, and a missing rate yields an unknown counterpart
   instead of a fabricated conversion.
+- **Dashboard priority:** the first page now prioritizes the owner's portfolio and
+  a high-importance opportunity surface. Market watch is removed from the overview
+  and remains available through its own tab. Opportunity absence is explicit; only
+  already-labelled demo opportunity notifications can appear as synthetic examples.
+- **Assistant identity:** the owner-facing decision assistant is named **Asha / اشا**;
+  Gold/Silver AI remains the repository and product identity.
+- **Decision taxonomy:** the owner-approved UI separates homogeneous comparisons
+  within an asset class, heterogeneous conversion comparisons across classes, and
+  a best overall portfolio action. `DECISION_FRAMEWORK_UI_V1` deterministically
+  reports readiness gates and currently fails closed; it does not rank targets or
+  produce financial actions while methodology, owner constraints, Iranian history,
+  backtesting, and walk-forward validation remain unresolved.
 - **Bubble boundary:** for supported gram-based gold and silver holdings, the UI can
   compute a raw current metal-content premium only when the domestic quote, global
   ounce quote, and USD/IRR quote are all present and valid. Historical minimum,

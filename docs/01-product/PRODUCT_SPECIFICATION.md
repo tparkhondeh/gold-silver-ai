@@ -2,8 +2,9 @@
 
 **Source of truth for:** the inventory of capabilities the product is meant to have,
 and their current status. This document lists *what*; the *how* lives in the
-domain-specific documents linked from each row. Nothing in this document is
-implemented yet — Phase 0 is documentation and governance only.
+domain-specific documents linked from each row. Phase 1 may implement partial,
+explicitly non-operational product surfaces; the current implementation boundary
+lives in `docs/10-project-state/CURRENT_STATE.md`.
 
 ## How to Read This
 
@@ -17,10 +18,10 @@ implemented yet — Phase 0 is documentation and governance only.
 ### Market Data
 | Capability | Status | Detail |
 |---|---|---|
-| Market data ingestion (manual + automatic) | DOCUMENTED | `docs/05-data/DATA_PIPELINE.md` |
+| Market data ingestion (manual + automatic) | PARTIAL | `docs/05-data/DATA_PIPELINE.md` |
 | Historical data storage | DOCUMENTED | `docs/05-data/HISTORICAL_DATA.md` |
 | Data validation & anomaly/missing-data detection | DOCUMENTED | `docs/05-data/DATA_QUALITY.md` |
-| Source tracking, provenance, freshness, reliability | DOCUMENTED | `docs/05-data/DATA_SOURCES.md` |
+| Source tracking, provenance, freshness, reliability | PARTIAL | `docs/05-data/DATA_SOURCES.md` |
 
 ### Market Analysis
 | Capability | Status | Detail |
@@ -43,16 +44,17 @@ implemented yet — Phase 0 is documentation and governance only.
 ### Portfolio
 | Capability | Status | Detail |
 |---|---|---|
-| Current portfolio analysis (valuation, relative valuation, risk, liquidity, regime, expected return, conversion costs, constraints) | DOCUMENTED | `docs/04-portfolio/PORTFOLIO_MODEL.md` |
-| Alternative-opportunity comparison | DOCUMENTED | `docs/04-portfolio/PORTFOLIO_MODEL.md` |
+| Current portfolio analysis (valuation, relative valuation, risk, liquidity, regime, expected return, conversion costs, constraints) | PARTIAL | `docs/04-portfolio/PORTFOLIO_MODEL.md` |
+| Alternative-opportunity comparison | PARTIAL | `docs/04-portfolio/PORTFOLIO_MODEL.md` |
 | Proposed allocation | DOCUMENTED | `docs/04-portfolio/ALLOCATION_ENGINE.md` |
-| Proposed rotation (increase/reduce/hold/sell/convert A→B) | DOCUMENTED | `docs/04-portfolio/ROTATION_ENGINE.md` |
+| Proposed rotation (increase/reduce/hold/sell/convert A→B) | PARTIAL | `docs/04-portfolio/ROTATION_ENGINE.md` |
 | Risk analysis | DOCUMENTED | `docs/04-portfolio/RISK_MODEL.md` |
 
 ### AI / Decision Layer
 | Capability | Status | Detail |
 |---|---|---|
 | Deterministic decision engine (financial logic in code) | DOCUMENTED | `docs/06-ai/DECISION_ENGINE.md` |
+| Decision presentation framework and deterministic readiness gates | IMPLEMENTED | `docs/04-portfolio/ROTATION_ENGINE.md` |
 | Decision history / audit trail | DOCUMENTED | `docs/06-ai/DECISION_ENGINE.md` |
 | Natural-language agent interaction | DOCUMENTED | `docs/06-ai/AGENT_ARCHITECTURE.md` |
 | AI role boundaries (interpretation vs. calculation) | DOCUMENTED | `docs/06-ai/AI_ROLE.md` |
@@ -60,15 +62,17 @@ implemented yet — Phase 0 is documentation and governance only.
 ### Platform
 | Capability | Status | Detail |
 |---|---|---|
+| Persian portfolio-first web dashboard and separate market-watch tab | IMPLEMENTED | `docs/01-product/USER_REQUIREMENTS.md` |
 | Automatic and manual data/model updates | DOCUMENTED | `docs/05-data/DATA_PIPELINE.md` |
 | Long-term extensibility to additional precious-metal instruments | DOCUMENTED | `docs/03-market/ASSET_UNIVERSE.md` |
 
-## Explicitly Out of Scope for Now
+## Operationally Out of Scope for Now
 
-- Any UI.
-- Any live/real financial calculation.
-- Any connected market-data API.
-- Any investment recommendation delivered to the owner.
+- Any operational investment recommendation or autonomous execution.
+- Any target ranking, allocation, or rotation action before its methodology is
+  owner-approved, backtested, and walk-forward validated on Iranian data.
+- Any market value that does not pass the active source, unit, freshness, and
+  provenance controls.
 
 These remain out of scope until the corresponding phase is designed, approved, and
 sequenced — see `ROADMAP.md`.

@@ -20,6 +20,22 @@ Each proposed action must come with its reasoning: which of the analysis
 dimensions in `PORTFOLIO_MODEL.md` (valuation, risk, liquidity, regime, expected
 return, cost, constraints) drove it.
 
+## Owner-Approved Output Taxonomy
+
+The owner has approved three presentation layers for future decision support:
+
+1. **Homogeneous decision** — compare alternatives only within the current
+   asset's class.
+2. **Heterogeneous decision** — evaluate conversion from one asset class to
+   another, including conversion costs and portfolio consequences.
+3. **Best overall action** — evaluate the whole portfolio and market/data state
+   together before presenting the best permitted action.
+
+Phase 1 implements only the labelled UI structure and deterministic readiness
+gates for these layers. Target selection, ranking, thresholds, confidence, and
+action rules remain methodology `STATUS: TBD` and cannot be inferred from this
+taxonomy.
+
 ## Non-Negotiable Constraints
 
 - Rotation logic is deterministic, code-computed from validated inputs — never
@@ -33,8 +49,9 @@ return, cost, constraints) drove it.
 
 ## Status
 
-`STATUS: TBD` for methodology (e.g. thresholds for triggering a suggested action,
-how conviction is communicated). `DECISION REQUIRED: YES` at design time.
+`STATUS: PARTIAL` for the owner-approved output taxonomy and UI shell. Methodology
+remains `STATUS: TBD` (e.g. target selection, thresholds for triggering a suggested
+action, and how conviction is communicated). `DECISION REQUIRED: YES` at design time.
 
 ## Related Documents
 

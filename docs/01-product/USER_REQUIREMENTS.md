@@ -13,6 +13,16 @@ document is about the user(s) driving those capabilities.
 - The owner's underlying need, as stated in the project mission, is to understand
   and make better decisions about gold/silver exposure in an Iranian market
   context — see `docs/01-product/PRODUCT_VISION.md`.
+- For the current Persian web dashboard, the owner wants the first page centered on
+  their own portfolio and only high-importance opportunities. Market watch remains
+  available as a separate tab instead of occupying dashboard space.
+- Decision support must present three distinct views: a homogeneous comparison
+  within the current asset's class, a heterogeneous conversion comparison across
+  asset classes, and a best overall portfolio action that considers the combined
+  conditions. This is an owner-approved output taxonomy, not an approved financial
+  methodology or permission to produce operational recommendations.
+- The owner has named the decision-support agent **Asha / اشا**. The product name
+  remains Gold/Silver AI; Asha is the user-facing assistant identity.
 
 ## Unknown — `STATUS: TBD`
 

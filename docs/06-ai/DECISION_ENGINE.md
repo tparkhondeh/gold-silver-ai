@@ -13,6 +13,12 @@ outputs (`docs/03-market/BUBBLE_MODEL.md`, `docs/04-portfolio/`) must:
 - Be traceable — every output can be explained by the specific inputs and logic
   that produced it.
 
+Phase 1 includes `DECISION_FRAMEWORK_UI_V1`, a deterministic readiness-gate and
+presentation shell for homogeneous, heterogeneous, and overall decision views.
+It is not the financial decision engine: it does not rank assets, select targets,
+set weights, or produce buy/sell/convert actions, and it fails closed while the
+requirements below remain unimplemented.
+
 ## Decision History Requirement
 
 Every analysis or recommendation the system produces must be recorded: what was
