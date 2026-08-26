@@ -2,7 +2,7 @@
 
 **Source of truth for:** where the project stands right now.
 
-_Last updated in the product calendar: ۱۴۰۵/۰۶/۰۳ (Phase 1 started)_
+_Last updated in the product calendar: ۱۴۰۵/۰۶/۰۴ (Phase 1 active)_
 
 ## Snapshot
 
@@ -12,8 +12,8 @@ _Last updated in the product calendar: ۱۴۰۵/۰۶/۰۳ (Phase 1 started)_
 - **Application:** a Persian RTL personal-wealth dashboard exists in `apps/web` with
   portfolio session entry with asset-specific units and purchase dates, market watch,
   deterministic per-holding and total profit/loss calculation, market watch,
-  sortable holdings and market tables (numeric columns default descending), a daily
-  decision desk with fail-closed action gates, risk/data readiness surfaces, and
+  sortable holdings and market tables (numeric columns default descending), a compact
+  asset workflow split into List, Asset Center, Analysis, and Decisions, risk/data readiness surfaces, and
   explicit source/freshness labels. The analysis workspace now separates summary,
   geopolitical, political/policy, macroeconomic, industry/supply-demand, technical,
   bubble/valuation, and portfolio/risk lenses across short- and long-term horizons.
@@ -38,6 +38,10 @@ _Last updated in the product calendar: ۱۴۰۵/۰۶/۰۳ (Phase 1 started)_
   a high-importance opportunity surface. Market watch is removed from the overview
   and remains available through its own tab. Opportunity absence is explicit; only
   already-labelled demo opportunity notifications can appear as synthetic examples.
+- **Information architecture:** selecting a holding carries its context into a
+  three-column Asset Center (information, analysis readiness, decision readiness),
+  the multi-lens analysis tab, and the dedicated per-asset decision tab. The overview
+  retains only a compact decision brief so the daily dashboard stays scannable.
 - **Assistant identity:** the owner-facing decision assistant is named **Asha / اشا**;
   Gold/Silver AI remains the repository and product identity.
 - **Decision taxonomy:** the owner-approved UI separates homogeneous comparisons

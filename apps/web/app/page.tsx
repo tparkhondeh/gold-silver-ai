@@ -18,8 +18,7 @@ import {
   getSameClassCandidates,
   type DecisionMode,
 } from "./decision-support";
-
-type View = "overview" | "portfolio" | "market" | "analysis" | "risk" | "data" | "agents";
+import { navItems, type View } from "./workspace-navigation";
 
 type Holding = {
   id: string;
@@ -180,16 +179,6 @@ const volatilityThresholdPercent: Record<string, number> = {
   USD_IRR: 3,
 };
 
-const navItems: Array<{ id: View; label: string; icon: string }> = [
-  { id: "overview", label: "نمای کلی", icon: "⌂" },
-  { id: "portfolio", label: "دارایی‌های من", icon: "◫" },
-  { id: "market", label: "دیده‌بان بازار", icon: "⌁" },
-  { id: "analysis", label: "تحلیل و سناریو", icon: "◉" },
-  { id: "risk", label: "ریسک و تخصیص", icon: "△" },
-  { id: "data", label: "کیفیت داده", icon: "▤" },
-  { id: "agents", label: "هیئت بررسی", icon: "◇" },
-];
-
 const analysisCategories: Array<{ id: AnalysisCategory; label: string; icon: string; short: string; long: string; evidence: string }> = [
   { id: "summary", label: "خلاصهٔ جامع", icon: "◎", short: "جمع‌بندی وضعیت داده، بازار و سبد برای افق روزانه تا یک‌ماهه.", long: "جمع‌بندی ساختاری برای افق فصلی تا چندساله، بدون تبدیل فرضیه به پیش‌بینی.", evidence: "تمام خروجی‌های قابل اتکا" },
   { id: "geopolitical", label: "ژئوپلیتیک", icon: "◇", short: "رویداد، مسیر انتقال شوک و اثر محتمل بر ارز، فلز و نقدشوندگی.", long: "تغییرات ساختاری در تحریم، تجارت، دسترسی به ارز و زنجیرهٔ تأمین.", evidence: "نیازمند خوراک رویداد زمان‌مند و طبقه‌بندی‌شده" },
@@ -303,6 +292,7 @@ export default function Home() {
   const [analysisHorizon, setAnalysisHorizon] = useState<AnalysisHorizon>("short");
   const [decisionHorizon, setDecisionHorizon] = useState<AnalysisHorizon>("short");
   const [decisionMode, setDecisionMode] = useState<DecisionMode>("homogeneous");
+  const [selectedHoldingId, setSelectedHoldingId] = useState<string | null>(null);
   const [scenarioShocks, setScenarioShocks] = useState<ScenarioShocks>({ ...emptyScenarioShocks });
   const [activeScenarioPreset, setActiveScenarioPreset] = useState("neutral");
   const [holdingSort, setHoldingSort] = useState<{ key: HoldingSortKey; direction: SortDirection }>({ key: "current", direction: "desc" });
@@ -504,6 +494,14 @@ export default function Home() {
   const excitingOpportunities = notifications.filter((notification) => notification.kind === "opportunity").slice(0, 3);
   const selectedAnalysis = analysisCategories.find((category) => category.id === analysisCategory) ?? analysisCategories[0];
   const decisionAssets = holdings.map((holding) => ({ id: holding.id, name: holding.name, priced: holdingValues.get(holding.id) !== null, bubble: bubbleRows.find((row) => row.holding.id === holding.id)?.current ?? null }));
+  const selectedHolding = holdings.find((holding) => holding.id === selectedHoldingId) ?? holdings[0] ?? null;
+  const selectedHoldingValue = selectedHolding ? (holdingValues.get(selectedHolding.id) ?? null) : null;
+  const selectedHoldingProfit = selectedHolding && selectedHoldingValue !== null && selectedHolding.costToman !== null ? selectedHoldingValue - selectedHolding.costToman : null;
+  const selectedHoldingProfitPercent = selectedHoldingProfit !== null && selectedHolding?.costToman && selectedHolding.costToman > 0 ? (selectedHoldingProfit / selectedHolding.costToman) * 100 : null;
+  const selectedHoldingBubble = selectedHolding ? (bubbleRows.find((row) => row.holding.id === selectedHolding.id)?.current ?? null) : null;
+  const focusedDecisionAssets = selectedHolding
+    ? [...decisionAssets.filter((asset) => asset.id === selectedHolding.id), ...decisionAssets.filter((asset) => asset.id !== selectedHolding.id)]
+    : decisionAssets;
   const decisionReadiness = evaluateDecisionGates({
     hasPortfolio: holdings.length > 0,
     portfolioFullyValued: holdings.length > 0 && valuedHoldingCount === holdings.length,
@@ -515,6 +513,11 @@ export default function Home() {
 
   function toggleHoldingSort(key: HoldingSortKey) {
     setHoldingSort((current) => ({ key, direction: current.key === key && current.direction === "desc" ? "asc" : "desc" }));
+  }
+
+  function openAssetWorkspace(holdingId: string, destination: View) {
+    setSelectedHoldingId(holdingId);
+    setView(destination);
   }
 
   function applyScenarioPreset(id: string) {
@@ -537,8 +540,9 @@ export default function Home() {
     const purchaseDateInput = String(data.get("purchaseDate") ?? "").trim();
     const purchaseDate = normalizeJalaliDate(purchaseDateInput) ?? purchaseDateInput;
     if (!Number.isFinite(amount) || amount <= 0 || !isValidPurchaseDate(purchaseDate)) return;
+    const holdingId = crypto.randomUUID();
     setHoldings((current) => [...current, {
-      id: crypto.randomUUID(),
+      id: holdingId,
       name: String(data.get("name")),
       amount,
       unit: String(data.get("unit")),
@@ -546,6 +550,7 @@ export default function Home() {
       purchaseDate,
       note: String(data.get("note") ?? "").trim(),
     }]);
+    setSelectedHoldingId(holdingId);
     event.currentTarget.reset();
     setSelectedAssetName("");
     setModalOpen(false);
@@ -557,6 +562,7 @@ export default function Home() {
 
   function activateDemoPortfolio(destination: View) {
     setHoldings(demoHoldings.map((holding) => ({ ...holding })));
+    setSelectedHoldingId(demoHoldings[0]?.id ?? null);
     setPortfolioMode("demo");
     const createdAt = new Date().toISOString();
     pushNotifications([
@@ -568,6 +574,7 @@ export default function Home() {
 
   function clearDemoPortfolio() {
     setHoldings([]);
+    setSelectedHoldingId(null);
     setPortfolioMode("personal");
     setNotifications((current) => current.filter((notification) => !notification.demo));
   }
@@ -626,24 +633,18 @@ export default function Home() {
               </aside>
             </section>
 
-            <section className="panel decision-desk">
-              <div className="panel-head decision-head">
-                <SectionTitle eyebrow="ASHA DECISION ARCHITECTURE" title="میز تصمیم اشا" text="هر دارایی ابتدا در کلاس خودش بررسی می‌شود، سپس امکان تبدیل بین کلاس‌ها و در پایان بهترین اقدام کل سبد ارزیابی می‌شود."/>
-                <div className="decision-controls"><span className="method-version compact"><span>{decisionFramework.id}</span><b>نسخه {decisionFramework.version}</b></span><HorizonToggle value={decisionHorizon} onChange={setDecisionHorizon}/></div>
-              </div>
-              <div className="decision-mode-tabs" role="tablist" aria-label="نوع تصمیم"><button type="button" role="tab" aria-selected={decisionMode === "homogeneous"} className={decisionMode === "homogeneous" ? "active" : ""} onClick={() => setDecisionMode("homogeneous")}><b>تصمیم همگن</b><small>داخل همان کلاس دارایی</small></button><button type="button" role="tab" aria-selected={decisionMode === "heterogeneous"} className={decisionMode === "heterogeneous" ? "active" : ""} onClick={() => setDecisionMode("heterogeneous")}><b>تصمیم ناهمگن</b><small>تبدیل بین کلاس‌های دارایی</small></button><button type="button" role="tab" aria-selected={decisionMode === "best"} className={decisionMode === "best" ? "active" : ""} onClick={() => setDecisionMode("best")}><b>بهترین اقدام کل</b><small>شرایط سبد و بازار باهم</small></button></div>
-              <div className="decision-gate"><span>!</span><div><strong>{decisionReadiness.operational ? "دروازه‌های تصمیم آماده‌اند" : `بهترین اقدام مجاز اکنون: ${decisionReadiness.safeAction}`}</strong><p>{decisionReadiness.operational ? "خروجی عملیاتی باید از موتور قطعی و نسخه‌دار دریافت شود." : "این نتیجه دربارهٔ آمادگی سیستم است، نه پیشنهاد نگهداری، خرید یا فروش یک دارایی."}</p></div></div>
-              {decisionMode === "best" ? <div className="best-decision-card"><div><small>{decisionHorizon === "short" ? "جمع‌بندی کوتاه‌مدت" : "جمع‌بندی بلندمدت"}</small><strong>{decisionReadiness.safeAction}</strong><p>شرایط کلی از پوشش سبد، تازگی دادهٔ ایران، محدودیت‌های مالک، روش مصوب و اعتبارسنجی تاریخی ساخته می‌شود. هر دروازهٔ ناقص، تصمیم مالی را متوقف می‌کند.</p></div><div className="decision-gates">{decisionReadiness.gates.map((gate) => <span className={gate.passed ? "passed" : "blocked"} key={gate.id}>{gate.passed ? "✓" : "×"} {gate.label}</span>)}</div></div> : decisionAssets.length === 0 ? <EmptyLock title="برای تصمیم‌سازی، ابتدا سبد را ثبت کن" text="تصمیم همگن و ناهمگن فقط برای دارایی‌های خودت نمایش داده می‌شود؛ دیده‌بان بازار جایگزین سبد شخصی نیست."/> : <div className="decision-grid">{decisionAssets.slice(0, 6).map((asset) => { const assetClass = getAssetClass(asset.name); const sameClassCandidates = getSameClassCandidates(asset.name, assetOptions).slice(0, 3); return <article key={asset.id}><div><span>{asset.name}</span><b>{assetClass.label}</b></div><strong>{decisionMode === "homogeneous" ? "مقایسهٔ درون‌کلاسی" : "ارزیابی تبدیل بین‌کلاسی"}</strong><p>{decisionMode === "homogeneous" ? `تصمیم فقط بین گزینه‌های کلاس «${assetClass.label}» سنجیده می‌شود؛ ${asset.priced ? "قیمت فعلی موجود است" : "قیمت تازه کامل نیست"}${asset.bubble !== null ? ` و حباب خام ${formatPercent(asset.bubble)} است` : ""}.` : `دارایی مبدأ از کلاس «${assetClass.label}» است؛ مقصد تا زمان مقایسهٔ ارزش، ریسک، نقدشوندگی، هزینهٔ تبدیل و محدودیت‌های شما انتخاب نمی‌شود.`}</p><small>{decisionMode === "homogeneous" ? `دامنهٔ مقایسه: ${sameClassCandidates.length ? sameClassCandidates.join("، ") : "گزینهٔ هم‌کلاس دیگری تعریف نشده"}` : "وضعیت: تبدیل غیرفعال تا عبور همهٔ دروازه‌ها"}</small></article>; })}</div>}
-              <div className="decision-framework-note"><b>مرز این نسخه:</b> {decisionFramework.limitation}</div>
-              <button className="text-button decision-link" onClick={() => setView("analysis")}>بازکردن مرکز تحلیل چندلایه ←</button>
+            <section className="panel decision-brief">
+              <div><SectionTitle eyebrow="ASHA DAILY BRIEF" title="خلاصهٔ تصمیم اشا" text="صفحهٔ اول فقط وضعیت و اقدام مجاز فعلی را نشان می‌دهد؛ جزئیات هر دارایی در فضای تخصصی خودش قرار دارد."/></div>
+              <div className="decision-brief-status"><small>بهترین اقدام مجاز اکنون</small><strong>{decisionReadiness.safeAction}</strong><p>{decisionReadiness.passedCount.toLocaleString("fa-IR")} از ۶ دروازه آماده است؛ این وضعیت توصیهٔ خرید یا فروش نیست.</p></div>
+              <div className="decision-brief-routes"><button className="ghost-button" onClick={() => setView("asset-center")}>مرکز دارایی</button><button className="ghost-button" onClick={() => setView("analysis")}>تحلیل‌ها</button><button className="primary-button" onClick={() => setView("decisions")}>تصمیم‌ها ←</button></div>
             </section>
           </>}
 
-          {view === "portfolio" && <section className="view-stack"><div className="view-hero"><SectionTitle eyebrow="MY ASSETS" title="دفتر دارایی‌های من" text="اطلاعات این نسخه فقط در نشست مرورگر شما نگه‌داری می‌شود و به سرویس بیرونی ارسال نمی‌شود."/><div className="market-actions">{portfolioMode === "demo" && <span className="status-chip warning">حالت نمایشی</span>}{holdings.length === 0 && <button className="ghost-button" data-testid="load-demo-portfolio" onClick={loadDemoPortfolio}>بارگذاری سبد نمایشی</button>}{portfolioMode === "demo" && <button className="ghost-button" onClick={clearDemoPortfolio}>پاک‌کردن داده‌های نمایشی</button>}<button className="primary-button" onClick={() => setModalOpen(true)}>＋ ثبت دارایی</button></div></div>
+          {view === "portfolio" && <section className="view-stack"><div className="view-hero"><SectionTitle eyebrow="MY ASSETS" title="فهرست دارایی‌های من" text="هر ردیف، اطلاعات مالی همان دارایی و مسیر مستقیم به نمای ترکیبی، تحلیل و تصمیم را در اختیار می‌گذارد."/><div className="market-actions">{portfolioMode === "demo" && <span className="status-chip warning">حالت نمایشی</span>}{holdings.length === 0 && <button className="ghost-button" data-testid="load-demo-portfolio" onClick={loadDemoPortfolio}>بارگذاری سبد نمایشی</button>}{portfolioMode === "demo" && <button className="ghost-button" onClick={clearDemoPortfolio}>پاک‌کردن داده‌های نمایشی</button>}<button className="primary-button" onClick={() => setModalOpen(true)}>＋ ثبت دارایی</button></div></div>
             {portfolioMode === "demo" && <section className="guardrail"><span>i</span><div><b>این سبد کاملاً ساختگی است</b><p>مقدار دارایی‌ها و بهای خرید فقط برای تجربه و بررسی رابط کاربری ساخته شده‌اند. قیمت‌های بازار همچنان از منابع واقعی و دارای برچسب تازگی می‌آیند و این سبد هیچ پیشنهاد خرید یا فروشی نیست.</p></div></section>}
             <section className="conversion-strip"><b>مبنای نمایش دوارزی</b><span>{portfolioRateStatus}</span></section>
             <section className="panel"><div className="portfolio-summary"><div><small>تعداد موقعیت‌ها</small><strong>{holdings.length.toLocaleString("fa-IR")}</strong></div><div><small>جمع بهای خرید ثبت‌شده</small><strong>{knownCost ? formatPortfolioMoney(knownCost) : "—"}</strong></div><div><small>ارزش روز</small><strong className={portfolioMarketValue === null ? "muted-value" : ""}>{portfolioMarketValue === null ? "پوشش ناقص" : formatPortfolioMoney(portfolioMarketValue)}</strong></div><div><small>سود و زیان</small><strong className={portfolioProfitLoss === null ? "muted-value" : portfolioProfitLoss < 0 ? "negative" : "positive"}>{portfolioProfitLoss === null ? "محاسبه نشده" : formatPortfolioMoney(portfolioProfitLoss)}</strong></div></div>
-              {holdings.length === 0 ? <EmptyLock title="هنوز دارایی ثبت نشده است" text="افزودن دارایی به معنی پیشنهاد خرید نیست؛ فقط اطلاعاتی است که خودتان وارد می‌کنید."/> : <div className="holdings-table"><div className="table-row table-head"><SortButton label="دارایی" active={holdingSort.key === "name"} direction={holdingSort.direction} onClick={() => toggleHoldingSort("name")}/><SortButton label="مقدار" active={holdingSort.key === "amount"} direction={holdingSort.direction} onClick={() => toggleHoldingSort("amount")}/><SortButton label="بهای خرید (ریال · دلار)" active={holdingSort.key === "cost"} direction={holdingSort.direction} onClick={() => toggleHoldingSort("cost")}/><SortButton label="ارزش فعلی (ریال · دلار)" active={holdingSort.key === "current"} direction={holdingSort.direction} onClick={() => toggleHoldingSort("current")}/><SortButton label="سود/زیان (ریال · دلار)" active={holdingSort.key === "profit"} direction={holdingSort.direction} onClick={() => toggleHoldingSort("profit")}/><span /></div>{sortedHoldings.map((item) => { const currentValue = holdingValues.get(item.id); const holdingProfitLoss = typeof currentValue === "number" && item.costToman !== null ? currentValue - item.costToman : null; const holdingProfitPercent = holdingProfitLoss !== null && item.costToman !== null && item.costToman > 0 ? (holdingProfitLoss / item.costToman) * 100 : null; return <div className="table-row" key={item.id}><span><b>{item.name}</b><small>{formatPurchaseDate(item.purchaseDate)} · {item.note || "ثبت‌شده توسط شما"}</small></span><span>{item.amount.toLocaleString("fa-IR")} {item.unit}</span><span>{item.costToman !== null ? formatPortfolioMoney(item.costToman) : "—"}</span><span className={currentValue === null || currentValue === undefined ? "no-data" : "positive"}>{currentValue === null || currentValue === undefined ? "—" : formatPortfolioMoney(currentValue)}</span><span className={`holding-profit ${holdingProfitLoss === null ? "muted-value" : holdingProfitLoss < 0 ? "negative" : "positive"}`}><b>{holdingProfitLoss === null ? "نامشخص" : formatPortfolioMoney(holdingProfitLoss)}</b><small>{holdingProfitPercent === null ? "—" : `${holdingProfitPercent > 0 ? "+" : ""}${holdingProfitPercent.toLocaleString("fa-IR", { maximumFractionDigits: 1 })}٪`}</small></span><button className="remove-button" onClick={() => setHoldings((current) => current.filter((row) => row.id !== item.id))} aria-label={`حذف ${item.name}`}>حذف</button></div>; })}</div>}
+              {holdings.length === 0 ? <EmptyLock title="هنوز دارایی ثبت نشده است" text="افزودن دارایی به معنی پیشنهاد خرید نیست؛ فقط اطلاعاتی است که خودتان وارد می‌کنید."/> : <div className="holdings-table"><div className="table-row table-head"><SortButton label="دارایی" active={holdingSort.key === "name"} direction={holdingSort.direction} onClick={() => toggleHoldingSort("name")}/><SortButton label="مقدار" active={holdingSort.key === "amount"} direction={holdingSort.direction} onClick={() => toggleHoldingSort("amount")}/><SortButton label="بهای خرید (ریال · دلار)" active={holdingSort.key === "cost"} direction={holdingSort.direction} onClick={() => toggleHoldingSort("cost")}/><SortButton label="ارزش فعلی (ریال · دلار)" active={holdingSort.key === "current"} direction={holdingSort.direction} onClick={() => toggleHoldingSort("current")}/><SortButton label="سود/زیان (ریال · دلار)" active={holdingSort.key === "profit"} direction={holdingSort.direction} onClick={() => toggleHoldingSort("profit")}/><span>مسیر</span></div>{sortedHoldings.map((item) => { const currentValue = holdingValues.get(item.id); const holdingProfitLoss = typeof currentValue === "number" && item.costToman !== null ? currentValue - item.costToman : null; const holdingProfitPercent = holdingProfitLoss !== null && item.costToman !== null && item.costToman > 0 ? (holdingProfitLoss / item.costToman) * 100 : null; return <div className="table-row" key={item.id}><span><b>{item.name}</b><small>{formatPurchaseDate(item.purchaseDate)} · {item.note || "ثبت‌شده توسط شما"}</small></span><span>{item.amount.toLocaleString("fa-IR")} {item.unit}</span><span>{item.costToman !== null ? formatPortfolioMoney(item.costToman) : "—"}</span><span className={currentValue === null || currentValue === undefined ? "no-data" : "positive"}>{currentValue === null || currentValue === undefined ? "—" : formatPortfolioMoney(currentValue)}</span><span className={`holding-profit ${holdingProfitLoss === null ? "muted-value" : holdingProfitLoss < 0 ? "negative" : "positive"}`}><b>{holdingProfitLoss === null ? "نامشخص" : formatPortfolioMoney(holdingProfitLoss)}</b><small>{holdingProfitPercent === null ? "—" : `${holdingProfitPercent > 0 ? "+" : ""}${holdingProfitPercent.toLocaleString("fa-IR", { maximumFractionDigits: 1 })}٪`}</small></span><span className="row-actions"><button className="asset-open-button" onClick={() => openAssetWorkspace(item.id, "asset-center")}>بازکردن</button><button className="remove-button" onClick={() => setHoldings((current) => current.filter((row) => row.id !== item.id))} aria-label={`حذف ${item.name}`}>حذف</button></span></div>; })}</div>}
             </section>
             <section className="panel bubble-monitor">
               <div className="panel-head"><SectionTitle eyebrow="PREMIUM MONITOR" title="حباب و پریمیوم دارایی‌ها" text="حباب جاری نسبت به ارزش خام فلز محاسبه می‌شود؛ آمار تاریخی فقط پس از ورود تاریخچهٔ معتبر نمایش داده خواهد شد."/><span className={bubbleAvailableCount ? "status-chip safe" : "status-chip warning"}>{bubbleAvailableCount.toLocaleString("fa-IR")} محاسبهٔ معتبر</span></div>
@@ -654,10 +655,24 @@ export default function Home() {
             </section>
           </section>}
 
+          {view === "asset-center" && <section className="view-stack">
+            <div className="view-hero"><SectionTitle eyebrow="ASSET 360" title="مرکز دارایی" text="نمای ترکیبی و مینیمالِ اطلاعات، تحلیل و وضعیت تصمیم برای یک دارایی؛ بدون تکرار جدول‌ها و جزئیات کم‌اهمیت."/><div className="market-actions"><button className="ghost-button" onClick={() => setView("portfolio")}>فهرست کامل</button><button className="primary-button" onClick={() => setModalOpen(true)}>＋ ثبت دارایی</button></div></div>
+            {selectedHolding ? <>
+              <section className="asset-context-bar" aria-label="انتخاب دارایی"><div><small>دارایی در حال بررسی</small><strong>{selectedHolding.name}</strong></div><div className="asset-context-list">{holdings.map((holding) => <button key={holding.id} className={holding.id === selectedHolding.id ? "active" : ""} onClick={() => setSelectedHoldingId(holding.id)}>{holding.name}</button>)}</div></section>
+              <section className="asset-center-grid">
+                <article className="panel asset-center-card asset-profile-card"><div className="asset-card-head"><span>◫</span><div><small>اطلاعات دارایی</small><h3>{selectedHolding.name}</h3></div><b>{getAssetClass(selectedHolding.name).label}</b></div><dl className="asset-facts"><div><dt>مقدار</dt><dd>{selectedHolding.amount.toLocaleString("fa-IR")} {selectedHolding.unit}</dd></div><div><dt>تاریخ خرید</dt><dd>{formatPurchaseDate(selectedHolding.purchaseDate)}</dd></div><div><dt>بهای خرید</dt><dd>{selectedHolding.costToman === null ? "ثبت نشده" : formatPortfolioMoney(selectedHolding.costToman)}</dd></div><div><dt>ارزش فعلی</dt><dd>{selectedHoldingValue === null ? "بدون قیمت قابل استفاده" : formatPortfolioMoney(selectedHoldingValue)}</dd></div><div><dt>سود/زیان</dt><dd className={selectedHoldingProfit === null ? "muted-value" : selectedHoldingProfit < 0 ? "negative" : "positive"}>{selectedHoldingProfit === null ? "محاسبه نشده" : `${formatPortfolioMoney(selectedHoldingProfit)} · ${selectedHoldingProfitPercent === null ? "—" : formatPercent(selectedHoldingProfitPercent)}`}</dd></div></dl><button className="text-button" onClick={() => setView("portfolio")}>ویرایش در فهرست دارایی‌ها ←</button></article>
+                <article className="panel asset-center-card asset-analysis-card"><div className="asset-card-head"><span>◉</span><div><small>تحلیل دارایی</small><h3>شواهد موجود</h3></div><b>{selectedHoldingValue === null ? "پوشش ناقص" : "قیمت‌گذاری‌شده"}</b></div><div className="asset-signal-list"><div><span>قیمت و ارزش روز</span><strong>{selectedHoldingValue === null ? "نیازمند قیمت تازه" : "قابل محاسبه"}</strong></div><div><span>حباب خام جاری</span><strong>{selectedHoldingBubble === null ? "دادهٔ کافی نیست" : formatPercent(selectedHoldingBubble)}</strong></div><div><span>تحلیل تاریخی</span><strong>در انتظار تاریخچهٔ معتبر ایران</strong></div><div><span>سناریوی کوتاه/بلند</span><strong>آمادهٔ بررسی فرضیه</strong></div></div><button className="primary-button" onClick={() => openAssetWorkspace(selectedHolding.id, "analysis")}>تحلیل کامل این دارایی</button></article>
+                <article className="panel asset-center-card asset-decision-card"><div className="asset-card-head"><span>◇</span><div><small>تصمیم دارایی</small><h3>دروازهٔ اقدام</h3></div><b>{decisionReadiness.passedCount.toLocaleString("fa-IR")} / ۶</b></div><div className="asset-decision-state"><small>اقدام مجاز فعلی</small><strong>{decisionReadiness.safeAction}</strong><p>تا زمان تأیید روش و آزمون تاریخی، اشا هیچ خرید، فروش یا تبدیل دارایی پیشنهاد نمی‌کند.</p></div><div className="mini-gates">{decisionReadiness.gates.map((gate) => <span className={gate.passed ? "passed" : "blocked"} key={gate.id}>{gate.passed ? "✓" : "×"} {gate.label}</span>)}</div><button className="primary-button" onClick={() => openAssetWorkspace(selectedHolding.id, "decisions")}>تصمیم‌های این دارایی</button></article>
+              </section>
+            </> : <section className="panel"><EmptyLock title="دارایی برای نمایش وجود ندارد" text="ابتدا یک دارایی ثبت کن؛ سپس اطلاعات، تحلیل و تصمیم آن در همین نمای ترکیبی قرار می‌گیرد."/></section>}
+          </section>}
+
           {view === "market" && <section className="view-stack"><div className="view-hero"><SectionTitle eyebrow="MARKET INTELLIGENCE" title="فلزات و بازارهای مرجع" text="هر قیمت با منبع، زمان انتشار، زمان دریافت و وضعیت اعتبارسنجی نمایش داده می‌شود."/><div className="market-actions"><span className={liveQuoteCount ? "status-chip safe" : "status-chip warning"}>{feedLoading ? "در حال بروزرسانی" : `${liveQuoteCount.toLocaleString("fa-IR")} قیمت تازه`}</span><button className="ghost-button refresh-button" onClick={() => void refreshMarket()} disabled={feedLoading}>{feedLoading ? "لطفاً صبر کنید" : "بروزرسانی منابع آنلاین"}</button></div></div>{feedError && <div className="feed-error">{feedError}</div>}<section className="conversion-strip"><b>مبنای تبدیل قیمت‌ها</b><span>{marketRateStatus}</span></section><section className="guardrail snapshot-note"><span>i</span><div><b>رهاورد فعلاً Snapshot دستی است</b><p>اعداد رهاورد از نشست مرورگر شما ثبت شده‌اند و با این دکمه خودکار تازه نمی‌شوند. پس از تهیه API، همین مرز داده بدون تغییر ظاهری به خوراک مستقیم متصل می‌شود.</p></div></section><section className="panel"><MarketTable rows={instruments} quotes={quoteMap} usdIrrRate={marketUsdIrrRate}/></section><section className="source-grid">{(feed?.sources ?? []).map((source) => <article key={source.id}><div><strong>{source.name}</strong><span className={`source-status ${source.status}`}>{sourceLabel(source.status)}</span></div><p>{source.message}</p>{source.id === "tgju" && <a className="source-action" href="https://www.tgju.org/form/api" target="_blank" rel="noreferrer">درخواست رسمی API از TGJU ↗</a>}</article>)}</section><section className="info-grid"><article><span>۱</span><h3>قیمت خام</h3><p>دریافت بدون تغییر همراه با زمان و شناسهٔ منبع.</p></article><article><span>۲</span><h3>اعتبارسنجی</h3><p>کنترل نوع، دامنه، تازگی و سازگاری رکورد.</p></article><article><span>۳</span><h3>قرنطینه</h3><p>عدد مشکوک هیچ‌وقت وارد تحلیل نمی‌شود.</p></article><article><span>۴</span><h3>نمایش</h3><p>فقط دادهٔ معتبر و قابل‌ردیابی نمایش داده می‌شود.</p></article></section></section>}
 
           {view === "analysis" && <section className="view-stack">
             <div className="view-hero"><SectionTitle eyebrow="MULTI-LENS ANALYSIS" title="مرکز تحلیل چندلایه و سناریو" text="از رویداد و اقتصاد تا رفتار قیمت، حباب و اثر سبد؛ هر نتیجه با افق، شواهد لازم و مرز عدم‌قطعیت جدا می‌شود."/><div className="market-actions">{portfolioMode === "demo" ? <span className="status-chip warning">سبد ساختگی فعال</span> : <button className="primary-button" onClick={() => activateDemoPortfolio("analysis")}>بارگذاری سبد نمایشی</button>}<HorizonToggle value={analysisHorizon} onChange={setAnalysisHorizon}/></div></div>
+
+            {selectedHolding && <section className="asset-context-bar compact" aria-label="انتخاب دارایی برای تحلیل"><div><small>تحلیل متمرکز روی</small><strong>{selectedHolding.name}</strong></div><div className="asset-context-list">{holdings.map((holding) => <button key={holding.id} className={holding.id === selectedHolding.id ? "active" : ""} onClick={() => setSelectedHoldingId(holding.id)}>{holding.name}</button>)}</div><button className="ghost-button" onClick={() => setView("asset-center")}>نمای ۳۶۰ درجه</button></section>}
 
             <section className="analysis-summary-grid">
               <article><small>قیمت تازه</small><strong>{liveQuoteCount.toLocaleString("fa-IR")}</strong><p>{staleQuoteCount.toLocaleString("fa-IR")} رکورد منقضی</p></article>
@@ -669,7 +684,7 @@ export default function Home() {
             <section className="panel analysis-catalogue">
               <div className="analysis-tabs" role="tablist" aria-label="دسته‌بندی تحلیل‌ها">{analysisCategories.map((category) => <button key={category.id} role="tab" aria-selected={analysisCategory === category.id} className={analysisCategory === category.id ? "active" : ""} onClick={() => setAnalysisCategory(category.id)}><i>{category.icon}</i>{category.label}</button>)}</div>
               <div className="analysis-category-panel" role="tabpanel">
-                <div className="analysis-category-title"><span>{selectedAnalysis.icon}</span><div><small>{analysisHorizon === "short" ? "افق کوتاه‌مدت" : "افق بلندمدت"}</small><h3>{selectedAnalysis.label}</h3></div><b className="evidence-badge">شواهد ناکافی برای تصمیم</b></div>
+                <div className="analysis-category-title"><span>{selectedAnalysis.icon}</span><div><small>{analysisHorizon === "short" ? "افق کوتاه‌مدت" : "افق بلندمدت"}{selectedHolding ? ` · ${selectedHolding.name}` : ""}</small><h3>{selectedAnalysis.label}</h3></div><b className="evidence-badge">شواهد ناکافی برای تصمیم</b></div>
                 <p className="analysis-lead">{selectedAnalysis[analysisHorizon]}</p>
                 <div className="analysis-category-body">
                   <article><small>آنچه اکنون قابل اثبات است</small><strong>{analysisCategory === "summary" ? `${liveQuoteCount.toLocaleString("fa-IR")} قیمت تازه و ${staleQuoteCount.toLocaleString("fa-IR")} قیمت منقضی` : analysisCategory === "portfolio" ? `${valuedHoldingCount.toLocaleString("fa-IR")} از ${holdings.length.toLocaleString("fa-IR")} موقعیت ارزش‌گذاری شده` : analysisCategory === "bubble" ? `${bubbleAvailableCount.toLocaleString("fa-IR")} حباب خام لحظه‌ای` : "خوراک تخصصی این لایه هنوز متصل نیست"}</strong></article>
@@ -689,6 +704,19 @@ export default function Home() {
             </section>
 
             <section className="guardrail"><span>!</span><div><b>محدودهٔ محتمل با نقطهٔ تضمینی فرق دارد</b><p>خروجی واقعی باید علاوه بر سناریوی پایه، سناریوی خلاف، کیفیت داده، عدم‌قطعیت، هزینه و نقدشوندگی را نشان دهد؛ تا آن زمان دروازهٔ اقدام بسته می‌ماند.</p></div></section>
+          </section>}
+
+          {view === "decisions" && <section className="view-stack">
+            <div className="view-hero"><SectionTitle eyebrow="ASHA DECISIONS" title="تصمیم‌های متناسب با هر دارایی" text="این صفحه فقط سؤال تصمیم را پاسخ می‌دهد: مقایسه در همان کلاس، امکان تبدیل بین کلاس‌ها، و بهترین اقدام مجاز برای کل سبد."/><div className="market-actions"><span className={decisionReadiness.operational ? "status-chip safe" : "status-chip warning"}>{decisionReadiness.passedCount.toLocaleString("fa-IR")} از ۶ دروازه</span><HorizonToggle value={decisionHorizon} onChange={setDecisionHorizon}/></div></div>
+            {selectedHolding && <section className="asset-context-bar compact" aria-label="انتخاب دارایی برای تصمیم"><div><small>تصمیم متمرکز روی</small><strong>{selectedHolding.name}</strong></div><div className="asset-context-list">{holdings.map((holding) => <button key={holding.id} className={holding.id === selectedHolding.id ? "active" : ""} onClick={() => setSelectedHoldingId(holding.id)}>{holding.name}</button>)}</div><button className="ghost-button" onClick={() => setView("asset-center")}>نمای ۳۶۰ درجه</button></section>}
+            <section className="panel decision-desk">
+              <div className="panel-head decision-head"><SectionTitle eyebrow="DECISION MODES" title="میز تصمیم اشا" text="اطلاعات هر دارایی از تحلیل جدا نمی‌شود، اما برای حفظ تمرکز فقط نتیجهٔ آمادگی و شواهد لازم در این صفحه نمایش داده می‌شود."/><span className="method-version compact"><span>{decisionFramework.id}</span><b>نسخه {decisionFramework.version}</b></span></div>
+              <div className="decision-mode-tabs" role="tablist" aria-label="نوع تصمیم"><button type="button" role="tab" aria-selected={decisionMode === "homogeneous"} className={decisionMode === "homogeneous" ? "active" : ""} onClick={() => setDecisionMode("homogeneous")}><b>تصمیم همگن</b><small>داخل همان کلاس دارایی</small></button><button type="button" role="tab" aria-selected={decisionMode === "heterogeneous"} className={decisionMode === "heterogeneous" ? "active" : ""} onClick={() => setDecisionMode("heterogeneous")}><b>تصمیم ناهمگن</b><small>تبدیل بین کلاس‌های دارایی</small></button><button type="button" role="tab" aria-selected={decisionMode === "best"} className={decisionMode === "best" ? "active" : ""} onClick={() => setDecisionMode("best")}><b>بهترین اقدام کل</b><small>شرایط سبد و بازار باهم</small></button></div>
+              <div className="decision-gate"><span>!</span><div><strong>{decisionReadiness.operational ? "دروازه‌های تصمیم آماده‌اند" : `بهترین اقدام مجاز اکنون: ${decisionReadiness.safeAction}`}</strong><p>{decisionReadiness.operational ? "خروجی عملیاتی باید از موتور قطعی و نسخه‌دار دریافت شود." : "این نتیجه دربارهٔ آمادگی سیستم است، نه پیشنهاد نگهداری، خرید یا فروش یک دارایی."}</p></div></div>
+              {decisionMode === "best" ? <div className="best-decision-card"><div><small>{decisionHorizon === "short" ? "جمع‌بندی کوتاه‌مدت" : "جمع‌بندی بلندمدت"}</small><strong>{decisionReadiness.safeAction}</strong><p>شرایط کلی از پوشش سبد، تازگی دادهٔ ایران، محدودیت‌های مالک، روش مصوب و اعتبارسنجی تاریخی ساخته می‌شود. هر دروازهٔ ناقص، تصمیم مالی را متوقف می‌کند.</p></div><div className="decision-gates">{decisionReadiness.gates.map((gate) => <span className={gate.passed ? "passed" : "blocked"} key={gate.id}>{gate.passed ? "✓" : "×"} {gate.label}</span>)}</div></div> : focusedDecisionAssets.length === 0 ? <EmptyLock title="برای تصمیم‌سازی، ابتدا سبد را ثبت کن" text="تصمیم همگن و ناهمگن فقط برای دارایی‌های خودت نمایش داده می‌شود؛ دیده‌بان بازار جایگزین سبد شخصی نیست."/> : <div className="decision-grid">{focusedDecisionAssets.slice(0, 6).map((asset) => { const assetClass = getAssetClass(asset.name); const sameClassCandidates = getSameClassCandidates(asset.name, assetOptions).slice(0, 3); return <article className={asset.id === selectedHolding?.id ? "focused" : ""} key={asset.id}><div><span>{asset.name}</span><b>{assetClass.label}</b></div><strong>{decisionMode === "homogeneous" ? "مقایسهٔ درون‌کلاسی" : "ارزیابی تبدیل بین‌کلاسی"}</strong><p>{decisionMode === "homogeneous" ? `تصمیم فقط بین گزینه‌های کلاس «${assetClass.label}» سنجیده می‌شود؛ ${asset.priced ? "قیمت فعلی موجود است" : "قیمت تازه کامل نیست"}${asset.bubble !== null ? ` و حباب خام ${formatPercent(asset.bubble)} است` : ""}.` : `دارایی مبدأ از کلاس «${assetClass.label}» است؛ مقصد تا زمان مقایسهٔ ارزش، ریسک، نقدشوندگی، هزینهٔ تبدیل و محدودیت‌های شما انتخاب نمی‌شود.`}</p><small>{decisionMode === "homogeneous" ? `دامنهٔ مقایسه: ${sameClassCandidates.length ? sameClassCandidates.join("، ") : "گزینهٔ هم‌کلاس دیگری تعریف نشده"}` : "وضعیت: تبدیل غیرفعال تا عبور همهٔ دروازه‌ها"}</small></article>; })}</div>}
+              <div className="decision-framework-note"><b>مرز این نسخه:</b> {decisionFramework.limitation}</div>
+              <button className="text-button decision-link" onClick={() => setView("analysis")}>مشاهدهٔ تحلیل همین دارایی ←</button>
+            </section>
           </section>}
 
           {view === "risk" && <section className="view-stack">

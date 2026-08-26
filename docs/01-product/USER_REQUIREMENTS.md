@@ -16,6 +16,11 @@ document is about the user(s) driving those capabilities.
 - For the current Persian web dashboard, the owner wants the first page centered on
   their own portfolio and only high-importance opportunities. Market watch remains
   available as a separate tab instead of occupying dashboard space.
+- The asset workflow must remain minimal and predictable: a sortable asset list,
+  asset-focused analysis, asset-focused decisions, and a separate combined
+  **Asset Center** that shows the selected asset's information, analysis readiness,
+  and decision readiness in one compact view. Selecting an asset must carry context
+  between these views.
 - Decision support must present three distinct views: a homogeneous comparison
   within the current asset's class, a heterogeneous conversion comparison across
   asset classes, and a best overall portfolio action that considers the combined

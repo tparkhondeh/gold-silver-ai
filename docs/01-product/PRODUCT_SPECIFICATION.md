@@ -62,7 +62,7 @@ lives in `docs/10-project-state/CURRENT_STATE.md`.
 ### Platform
 | Capability | Status | Detail |
 |---|---|---|
-| Persian portfolio-first web dashboard and separate market-watch tab | IMPLEMENTED | `docs/01-product/USER_REQUIREMENTS.md` |
+| Persian portfolio-first web dashboard with asset list, Asset Center, analysis, decision, and separate market-watch tabs | IMPLEMENTED | `docs/01-product/USER_REQUIREMENTS.md` |
 | Automatic and manual data/model updates | DOCUMENTED | `docs/05-data/DATA_PIPELINE.md` |
 | Long-term extensibility to additional precious-metal instruments | DOCUMENTED | `docs/03-market/ASSET_UNIVERSE.md` |
 
