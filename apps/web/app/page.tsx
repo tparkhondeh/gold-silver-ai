@@ -473,7 +473,7 @@ export default function Home() {
   const bubbleAvailableCount = bubbleRows.filter((row) => row.current !== null).length;
   const valuedHoldingCount = Array.from(holdingValues.values()).filter((value) => value !== null).length;
   const portfolioMarketValue = holdings.length > 0 && valuedHoldingCount === holdings.length
-    ? Array.from(holdingValues.values()).reduce((sum, value) => sum + (value ?? 0), 0)
+    ? Array.from(holdingValues.values()).reduce<number>((sum, value) => sum + (value ?? 0), 0)
     : null;
   const portfolioProfitLoss = portfolioMarketValue !== null && costCoverage === 100 ? portfolioMarketValue - knownCost : null;
   const portfolioProfitPercent = portfolioProfitLoss !== null && knownCost > 0 ? (portfolioProfitLoss / knownCost) * 100 : null;

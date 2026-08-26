@@ -1,7 +1,6 @@
 # Testing Strategy
 
-**Source of truth for:** how correctness is verified. No code and no test
-framework exist yet.
+**Source of truth for:** how correctness is verified.
 
 ## Principles
 
@@ -23,8 +22,9 @@ framework exist yet.
 
 ## Status
 
-`STATUS: TBD` for test framework, coverage targets, and CI integration — depends on
-the technology stack (`docs/02-architecture/SYSTEM_ARCHITECTURE.md`).
+`STATUS: PARTIAL`. Phase 1 uses Node's built-in test runner for deterministic unit,
+contract, repository, rendered-output, and API tests; ESLint and the Vinext build are
+separate gates. CI integration and a numeric coverage target remain `STATUS: TBD`.
 
 ## Related Documents
 

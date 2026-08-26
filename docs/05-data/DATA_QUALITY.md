@@ -1,7 +1,6 @@
 # Data Quality
 
-**Source of truth for:** how incoming and stored data is validated. Not implemented
-in Phase 0.
+**Source of truth for:** how incoming and stored data is validated.
 
 ## Requirement
 
@@ -33,8 +32,15 @@ Every data point entering the system must be checked for:
 
 ## Status
 
-`STATUS: TBD` for specific thresholds, anomaly-detection methodology, and how
-flags are surfaced/resolved. Tier B / Implementation decision
+`STATUS: PARTIAL`. Schema version 1 now deterministically validates registry
+membership, active-source state, positive canonical decimal syntax, currency/unit
+agreement, UTC timestamp syntax, future-time tolerance, point-in-time ordering, and
+correction references. Invalid CSV rows enter immutable quarantine; duplicate source
+events are identified through SHA-256 idempotency keys. Secret-like raw-payload keys
+are redacted before persistence.
+
+`STATUS: TBD` remains for empirical anomaly thresholds, cross-source divergence,
+source-reliability scoring, and operator resolution UI. These are Tier B decisions
 (`docs/00-governance/PROJECT_RULES.md` § 3): Claude Code proposes standard
 statistical practice at design time, escalating only if a threshold choice would
 materially change what counts as valid financial data (see

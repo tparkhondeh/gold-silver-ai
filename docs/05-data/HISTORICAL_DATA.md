@@ -1,7 +1,7 @@
 # Historical Data
 
-**Source of truth for:** how the historical dataset is maintained over time. Not
-implemented in Phase 0. No historical data has been collected.
+**Source of truth for:** how the historical dataset is maintained over time. No
+decision-grade historical market data has been collected.
 
 ## Requirement
 
@@ -31,11 +31,11 @@ available.
 
 ## Status
 
-`STATUS: TBD` for storage format, retention policy, and backfill approach. Tier B
-/ Implementation decision (`docs/00-governance/PROJECT_RULES.md` § 3): Claude Code
-decides once a data source is chosen and its historical coverage is known,
-escalating only if a source's licensing terms restrict backfill (see
-`docs/10-project-state/OPEN_DECISIONS.md` item B4).
+`STATUS: PARTIAL`. PostgreSQL append-only observations now encode the complete
+point-in-time fields, correction links, raw payload fingerprint, source, and
+instrument contract. Immutability triggers prevent update/delete of observations,
+validation results, quarantine records, and resolution events. Runtime persistence,
+retention, licensed backfill, gap reporting, and restore testing remain `STATUS: TBD`.
 
 ## Related Documents
 

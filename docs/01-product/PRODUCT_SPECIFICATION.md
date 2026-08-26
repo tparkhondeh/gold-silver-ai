@@ -19,8 +19,8 @@ lives in `docs/10-project-state/CURRENT_STATE.md`.
 | Capability | Status | Detail |
 |---|---|---|
 | Market data ingestion (manual + automatic) | PARTIAL | `docs/05-data/DATA_PIPELINE.md` |
-| Historical data storage | DOCUMENTED | `docs/05-data/HISTORICAL_DATA.md` |
-| Data validation & anomaly/missing-data detection | DOCUMENTED | `docs/05-data/DATA_QUALITY.md` |
+| Historical data storage | PARTIAL | PostgreSQL point-in-time migration exists; runtime persistence and backfill are pending — `docs/05-data/HISTORICAL_DATA.md` |
+| Data validation & anomaly/missing-data detection | PARTIAL | Structural validation/quarantine implemented; empirical anomaly and cross-source thresholds pending — `docs/05-data/DATA_QUALITY.md` |
 | Source tracking, provenance, freshness, reliability | PARTIAL | `docs/05-data/DATA_SOURCES.md` |
 
 ### Market Analysis
@@ -63,7 +63,7 @@ lives in `docs/10-project-state/CURRENT_STATE.md`.
 | Capability | Status | Detail |
 |---|---|---|
 | Persian portfolio-first web dashboard with asset list, Asset Center, analysis, decision, and separate market-watch tabs | IMPLEMENTED | `docs/01-product/USER_REQUIREMENTS.md` |
-| Automatic and manual data/model updates | DOCUMENTED | `docs/05-data/DATA_PIPELINE.md` |
+| Automatic and manual data/model updates | PARTIAL | Strict manual CSV core implemented; operator UI and scheduling pending — `docs/05-data/DATA_PIPELINE.md` |
 | Long-term extensibility to additional precious-metal instruments | DOCUMENTED | `docs/03-market/ASSET_UNIVERSE.md` |
 
 ## Operationally Out of Scope for Now

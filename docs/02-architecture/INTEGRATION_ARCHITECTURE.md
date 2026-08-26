@@ -7,9 +7,11 @@ chosen yet.
 
 ## Status
 
-No external integrations exist. No data providers, APIs, or vendors have been
-selected. `STATUS: TBD` — `DECISION REQUIRED: YES` for each integration, evaluated
-individually when needed.
+`STATUS: PARTIAL`. ADR 0003 accepts Navasan and GoldAPI.io as keyed Phase 1
+adapters, with XAUS/Gold-API.com restricted to informational fallback use. The
+adapters exist behind the normalized `/api/market` boundary. Credentials, Navasan's
+contract unit, an independent licensed Iranian cross-check, and operational cadence
+remain unresolved; see `docs/05-data/DATA_SOURCES.md`.
 
 ## Principle: Provider Abstraction
 
@@ -49,11 +51,11 @@ requires single-source risk to be recorded explicitly when it can't be avoided.
 When a real provider is evaluated (Tier A, `docs/10-project-state/OPEN_DECISIONS.md`
 item A2), this risk is part of what makes it Tier A rather than routine.
 
-## Out of Scope for Phase 0
+## Current Boundary
 
-Choosing or connecting to any market data API, news source, brokerage, or exchange
-integration. See `docs/01-product/PRODUCT_SPECIFICATION.md` § Explicitly Out of
-Scope for Now.
+No brokerage, exchange execution, credential reuse, browser-session automation, or
+unlicensed scraping is permitted. Phase 1 integrations are read-only market-data
+adapters and remain non-operational until their source contracts pass validation.
 
 ## Related Documents
 

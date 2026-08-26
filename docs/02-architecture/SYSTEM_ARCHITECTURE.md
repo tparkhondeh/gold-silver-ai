@@ -7,11 +7,11 @@ specifics (`docs/05-data/`), AI behavior (`docs/06-ai/`), or market/portfolio lo
 
 ## Status
 
-No technology stack has been chosen. Per `docs/00-governance/PROJECT_RULES.md` § 7,
-a stack is chosen when a real, approved implementation task requires it — not
-speculatively in Phase 0. `STATUS: TBD` — `DECISION REQUIRED: YES`, to be presented
-per the decision format in `docs/00-governance/PROJECT_RULES.md` § 2 when Phase 1
-is scoped.
+`STATUS: ACTIVE FOR PHASE 1`. ADR 0001 establishes a TypeScript/React,
+server-rendered web boundary and PostgreSQL behind repository interfaces for the
+approved Phase 1 vertical slice. Deployment topology beyond the local web application
+remains `STATUS: TBD`; the accepted stack decision is not permission to deploy or
+merge to `main`.
 
 ## Layered Shape (Target)
 

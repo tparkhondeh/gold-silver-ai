@@ -1,28 +1,22 @@
 # Known Issues
 
-**Source of truth for:** known limitations and gaps in the current state of the
-project. None of these are blocking for Phase 0's own deliverable (documentation
-and governance), but they should be resolved before the affected future work begins.
+**Source of truth for:** known limitations and gaps in the current state.
 
-## Phase 0 Limitations
+## Phase 1 Limitations
 
-1. **No remote git hosting configured.** The repository exists only locally.
-   `main` branch protection (no direct push, no unapproved merge) is currently a
-   documented policy, not a technically enforced one — see
-   `docs/00-governance/STABILITY_POLICY.md` § 2. Enforcement requires choosing a
-   Git hosting platform, which is `STATUS: TBD`.
-2. **No CI/automation exists** to run tests or checks — there's no code to test
-   yet, so this isn't blocking now, but it's not yet set up for when code exists.
-3. **ADR folder is empty by design** — no architecture decisions have actually
-   been made yet (deliberately; see `docs/08-decisions/ADR/README.md`). This is
-   correct for Phase 0, not a gap to fill artificially.
-4. **Local git commit identity** was set locally (not global) using the owner's
-   known email, since no git identity existed in this environment. Worth the
-   owner confirming this is the identity they want attributed to commits going
-   forward.
-
-## Not Yet Known
-
-Whether the documentation architecture actually scales well in practice can only
-be evaluated once real implementation work (Phase 1) starts using it — flag any
-friction discovered then rather than assuming the structure is perfect now.
+1. **The Phase 1 branch is not confirmed on GitHub.** The private `origin` is
+   configured, but authentication has stalled every non-force push attempt and the
+   branch has no verified upstream. Local commits are intact; `main` is untouched.
+2. **No CI or enforced branch protection is verified.** Lint, build, and tests run
+   locally only.
+3. **PostgreSQL is designed but not connected.** Schema version 1, migration SQL,
+   repository code, and isolated tests exist; no runtime database contains market
+   or portfolio data.
+4. **Iranian source redundancy is missing.** Navasan remains inactive without a key
+   and declared IRR/toman contract; TGJU requires licensed access; the Rahavard
+   snapshot is manual and expired.
+5. **Financial decisions remain intentionally locked.** Owner constraints,
+   Iran-specific history, methodology approval, backtesting, and walk-forward
+   validation are incomplete.
+6. **The demo portfolio is opt-in, synthetic, and session-local.** It supports UI
+   evaluation only and must never be interpreted as owner or market data.

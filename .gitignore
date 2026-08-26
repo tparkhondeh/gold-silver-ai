@@ -1,6 +1,4 @@
-# This file is intentionally minimal.
-# Technology stack has not been chosen yet (see docs/02-architecture/SYSTEM_ARCHITECTURE.md).
-# Extend this file only when a stack decision introduces real build artifacts.
+# Phase 1 TypeScript/web and local data-development artifacts.
 
 # OS
 .DS_Store
@@ -44,3 +42,4 @@ node_modules/
 dist/
 .wrangler/
 coverage/
+*.tsbuildinfo

@@ -1,7 +1,6 @@
 # Data Pipeline
 
-**Source of truth for:** how data moves from source into the system. Not
-implemented in Phase 0.
+**Source of truth for:** how data moves from source into the system.
 
 ## Requirement
 
@@ -30,15 +29,19 @@ Both paths feed the same validation step (`DATA_QUALITY.md`) — there is no
 - The system must be able to detect when expected data hasn't arrived (staleness),
   not just when it arrived and looks wrong.
 
-## Status
+## Implemented Phase 1 Slice
 
-`STATUS: TBD` for scheduling mechanism, operator tooling for manual updates, and
-alerting approach (Tier B — `docs/10-project-state/OPEN_DECISIONS.md` item B2).
-Deferred until an implementation phase requires it. Whatever scheduling is chosen
-must account for Iran's timezone and market calendar rather than assuming a
-Western trading week or timezone by default — see
-`docs/02-architecture/INTEGRATION_ARCHITECTURE.md` § Iran-Specific Operational
-Constraints.
+- Strict manual CSV parsing with a versioned required-header contract.
+- The same deterministic validation boundary used for every row; manual input has
+  no trusted bypass.
+- Batch and row idempotency, duplicate reporting, sanitized raw-payload retention,
+  and append-only quarantine records.
+- Transactional, parameterized PostgreSQL repository statements. No market values
+  are loaded by the migration or by tests.
+
+`STATUS: PARTIAL` for a live database connection, operator upload UI, scheduling,
+and alerting. Future scheduling must use Tehran time and the Iranian market calendar;
+see `docs/02-architecture/INTEGRATION_ARCHITECTURE.md`.
 
 ## Related Documents
 

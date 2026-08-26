@@ -57,4 +57,15 @@ Recommendation → Approval → Execution boundary; Operational Safety States
 clarification; Environment Separation; and Backup Restore-testing + RPO/RTO
 requirements. Full details: `PHASE_0_AUDIT.md` § 15.
 
-Nothing else has been completed. No data, no code, no technology choices.
+## Phase 1 — Completed Units on the Working Branch
+
+**Status:** completed units below are on `codex/phase-1-data-ui`, not merged to
+`main` and not yet confirmed on the private remote.
+
+- Accepted Phase 1 stack/scope, portfolio UI, source boundary, manual snapshot, and
+  notification-safety decisions in ADR 0001–0005.
+- Persian local application, portfolio/asset/analysis/decision workspaces, explicit
+  demo mode, normalized read-only market boundary, and deterministic UI calculations.
+- Data Foundation schema version 1 contracts, strict manual CSV ingestion,
+  deterministic validation, idempotency, append-only quarantine design, PostgreSQL
+  migration/repository, and isolated tests without loading market values.

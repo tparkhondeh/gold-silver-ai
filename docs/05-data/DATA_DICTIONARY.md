@@ -6,7 +6,30 @@ exposes or stores.
 ## Status
 
 `STATUS: PARTIAL`. The Phase 1 read-only normalized quote contract is implemented at
-`/api/market`. A durable observation/persistence schema is not implemented yet.
+`/api/market`. Durable schema version 1 contracts and a PostgreSQL migration now
+exist under `apps/web/data/` and `apps/web/db/migrations/`; a live database is not
+configured yet.
+
+## Durable Observation Contract (schema version 1)
+
+| Field | Type / nullability | Meaning |
+|---|---|---|
+| `id` | `obs_` + SHA-256, required | Immutable observation identifier derived from the idempotency identity. |
+| `idempotencyKey` | SHA-256 hex, required/unique | Prevents a repeated source event from being stored twice. |
+| `payloadHash` | SHA-256 hex, required | Fingerprint of the sanitized raw payload using stable key ordering. |
+| `instrumentCode` | string, required | Versioned instrument-registry key. |
+| `sourceId` | string, required | Versioned source-contract key. |
+| `value` | canonical positive decimal string | Parsed by PostgreSQL as `numeric(38,12)`; never converted through binary floating point in ingestion. |
+| `currency` / `unit` | closed enums, required | Must exactly match the instrument contract. |
+| `observedAt` | UTC ISO-8601, required | When the underlying value/event occurred. |
+| `publishedAt` | UTC ISO-8601 or null | When the provider published it; null is explicit unknown. |
+| `collectedAt` | UTC ISO-8601, required | When this system received it. |
+| `effectiveFrom` / `effectiveTo` | UTC ISO-8601; end nullable | Point-in-time validity interval. |
+| `correctionOf` | observation id or null | Append-only correction link; originals are never overwritten. |
+| `rawPayload` | sanitized JSON, required | Source row retained for audit; secret-like keys are redacted before storage. |
+
+Validation results and quarantined rows are separate immutable records. A quarantine
+decision is appended to `quarantine_resolutions` instead of mutating the original.
 
 ## Normalized Quote Contract (schema version 1)
 

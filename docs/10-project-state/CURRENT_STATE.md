@@ -80,6 +80,13 @@ _Last updated in the product calendar: ۱۴۰۵/۰۶/۰۴ (Phase 1 active)_
   branch publication must be verified before claiming this branch is stored.
 - **Decision record:** Phase 1 scope, wealth UI scope, live-source boundary, and the
   temporary Rahavard manual-snapshot boundary are in ADR 0001 through ADR 0004.
+- **Data Foundation:** schema version 1 now defines instrument, source, observation,
+  validation, quarantine, duplicate, and ingestion-batch contracts. Manual CSV rows
+  pass through deterministic registry/unit/decimal/UTC/point-in-time validation;
+  invalid rows are retained in quarantine and repeated source events are idempotent.
+  A PostgreSQL migration and parameterized transactional repository are implemented
+  without loading market values. Runtime database configuration and persistence
+  history are not connected yet.
 
 ## Immediate Next Step
 

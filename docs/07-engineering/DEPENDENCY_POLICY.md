@@ -1,7 +1,7 @@
 # Dependency Policy
 
 **Source of truth for:** how external dependencies (libraries, packages, services)
-are chosen and added. No dependencies exist yet.
+are chosen and added.
 
 ## Rule
 
@@ -31,9 +31,11 @@ manifest without having gone through § Before Adding a Dependency above.
 
 ## Status
 
-No package manager or ecosystem has been chosen yet — depends on the technology
-stack (`docs/02-architecture/SYSTEM_ARCHITECTURE.md`). This policy applies
-regardless of which ecosystem is eventually used.
+`STATUS: ACTIVE`. Phase 1 uses npm with committed `package.json` and lockfile; those
+files are the dependency registry. The first Data Foundation slice added no new
+dependency: CSV parsing, hashing, validation, and repository boundaries use platform
+APIs plus the already-present Drizzle PostgreSQL schema package. Project license/IP
+posture remains owner-critical decision A18.
 
 ## Related Documents
 

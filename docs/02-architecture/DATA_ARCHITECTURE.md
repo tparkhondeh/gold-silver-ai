@@ -7,9 +7,11 @@ from here.
 
 ## Status
 
-No storage technology, database, or file format has been chosen.
-`STATUS: TBD` — `DECISION REQUIRED: YES`, deferred to when Phase 1 data-foundation
-work is scoped (see `docs/01-product/ROADMAP.md`).
+`STATUS: PARTIAL`. ADR 0001 selects PostgreSQL behind repository interfaces for
+Phase 1. The first append-only migration, point-in-time observation contract,
+validation/quarantine contract, manual CSV boundary, and parameterized repository
+are implemented. A live database connection, production configuration, retention,
+backup, and historical backfill remain `STATUS: TBD`.
 
 ## Data Flow Principle
 

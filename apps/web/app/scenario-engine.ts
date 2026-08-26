@@ -8,6 +8,13 @@ export type ScenarioHoldingInput = {
   valueToman: number | null;
 };
 
+export type ScenarioHoldingResult = Omit<ScenarioHoldingInput, "valueToman"> & {
+  valueToman: number;
+  movePercent: number;
+  projectedValueToman: number;
+  impactToman: number;
+};
+
 export const scenarioDrivers: Array<{ key: ScenarioDriver; label: string; hint: string }> = [
   { key: "usd", label: "دلار آزاد", hint: "شوک فرضی نرخ USD/IRR" },
   { key: "gold", label: "اونس جهانی طلا", hint: "شوک فرضی XAU/USD" },
@@ -75,11 +82,12 @@ export function calculateScenarioMove(name: string, shocks: ScenarioShocks) {
 }
 
 export function calculatePortfolioScenario(holdings: ScenarioHoldingInput[], shocks: ScenarioShocks) {
-  const rows = holdings.flatMap((holding) => {
-    if (holding.valueToman === null || !Number.isFinite(holding.valueToman) || holding.valueToman < 0) return [];
+  const rows: ScenarioHoldingResult[] = holdings.flatMap((holding) => {
+    const valueToman = holding.valueToman;
+    if (valueToman === null || !Number.isFinite(valueToman) || valueToman < 0) return [];
     const movePercent = calculateScenarioMove(holding.name, shocks);
-    const projectedValueToman = holding.valueToman * (1 + movePercent / 100);
-    return [{ ...holding, movePercent, projectedValueToman, impactToman: projectedValueToman - holding.valueToman }];
+    const projectedValueToman = valueToman * (1 + movePercent / 100);
+    return [{ id: holding.id, name: holding.name, valueToman, movePercent, projectedValueToman, impactToman: projectedValueToman - valueToman }];
   });
   const baseValueToman = rows.reduce((sum, row) => sum + row.valueToman, 0);
   const projectedValueToman = rows.reduce((sum, row) => sum + row.projectedValueToman, 0);

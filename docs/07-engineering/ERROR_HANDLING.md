@@ -1,6 +1,6 @@
 # Error Handling
 
-**Source of truth for:** how the system handles failure. No code exists yet.
+**Source of truth for:** how the system handles failure.
 
 ## Principles
 
@@ -22,8 +22,11 @@
 
 ## Status
 
-`STATUS: TBD` for concrete error-handling mechanisms, logging format, and
-alerting — depends on the technology stack.
+`STATUS: PARTIAL`. Market adapters expose unavailable/stale source states instead of
+reusing guesses. Manual ingestion rejects structurally invalid CSV files, quarantines
+row-level validation failures, records deterministic issue codes, and reports
+duplicates separately. Logging format, operator alerting, and incident integration
+remain `STATUS: TBD`.
 
 ## Related Documents
 

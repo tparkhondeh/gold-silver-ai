@@ -16,15 +16,15 @@ ones being validated, not just built.
 
 | Phase | Focus | Status |
 |---|---|---|
-| Phase 0 | Foundation, governance, documentation architecture | **In progress** (this phase) |
-| Phase 1 | `STATUS: TBD` — expected candidate: data foundation (sourcing, ingestion, validation) since every later phase depends on trustworthy data | Not started — requires owner approval to begin |
+| Phase 0 | Foundation, governance, documentation architecture | **Owner-approved**; branch remains separate from `main` |
+| Phase 1 | Data foundation plus a visible Persian local interface, scoped by ADR 0001 | **Active** on `codex/phase-1-data-ui` |
 | Phase 2+ | `STATUS: TBD` | Not started |
 
-Everything past Phase 0 is intentionally unscoped here. Per the project mission,
+Everything past Phase 1 is intentionally unscoped here. Per the project mission,
 the logical dependency order is roughly: data foundation → historical/bubble
 analysis → backtesting & calibration → portfolio & risk modeling → agent layer —
 but this ordering is a *starting hypothesis for discussion*, not a committed plan.
-`DECISION REQUIRED: YES` from the owner before Phase 1 is scoped and started.
+`DECISION REQUIRED: YES` from the owner before a later dependent phase is scoped.
 
 ## What Phase 0 Deliberately Does Not Do
 
