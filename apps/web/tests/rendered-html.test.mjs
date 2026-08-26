@@ -19,6 +19,8 @@ test("renders the Persian wealth and market dashboard", async () => {
   assert.match(html, /lang="fa"/);
   assert.match(html, /dir="rtl"/);
   assert.match(html, /اشا/);
+  assert.match(html, /نشان اشا/);
+  assert.match(html, /ASHA/);
   assert.match(html, /بدون قیمت ساختگی/);
   assert.match(html, /load-demo-portfolio/);
   assert.match(html, /notification-center/);

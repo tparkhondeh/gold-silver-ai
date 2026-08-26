@@ -272,6 +272,23 @@ function quoteObservedAt(quote: LiveQuote) {
   return quote.publishedAt ?? quote.collectedAt;
 }
 
+function AshaLogo() {
+  return (
+    <svg className="asha-logo" viewBox="0 0 48 48" role="img" aria-label="نشان اشا">
+      <defs>
+        <linearGradient id="asha-mark-gradient" x1="9" y1="8" x2="39" y2="41" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#F7F2FF" />
+          <stop offset="1" stopColor="#D9C5F3" />
+        </linearGradient>
+      </defs>
+      <path className="asha-logo-orbit" d="M10.5 29.5C6.5 20.5 12.2 10.4 21.9 8.6C31.7 6.7 40.6 13.7 40.7 23.6C40.8 33.4 31.9 40.5 22.2 38.8" />
+      <path className="asha-logo-core" d="M14.5 34.8L23.8 12.7L33.4 34.8M18.3 26.6H29.9" />
+      <path className="asha-logo-spark" d="M36.8 7.4V13.2M33.9 10.3H39.7" />
+      <circle className="asha-logo-dot" cx="12.2" cy="34.7" r="2.4" />
+    </svg>
+  );
+}
+
 function SectionTitle({ eyebrow, title, text }: { eyebrow: string; title: string; text?: string }) {
   return <div className="section-title"><span>{eyebrow}</span><h2>{title}</h2>{text && <p>{text}</p>}</div>;
 }
@@ -593,8 +610,8 @@ export default function Home() {
     <div className="app-shell">
       <aside className={menuOpen ? "sidebar open" : "sidebar"}>
         <a className="brand" href="#top" onClick={() => setView("overview")}>
-          <span className="brand-mark">ا</span>
-          <span><strong>اشا</strong><small>دستیار تصمیم زر و سیم</small></span>
+          <span className="brand-mark"><AshaLogo /></span>
+          <span><strong>اشا <b>ASHA</b></strong><small>دستیار تصمیم زر و سیم</small></span>
         </a>
         <nav aria-label="بخش‌های سامانه">
           {navItems.map((item) => <button key={item.id} className={view === item.id ? "active" : ""} onClick={() => { setView(item.id); setMenuOpen(false); }}><i>{item.icon}</i>{item.label}</button>)}

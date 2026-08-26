@@ -1,0 +1,561 @@
+/* Asha pastel violet + matte white palette. Loaded after the structural Boho layer. */
+:root {
+  --bg: #f3f0f6;
+  --surface: #fcfbfd;
+  --surface-2: #eee9f3;
+  --ink: #352d40;
+  --muted: #706979;
+  --green: #684b84;
+  --green-2: #80619d;
+  --gold: #9d7ac1;
+  --gold-soft: #eadff4;
+  --line: #ded6e7;
+  --danger: #a6536d;
+  --blue: #68759d;
+  --shadow: 0 20px 52px rgba(75, 52, 96, 0.11);
+  --asha-violet-950: #2f253b;
+  --asha-violet-900: #49355d;
+  --asha-violet-800: #5c4077;
+  --asha-violet-700: #6e4e8d;
+  --asha-violet-600: #8061a3;
+  --asha-violet-500: #9b79bf;
+  --asha-violet-300: #cbb5e1;
+  --asha-violet-200: #ded0ec;
+  --asha-violet-100: #ede5f5;
+  --asha-violet-50: #f7f3fa;
+  --asha-matte: #fcfbfd;
+  --asha-success: #477765;
+  --asha-warning: #936b39;
+}
+
+body {
+  background-color: var(--bg);
+  background-image:
+    radial-gradient(circle at 13% 9%, rgba(190, 164, 217, 0.24), transparent 27rem),
+    radial-gradient(circle at 88% 78%, rgba(220, 206, 234, 0.3), transparent 31rem),
+    linear-gradient(rgba(255, 255, 255, 0.42) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.36) 1px, transparent 1px);
+  color: var(--ink);
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline-color: rgba(128, 97, 163, 0.55);
+}
+
+.sidebar {
+  background:
+    radial-gradient(circle at 15% 8%, rgba(241, 231, 250, 0.15), transparent 13rem),
+    linear-gradient(165deg, #795a98 0%, #63447f 52%, #49345e 100%);
+  color: #fff;
+  border-left-color: rgba(255, 255, 255, 0.14);
+}
+
+.sidebar::before,
+.sidebar::after {
+  border-color: rgba(235, 218, 250, 0.18);
+}
+
+.brand {
+  border-bottom-color: rgba(255, 255, 255, 0.17);
+}
+
+.brand-mark {
+  width: 50px;
+  height: 50px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 18px 8px 18px 8px;
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.18), rgba(210, 187, 233, 0.16));
+  box-shadow: 0 12px 30px rgba(39, 25, 52, 0.24);
+}
+
+.asha-logo {
+  display: block;
+  width: 43px;
+  height: 43px;
+}
+
+.asha-logo-orbit,
+.asha-logo-core,
+.asha-logo-spark {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.asha-logo-orbit {
+  stroke: url(#asha-mark-gradient);
+  stroke-width: 2.1;
+}
+
+.asha-logo-core {
+  stroke: #fff;
+  stroke-width: 2.8;
+}
+
+.asha-logo-spark {
+  stroke: #eadcf8;
+  stroke-width: 1.8;
+}
+
+.asha-logo-dot {
+  fill: #f7f2ff;
+}
+
+.brand strong b {
+  margin-inline-start: 4px;
+  color: rgba(255, 255, 255, 0.62);
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+}
+
+.brand small,
+.sidebar nav button,
+.sidebar-status small {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.sidebar nav button:hover,
+.sidebar nav button.active {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.sidebar nav button.active {
+  box-shadow: inset -3px 0 #d7c0ec, 0 9px 24px rgba(42, 27, 55, 0.15);
+}
+
+.sidebar-status {
+  border-color: rgba(232, 215, 247, 0.24);
+  background: rgba(55, 36, 72, 0.4);
+}
+
+.sidebar-status > i {
+  background: #bfe0d4;
+  box-shadow: 0 0 0 5px rgba(191, 224, 212, 0.14);
+}
+
+.sidebar-version {
+  color: rgba(255, 255, 255, 0.48);
+}
+
+.topbar {
+  background: rgba(249, 247, 251, 0.88);
+  border-bottom-color: rgba(111, 78, 141, 0.15);
+  box-shadow: 0 8px 28px rgba(73, 52, 94, 0.05);
+}
+
+.overview-toolbar,
+.conversion-strip {
+  border-color: rgba(111, 78, 141, 0.18);
+  background: rgba(252, 251, 253, 0.92);
+  box-shadow: 0 10px 28px rgba(73, 52, 94, 0.06);
+}
+
+.overview-toolbar > div:first-child > span {
+  color: var(--asha-violet-700);
+}
+
+.offline-state {
+  border-color: #ded0eb;
+  background: rgba(247, 242, 251, 0.9);
+}
+
+.offline-state.online {
+  border-color: #c9ddd5;
+  background: #edf5f2;
+}
+
+.offline-state.online > i {
+  background: var(--asha-success);
+  box-shadow: 0 0 0 4px rgba(71, 119, 101, 0.13);
+}
+
+.primary-button {
+  background: var(--asha-violet-700);
+  color: #fff;
+  box-shadow: 0 9px 22px rgba(89, 61, 116, 0.2);
+}
+
+.primary-button:hover {
+  background: var(--asha-violet-800);
+  box-shadow: 0 12px 28px rgba(89, 61, 116, 0.26);
+}
+
+.ghost-button {
+  border-color: #bda8d2;
+  background: rgba(252, 251, 253, 0.62);
+  color: var(--asha-violet-800);
+}
+
+.text-button,
+.source-action,
+.live-value,
+footer b {
+  color: var(--asha-violet-700);
+}
+
+.hero-card {
+  border-color: rgba(255, 255, 255, 0.26);
+  background:
+    radial-gradient(circle at 78% 20%, rgba(226, 207, 243, 0.18), transparent 16rem),
+    linear-gradient(135deg, #8060a0 0%, #63467e 58%, #4c365f 100%);
+  box-shadow: 0 28px 65px rgba(69, 45, 91, 0.22);
+}
+
+.hero-card h2 em,
+.hero-card .eyebrow,
+.readiness-ring strong,
+.scenario-result strong {
+  color: #e4d3f5;
+}
+
+.hero-card p {
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.readiness-ring::before {
+  border-top-color: #d8c2ed;
+  border-right-color: rgba(216, 194, 237, 0.4);
+}
+
+.metric-grid article,
+.panel,
+.source-grid article,
+.info-grid article,
+.risk-grid article,
+.agent-grid article,
+.data-cards article,
+.modal,
+.notification-panel {
+  border-color: rgba(117, 87, 145, 0.18);
+  background: rgba(252, 251, 253, 0.94);
+  box-shadow: 0 14px 36px rgba(75, 52, 96, 0.075);
+}
+
+.metric-grid article:hover {
+  box-shadow: 0 18px 42px rgba(75, 52, 96, 0.13);
+}
+
+.metric-icon.gold,
+.instrument > i.gold,
+.asset-dot {
+  background: #ede1f6;
+  color: #72518f;
+}
+
+.metric-icon.green,
+.instrument > i.silver,
+.asset-card-head > span,
+.analysis-category-title > span {
+  background: #e6ddf0;
+  color: #694d83;
+}
+
+.metric-icon.blue,
+.instrument > i.blue,
+.metric-icon.neutral {
+  background: #e8e6f1;
+  color: #59658a;
+}
+
+.empty-lock,
+.opportunity-empty {
+  border-color: rgba(113, 83, 142, 0.24);
+  background: rgba(247, 244, 250, 0.76);
+}
+
+.progress,
+.allocation-track {
+  background: #e8e1ee;
+}
+
+.progress i,
+.allocation-track i {
+  background: linear-gradient(90deg, #a986ca, #755593);
+}
+
+.portfolio-summary > div,
+.home-portfolio-summary > span,
+.market-head,
+.table-row.table-head,
+.bubble-head,
+.scenario-impact-row.head {
+  background: #eee9f3;
+  color: #62596e;
+}
+
+.table-row,
+.market-row,
+.mini-holdings > div,
+.audit-timeline > div,
+.asset-card-head,
+.asset-facts > div,
+.asset-signal-list > div,
+.bubble-row,
+.scenario-impact-row {
+  border-color: rgba(106, 78, 133, 0.13);
+}
+
+.table-row:not(.table-head):hover {
+  background: #f5f1f8;
+}
+
+.score,
+.status-chip.safe,
+.source-status.connected,
+.source-status.fallback,
+.pending,
+.fresh {
+  background: #e7def1;
+  color: #604779;
+}
+
+.status-chip.warning,
+.source-status.needs_key,
+.source-status.needs_unit,
+.offline-state:not(.online),
+.modal-note {
+  background: #f3eaf7;
+  color: #725080;
+  border-color: #ddc9e8;
+}
+
+.guardrail,
+.method-note,
+.decision-framework-note {
+  border-color: var(--asha-violet-500);
+  background: #f0e9f6;
+  color: var(--muted);
+}
+
+.guardrail > span {
+  border-color: #a98bc6;
+  color: #6c4f85;
+}
+
+.scenario-result {
+  background: linear-gradient(145deg, #684b84, #4c375f);
+}
+
+.modal input,
+.modal select,
+.scenario-card input {
+  border-color: #d9cee4;
+  background: var(--asha-matte);
+}
+
+.modal input:focus,
+.modal select:focus,
+.scenario-card input:focus {
+  border-color: var(--asha-violet-500);
+  box-shadow: 0 0 0 3px rgba(155, 121, 191, 0.15);
+}
+
+.notification-trigger {
+  border-color: #cbb8dd;
+  background: #f7f3fa;
+  color: #5e4377;
+}
+
+.notification-trigger:hover {
+  background: #eee5f5;
+}
+
+.notification-trigger::before {
+  color: var(--asha-violet-600);
+}
+
+.notification-trigger b {
+  background: #755593;
+  color: #fff;
+}
+
+.notification-backdrop,
+.modal-backdrop {
+  background: rgba(35, 25, 45, 0.56);
+}
+
+.notification-toolbar,
+.notification-policy {
+  background: #f2edf6;
+  border-color: #ded3e7;
+}
+
+.notification-filters button,
+.horizon-toggle button,
+.sort-button,
+.decision-mode-tabs button,
+.scenario-preset-grid button,
+.analysis-tabs button,
+.asset-context-list button {
+  border-color: rgba(105, 77, 132, 0.17);
+  background: #f7f4f9;
+  color: #655c70;
+}
+
+.notification-filters button.active,
+.horizon-toggle button.active,
+.sort-button.active,
+.decision-mode-tabs button.active,
+.scenario-preset-grid button.active,
+.analysis-tabs button.active,
+.asset-context-list button.active,
+.asset-open-button {
+  border-color: rgba(105, 77, 132, 0.4);
+  background: #e8dff1;
+  color: #59416f;
+}
+
+.asset-open-button:hover {
+  background: #ddd0e9;
+}
+
+.notification-item,
+.decision-grid article,
+.analysis-summary-grid article,
+.analysis-category-panel,
+.scenario-output-grid article,
+.asset-context-bar {
+  border-color: rgba(105, 77, 132, 0.14);
+  background: rgba(250, 248, 252, 0.9);
+}
+
+.notification-item:hover,
+.notification-item.unread,
+.decision-grid article.focused {
+  border-color: rgba(105, 77, 132, 0.34);
+  background: #eee7f4;
+  box-shadow: 0 8px 20px rgba(78, 54, 100, 0.08);
+}
+
+.notification-symbol.data,
+.audit-timeline > div > span {
+  background: #e7ddf1;
+  color: #694c83;
+}
+
+.empty-lock > span,
+.opportunity-empty span {
+  color: var(--asha-violet-500);
+}
+
+.notification-symbol.opportunity,
+.opportunity-list article,
+.evidence-badge {
+  background: #efe3f5;
+  color: #744b82;
+  border-color: rgba(126, 82, 142, 0.18);
+}
+
+.conversion-strip,
+.decision-gate,
+.asset-decision-state,
+.analysis-category-body article,
+.scenario-driver-grid label {
+  background: #f0ebf4;
+  border-color: rgba(104, 75, 132, 0.16);
+}
+
+.decision-gate > span {
+  border-color: #b79dcd;
+  background: #e7dcf0;
+  color: #644a7c;
+}
+
+.best-decision-card {
+  border-color: rgba(105, 77, 132, 0.18);
+  background: linear-gradient(135deg, rgba(237, 229, 245, 0.95), rgba(252, 250, 253, 0.95));
+}
+
+.decision-gates .passed,
+.mini-gates .passed {
+  background: #e3efe9;
+  color: #436c5d;
+}
+
+.decision-gates .blocked,
+.mini-gates .blocked {
+  background: #f3e5ec;
+  color: #92536a;
+}
+
+.method-version,
+.asset-card-head > b {
+  background: #e9e1f1;
+  color: #604877;
+}
+
+.scenario-driver-grid input,
+.scenario-card input[type="range"] {
+  accent-color: var(--asha-violet-700);
+}
+
+.section-title > span,
+.eyebrow,
+.info-grid article > span,
+.risk-grid article > span,
+.agent-grid article > span {
+  color: var(--asha-violet-600);
+}
+
+.section-title h2,
+.analysis-category-title h3,
+.asset-card-head h3,
+.notification-head h2 {
+  color: var(--ink);
+}
+
+.decision-grid article > strong,
+.best-decision-card > div:first-child strong,
+.decision-brief-status strong,
+.asset-context-bar strong,
+.asset-decision-state strong,
+.analysis-summary-grid strong,
+.analysis-brief b,
+.scenario-output-grid strong,
+.method-note b,
+.decision-framework-note b {
+  color: #513b68;
+}
+
+.section-title p,
+.decision-grid article p,
+.decision-grid article > small,
+.best-decision-card > div:first-child p,
+.decision-brief-status p,
+.asset-facts dt,
+.asset-signal-list span,
+.asset-decision-state p,
+.analysis-lead,
+.analysis-brief p,
+.scenario-driver-grid label span small,
+.scenario-impact-row,
+.history-pending,
+.field-help {
+  color: var(--muted);
+}
+
+.source-status.unavailable,
+.feed-error {
+  background: #f5e7ec;
+  color: #8d465e;
+  border-color: #dcaebe;
+}
+
+@media (prefers-contrast: more) {
+  :root {
+    --ink: #241d2c;
+    --muted: #554d5f;
+    --line: #aa99ba;
+  }
+
+  .primary-button,
+  .sidebar {
+    background-color: var(--asha-violet-900);
+  }
+}
