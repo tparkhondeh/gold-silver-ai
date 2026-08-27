@@ -20,6 +20,7 @@ import {
 } from "./decision-support";
 import { navItems, type View } from "./workspace-navigation";
 import { OperatorCsvImport } from "./operator-csv-import";
+import { assetCategories, assetOptions, getAssetOptionsForCategory } from "./asset-catalog";
 
 type Holding = {
   id: string;
@@ -104,13 +105,6 @@ const instruments: Instrument[] = [
   { code: "XAU_USD", name: "اونس جهانی طلا", market: "بازار جهانی", unit: "دلار / اونس", icon: "Au", tone: "gold", sourceState: "planned" },
   { code: "XAG_USD", name: "اونس جهانی نقره", market: "بازار جهانی", unit: "دلار / اونس", icon: "Ag", tone: "silver", sourceState: "planned" },
   { code: "COPPER_USD", name: "مس جهانی", market: "بازار جهانی", unit: "دلار", icon: "Cu", tone: "copper", sourceState: "planned" },
-];
-
-const assetOptions = [
-  "طلای ۱۸ عیار", "طلای ۲۴ عیار", "مثقال طلا", "سکه امامی", "سکه بهار آزادی", "نیم سکه", "ربع سکه", "سکه یک گرمی", "شمش نقره ۹۹۹",
-  "گواهی سپرده کالایی", "ارز خارجی", "وجه نقد و سپرده بانکی", "سهام",
-  "صندوق سرمایه‌گذاری و ETF", "رمزارز", "ملک و زمین", "کسب‌وکار خصوصی",
-  "خودرو و تجهیزات", "طلب و وام پرداختی", "دارایی دیجیتال و مالکیت فکری",
 ];
 
 const assetUnitOptions: Record<string, string[]> = {
@@ -305,6 +299,7 @@ export default function Home() {
   const [portfolioMode, setPortfolioMode] = useState<"personal" | "demo">("personal");
   const [holdingsLoaded, setHoldingsLoaded] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
+  const [selectedAssetCategory, setSelectedAssetCategory] = useState("");
   const [selectedAssetName, setSelectedAssetName] = useState("");
   const [analysisCategory, setAnalysisCategory] = useState<AnalysisCategory>("summary");
   const [analysisHorizon, setAnalysisHorizon] = useState<AnalysisHorizon>("short");
@@ -506,6 +501,7 @@ export default function Home() {
   const connectedSourceCount = feed?.sources.filter((source) => source.status === "connected" || source.status === "fallback" || source.status === "snapshot").length ?? 0;
   const pricingReady = portfolioMode === "demo" || liveQuoteCount > 0;
   const readinessScore = 1 + (holdings.length ? 1 : 0) + (pricingReady ? 1 : 0);
+  const filteredAssetOptions = getAssetOptionsForCategory(selectedAssetCategory);
   const availableUnits = selectedAssetName ? (assetUnitOptions[selectedAssetName] ?? ["واحد"]) : [];
   const unreadNotificationCount = notifications.filter((notification) => !notification.read).length;
   const visibleNotifications = notificationFilter === "all" ? notifications : notifications.filter((notification) => notification.kind === notificationFilter);
@@ -570,6 +566,7 @@ export default function Home() {
     }]);
     setSelectedHoldingId(holdingId);
     event.currentTarget.reset();
+    setSelectedAssetCategory("");
     setSelectedAssetName("");
     setModalOpen(false);
   }
@@ -765,7 +762,10 @@ export default function Home() {
           <div className="modal-head"><div><span>MY PORTFOLIO</span><h2 id="asset-dialog-title">ثبت دارایی من</h2></div><button onClick={() => setModalOpen(false)} aria-label="بستن">×</button></div>
           <p className="modal-note">این اطلاعات فقط در نشست فعلی مرورگر ذخیره می‌شود و به هیچ سرویس بیرونی ارسال نمی‌شود.</p>
           <form onSubmit={addHolding}>
-            <label>نوع دارایی<select name="name" required value={selectedAssetName} onChange={(event) => setSelectedAssetName(event.target.value)}><option value="" disabled>انتخاب کنید</option>{assetOptions.map((item) => <option key={item}>{item}</option>)}</select></label>
+            <div className="form-row">
+              <label>دستهٔ دارایی<select required value={selectedAssetCategory} onChange={(event) => { setSelectedAssetCategory(event.target.value); setSelectedAssetName(""); }}><option value="" disabled>ابتدا دسته را انتخاب کنید</option>{assetCategories.map((category) => <option key={category.id} value={category.id}>{category.label}</option>)}</select></label>
+              <label>نوع دارایی<select name="name" required disabled={!selectedAssetCategory} value={selectedAssetName} onChange={(event) => setSelectedAssetName(event.target.value)}><option value="" disabled>{selectedAssetCategory ? "نوع دارایی را انتخاب کنید" : "در انتظار انتخاب دسته"}</option>{filteredAssetOptions.map((item) => <option key={item}>{item}</option>)}</select></label>
+            </div>
             <div className="form-row">
               <label>مقدار<input name="amount" type="number" min="0.000001" step="any" required placeholder="مثلاً ۲.۵"/></label>
               <label>واحد<select key={selectedAssetName} name="unit" required disabled={!selectedAssetName} defaultValue={availableUnits[0] ?? ""}>{availableUnits.length === 0 && <option value="">ابتدا دارایی را انتخاب کنید</option>}{availableUnits.map((unit) => <option key={unit}>{unit}</option>)}</select></label>

@@ -72,3 +72,5 @@ requirements. Full details: `PHASE_0_AUDIT.md` § 15.
 - Loopback/same-origin CSV operator preview in the Persian Data Trust workspace,
   including accepted/duplicate/quarantine counts and an explicit persistence lock.
 - Asha pastel-violet/matte-white visual token layer plus custom SVG mark and favicon.
+- Category-first asset registration that narrows the asset-type selector while
+  preserving all twenty supported portfolio asset types and their unit mappings.

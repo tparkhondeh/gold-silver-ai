@@ -10,7 +10,8 @@ _Last updated in the product calendar: ۱۴۰۵/۰۶/۰۵ (Phase 1 active)_
 - **Branch:** Phase 1 work is isolated on `codex/phase-1-data-ui`; `main` remains
   untouched pending a separate owner-approved merge.
 - **Application:** a Persian RTL personal-wealth dashboard exists in `apps/web` with
-  portfolio session entry with asset-specific units and purchase dates, market watch,
+  category-first portfolio session entry, filtered asset types, asset-specific units
+  and purchase dates, market watch,
   deterministic per-holding and total profit/loss calculation, market watch,
   sortable holdings and market tables (numeric columns default descending), a compact
   asset workflow split into List, Asset Center, Analysis, and Decisions, risk/data readiness surfaces, and
