@@ -1281,6 +1281,128 @@ footer b {
   min-width: 0;
 }
 
+.home-asset-groups {
+  display: grid;
+  gap: 7px;
+  margin-top: 8px;
+}
+
+.home-asset-group {
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface);
+}
+
+.home-asset-group.expanded {
+  border-color: rgba(117, 85, 147, 0.34);
+  box-shadow: 0 8px 22px rgba(88, 65, 110, 0.08);
+}
+
+.home-asset-group-trigger {
+  width: 100%;
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  padding: 10px 11px;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 10px;
+  text-align: right;
+}
+
+.home-asset-group-trigger:hover {
+  background: rgba(132, 98, 165, 0.06);
+}
+
+.home-asset-group-trigger span strong,
+.home-asset-group-trigger span small {
+  display: block;
+}
+
+.home-asset-group-trigger span strong {
+  font-size: 10px;
+}
+
+.home-asset-group-trigger span small {
+  margin-top: 3px;
+  color: var(--muted);
+  font-size: 8px;
+}
+
+.home-asset-group-trigger > b {
+  max-width: 210px;
+  font-size: 9px;
+  line-height: 1.55;
+  text-align: left;
+}
+
+.home-asset-group-trigger > i {
+  color: var(--muted);
+  font-size: 15px;
+  font-style: normal;
+  transition: transform 160ms ease;
+}
+
+.home-asset-group.expanded .home-asset-group-trigger > i {
+  transform: rotate(180deg);
+}
+
+.home-asset-children {
+  border-top: 1px solid var(--line);
+  padding: 7px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  background: rgba(132, 98, 165, 0.035);
+}
+
+.home-asset-children > button {
+  min-width: 0;
+  border: 1px solid rgba(106, 78, 133, 0.12);
+  border-radius: 9px;
+  background: var(--surface);
+  color: var(--ink);
+  padding: 9px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 8px;
+  text-align: right;
+}
+
+.home-asset-children > button:hover {
+  border-color: rgba(117, 85, 147, 0.36);
+  transform: translateY(-1px);
+}
+
+.home-asset-children strong,
+.home-asset-children small {
+  display: block;
+}
+
+.home-asset-children strong {
+  font-size: 9px;
+}
+
+.home-asset-children small {
+  margin-top: 3px;
+  color: var(--muted);
+  font-size: 7px;
+}
+
+.home-asset-children b {
+  font-size: 8px;
+  line-height: 1.55;
+  text-align: left;
+}
+
+.home-asset-children i {
+  color: #755593;
+  font-style: normal;
+}
+
 .opportunity-radar {
   display: flex;
   flex-direction: column;
@@ -2349,6 +2471,7 @@ footer b {
   }
 
   .home-holdings,
+  .home-asset-children,
   .decision-mode-tabs,
   .decision-gates,
   .home-portfolio-summary {

@@ -74,3 +74,5 @@ requirements. Full details: `PHASE_0_AUDIT.md` § 15.
 - Asha pastel-violet/matte-white visual token layer plus custom SVG mark and favicon.
 - Category-first asset registration that narrows the asset-type selector while
   preserving all twenty supported portfolio asset types and their unit mappings.
+- Expandable asset-category groups on the overview, with per-category valuation
+  state and direct access to each holding's focused workspace.

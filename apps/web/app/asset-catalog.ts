@@ -42,3 +42,8 @@ export const assetOptions = assetCategories.flatMap((category) => category.asset
 export function getAssetOptionsForCategory(categoryId: string) {
   return assetCategories.find((category) => category.id === categoryId)?.assets ?? [];
 }
+
+export function getAssetCategoryForAsset(assetName: string) {
+  return assetCategories.find((category) => category.assets.includes(assetName))
+    ?? { id: "other", label: "سایر دارایی‌ها", assets: [] };
+}

@@ -20,7 +20,7 @@ import {
 } from "./decision-support";
 import { navItems, type View } from "./workspace-navigation";
 import { OperatorCsvImport } from "./operator-csv-import";
-import { assetCategories, assetOptions, getAssetOptionsForCategory } from "./asset-catalog";
+import { assetCategories, assetOptions, getAssetCategoryForAsset, getAssetOptionsForCategory } from "./asset-catalog";
 
 type Holding = {
   id: string;
@@ -314,6 +314,7 @@ export default function Home() {
   const [feedLoading, setFeedLoading] = useState(true);
   const [feedError, setFeedError] = useState<string | null>(null);
   const [notificationOpen, setNotificationOpen] = useState(false);
+  const [expandedHomeCategoryId, setExpandedHomeCategoryId] = useState<string | null>(null);
   const [notificationFilter, setNotificationFilter] = useState<NotificationFilter>("all");
   const [notifications, setNotifications] = useState<MarketNotification[]>([]);
   const previousQuotesRef = useRef<Map<string, LiveQuote>>(new Map());
@@ -513,6 +514,17 @@ export default function Home() {
   const selectedHoldingProfit = selectedHolding && selectedHoldingValue !== null && selectedHolding.costToman !== null ? selectedHoldingValue - selectedHolding.costToman : null;
   const selectedHoldingProfitPercent = selectedHoldingProfit !== null && selectedHolding?.costToman && selectedHolding.costToman > 0 ? (selectedHoldingProfit / selectedHolding.costToman) * 100 : null;
   const selectedHoldingBubble = selectedHolding ? (bubbleRows.find((row) => row.holding.id === selectedHolding.id)?.current ?? null) : null;
+  const homeAssetGroups = Array.from(holdings.reduce((groups, holding) => {
+    const category = getAssetCategoryForAsset(holding.name);
+    const existing = groups.get(category.id);
+    if (existing) existing.holdings.push(holding);
+    else groups.set(category.id, { id: category.id, label: category.label, holdings: [holding] });
+    return groups;
+  }, new Map<string, { id: string; label: string; holdings: Holding[] }>()).values()).map((group) => {
+    const values = group.holdings.map((holding) => holdingValues.get(holding.id) ?? null);
+    const fullyValued = values.every((value) => value !== null);
+    return { ...group, value: fullyValued ? values.reduce<number>((sum, value) => sum + (value ?? 0), 0) : null };
+  });
   const focusedDecisionAssets = selectedHolding
     ? [...decisionAssets.filter((asset) => asset.id === selectedHolding.id), ...decisionAssets.filter((asset) => asset.id !== selectedHolding.id)]
     : decisionAssets;
@@ -640,7 +652,7 @@ export default function Home() {
 
             <section className="home-primary-grid">
               <article className="panel portfolio-panel home-portfolio"><div className="panel-head"><SectionTitle eyebrow="MY PORTFOLIO" title="سبد دارایی‌های من" text="نمای اصلی روی دارایی‌های خودت متمرکز است؛ دیده‌بان بازار در تب مستقل قرار دارد."/><button className="text-button" onClick={() => setView("portfolio")}>مدیریت کامل ←</button></div>
-                {holdings.length === 0 ? <EmptyLock title="سبد شما هنوز خالی است" text="دارایی‌های خودت را ثبت کن یا برای بررسی رابط، سبد نمایشی را فعال کن."/> : <><div className="home-portfolio-summary"><span><small>ارزش روز</small><b>{portfolioMarketValue === null ? "پوشش ناقص" : formatPortfolioMoney(portfolioMarketValue)}</b></span><span><small>سود و زیان</small><b className={portfolioProfitLoss === null ? "muted-value" : portfolioProfitLoss < 0 ? "negative" : "positive"}>{portfolioProfitLoss === null ? "محاسبه نشده" : formatPortfolioMoney(portfolioProfitLoss)}</b></span></div><div className="mini-holdings home-holdings">{sortedHoldings.slice(0, 6).map((item) => { const currentValue = holdingValues.get(item.id); return <div key={item.id}><span className="asset-dot">◈</span><span><strong>{item.name}</strong><small>{item.amount.toLocaleString("fa-IR")} {item.unit} · {getAssetClass(item.name).label}</small></span><b>{currentValue === null || currentValue === undefined ? "بدون قیمت تازه" : formatPortfolioMoney(currentValue)}</b></div>; })}</div></>}
+                {holdings.length === 0 ? <EmptyLock title="سبد شما هنوز خالی است" text="دارایی‌های خودت را ثبت کن یا برای بررسی رابط، سبد نمایشی را فعال کن."/> : <><div className="home-portfolio-summary"><span><small>ارزش روز</small><b>{portfolioMarketValue === null ? "پوشش ناقص" : formatPortfolioMoney(portfolioMarketValue)}</b></span><span><small>سود و زیان</small><b className={portfolioProfitLoss === null ? "muted-value" : portfolioProfitLoss < 0 ? "negative" : "positive"}>{portfolioProfitLoss === null ? "محاسبه نشده" : formatPortfolioMoney(portfolioProfitLoss)}</b></span></div><div className="home-asset-groups">{homeAssetGroups.map((group) => { const expanded = expandedHomeCategoryId === group.id; const panelId = `home-assets-${group.id}`; return <article className={`home-asset-group${expanded ? " expanded" : ""}`} key={group.id}><button type="button" className="home-asset-group-trigger" aria-expanded={expanded} aria-controls={panelId} onClick={() => setExpandedHomeCategoryId(expanded ? null : group.id)}><span className="asset-dot">◈</span><span><strong>{group.label}</strong><small>{group.holdings.length.toLocaleString("fa-IR")} زیرشاخه در سبد</small></span><b>{group.value === null ? "پوشش قیمت ناقص" : formatPortfolioMoney(group.value)}</b><i aria-hidden="true">⌄</i></button>{expanded && <div className="home-asset-children" id={panelId} role="region" aria-label={`زیرشاخه‌های ${group.label}`}>{group.holdings.map((item) => { const currentValue = holdingValues.get(item.id); return <button type="button" key={item.id} onClick={() => openAssetWorkspace(item.id, "asset-center")}><span><strong>{item.name}</strong><small>{item.amount.toLocaleString("fa-IR")} {item.unit}</small></span><b>{currentValue === null || currentValue === undefined ? "بدون قیمت تازه" : formatPortfolioMoney(currentValue)}</b><i aria-hidden="true">←</i></button>; })}</div>}</article>; })}</div></>}
               </article>
               <aside className="panel opportunity-radar"><div className="panel-head"><SectionTitle eyebrow="HIGH-CONVICTION WATCH" title="فرصت‌های خیلی جذاب" text="فقط فرصت‌هایی که تمام دروازه‌های داده و روش را عبور کنند؛ موارد آزمایشی با برچسب جدا نمایش داده می‌شوند."/><span className={excitingOpportunities.length ? "status-chip warning" : "status-chip safe"}>{excitingOpportunities.length.toLocaleString("fa-IR")} مورد</span></div>
                 {excitingOpportunities.length ? <div className="opportunity-list">{excitingOpportunities.map((opportunity) => <article key={opportunity.id}><div><span>◇</span><b>{opportunity.demo ? "نمایشی" : "تأییدشده"}</b></div><strong>{opportunity.title}</strong><p>{opportunity.message}</p><time>{formatNotificationTime(opportunity.createdAt)}</time></article>)}</div> : <div className="opportunity-empty"><span>◇</span><strong>فرصت خیلی جذابِ تأییدشده‌ای وجود ندارد</strong><p>وقتی دادهٔ تازه، روش مصوب و اعتبارسنجی تاریخی هم‌زمان آماده باشند، موارد با اهمیت بالا اینجا ظاهر می‌شوند.</p></div>}

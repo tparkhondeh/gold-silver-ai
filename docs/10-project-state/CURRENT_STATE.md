@@ -37,7 +37,9 @@ _Last updated in the product calendar: ۱۴۰۵/۰۶/۰۵ (Phase 1 active)_
   instead of a fabricated conversion.
 - **Dashboard priority:** the first page now prioritizes the owner's portfolio and
   a high-importance opportunity surface. Market watch is removed from the overview
-  and remains available through its own tab. Opportunity absence is explicit; only
+  and remains available through its own tab. Portfolio positions are grouped into
+  compact, keyboard-accessible asset-category accordions; opening a category reveals
+  its holdings and provides a direct route to each Asset Center. Opportunity absence is explicit; only
   already-labelled demo opportunity notifications can appear as synthetic examples.
 - **Information architecture:** selecting a holding carries its context into a
   three-column Asset Center (information, analysis readiness, decision readiness),
