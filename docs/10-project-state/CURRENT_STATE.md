@@ -2,7 +2,7 @@
 
 **Source of truth for:** where the project stands right now.
 
-_Last updated in the product calendar: ۱۴۰۵/۰۶/۰۴ (Phase 1 active)_
+_Last updated in the product calendar: ۱۴۰۵/۰۶/۰۵ (Phase 1 active)_
 
 ## Snapshot
 
@@ -26,8 +26,8 @@ _Last updated in the product calendar: ۱۴۰۵/۰۶/۰۴ (Phase 1 active)_
   In demo mode, scenario
   presets, sample analytical states, portfolio weights, concentration, return display,
   and an adjustable stress test are interactive; each remains explicitly non-operational
-  and synthetic. The UI uses a warm boho
-  system of cream, pastel olive, natural gold, organic radii, and accessible contrast.
+  and synthetic. The UI uses Asha's matte-white and pastel-violet token layer,
+  organic radii, accessible contrast, a custom inline SVG mark, and a matching favicon.
   The oversized overview slogan has been replaced by a compact command bar; card,
   table, panel, and guardrail spacing is tightened to reduce scrolling without hiding
   provenance or safety state. Every monetary UI output is paired as IRR and USD. The
@@ -85,8 +85,11 @@ _Last updated in the product calendar: ۱۴۰۵/۰۶/۰۴ (Phase 1 active)_
   pass through deterministic registry/unit/decimal/UTC/point-in-time validation;
   invalid rows are retained in quarantine and repeated source events are idempotent.
   A PostgreSQL migration and parameterized transactional repository are implemented
-  without loading market values. Runtime database configuration and persistence
-  history are not connected yet.
+  without loading market values. The Data Trust tab now exposes a loopback-only,
+  same-origin CSV operator preview for the six instruments accepted in ADR 0001. It
+  reports accepted, duplicate, and quarantined rows without returning raw payloads;
+  commit remains fail-closed until PostgreSQL is connected. Runtime database
+  configuration and persistence history are not connected yet.
 
 ## Immediate Next Step
 

@@ -547,6 +547,260 @@ footer b {
   border-color: #dcaebe;
 }
 
+.operator-import {
+  display: grid;
+  gap: 14px;
+}
+
+.operator-import-head {
+  align-items: flex-start;
+}
+
+.operator-form {
+  display: grid;
+  gap: 9px;
+  border: 1px solid rgba(105, 77, 132, 0.14);
+  border-radius: 16px;
+  background: #f8f5fa;
+  padding: 14px;
+}
+
+.operator-form > label {
+  color: #594b66;
+  font-size: 9px;
+  font-weight: 800;
+}
+
+.operator-file-row {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-width: 0;
+}
+
+.operator-file-row input[type="file"] {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  clip-path: inset(50%);
+}
+
+.operator-file-button {
+  flex: 0 0 auto;
+  border: 1px solid #bda8d2;
+  border-radius: 13px 6px 13px 6px;
+  background: #fdfcff;
+  color: var(--asha-violet-800);
+  cursor: pointer;
+  padding: 9px 12px;
+  font-size: 9px;
+  font-weight: 800;
+}
+
+.operator-file-button:hover {
+  background: #ede5f5;
+}
+
+.operator-file-row:focus-within .operator-file-button {
+  outline: 3px solid rgba(128, 97, 163, 0.35);
+  outline-offset: 2px;
+}
+
+.operator-file-row > span {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--muted);
+  font-size: 8px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.operator-file-row .text-button {
+  margin-inline-start: auto;
+}
+
+.operator-form textarea {
+  width: 100%;
+  min-height: 150px;
+  resize: vertical;
+  border: 1px solid #d9cee4;
+  border-radius: 12px;
+  background: #fff;
+  color: #332b3e;
+  padding: 12px;
+  font-family: Consolas, "Courier New", monospace;
+  font-size: 9px;
+  line-height: 1.65;
+  outline: none;
+}
+
+.operator-form textarea:focus {
+  border-color: var(--asha-violet-500);
+  box-shadow: 0 0 0 3px rgba(155, 121, 191, 0.14);
+}
+
+.operator-form .field-help {
+  margin: 0;
+  font-size: 8px;
+  line-height: 1.7;
+}
+
+.operator-form .field-help b {
+  direction: ltr;
+  display: inline-block;
+  color: #59416f;
+  font-family: Consolas, monospace;
+}
+
+.operator-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.operator-actions button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+  transform: none;
+}
+
+.operator-feedback {
+  display: grid;
+  gap: 10px;
+}
+
+.operator-counts {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.operator-counts article {
+  border: 1px solid rgba(105, 77, 132, 0.14);
+  border-radius: 12px;
+  background: #f6f2f9;
+  padding: 11px;
+}
+
+.operator-counts small,
+.operator-counts strong {
+  display: block;
+}
+
+.operator-counts small {
+  color: var(--muted);
+  font-size: 7px;
+}
+
+.operator-counts strong {
+  margin-top: 4px;
+  color: #513b68;
+  font-size: 16px;
+}
+
+.operator-counts .accepted {
+  background: #eef5f2;
+}
+
+.operator-counts .accepted strong {
+  color: #477765;
+}
+
+.operator-counts .duplicate {
+  background: #f5f0e8;
+}
+
+.operator-counts .duplicate strong {
+  color: #8a683d;
+}
+
+.operator-counts .quarantined {
+  background: #f6e9ee;
+}
+
+.operator-counts .quarantined strong {
+  color: #98516a;
+}
+
+.operator-preview-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.operator-preview-grid > div {
+  border: 1px solid rgba(105, 77, 132, 0.13);
+  border-radius: 12px;
+  background: #fbf9fc;
+  padding: 12px;
+}
+
+.operator-preview-grid h3 {
+  margin: 0 0 8px;
+  color: #49375a;
+  font-size: 10px;
+}
+
+.operator-preview-grid p {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  margin: 0;
+  border-top: 1px dashed rgba(105, 77, 132, 0.15);
+  padding: 7px 0;
+  font-size: 8px;
+}
+
+.operator-preview-grid p b {
+  direction: ltr;
+  color: #513b68;
+}
+
+.operator-preview-grid p span,
+.operator-preview-grid small {
+  color: var(--muted);
+}
+
+.operator-batch-id {
+  margin: 0;
+  color: var(--muted);
+  font-size: 7px;
+}
+
+.operator-batch-id code {
+  direction: ltr;
+  display: inline-block;
+  color: #5d4773;
+}
+
+@media (max-width: 680px) {
+  .operator-import-head,
+  .operator-file-row,
+  .operator-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .operator-file-row .text-button {
+    align-self: flex-start;
+    margin-inline-start: 0;
+  }
+
+  .operator-counts,
+  .operator-preview-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .operator-counts,
+  .operator-preview-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 @media (prefers-contrast: more) {
   :root {
     --ink: #241d2c;

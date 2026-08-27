@@ -10,8 +10,9 @@
 2. **No CI or enforced branch protection is verified.** Lint, build, and tests run
    locally only.
 3. **PostgreSQL is designed but not connected.** Schema version 1, migration SQL,
-   repository code, and isolated tests exist; no runtime database contains market
-   or portfolio data.
+   repository code, and isolated tests exist, but PostgreSQL/Docker/`psql` are not
+   installed on the current development host. The protected CSV preview works; its
+   commit action returns an explicit unavailable state and stores nothing.
 4. **Iranian source redundancy is missing.** Navasan remains inactive without a key
    and declared IRR/toman contract; TGJU requires licensed access; the Rahavard
    snapshot is manual and expired.

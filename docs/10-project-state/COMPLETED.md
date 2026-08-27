@@ -69,3 +69,6 @@ requirements. Full details: `PHASE_0_AUDIT.md` § 15.
 - Data Foundation schema version 1 contracts, strict manual CSV ingestion,
   deterministic validation, idempotency, append-only quarantine design, PostgreSQL
   migration/repository, and isolated tests without loading market values.
+- Loopback/same-origin CSV operator preview in the Persian Data Trust workspace,
+  including accepted/duplicate/quarantine counts and an explicit persistence lock.
+- Asha pastel-violet/matte-white visual token layer plus custom SVG mark and favicon.

@@ -4,8 +4,12 @@
 
 ## Status
 
-No specific security tooling, hosting, or authentication mechanism has been chosen.
-`STATUS: TBD` — Tier B / Implementation decision
+`STATUS: PARTIAL`. No production authentication or hosting security mechanism has
+been chosen. The Phase 1 local CSV preview establishes a baseline operator boundary:
+loopback host allowlisting, exact same-origin validation, `Sec-Fetch-Site` checking,
+a non-simple intent header, JSON-only input, strict size limits, no-store responses,
+and omission of raw payloads from preview output. Persistence remains disabled.
+Broader security tooling is a Tier B / Implementation decision
 (`docs/00-governance/PROJECT_RULES.md` § 3): Claude Code selects baseline
 tooling following standard security practice when an implementation phase
 requires it, escalating to the owner only if it would involve handling real user
