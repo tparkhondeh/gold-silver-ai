@@ -29,6 +29,8 @@ _Last updated in the product calendar: ۱۴۰۵/۰۶/۰۵ (Phase 1 active)_
   and an adjustable stress test are interactive; each remains explicitly non-operational
   and synthetic. The UI uses Asha's matte-white and pastel-violet token layer,
   organic radii, accessible contrast, a custom inline SVG mark, and a matching favicon.
+  Persian typography now bundles the variable Vazirmatn font and enforces a compact
+  12px minimum supporting-text size with a consistent heading/body scale.
   The oversized overview slogan has been replaced by a compact command bar; card,
   table, panel, and guardrail spacing is tightened to reduce scrolling without hiding
   provenance or safety state. Every monetary UI output is paired as IRR and USD. The
@@ -91,8 +93,14 @@ _Last updated in the product calendar: ۱۴۰۵/۰۶/۰۵ (Phase 1 active)_
   without loading market values. The Data Trust tab now exposes a loopback-only,
   same-origin CSV operator preview for the six instruments accepted in ADR 0001. It
   reports accepted, duplicate, and quarantined rows without returning raw payloads;
-  commit remains fail-closed until PostgreSQL is connected. Runtime database
-  configuration and persistence history are not connected yet.
+  the revalidation-and-commit path is wired to the transactional repository behind
+  an explicit enable flag and loopback-only PostgreSQL URL. Runtime PostgreSQL,
+  applied migration, integration evidence, and persistence history are not connected
+  yet, so the current host still fails closed.
+- **Public review:** Asha is available through a public Sites URL for UI review. It
+  has no shared portfolio backend: each visitor's holdings remain in that browser
+  session and are not visible to the owner or other visitors. The public operator
+  import surface is explicitly disabled because its hostname is not loopback.
 
 ## Immediate Next Step
 

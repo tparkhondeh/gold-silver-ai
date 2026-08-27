@@ -60,3 +60,21 @@ Apply the migration to an isolated local PostgreSQL database, register only the
 ADR-approved contracts, add integration tests, then expose a protected preview-before-
 commit CSV operator path. Do not connect decision engines or enable real opportunity
 alerts yet.
+
+## ۱۴۰۵/۰۶/۰۵ Addendum — Guarded Commit Boundary
+
+- Added the official `pg` driver behind the existing repository interface; no
+  database credential or market value was added.
+- Commit now revalidates CSV, requires an action-matched non-simple header, an
+  explicit enable flag, and a loopback PostgreSQL URL, then uses one atomic
+  transaction. Initialization and transaction errors return sanitized failures.
+- Added deterministic tests for commit delegation, configuration rejection,
+  transaction commit, rollback, and connection release. The full suite passes 29
+  tests; typecheck and production build pass.
+- Updated the exposed build/RSC toolchain to patched compatible releases. Production
+  dependencies audit clean; four moderate development-only findings remain in
+  `drizzle-kit`'s legacy loader and are recorded in `KNOWN_ISSUES.md` rather than
+  forcing the registry's breaking downgrade.
+- The public deployment remains review-only and cannot reach the operator API or
+  collect shared portfolio data. Final lint also passes. Live PostgreSQL integration
+  and owner approval remain open gates for this unit.

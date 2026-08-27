@@ -959,3 +959,180 @@ footer b {
     background-color: var(--asha-violet-900);
   }
 }
+
+/* Persian-first typography scale. Keep the interface compact without sub-12px text. */
+:root {
+  --font-fa: "Vazirmatn Variable", Tahoma, "Segoe UI", Arial, sans-serif;
+  --text-xs: 0.75rem;
+  --text-sm: 0.8125rem;
+  --text-base: 0.875rem;
+  --text-md: 1rem;
+  --text-lg: 1.125rem;
+  --text-title: 1.375rem;
+}
+
+html {
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+}
+
+body,
+button,
+input,
+select,
+textarea {
+  font-family: var(--font-fa);
+  font-synthesis: none;
+}
+
+body {
+  font-size: var(--text-base);
+  font-weight: 430;
+  line-height: 1.65;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1,
+h2,
+h3,
+h4,
+.hero-card h2,
+.section-title h2,
+.modal-head h2,
+.scenario-result strong,
+.data-cards article strong {
+  font-family: var(--font-fa);
+  letter-spacing: -0.015em;
+}
+
+.top-title h1 {
+  font-size: 1.25rem;
+  line-height: 1.35;
+}
+
+.section-title h2,
+.modal-head h2 {
+  font-size: var(--text-title);
+  font-weight: 690;
+  line-height: 1.35;
+}
+
+.info-grid h3,
+.risk-grid h3,
+.agent-grid h3,
+.scenario-card h3,
+.locked-models h3,
+.audit-timeline h3,
+.operator-preview-grid h3 {
+  font-size: 0.9375rem !important;
+  line-height: 1.45;
+}
+
+p,
+button,
+label,
+input,
+select,
+textarea {
+  font-size: var(--text-sm) !important;
+}
+
+p {
+  line-height: 1.75 !important;
+}
+
+small,
+.sidebar-version,
+.notification-meta,
+.source-status,
+.evidence-badge,
+.operator-batch-id,
+.asset-card-head > b,
+.asset-decision-state small,
+.mini-gates span,
+.decision-gates span,
+.method-version b {
+  font-size: var(--text-xs) !important;
+  line-height: 1.55;
+}
+
+.eyebrow,
+.section-title > span,
+.score,
+.market-row,
+.table-row,
+.status-chip,
+.feed-error,
+.conversion-strip,
+.horizon-toggle button,
+.bubble-row,
+.analysis-tabs button,
+.analysis-lead,
+.analysis-brief b,
+.scenario-impact-row,
+.scenario-driver-grid output,
+.field-help,
+footer {
+  font-size: var(--text-sm) !important;
+  line-height: 1.55;
+}
+
+.offline-state strong,
+.readiness li b,
+.mini-holdings strong,
+.mini-holdings > div > b,
+.instrument strong,
+.source-grid strong,
+.holding-profit b,
+.allocation-list > div > div,
+.notification-trigger b,
+.notification-policy b,
+.decision-gate strong,
+.decision-grid article b,
+.decision-grid article > strong,
+.home-portfolio-summary b,
+.home-asset-group-trigger span strong,
+.home-asset-group-trigger > b,
+.home-asset-children strong,
+.home-asset-children b,
+.opportunity-list article > div b,
+.opportunity-list article > strong,
+.opportunity-empty strong,
+.decision-mode-tabs b,
+.asset-context-bar strong,
+.asset-signal-list strong,
+.asset-decision-state strong,
+.analysis-category-body strong,
+.method-version span,
+.scenario-preset-grid button strong,
+.scenario-driver-grid label span b,
+.scenario-output-grid strong {
+  font-size: var(--text-sm) !important;
+  line-height: 1.5;
+}
+
+.metric-grid strong,
+.portfolio-summary strong,
+.live-value {
+  font-size: var(--text-md) !important;
+  line-height: 1.4;
+}
+
+.primary-button,
+.ghost-button,
+.persian-date-trigger {
+  min-height: 44px;
+}
+
+.persian-calendar-head > button {
+  font-size: var(--text-lg) !important;
+}
+
+@media (max-width: 560px) {
+  body { font-size: var(--text-base); }
+  .top-title h1 { font-size: var(--text-lg); }
+  .section-title h2,
+  .modal-head h2 { font-size: 1.25rem; }
+}

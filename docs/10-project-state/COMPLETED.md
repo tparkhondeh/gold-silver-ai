@@ -78,3 +78,8 @@ requirements. Full details: `PHASE_0_AUDIT.md` § 15.
   state and direct access to each holding's focused workspace.
 - Optional Persian purchase-date calendar with month/year navigation, future-date
   blocking, today/clear actions, and no required typing.
+- Bundled Vazirmatn variable font and a consistent Persian typography scale with no
+  supporting UI text below 12px.
+- Guarded PostgreSQL runtime adapter and preview-to-commit operator path with exact
+  request-intent matching, loopback-only database configuration, atomic rollback,
+  and idempotent repository delegation. A live database remains pending.

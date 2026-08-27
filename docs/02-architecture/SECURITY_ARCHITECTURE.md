@@ -4,11 +4,14 @@
 
 ## Status
 
-`STATUS: PARTIAL`. No production authentication or hosting security mechanism has
-been chosen. The Phase 1 local CSV preview establishes a baseline operator boundary:
+`STATUS: PARTIAL`. A public review deployment exists, but it has no account system,
+server-side portfolio storage, or production authentication and must not collect
+sensitive holdings. The Phase 1 local CSV operator establishes a baseline boundary:
 loopback host allowlisting, exact same-origin validation, `Sec-Fetch-Site` checking,
-a non-simple intent header, JSON-only input, strict size limits, no-store responses,
-and omission of raw payloads from preview output. Persistence remains disabled.
+a non-simple action-matched intent header, JSON-only input, strict size limits,
+no-store responses, and omission of raw payloads from preview output. Persistence
+also requires an explicit enable flag and a loopback-only PostgreSQL URL. It remains
+disabled until the local database is migrated and integration-tested.
 Broader security tooling is a Tier B / Implementation decision
 (`docs/00-governance/PROJECT_RULES.md` § 3): Claude Code selects baseline
 tooling following standard security practice when an implementation phase

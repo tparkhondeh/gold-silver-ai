@@ -32,10 +32,11 @@ manifest without having gone through § Before Adding a Dependency above.
 ## Status
 
 `STATUS: ACTIVE`. Phase 1 uses npm with committed `package.json` and lockfile; those
-files are the dependency registry. The first Data Foundation slice added no new
-dependency: CSV parsing, hashing, validation, and repository boundaries use platform
-APIs plus the already-present Drizzle PostgreSQL schema package. Project license/IP
-posture remains owner-critical decision A18.
+files are the dependency registry. CSV parsing, hashing, and validation use platform
+APIs. The guarded local database runtime adds pinned `pg` (MIT), and the Persian UI
+bundles pinned Vazirmatn through Fontsource (OFL-1.1). Production-dependency audit is
+clean as of ۱۴۰۵/۰۶/۰۵. Project license/IP posture remains owner-critical decision
+A18.
 
 ## Related Documents
 

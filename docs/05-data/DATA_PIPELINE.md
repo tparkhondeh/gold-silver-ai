@@ -40,11 +40,15 @@ Both paths feed the same validation step (`DATA_QUALITY.md`) — there is no
   are loaded by the migration or by tests.
 - A loopback-only, same-origin operator API and Persian Data Trust UI for CSV
   preview. Requests are size/type limited, use the versioned Phase 1 registry, and
-  return counts plus sanitized row outcomes without exposing raw payloads. Commit
-  fails closed while PostgreSQL is unavailable.
+  return counts plus sanitized row outcomes without exposing raw payloads.
+- The commit path now revalidates the submitted batch and delegates to the same
+  parameterized transactional repository. It requires both an explicit enable flag
+  and a loopback-only PostgreSQL URL; request intent must exactly match preview or
+  commit. Connection, migration application, and live integration tests remain
+  pending, so commit still fails closed on the current host.
 
-`STATUS: PARTIAL` for a live database connection, operator commit, scheduling, and
-alerting. Future scheduling must use Tehran time and the Iranian market calendar;
+`STATUS: PARTIAL` for a live database connection, migration verification, scheduling,
+and alerting. Future scheduling must use Tehran time and the Iranian market calendar;
 see `docs/02-architecture/INTEGRATION_ARCHITECTURE.md`.
 
 ## Related Documents
