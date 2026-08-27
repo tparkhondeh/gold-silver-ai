@@ -775,6 +775,152 @@ footer b {
   color: #5d4773;
 }
 
+.persian-date-field {
+  position: relative;
+  display: grid;
+  gap: 7px;
+  margin-top: 16px;
+}
+
+.persian-date-label {
+  color: var(--ink);
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.persian-date-label small {
+  color: var(--muted);
+  font-size: 8px;
+  font-weight: 400;
+}
+
+.persian-date-trigger {
+  width: 100%;
+  min-height: 44px;
+  border: 1px solid #d5c9df;
+  border-radius: 14px 6px 14px 6px;
+  background: #fff;
+  color: var(--muted);
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  text-align: right;
+}
+
+.persian-date-trigger.has-value {
+  color: var(--ink);
+}
+
+.persian-date-trigger i {
+  color: var(--asha-violet-600);
+  font-style: normal;
+}
+
+.persian-date-trigger:focus-visible,
+.persian-calendar button:focus-visible,
+.persian-calendar select:focus-visible {
+  outline: 2px solid var(--asha-violet-600);
+  outline-offset: 2px;
+}
+
+.persian-calendar {
+  border: 1px solid var(--line);
+  border-radius: 18px 8px 18px 8px;
+  background: var(--surface);
+  padding: 10px;
+  box-shadow: 0 12px 30px rgba(34, 26, 42, 0.1);
+  animation: calendar-enter 180ms ease-out;
+}
+
+@keyframes calendar-enter {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.persian-calendar-head {
+  display: grid;
+  grid-template-columns: 36px minmax(0, 1fr) 36px;
+  gap: 7px;
+  align-items: center;
+}
+
+.persian-calendar-head > div {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 0.8fr);
+  gap: 6px;
+}
+
+.persian-calendar-head button,
+.persian-calendar-actions button {
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: transparent;
+  color: var(--ink);
+}
+
+.persian-calendar-head button {
+  min-width: 36px;
+  min-height: 36px;
+  font-size: 18px;
+}
+
+.persian-calendar-head button:disabled,
+.persian-calendar-days button:disabled {
+  cursor: not-allowed;
+  opacity: 0.28;
+}
+
+.persian-calendar-head select {
+  min-width: 0;
+  padding: 7px;
+}
+
+.persian-calendar-days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  margin-top: 9px;
+}
+
+.persian-calendar-days button {
+  min-width: 0;
+  min-height: 38px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--ink);
+  font-size: 9px;
+}
+
+.persian-calendar-days button:hover:not(:disabled) {
+  background: rgba(132, 98, 165, 0.09);
+}
+
+.persian-calendar-days button[aria-pressed="true"] {
+  background: var(--asha-violet-700);
+  color: #fff;
+}
+
+.persian-calendar-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 9px;
+  padding-top: 9px;
+  border-top: 1px solid var(--line);
+}
+
+.persian-calendar-actions button {
+  min-height: 38px;
+  padding: 0 11px;
+  font-size: 8px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .persian-calendar { animation: none; }
+}
+
 @media (max-width: 680px) {
   .operator-import-head,
   .operator-file-row,

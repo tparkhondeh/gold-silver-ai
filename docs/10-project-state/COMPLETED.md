@@ -76,3 +76,5 @@ requirements. Full details: `PHASE_0_AUDIT.md` § 15.
   preserving all twenty supported portfolio asset types and their unit mappings.
 - Expandable asset-category groups on the overview, with per-category valuation
   state and direct access to each holding's focused workspace.
+- Optional Persian purchase-date calendar with month/year navigation, future-date
+  blocking, today/clear actions, and no required typing.

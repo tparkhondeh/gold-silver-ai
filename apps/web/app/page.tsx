@@ -21,6 +21,8 @@ import {
 import { navItems, type View } from "./workspace-navigation";
 import { OperatorCsvImport } from "./operator-csv-import";
 import { assetCategories, assetOptions, getAssetCategoryForAsset, getAssetOptionsForCategory } from "./asset-catalog";
+import { currentJalaliDate, toPersianDigits } from "./jalali-calendar";
+import { PersianDatePicker } from "./persian-date-picker";
 
 type Holding = {
   id: string;
@@ -215,16 +217,6 @@ function toEnglishDigits(value: string) {
     const persianIndex = "۰۱۲۳۴۵۶۷۸۹".indexOf(digit);
     return String(persianIndex >= 0 ? persianIndex : "٠١٢٣٤٥٦٧٨٩".indexOf(digit));
   });
-}
-
-function toPersianDigits(value: string) {
-  return value.replace(/\d/g, (digit) => "۰۱۲۳۴۵۶۷۸۹"[Number(digit)]);
-}
-
-function currentJalaliDate() {
-  const parts = new Intl.DateTimeFormat("en-US-u-ca-persian", { year: "numeric", month: "2-digit", day: "2-digit", timeZone: "Asia/Tehran" }).formatToParts(new Date());
-  const part = (type: Intl.DateTimeFormatPartTypes) => Number(parts.find((item) => item.type === type)?.value ?? 0);
-  return `${part("year").toString().padStart(4, "0")}/${part("month").toString().padStart(2, "0")}/${part("day").toString().padStart(2, "0")}`;
 }
 
 function normalizeJalaliDate(value: string) {
@@ -564,8 +556,8 @@ export default function Home() {
     const amount = Number(data.get("amount"));
     const rawCost = String(data.get("cost") ?? "").trim();
     const purchaseDateInput = String(data.get("purchaseDate") ?? "").trim();
-    const purchaseDate = normalizeJalaliDate(purchaseDateInput) ?? purchaseDateInput;
-    if (!Number.isFinite(amount) || amount <= 0 || !isValidPurchaseDate(purchaseDate)) return;
+    const purchaseDate = purchaseDateInput ? normalizeJalaliDate(purchaseDateInput) : null;
+    if (!Number.isFinite(amount) || amount <= 0 || (purchaseDateInput && !purchaseDate)) return;
     const holdingId = crypto.randomUUID();
     setHoldings((current) => [...current, {
       id: holdingId,
@@ -782,10 +774,8 @@ export default function Home() {
               <label>مقدار<input name="amount" type="number" min="0.000001" step="any" required placeholder="مثلاً ۲.۵"/></label>
               <label>واحد<select key={selectedAssetName} name="unit" required disabled={!selectedAssetName} defaultValue={availableUnits[0] ?? ""}>{availableUnits.length === 0 && <option value="">ابتدا دارایی را انتخاب کنید</option>}{availableUnits.map((unit) => <option key={unit}>{unit}</option>)}</select></label>
             </div>
-            <div className="form-row">
-              <label>بهای خرید کل (تومان)<input name="cost" type="number" min="0" step="1000" placeholder="اختیاری"/></label>
-              <label>تاریخ خرید (شمسی)<input name="purchaseDate" inputMode="numeric" dir="ltr" required placeholder={`مثلاً ${toPersianDigits(currentJalaliDate())}`} aria-describedby="purchase-date-help"/><small id="purchase-date-help" className="field-help">با قالب ۱۴۰۵/۰۶/۰۳ وارد کنید.</small></label>
-            </div>
+            <label>بهای خرید کل (تومان)<input name="cost" type="number" min="0" step="1000" placeholder="اختیاری"/></label>
+            <PersianDatePicker name="purchaseDate" />
             <label>یادداشت<input name="note" maxLength={80} placeholder="مثلاً نگهداری بلندمدت"/></label>
             <div className="modal-actions"><button type="button" className="ghost-button" onClick={() => setModalOpen(false)}>انصراف</button><button className="primary-button" type="submit">ثبت در نشست فعلی</button></div>
           </form>
