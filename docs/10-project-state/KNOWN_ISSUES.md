@@ -7,8 +7,10 @@
 1. **The Phase 1 branch is not confirmed on GitHub.** The private `origin` is
    configured, but authentication has stalled every non-force push attempt and the
    branch has no verified upstream. Local commits are intact; `main` is untouched.
-2. **No CI or enforced branch protection is verified.** Lint, build, and tests run
-   locally only.
+2. **CI is defined but not remotely verified.** The read-only Phase 1 quality workflow
+   runs locked install, lint, typecheck, build, tests, and production audit. It cannot
+   be claimed operational until the branch is published and the first GitHub run passes;
+   branch protection is still not configured.
 3. **PostgreSQL is wired but not running.** Schema version 1, migration SQL,
    repository code, guarded runtime adapter, preview/commit route, and isolated tests
    exist, but PostgreSQL/Docker/`psql` are not installed on the current development
@@ -16,9 +18,10 @@
 4. **Iranian source redundancy is missing.** Navasan remains inactive without a key
    and declared IRR/toman contract; TGJU requires licensed access; the Rahavard
    snapshot is manual and expired.
-5. **Financial decisions remain intentionally locked.** Owner constraints,
-   Iran-specific history, methodology approval, backtesting, and walk-forward
-   validation are incomplete.
+5. **Financial decisions remain intentionally locked.** The owner-constraint form is
+   implemented and session-local, but the owner has not completed it. Iran-specific
+   history, methodology approval, backtesting, and walk-forward validation are also
+   incomplete.
 6. **The demo portfolio is opt-in, synthetic, and session-local.** It supports UI
    evaluation only and must never be interpreted as owner or market data.
 7. **The public review link has no shared-account backend.** A visitor's entered

@@ -1,7 +1,13 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { evaluateDecisionGates, getAssetClass, getSameClassCandidates } from "../app/decision-support.ts";
+import {
+  emptyOwnerDecisionConstraints,
+  evaluateDecisionGates,
+  evaluateOwnerDecisionConstraints,
+  getAssetClass,
+  getSameClassCandidates,
+} from "../app/decision-support.ts";
 
 test("classifies same-class gold and capital-market alternatives deterministically", () => {
   assert.deepEqual(getAssetClass("سکه امامی"), { id: "gold", label: "طلا" });
@@ -32,4 +38,18 @@ test("keeps every financial decision locked until all explicit gates pass", () =
   });
   assert.equal(complete.operational, true);
   assert.equal(complete.passedCount, 6);
+});
+
+test("requires every owner constraint to be explicit and within its safe input range", () => {
+  assert.equal(evaluateOwnerDecisionConstraints(emptyOwnerDecisionConstraints).complete, false);
+  const complete = evaluateOwnerDecisionConstraints({
+    liquidityReservePercent: "15",
+    maxSingleAssetPercent: "30",
+    maxAcceptableDrawdownPercent: "20",
+    shortTermMonths: "6",
+    longTermYears: "5",
+  });
+  assert.equal(complete.complete, true);
+  assert.equal(complete.completedCount, 5);
+  assert.equal(evaluateOwnerDecisionConstraints({ ...emptyOwnerDecisionConstraints, maxSingleAssetPercent: "101" }).completedCount, 0);
 });

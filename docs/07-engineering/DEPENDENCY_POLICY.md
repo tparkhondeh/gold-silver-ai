@@ -38,7 +38,13 @@ bundles pinned Vazirmatn through Fontsource (OFL-1.1). Production-dependency aud
 clean as of ۱۴۰۵/۰۶/۰۵. Project license/IP posture remains owner-critical decision
 A18.
 
+The open-source product review and adopt/defer/reject decisions are recorded in
+`OPEN_SOURCE_ADOPTION.md`. The GitHub Actions workflow uses only official MIT-licensed
+GitHub actions and receives read-only repository contents permission. No source code
+from the reviewed AGPL financial products is included.
+
 ## Related Documents
 
 - Security posture: `docs/02-architecture/SECURITY_ARCHITECTURE.md`
 - Stack decision: `docs/02-architecture/SYSTEM_ARCHITECTURE.md`
+- Open-source review: `OPEN_SOURCE_ADOPTION.md`

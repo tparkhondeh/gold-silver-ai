@@ -1,7 +1,7 @@
 # Monitoring
 
 **Source of truth for:** how the system's health and correctness are observed
-once running. Nothing is deployed yet.
+once running.
 
 ## Requirement (once implemented)
 
@@ -14,10 +14,22 @@ At minimum, the system should eventually make observable:
 - Whether deterministic outputs (valuation, allocation, risk) are being produced
   successfully.
 
+## Implemented Phase 1 Surface
+
+- `GET /api/health` returns a non-secret, non-cached readiness document.
+- Web availability, global feed configuration, Iranian feed configuration,
+  operator persistence, scenario methodology, and financial-decision readiness are
+  reported separately.
+- The Data Trust tab exposes the same boundaries in owner-facing language.
+- Worker responses receive `nosniff`, no-referrer, disabled browser capability, and
+  DNS-prefetch security headers.
+
 ## Status
 
-`STATUS: TBD` for tooling and implementation — depends on the technology stack and
-deployment approach (`DEPLOYMENT.md`).
+`STATUS: PARTIAL`. Runtime health is now observable and fail-closed, but there is no
+external uptime probe, alert delivery channel, persistence metric store, or incident
+dashboard. `/api/health` deliberately reports `evaluation_only`; HTTP availability
+must never be interpreted as readiness for financial use.
 
 ## Related Documents
 

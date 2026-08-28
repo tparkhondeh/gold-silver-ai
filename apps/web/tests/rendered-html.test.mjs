@@ -15,6 +15,9 @@ async function render() {
 test("renders the Persian wealth and market dashboard", async () => {
   const response = await render();
   assert.equal(response.status, 200);
+  assert.equal(response.headers.get("x-content-type-options"), "nosniff");
+  assert.equal(response.headers.get("referrer-policy"), "no-referrer");
+  assert.match(response.headers.get("permissions-policy") ?? "", /camera=\(\)/);
   const html = await response.text();
   assert.match(html, /lang="fa"/);
   assert.match(html, /dir="rtl"/);
@@ -31,12 +34,24 @@ test("renders the Persian wealth and market dashboard", async () => {
   assert.match(html, /بهترین اقدام مجاز اکنون/);
   assert.match(html, /مرکز دارایی/);
   assert.match(html, /تصمیم‌های دارایی/);
+  assert.match(html, /PHASE 1 · EVALUATION/);
   assert.match(html, /سبد دارایی‌های من/);
   assert.match(html, /فرصت‌های خیلی جذاب/);
   assert.match(html, /دیده‌بان بازار/);
   assert.doesNotMatch(html, /MARKET WATCH/);
   assert.doesNotMatch(html, /تصمیم بهتر، از/);
   assert.doesNotMatch(html, /Your site is taking shape/);
+});
+
+test("exposes an honest machine-readable readiness endpoint", async () => {
+  const response = await request("/api/health", { accept: "application/json" });
+  assert.equal(response.status, 200);
+  assert.equal(response.headers.get("cache-control"), "no-store");
+  const health = await response.json();
+  assert.equal(health.service, "asha-web");
+  assert.equal(health.status, "evaluation_only");
+  assert.equal(health.release.stableForFinancialUse, false);
+  assert.equal(health.engines.some((engine) => engine.id === "financial-decision" && engine.state === "blocked"), true);
 });
 
 test("serves the owner-approved Rahavard snapshot with deterministic IRR-to-toman conversion", async () => {

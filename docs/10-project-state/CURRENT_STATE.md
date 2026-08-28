@@ -2,7 +2,7 @@
 
 **Source of truth for:** where the project stands right now.
 
-_Last updated in the product calendar: ۱۴۰۵/۰۶/۰۵ (Phase 1 active)_
+_Last updated in the product calendar: ۱۴۰۵/۰۶/۰۶ (Phase 1 active)_
 
 ## Snapshot
 
@@ -55,6 +55,9 @@ _Last updated in the product calendar: ۱۴۰۵/۰۶/۰۵ (Phase 1 active)_
   reports readiness gates and currently fails closed; it does not rank targets or
   produce financial actions while methodology, owner constraints, Iranian history,
   backtesting, and walk-forward validation remain unresolved.
+  The Decisions tab now captures the owner's five explicit constraints (liquidity
+  reserve, concentration cap, tolerated drawdown, and short/long horizons) in
+  session storage only. Completing them opens only that single gate.
 - **Bubble boundary:** for supported gram-based gold and silver holdings, the UI can
   compute a raw current metal-content premium only when the domestic quote, global
   ounce quote, and USD/IRR quote are all present and valid. Historical minimum,
@@ -101,6 +104,14 @@ _Last updated in the product calendar: ۱۴۰۵/۰۶/۰۵ (Phase 1 active)_
   has no shared portfolio backend: each visitor's holdings remain in that browser
   session and are not visible to the owner or other visitors. The public operator
   import surface is explicitly disabled because its hostname is not loopback.
+- **Operational visibility:** `GET /api/health` and the Data Trust engine panel expose
+  web, market, persistence, scenario, and financial-decision readiness without secrets.
+  The response remains `evaluation_only`. A read-only GitHub Actions workflow now
+  encodes install, lint, typecheck, build, test, and production-audit gates; its first
+  remote run is pending branch publication.
+- **Open-source review:** high-star same-concept projects were license-screened.
+  AGPL product code was not copied; compatible patterns were independently implemented
+  and recorded in `docs/07-engineering/OPEN_SOURCE_ADOPTION.md`.
 
 ## Immediate Next Step
 

@@ -23,6 +23,49 @@ export type DecisionGateInput = {
   ownerConstraintsDefined: boolean;
 };
 
+export type OwnerDecisionConstraints = {
+  liquidityReservePercent: string;
+  maxSingleAssetPercent: string;
+  maxAcceptableDrawdownPercent: string;
+  shortTermMonths: string;
+  longTermYears: string;
+};
+
+export const emptyOwnerDecisionConstraints: OwnerDecisionConstraints = {
+  liquidityReservePercent: "",
+  maxSingleAssetPercent: "",
+  maxAcceptableDrawdownPercent: "",
+  shortTermMonths: "",
+  longTermYears: "",
+};
+
+export const ownerConstraintFields: Array<{
+  key: keyof OwnerDecisionConstraints;
+  label: string;
+  suffix: string;
+  min: number;
+  max: number;
+}> = [
+  { key: "liquidityReservePercent", label: "حداقل ذخیرهٔ نقد", suffix: "٪", min: 0, max: 100 },
+  { key: "maxSingleAssetPercent", label: "حداکثر وزن یک دارایی", suffix: "٪", min: 1, max: 100 },
+  { key: "maxAcceptableDrawdownPercent", label: "حداکثر افت قابل‌تحمل", suffix: "٪", min: 1, max: 100 },
+  { key: "shortTermMonths", label: "افق کوتاه‌مدت", suffix: "ماه", min: 1, max: 24 },
+  { key: "longTermYears", label: "افق بلندمدت", suffix: "سال", min: 1, max: 20 },
+];
+
+export function evaluateOwnerDecisionConstraints(input: OwnerDecisionConstraints) {
+  const fields = ownerConstraintFields.map((field) => {
+    const value = Number(input[field.key]);
+    const valid = input[field.key].trim() !== "" && Number.isFinite(value) && value >= field.min && value <= field.max;
+    return { ...field, value: valid ? value : null, valid };
+  });
+  return {
+    complete: fields.every((field) => field.valid),
+    completedCount: fields.filter((field) => field.valid).length,
+    fields,
+  };
+}
+
 export const decisionFramework = {
   id: "DECISION_FRAMEWORK_UI_V1",
   version: "1.0.0",

@@ -25,6 +25,8 @@ Next:
 6. Define and owner-approve an opportunity-alert methodology, evaluation protocol,
    uncertainty language, and false-positive limits before enabling real opportunity
    notifications.
+7. Publish the Phase 1 branch and confirm the new read-only quality workflow passes;
+   then make it a required status check before any separately approved merge.
 
 ## Explicitly Out of Scope
 
