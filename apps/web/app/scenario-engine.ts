@@ -38,6 +38,7 @@ export const emptyScenarioShocks: ScenarioShocks = {
 export const scenarioPresets: Array<{ id: string; label: string; description: string; shocks: ScenarioShocks }> = [
   { id: "neutral", label: "خط مبنا", description: "همهٔ محرک‌ها صفر؛ برای مقایسهٔ قبل و بعد.", shocks: { ...emptyScenarioShocks } },
   { id: "fx-stress", label: "شوک ارزی فرضی", description: "افزایش دلار همراه با فشار بر دارایی‌های ریسکی؛ صرفاً ترکیب ورودی آزمایش.", shocks: { usd: 18, gold: 3, silver: 1, premium: 6, equity: -10, crypto: -12, property: 4 } },
+  { id: "policy-tightening", label: "سیاست انقباضی فرضی", description: "فشار سیاستی بر سهام و دارایی ریسکی همراه با افزایش محدود ارز و پریمیوم.", shocks: { usd: 8, gold: -2, silver: -3, premium: 5, equity: -14, crypto: -10, property: -4 } },
   { id: "metals-up", label: "رونق فلزات فرضی", description: "رشد هم‌زمان طلا و نقره با افزایش محدود پریمیوم داخلی.", shocks: { usd: 2, gold: 14, silver: 18, premium: 4, equity: 0, crypto: -2, property: 0 } },
   { id: "liquidity", label: "فشار نقدشوندگی فرضی", description: "افت دارایی‌های ریسکی و غیرنقد همراه با افزایش دلار و پریمیوم.", shocks: { usd: 12, gold: -4, silver: -9, premium: 8, equity: -20, crypto: -24, property: -14 } },
   { id: "risk-on", label: "رونق ریسک‌پذیری فرضی", description: "رشد سهام و رمزارز همراه با افت دلار و پریمیوم داخلی.", shocks: { usd: -7, gold: -3, silver: 5, premium: -6, equity: 16, crypto: 22, property: 7 } },
