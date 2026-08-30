@@ -54,7 +54,22 @@ test("exposes an honest machine-readable readiness endpoint", async () => {
   assert.equal(health.engines.some((engine) => engine.id === "financial-decision" && engine.state === "blocked"), true);
 });
 
-test("serves the owner-approved Rahavard snapshot with deterministic IRR-to-toman conversion", async () => {
+test("serves the manual snapshot deterministically and never sends an unrotated Navasan key", async (t) => {
+  const previousEnvironment = { key: process.env.NAVASAN_API_KEY, unit: process.env.NAVASAN_VALUE_UNIT, rotation: process.env.NAVASAN_KEY_ROTATION_CONFIRMED };
+  process.env.NAVASAN_API_KEY = "synthetic-test-credential";
+  process.env.NAVASAN_VALUE_UNIT = "TOMAN";
+  process.env.NAVASAN_KEY_ROTATION_CONFIRMED = "false";
+  t.after(() => {
+    for (const [name, value] of Object.entries({ NAVASAN_API_KEY: previousEnvironment.key, NAVASAN_VALUE_UNIT: previousEnvironment.unit, NAVASAN_KEY_ROTATION_CONFIRMED: previousEnvironment.rotation })) {
+      if (value === undefined) delete process.env[name];
+      else process.env[name] = value;
+    }
+  });
+  const outboundRequests = [];
+  t.mock.method(globalThis, "fetch", async (input) => {
+    outboundRequests.push(String(input));
+    return new Response("Controlled offline fixture", { status: 503 });
+  });
   const response = await request("/api/market", { accept: "application/json" });
   assert.equal(response.status, 200);
   const feed = await response.json();
@@ -67,5 +82,10 @@ test("serves the owner-approved Rahavard snapshot with deterministic IRR-to-toma
   assert.equal(quoteByCode.get("GOLD_18K_IRR")?.currency, "TOMAN");
   assert.equal(quoteByCode.get("GOLD_18K_IRR")?.publishedAt, null);
   assert.equal(feed.sources.some((source) => source.id === "rahavard-manual" && source.status === "snapshot"), true);
+  assert.equal(feed.sources.some((source) => source.id === "xaus"), true);
+  assert.equal(feed.sources.some((source) => source.id === "gold-api-com"), true);
   assert.equal(feed.sources.some((source) => source.id === "tgju" && source.status === "needs_key"), true);
+  assert.equal(feed.sources.some((source) => source.id === "navasan" && source.status === "needs_key" && source.message.includes("کلید قبلی")), true);
+  assert.equal(outboundRequests.some((url) => url.includes("navasan.tech")), false);
+  assert.equal(JSON.stringify(feed).includes("synthetic-test-credential"), false);
 });

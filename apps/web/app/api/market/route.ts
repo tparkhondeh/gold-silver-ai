@@ -1,4 +1,6 @@
 import { NextResponse } from "next/server";
+import { inspectNavasanConfiguration, normalizeNavasanPayload, type NavasanPayload } from "../../navasan-adapter";
+import { selectPreferredQuotes } from "../../quote-priority";
 import { rahavardManualSnapshot } from "./rahavard-snapshot";
 
 export const dynamic = "force-dynamic";
@@ -53,12 +55,18 @@ type XausPayload = {
   data_state?: { status?: unknown; as_of?: unknown };
 };
 
-type NavasanItem = { value?: unknown; timestamp?: unknown };
-type NavasanPayload = Record<string, NavasanItem>;
-
 const CACHE_MS = 60_000;
 const TIMEOUT_MS = 8_000;
+const DEFAULT_NAVASAN_REFRESH_SECONDS = 21_600;
 let cached: { expiresAt: number; payload: FeedResult } | null = null;
+let cachedIran: { expiresAt: number; quotes: Quote[] } | null = null;
+
+function navasanRefreshSeconds() {
+  const configuredSeconds = Number(process.env.NAVASAN_REFRESH_SECONDS ?? DEFAULT_NAVASAN_REFRESH_SECONDS);
+  return Number.isFinite(configuredSeconds)
+    ? Math.min(86_400, Math.max(30, Math.floor(configuredSeconds)))
+    : DEFAULT_NAVASAN_REFRESH_SECONDS;
+}
 
 function asFiniteNumber(value: unknown, label: string) {
   const parsed = typeof value === "string" ? Number(value.replaceAll(",", "")) : Number(value);
@@ -71,6 +79,19 @@ function asPublishedAt(value: unknown) {
   if (!Number.isFinite(date.getTime())) throw new Error("provider timestamp is invalid");
   if (date.getTime() > Date.now() + 5 * 60_000) throw new Error("provider timestamp is in the future");
   return date.toISOString();
+}
+
+function navasanFailureMessage(error: unknown) {
+  const name = error instanceof Error ? error.name : "";
+  const message = error instanceof Error ? error.message.toLowerCase() : "";
+  const networkFailure = name === "AbortError"
+    || name === "TimeoutError"
+    || message.includes("fetch")
+    || message.includes("network")
+    || message.includes("timeout");
+  return networkFailure
+    ? "اتصال شبکه یا پاسخ نوسان در مهلت مقرر برقرار نشد؛ نرخ قدیمی جایگزین نمی‌شود"
+    : "پاسخ نوسان از اعتبارسنجی واحد، مقیاس، دامنه یا زمان عبور نکرد";
 }
 
 function quoteStatus(publishedAt: string | null, collectedAt?: string): "valid" | "stale" {
@@ -189,29 +210,14 @@ async function fetchXaus(collectedAt: string): Promise<Quote[]> {
 }
 
 async function fetchIranQuotes(apiKey: string, declaredUnit: "IRR" | "TOMAN", collectedAt: string): Promise<Quote[]> {
-  const payload = await fetchJson(`https://api.navasan.tech/latest/?api_key=${encodeURIComponent(apiKey)}`) as NavasanPayload;
-  const scale = declaredUnit === "IRR" ? 0.1 : 1;
-  const mappings = [
-    ["18ayar", "GOLD_18K_IRR", "gram"],
-    ["abshodeh", "MESGHAL_IRR", "unit"],
-    ["sekkeh", "EMAMI_COIN_IRR", "unit"],
-    ["usd_sell", "USD_IRR", "usd"],
-  ] as const;
+  if (cachedIran && cachedIran.expiresAt > Date.now()) {
+    return cachedIran.quotes.map((quote) => ({ ...quote, status: quoteStatus(quote.publishedAt, quote.collectedAt) }));
+  }
 
-  return mappings.flatMap(([providerCode, instrumentCode, unit]) => {
-    const item = payload[providerCode];
-    if (!item) return [];
-    const rawValue = asFiniteNumber(item.value, providerCode);
-    const value = rawValue * scale;
-    if (!Number.isSafeInteger(Math.round(value))) throw new Error(`${providerCode} exceeds safe integer range`);
-    const publishedAt = asPublishedAt(item.timestamp);
-    return [{
-      instrumentCode, value, currency: "TOMAN" as const, unit,
-      publishedAt, collectedAt, sourceId: "navasan", sourceName: "Navasan",
-      sourceUrl: "https://www.navasan.tech/api/", quality: "primary" as const,
-      status: quoteStatus(publishedAt),
-    }];
-  });
+  const payload = await fetchJson(`https://api.navasan.tech/latest/?api_key=${encodeURIComponent(apiKey)}`) as NavasanPayload;
+  const quotes = normalizeNavasanPayload(payload, declaredUnit, collectedAt);
+  cachedIran = { expiresAt: Date.now() + navasanRefreshSeconds() * 1000, quotes };
+  return quotes;
 }
 
 export async function GET() {
@@ -241,36 +247,58 @@ export async function GET() {
     });
   }
 
-  try {
-    if (goldApiToken) {
-      quotes.push(...await Promise.all([fetchGoldApiIo("XAU", goldApiToken, collectedAt), fetchGoldApiIo("XAG", goldApiToken, collectedAt)]));
+  const [xausResult, goldApiComResult, goldApiIoResult] = await Promise.allSettled([
+    fetchXaus(collectedAt),
+    Promise.all([fetchGoldApiCom("XAU", collectedAt), fetchGoldApiCom("XAG", collectedAt)]),
+    goldApiToken
+      ? Promise.all([fetchGoldApiIo("XAU", goldApiToken, collectedAt), fetchGoldApiIo("XAG", goldApiToken, collectedAt)])
+      : Promise.resolve<Quote[]>([]),
+  ]);
+
+  if (xausResult.status === "fulfilled") {
+    sources.push({ id: "xaus", name: "XAUS", status: "fallback", message: "خوراک عمومی جهانی فعال؛ قیمت‌ها صرفاً اطلاع‌رسانی‌اند" });
+  } else {
+    sources.push({ id: "xaus", name: "XAUS", status: "unavailable", message: "دریافت یا اعتبارسنجی خوراک عمومی XAUS ناموفق بود" });
+  }
+
+  if (goldApiComResult.status === "fulfilled") {
+    sources.push({ id: "gold-api-com", name: "Gold-API.com", status: "fallback", message: "کراس‌چک عمومی طلا و نقره فعال؛ وارد تصمیم مالی نمی‌شود" });
+  } else {
+    sources.push({ id: "gold-api-com", name: "Gold-API.com", status: "unavailable", message: "کراس‌چک عمومی Gold-API.com در دسترس نبود" });
+  }
+
+  if (goldApiToken) {
+    if (goldApiIoResult.status === "fulfilled") {
+      quotes.push(...goldApiIoResult.value);
       sources.push({ id: "goldapi-io", name: "GoldAPI.io", status: "connected", message: "خوراک کلیددار طلا و نقره جهانی" });
     } else {
-      try {
-        quotes.push(...await fetchXaus(collectedAt));
-        sources.push({ id: "xaus", name: "XAUS", status: "fallback", message: "خوراک رایگان با وضعیت تازگی و منشأ؛ قیمت‌ها صرفاً اطلاع‌رسانی‌اند" });
-      } catch {
-        quotes.push(...await Promise.all([fetchGoldApiCom("XAU", collectedAt), fetchGoldApiCom("XAG", collectedAt)]));
-        sources.push({ id: "gold-api-com", name: "Gold-API.com", status: "fallback", message: "خوراک رایگان ثانویه؛ برای تصمیم نهایی کافی نیست" });
-      }
-      sources.push({ id: "goldapi-io", name: "GoldAPI.io", status: "needs_key", message: "برای خوراک کلیددار، GOLD_API_TOKEN تنظیم شود" });
+      sources.push({ id: "goldapi-io", name: "GoldAPI.io", status: "unavailable", message: "توکن موجود است اما دریافت یا اعتبارسنجی خوراک کلیددار ناموفق بود" });
     }
-  } catch {
-    sources.push({ id: goldApiToken ? "goldapi-io" : "global-metals", name: goldApiToken ? "GoldAPI.io" : "خوراک جهانی", status: "unavailable", message: "دریافت یا اعتبارسنجی خوراک جهانی ناموفق بود" });
+  } else {
+    sources.push({ id: "goldapi-io", name: "GoldAPI.io", status: "needs_key", message: "برای خوراک کلیددار، GOLD_API_TOKEN تنظیم شود" });
+  }
+
+  if (goldApiIoResult.status !== "fulfilled" || goldApiIoResult.value.length === 0) {
+    if (xausResult.status === "fulfilled") quotes.push(...xausResult.value);
+    else if (goldApiComResult.status === "fulfilled") quotes.push(...goldApiComResult.value);
   }
 
   const navasanKey = process.env.NAVASAN_API_KEY?.trim();
-  const navasanUnit = process.env.NAVASAN_VALUE_UNIT?.trim().toUpperCase();
-  if (!navasanKey) {
+  const navasanConfiguration = inspectNavasanConfiguration(process.env);
+  if (!navasanConfiguration.ready && navasanConfiguration.reason === "missing_key") {
     sources.push({ id: "navasan", name: "Navasan", status: "needs_key", message: "برای بازار ایران، NAVASAN_API_KEY لازم است" });
-  } else if (navasanUnit !== "IRR" && navasanUnit !== "TOMAN") {
+  } else if (!navasanConfiguration.ready && navasanConfiguration.reason === "key_rotation_required") {
+    sources.push({ id: "navasan", name: "Navasan", status: "needs_key", message: "کلید قبلی افشاشده محسوب می‌شود؛ تا لغو آن و ثبت امن کلید جدید، دریافت نوسان متوقف است" });
+  } else if (!navasanConfiguration.ready) {
     sources.push({ id: "navasan", name: "Navasan", status: "needs_unit", message: "واحد قرارداد باید با NAVASAN_VALUE_UNIT مشخص شود" });
-  } else {
+  } else if (navasanKey) {
     try {
-      quotes.push(...await fetchIranQuotes(navasanKey, navasanUnit, collectedAt));
-      sources.push({ id: "navasan", name: "Navasan", status: "connected", message: `خوراک ایران با واحد قراردادی ${navasanUnit}` });
-    } catch {
-      sources.push({ id: "navasan", name: "Navasan", status: "unavailable", message: "دریافت یا اعتبارسنجی خوراک ایران ناموفق بود" });
+      const navasanUnit = navasanConfiguration.unit;
+      const iranQuotes = await fetchIranQuotes(navasanKey, navasanUnit, collectedAt);
+      quotes.push(...iranQuotes);
+      sources.push({ id: "navasan", name: "Navasan", status: "connected", message: `خوراک ایران با واحد قراردادی ${navasanUnit}، مقیاس ثابت هر نماد، ${iranQuotes.length} نماد و بازخوانی ${navasanRefreshSeconds()} ثانیه‌ای` });
+    } catch (error) {
+      sources.push({ id: "navasan", name: "Navasan", status: "unavailable", message: navasanFailureMessage(error) });
     }
   }
 
@@ -281,7 +309,7 @@ export async function GET() {
     message: "وب‌سرویس رسمی شناسایی شده؛ فعال‌سازی به قرارداد، مجوز و کلید سروری TGJU نیاز دارد",
   });
 
-  const deduplicatedQuotes = Array.from(new Map(quotes.map((quote) => [quote.instrumentCode, quote])).values());
+  const deduplicatedQuotes = selectPreferredQuotes(quotes);
   const payload = { collectedAt, quotes: deduplicatedQuotes, sources } satisfies FeedResult;
   cached = { expiresAt: Date.now() + CACHE_MS, payload };
   return NextResponse.json(payload, { headers: { "Cache-Control": "private, max-age=30", "X-Content-Type-Options": "nosniff" } });

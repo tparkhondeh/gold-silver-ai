@@ -2,14 +2,14 @@ import { NextResponse } from "next/server";
 
 import { inspectOperatorDatabaseEnvironment } from "../../../db/postgres-runtime";
 import { decisionFramework } from "../../decision-support";
+import { inspectNavasanConfiguration } from "../../navasan-adapter";
 import { scenarioMethodology } from "../../scenario-engine";
 
 export const dynamic = "force-dynamic";
 
 export function GET() {
-  const navasanKeyConfigured = Boolean(process.env.NAVASAN_API_KEY?.trim());
-  const navasanUnit = process.env.NAVASAN_VALUE_UNIT?.trim().toUpperCase();
-  const iranFeedConfigured = navasanKeyConfigured && (navasanUnit === "IRR" || navasanUnit === "TOMAN");
+  const navasanConfiguration = inspectNavasanConfiguration(process.env);
+  const iranFeedConfigured = navasanConfiguration.ready;
   const database = inspectOperatorDatabaseEnvironment();
   const databaseReason = database.available ? "PostgreSQL محلی و دروازهٔ Commit آماده‌اند" : ({
     "operator database commit is not explicitly enabled": "Commit پایگاه داده صریحاً فعال نشده است",
@@ -30,7 +30,7 @@ export function GET() {
     engines: [
       { id: "web", state: "ready", reason: "رابط وب در دسترس است" },
       { id: "global-market", state: process.env.GOLD_API_TOKEN?.trim() ? "configured" : "fallback", reason: process.env.GOLD_API_TOKEN?.trim() ? "خوراک کلیددار پیکربندی شده" : "خوراک‌های عمومی فقط برای نمایش اطلاع‌رسانی" },
-      { id: "iran-market", state: iranFeedConfigured ? "configured" : "blocked", reason: iranFeedConfigured ? `واحد قرارداد ${navasanUnit}` : "کلید و واحد قراردادی منبع ایرانی کامل نیست" },
+      { id: "iran-market", state: iranFeedConfigured ? "configured" : "blocked", reason: navasanConfiguration.ready ? `واحد قرارداد ${navasanConfiguration.unit}` : navasanConfiguration.reason === "key_rotation_required" ? "کلید قبلی باید لغو و با کلید جدید جایگزین شود" : "کلید و واحد قراردادی منبع ایرانی کامل نیست" },
       { id: "portfolio-persistence", state: database.available ? "configured" : "blocked", reason: databaseReason },
       { id: "scenario", state: "demo_only", reason: `${scenarioMethodology.id} هنوز کالیبره و بک‌تست نشده است` },
       { id: "financial-decision", state: "blocked", reason: `${decisionFramework.id} رابط دروازه‌هاست و توصیهٔ مالی تولید نمی‌کند` },
