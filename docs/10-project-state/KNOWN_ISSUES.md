@@ -7,16 +7,17 @@
 1. **Resolved: private Git publication.** Browser-authorized Git Credential Manager
    now authenticates successfully. The development branch was published with verified
    HEAD/upstream and unchanged remote `main`; no tag or backup branch was published.
-2. **Original CI failure resolved; current database work unverified remotely.**
-   Run 33304773397 passed the Node 22 repair at HEAD 2823864. The new real PostgreSQL
-   CI job accompanies the transfer checkpoint; only its own run can validate it.
+2. **Original CI failure resolved; code checkpoint passes both jobs.**
+   Run 33316064205 passed quality and real PostgreSQL integration/restore at ec3f410.
+   This does not establish owner-host or personal-data readiness.
    Branch protection is not configured.
 3. **PostgreSQL startup blocked by local ownership mismatch.** Verified 17.11
    binaries and a fresh cluster exist, but the private directory was created as
    `CodexSandboxOffline`; the owner-run server receives Permission denied. Explicit
    permission was requested before repairing that directory's ACL. No application
-   migrations, real integration/restore tests or server-side portfolio persistence
-   have passed. Details: `POSTGRES_FOUNDATION_CHECKPOINT.md`.
+   migrations or integration/restore tests have passed on this host. Isolated CI
+   tests passed, but server-side portfolio persistence remains unimplemented.
+   Details: `POSTGRES_FOUNDATION_CHECKPOINT.md`.
 4. **Iranian source continuity and redundancy are missing.** Navasan has a tested
    toman/per-symbol scale adapter but is paused until its exposed key is revoked and
    replaced. The rotation flag is an operator declaration, not proof from the vendor.

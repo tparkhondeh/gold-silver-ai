@@ -13,14 +13,15 @@ verified with upstream configured; remote `main` stayed at
 `5c03fabb1c8090497c0b03c9059a6e51fdb91d03`, with no tags or backup branch published.
 The Node 22 TypeScript test-command repair passed GitHub run 33304773397.
 The owner requested a development checkpoint for transfer to another computer;
-current database changes are not covered by that older green run. This handoff is
+the code checkpoint `ec3f410` subsequently passed GitHub quality and real PostgreSQL
+integration/restore in run 33316064205. This handoff is
 not a phase acceptance or authorization to repair the old host's ACL. Follow
 [`CONTINUE_ON_ANOTHER_SYSTEM.md`](../../CONTINUE_ON_ANOTHER_SYSTEM.md).
 The official PostgreSQL 17.11 installer is now verified and extracted; local startup
 is blocked by a sandbox-versus-owner Windows ACL mismatch on the new project-owned
 cluster. Permission repair was requested, not bypassed. See
 [`POSTGRES_FOUNDATION_CHECKPOINT.md`](POSTGRES_FOUNDATION_CHECKPOINT.md) for current
-tests, implemented controls, and unverified integration work. No Phase 2 branch has
+tests, implemented controls, and unverified owner-host integration work. No Phase 2 branch has
 been created.
 PostgreSQL integration, server-side portfolios, historical
 backfill, and the real baseline remain pending. See
@@ -187,7 +188,8 @@ backfill, and the real baseline remain pending. See
   yet, so the current host still fails closed. The development checkpoint adds migration
   checksums/rollback, database probes, immutable batch/truncate protection, correction
   constraints, exact decimal limits and server-controlled collection time; real
-  PostgreSQL integration and restore evidence remain blocked by the ACL issue above.
+  PostgreSQL integration and fixture restore passed in isolated GitHub CI, while
+  owner-host integration remains blocked by the ACL issue above.
   In the fresh-session laboratory, a fixed
   five-row CSV sample exercises preview plus a memory-only commit result (three
   accepted, one duplicate, one quarantined) without reaching the server or implying
@@ -201,8 +203,8 @@ backfill, and the real baseline remain pending. See
   The response remains `evaluation_only`. A read-only GitHub Actions workflow now
   encodes install, lint, typecheck, build, test, and production-audit gates; the first
   remote run exposed the now-resolved Node 22 TypeScript test-command issue. The
-  pending database job adds a real PostgreSQL service and matching in-container
-  backup/restore clients; it has not yet executed.
+  database job uses a real PostgreSQL service and matching in-container
+  backup/restore clients; it passed for the code checkpoint described above.
 - **Open-source review:** high-star same-concept projects were license-screened.
   AGPL product code was not copied; compatible patterns were independently implemented
   and recorded in `docs/07-engineering/OPEN_SOURCE_ADOPTION.md`.

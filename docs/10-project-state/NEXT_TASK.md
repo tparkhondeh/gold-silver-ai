@@ -9,6 +9,9 @@ Transfer instructions are in `CONTINUE_ON_ANOTHER_SYSTEM.md` at repository root.
 The checkpoint push is explicitly authorized even though local PostgreSQL tests
 remain blocked; it is not release approval. On a new machine, provision independently
 instead of applying the old machine's path, SID or ACL repair.
+The published code checkpoint `ec3f410` passed both quality and real PostgreSQL CI
+jobs in run 33316064205. Do not repeat the resolved Node 22 repair or infer local
+Windows/personal-data readiness from the isolated Linux test database.
 
 1. Obtain the requested narrow permission to repair the fresh PostgreSQL cluster's
    Windows ACL for the owner account. Do not reinitialize, move, delete or expose the

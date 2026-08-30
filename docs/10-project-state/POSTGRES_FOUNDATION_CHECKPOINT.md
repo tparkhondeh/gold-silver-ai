@@ -1,6 +1,6 @@
 # PostgreSQL Foundation Checkpoint
 
-**Version 0.2.0** · ASHA engineering · ۱۴۰۵/۰۶/۰۸ (2026-08-30) · Work in progress
+**Version 0.3.0** · ASHA engineering · ۱۴۰۵/۰۶/۰۸ (2026-08-30) · Work in progress
 
 ## AI READING INSTRUCTION
 
@@ -11,13 +11,14 @@ not a Data Foundation acceptance report or a financial-readiness claim.
 
 **[SPEC]**
 
-- Branch: `codex/phase-1-data-ui`; published HEAD: `2823864138ef1ee7eb722b7a6c54d3a028a55403`.
+- Branch: `codex/phase-1-data-ui`; code checkpoint: `ec3f41029549918965f2b74fa27222a32af28679` (later documentation commits may follow).
 - Initial dirty README preserved and corrected; implementation is a development checkpoint.
 - Owner subsequently authorized committing/pushing this work for transfer to another computer despite the local database blocker. See the root `CONTINUE_ON_ANOTHER_SYSTEM.md`.
 - No merge, public deployment, Phase 2 branch, market ingestion or financial activation is authorized by this handoff.
 - Previous CI [33304773397](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33304773397) passed for the published HEAD only.
 - Current local gates: typecheck, lint, build, **60 unit/contract tests passed; zero skipped**.
-- PostgreSQL integration, backup/restore, current CI and authenticated two-browser persistence: **NOT EXECUTED**.
+- GitHub [run 33316064205](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33316064205) **PASSED** for code checkpoint `ec3f410`: quality job (lint/typecheck/build/tests/production audit) and real PostgreSQL migration/integration/restore job.
+- Owner-machine PostgreSQL integration/restore and authenticated two-browser persistence: **NOT EXECUTED**. CI's disposable Linux database does not certify the Windows host or real personal data.
 - Two independent read-only reviews inspected database safety and readiness/CI. They did not approve financial use or execute real database tests.
 - Local evaluation server restarted at `http://localhost:4174/` (IPv6 loopback); `/api/health` returned HTTP 200 with `evaluation_only`, blocked observation/portfolio storage and blocked financial decisions. This is not an authenticated-browser end-to-end test.
 
@@ -49,12 +50,12 @@ locally verified signed file, not an independently published checksum comparison
 - Intended network: `127.0.0.1:55432`, UTC, 20 connections and 64 MB shared buffers.
 - The initial bootstrap ran as `TAHA\CodexSandboxOffline` and made its new private directory accessible only to that account.
 - Owner-context startup runs as `TAHA\Saraytell` and `pg_ctl` returns **Permission denied** for this directory.
-- PostgreSQL is not running. Application databases/migrations and integration tests have not executed.
+- PostgreSQL is not running on the owner machine. Local application databases/migrations and integration tests have not executed there; isolated CI execution is recorded separately above.
 - Explicit owner permission was requested to repair **only this new project directory's ACL** for Saraytell. No repair was attempted without approval.
 - Do not reset, move or delete the cluster, open permissions to Everyone, use another account, or initialize a replacement to avoid this stop.
 - Bootstrap now refuses temporary sandbox accounts and treats access errors as errors, not nonexistent files.
 
-## 4. Implemented controls awaiting real database proof
+## 4. Implemented controls and verification boundary
 
 **[SPEC]**
 
@@ -69,10 +70,14 @@ locally verified signed file, not an independently published checksum comparison
 - Local setup separates owner/runtime roles, protects generated secrets, seeds registries only and never replaces the owner's `.env.local`.
 - Activation requires migration checksums, required triggers, restricted runtime grants and recent successful integration evidence matching current source files.
 
+**[SPEC]**
+
+- Applied SQL, restricted test-role access, concurrent replay, immutable triggers, numeric round trips and fixture backup/restore passed the real PostgreSQL CI job.
+- CI uses the PostgreSQL service container's own client binaries through [GitHub's job service context](https://docs.github.com/en/actions/reference/workflows-and-actions/contexts#job-context).
+
 **[?]**
 
-- Role provisioning, applied SQL, concurrent replay, trigger behavior, numeric round trips and restore behavior are implemented tests, **not passing test results yet**.
-- CI uses the PostgreSQL service container's own client binaries through [GitHub's job service context](https://docs.github.com/en/actions/reference/workflows-and-actions/contexts#job-context); the new job has not executed.
+- Windows bootstrap, owner/runtime login provisioning and local activation evidence remain unverified on the owner's host.
 - Restore test is fixture-schema recovery plus explicit runtime re-granting, not a complete personal-data disaster-recovery certification.
 - Inline availability-cutoff tests do not establish complete point-in-time dataset selection, effective-interval or revision policy correctness.
 
@@ -81,7 +86,7 @@ locally verified signed file, not an independently published checksum comparison
 **[SPEC]**
 
 1. Approved ACL repair, owner-context startup, actual migrations and real integration/restore tests.
-2. Resolve any actual SQL failures; repeat local gates, commit/push only development branch, verify new CI and unchanged remote main.
+2. Repeat applicable gates for future changes, push only development branch and verify each new CI/remote HEAD. This handoff's code checkpoint passed CI; remote main remained unchanged at `5c03fabb1c8090497c0b03c9059a6e51fdb91d03`.
 3. Secure user/session isolation and durable portfolios/transactions/preferences; non-destructive migration of existing browser data.
 4. Complete provenance/registries, cross-batch duplicate lineage/count semantics and correction reasons; do not claim full provenance v2.
 5. Owner revocation/replacement of the disclosed Navasan credential through a secure local input path; no key in chat or Git.
@@ -92,5 +97,6 @@ locally verified signed file, not an independently published checksum comparison
 
 **[SPEC]**
 
+- 0.3.0: recorded successful GitHub quality and real PostgreSQL integration/restore at `ec3f410`; kept Windows/personal-data gates explicit.
 - 0.2.0: added owner-authorized development handoff; no ACL repair or phase acceptance implied.
 - 0.1.0: recorded verified download, local-account ACL blocker, code/test work, independent review findings and explicit unexecuted gates.
