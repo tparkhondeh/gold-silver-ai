@@ -26,6 +26,13 @@
 contract, repository, rendered-output, and API tests; ESLint and the Vinext build are
 separate gates. CI integration and a numeric coverage target remain `STATUS: TBD`.
 
+The synthetic intelligence suite separately verifies deterministic repeatability,
+hand-reconstructable weighted score arithmetic, ordering of best/worst scenarios,
+90-observation history coverage, bounded rotation amounts, tolerated-drawdown override,
+and tangible technical/bubble/portfolio lens output. These tests validate the sandbox
+calculation path only; they are not a substitute for backtesting or walk-forward
+validation of a real Iranian-market methodology.
+
 ## Related Documents
 
 - Quality gates: `docs/00-governance/QUALITY_GATES.md`

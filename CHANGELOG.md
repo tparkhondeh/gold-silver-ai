@@ -1,16 +1,30 @@
 # Changelog
 
 All notable changes to this project are recorded here. Format loosely follows
-[Keep a Changelog](https://keepachangelog.com/). This log records what shipped to
-`main`; it does not record in-progress branch work (see
-`docs/10-project-state/CURRENT_STATE.md` for that).
+[Keep a Changelog](https://keepachangelog.com/). Unreleased entries describe
+development-branch changes, not a release or merge to `main`. Current operational
+state is recorded in `docs/10-project-state/CURRENT_STATE.md`.
 
 ## [Unreleased]
 
-Nothing has been merged to `main` yet.
+### Phase 1 local stabilization — ۱۴۰۵/۰۶/۰۸
 
-### Phase 0 — Foundation & Governance (in progress, on branch `phase-0-foundation`)
+- Preserved and reviewed the accumulated market-adapter, synthetic-intelligence,
+  portfolio-interaction, and UI changes in the active Phase 1 checkout.
+- Paused Navasan requests until the exposed credential is revoked and replaced;
+  API health and setup now make that requirement explicit without returning keys.
+- Made the market contract test offline and checked that an unrotated credential
+  never reaches the provider.
+- Corrected legacy typography overrides; inspected all nine UI workspaces for
+  visible text below the 13px supporting-text minimum.
+- Local typecheck, lint, production build, and 50 tests passed. PostgreSQL
+  integration, remote CI, and remote publication are not verified.
+- Reconciled documentation with the real staged-development gates. No Phase 2
+  branch or real baseline engine was created; no `main` operation was performed.
+
+### Phase 0 — Foundation & Governance (owner-approved)
 
 - Established repository governance, documentation architecture, and development
-  workflow. No application functionality. Pending owner review before merge.
+  workflow. No application functionality in that phase. Owner approval to continue
+  into Phase 1 is recorded; a merge to remote `main` is not claimed by this log.
   See `PHASE_0_AUDIT.md`.

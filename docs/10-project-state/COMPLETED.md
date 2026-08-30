@@ -6,8 +6,8 @@ what's ahead.
 
 ## Phase 0 — Foundation & Governance
 
-**Status:** Complete on branch `phase-0-foundation`. **Not yet merged to `main`** —
-pending owner review and approval per `docs/00-governance/QUALITY_GATES.md`.
+**Status:** Complete on branch `phase-0-foundation`; owner approved continuation
+into Phase 1. This local audit does not establish remote `main` merge state.
 
 Delivered:
 - Git repository initialized; `main` (empty, stable) and `phase-0-foundation`
@@ -62,6 +62,22 @@ requirements. Full details: `PHASE_0_AUDIT.md` § 15.
 **Status:** completed units below are on `codex/phase-1-data-ui`, not merged to
 `main` and not yet confirmed on the private remote.
 
+### Local stabilization — ۱۴۰۵/۰۶/۰۸
+
+- Compared the active linked worktree with both older OneDrive checkouts without
+  deletion or reset; selected the owner-named active Phase 1 checkout as canonical.
+- Added a fail-closed Navasan credential-rotation gate, a hidden-input setup
+  acknowledgement, health messaging, and offline API-contract coverage.
+- Fixed remaining legacy small-font overrides and inspected all nine UI workspaces;
+  the inspected visible text met the 13px minimum and no browser console errors
+  were observed.
+- Passed local typecheck, lint, production build, and 50 tests. These are not
+  PostgreSQL integration, live-provider, remote-CI, or financial-validation results.
+- Updated project state to identify GitHub authentication, PostgreSQL, persistence,
+  source rotation/history, and real-model validation as unresolved gates.
+
+### Accumulated Phase 1 implementation
+
 - Accepted Phase 1 stack/scope, portfolio UI, source boundary, manual snapshot, and
   notification-safety decisions in ADR 0001–0005.
 - Persian local application, portfolio/asset/analysis/decision workspaces, explicit
@@ -74,12 +90,44 @@ requirements. Full details: `PHASE_0_AUDIT.md` § 15.
 - Asha pastel-violet/matte-white visual token layer plus custom SVG mark and favicon.
 - Category-first asset registration that narrows the asset-type selector while
   preserving all twenty supported portfolio asset types and their unit mappings.
+- Asset Center decision summary now shows all three owner-approved decision layers
+  (homogeneous, heterogeneous, and overall) with deterministic sandbox triggers and
+  an explicit non-operational boundary instead of only readiness badges.
+- Replaced the eight static sandbox analysis narratives and threshold-only decision
+  cards with `ASHA_SYNTHETIC_INTELLIGENCE_V1`: a deterministic 90-observation history,
+  momentum/volatility/drawdown calculations, premium range, scenario stress, disclosed
+  score weights, per-asset same-class/cross-class routes, amounts, reasons, invalidation
+  rules, and a constraint-aware overall portfolio route. Automated tests verify
+  repeatability, score arithmetic, rotation caps, drawdown overrides, and lens output.
 - Expandable asset-category groups on the overview, with per-category valuation
   state and direct access to each holding's focused workspace.
 - Optional Persian purchase-date calendar with month/year navigation, future-date
   blocking, today/clear actions, and no required typing.
-- Bundled Vazirmatn variable font and a consistent Persian typography scale with no
-  supporting UI text below 12px.
+- Full create/edit/delete portfolio interaction: editing reuses the category-first
+  unit-aware form and preserves the optional Jalali date; deletion has an explicit
+  confirmation step.
+- Responsive table containment prevents portfolio and market tables from causing
+  page-level horizontal overflow, and residual decorative geometry was removed from
+  the analysis, risk, and review surfaces.
+- Fresh browser sessions now start in the labelled full-experience laboratory, so
+  the deterministic synthetic engines are immediately testable across browsers;
+  choosing personal mode remains an explicit per-browser preference.
+- Bundled Vazirmatn variable font, raised the Persian supporting-text floor to 13px,
+  and removed the remaining 8–11px legacy typography from Asset Center facts,
+  values, signals, and card headings.
 - Guarded PostgreSQL runtime adapter and preview-to-commit operator path with exact
   request-intent matching, loopback-only database configuration, atomic rollback,
   and idempotent repository delegation. A live database remains pending.
+- Independent keyless XAUS and Gold-API.com retrieval on every uncached market refresh,
+  with XAUS as the informational display feed and Gold-API.com as an explicit
+  non-decision cross-check/display fallback, plus hidden local setup for future keyed
+  Navasan and GoldAPI.io credentials.
+- Navasan's official `latest` response contract is implemented for eight approved
+  Iranian instruments with exact toman and per-symbol thousand-toman normalization,
+  Unix-time/future-time and plausible-range validation, free-plan quota-aware caching,
+  and deterministic tests. The owner-provided local key was live-verified on
+  ۱۴۰۵/۰۶/۰۷ without entering Git or a browser response; all eight observations passed.
+- Owner-facing money output now uses toman plus USD, with one normalized USD/toman
+  rate and no display-only tenfold IRR conversion. Market watch always uses live
+  validated quotes even while the separate demo portfolio is active, and deterministic
+  source precedence prevents a manual snapshot from replacing a valid keyed feed.

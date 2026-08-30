@@ -19,6 +19,39 @@ It is not the financial decision engine: it does not rank assets, select targets
 set weights, or produce buy/sell/convert actions, and it fails closed while the
 requirements below remain unimplemented.
 
+## Full-experience simulation boundary
+
+Phase 1 also includes the clearly labelled `ASHA_SANDBOX_DECISION_V1` experience
+engine. It is the default in a fresh browser session so the complete product can be
+evaluated immediately; an explicit switch returns that browser to personal mode.
+It uses only the fixed `ASHA_SYNTHETIC_MARKET_V1` dataset and deterministic,
+versioned demonstration rules to populate the market, analysis, scenario, risk,
+homogeneous-decision, heterogeneous-decision, and overall-decision surfaces. Its
+six displayed gates are UI fixtures, not evidence that real validation gates have
+passed. Every sandbox surface is labelled as synthetic and non-operational,
+`executionAllowed` is permanently `false`, and leaving the sandbox restores the
+browser-session portfolio that was present before activation. The selected mode and
+portfolio remain browser-session-local and are not synchronized across browsers.
+
+The same boundary now provides `ASHA_SYNTHETIC_INTELLIGENCE_V1`: eight deterministic
+analysis lenses calculated from a 90-observation synthetic price history, cost-basis
+return, premium distance/range, multi-driver scenario impacts, asset risk, portfolio
+weight, liquidity reserve, and concentration constraints. Short- and long-horizon
+scores use disclosed weights and thresholds. Each selected asset exposes the numeric
+score breakdown, best/worst scenario, homogeneous route, heterogeneous route, amount,
+reason, and invalidation rule; the overall route is constrained by the cash target,
+concentration cap, score ordering, and a maximum rotation size. Scenario loss beyond
+the owner's tolerated drawdown forces a sandbox risk-reduction route even when
+momentum is positive. The UI does not fabricate VaR, Sharpe, or statistical confidence
+from this uncalibrated history. A separate 90-observation synthetic premium fixture
+supports the gold, silver, and coin examples, and an in-browser CSV preview/commit exercise remains available. The CSV exercise
+is intentionally memory-only: it demonstrates accepted, duplicate, and quarantined
+rows without calling the persistence API or claiming that a database write occurred.
+
+The sandbox must never be promoted into the real decision path, used as historical
+evidence, represented as current market data, or connected to execution. The real
+`DECISION_FRAMEWORK_UI_V1` gates continue to fail closed independently.
+
 ## Decision History Requirement
 
 Every analysis or recommendation the system produces must be recorded: what was
