@@ -18,7 +18,7 @@ type OperatorRequest = {
   text?: unknown;
 };
 
-type ResolveRepository = () => OperatorRepositoryResolution;
+type ResolveRepository = () => OperatorRepositoryResolution | Promise<OperatorRepositoryResolution>;
 
 function json(body: unknown, status = 200) {
   return Response.json(body, {
@@ -72,9 +72,9 @@ function batchCounts(batch: IngestionBatch) {
   };
 }
 
-function safeResolveRepository(resolveRepository: ResolveRepository): OperatorRepositoryResolution {
+async function safeResolveRepository(resolveRepository: ResolveRepository): Promise<OperatorRepositoryResolution> {
   try {
-    return resolveRepository();
+    return await resolveRepository();
   } catch {
     return { available: false, reason: "PostgreSQL runtime could not be initialized" };
   }
@@ -158,7 +158,7 @@ export function createOperatorCsvPost(
       return json({ ok: false, code: "validation_failed", message: "CSV validation failed safely" }, 500);
     }
 
-    const persistence = safeResolveRepository(resolveRepository);
+    const persistence = await safeResolveRepository(resolveRepository);
     if (action === "preview") return json(previewResponse(batch, persistence));
     if (!persistence.available) {
       return json({
@@ -184,7 +184,7 @@ export function createOperatorCsvPost(
       return json({
         ok: false,
         code: "database_unavailable",
-        message: "PostgreSQL transaction failed; the batch was not committed",
+        message: "PostgreSQL outcome is unconfirmed; retry the same batch idempotently after checking database availability",
       }, 503);
     }
   };

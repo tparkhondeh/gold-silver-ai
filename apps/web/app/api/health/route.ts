@@ -1,22 +1,27 @@
 import { NextResponse } from "next/server";
 
-import { inspectOperatorDatabaseEnvironment } from "../../../db/postgres-runtime";
+import { inspectObservationDatabaseHealth } from "../../../db/postgres-runtime";
 import { decisionFramework } from "../../decision-support";
 import { inspectNavasanConfiguration } from "../../navasan-adapter";
 import { scenarioMethodology } from "../../scenario-engine";
 
 export const dynamic = "force-dynamic";
 
-export function GET() {
+export async function GET() {
   const navasanConfiguration = inspectNavasanConfiguration(process.env);
   const iranFeedConfigured = navasanConfiguration.ready;
-  const database = inspectOperatorDatabaseEnvironment();
-  const databaseReason = database.available ? "PostgreSQL محلی و دروازهٔ Commit آماده‌اند" : ({
+  const database = await inspectObservationDatabaseHealth();
+  const databaseReason = ({
     "operator database commit is not explicitly enabled": "Commit پایگاه داده صریحاً فعال نشده است",
     "DATABASE_URL is not configured": "آدرس PostgreSQL تنظیم نشده است",
     "DATABASE_URL is invalid": "آدرس PostgreSQL معتبر نیست",
     "DATABASE_URL must use PostgreSQL": "پایگاه داده باید PostgreSQL باشد",
     "Phase 1 operator database must be loopback-only": "پایگاه دادهٔ اپراتور Phase 1 باید فقط محلی باشد",
+    "PostgreSQL URL options and fragments are not permitted": "پارامتر اضافی در آدرس دیتابیس مجاز نیست",
+    "database_schema_missing": "اتصال برقرار است اما ساختار کامل دیتابیس موجود نیست",
+    "database_role_too_privileged": "دسترسی حساب برنامه بیش از حد مجاز است",
+    "database_unreachable_or_probe_failed": "اتصال یا بررسی واقعی دیتابیس ناموفق بود",
+    "database_connected_schema_present": "اتصال واقعی برقرار است و ساختار اولیه موجود است؛ تکمیل قابلیت‌ها جداگانه ارزیابی می‌شود",
   }[database.reason] ?? "پایگاه دادهٔ اپراتور آماده نیست");
 
   return NextResponse.json({
@@ -31,7 +36,8 @@ export function GET() {
       { id: "web", state: "ready", reason: "رابط وب در دسترس است" },
       { id: "global-market", state: process.env.GOLD_API_TOKEN?.trim() ? "configured" : "fallback", reason: process.env.GOLD_API_TOKEN?.trim() ? "خوراک کلیددار پیکربندی شده" : "خوراک‌های عمومی فقط برای نمایش اطلاع‌رسانی" },
       { id: "iran-market", state: iranFeedConfigured ? "configured" : "blocked", reason: navasanConfiguration.ready ? `واحد قرارداد ${navasanConfiguration.unit}` : navasanConfiguration.reason === "key_rotation_required" ? "کلید قبلی باید لغو و با کلید جدید جایگزین شود" : "کلید و واحد قراردادی منبع ایرانی کامل نیست" },
-      { id: "portfolio-persistence", state: database.available ? "configured" : "blocked", reason: databaseReason },
+      { id: "observation-persistence", state: database.state, reason: databaseReason },
+      { id: "portfolio-persistence", state: "blocked", reason: "ذخیرهٔ سمت سرور و حساب کاربری سبد هنوز پیاده‌سازی و آزمون نشده است" },
       { id: "scenario", state: "demo_only", reason: `${scenarioMethodology.id} هنوز کالیبره و بک‌تست نشده است` },
       { id: "financial-decision", state: "blocked", reason: `${decisionFramework.id} رابط دروازه‌هاست و توصیهٔ مالی تولید نمی‌کند` },
     ],

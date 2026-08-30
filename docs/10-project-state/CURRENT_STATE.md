@@ -7,14 +7,21 @@ _Last updated in the product calendar: ۱۴۰۵/۰۶/۰۸ (Phase 1 active)_
 ## Current Execution Gate
 
 The owner authorized staged Data Foundation and deterministic-baseline development,
-with each stage dependent on the previous quality gate. Local Phase 1 stabilization
-passed typecheck, lint, build, and 50 tests. Private GitHub authentication is now
-working: Phase 1 HEAD `b58f393aa29d3299595cce71ba238e23eba424cd` was published and
+with each stage dependent on the previous quality gate. Private GitHub authentication
+is working: Phase 1 HEAD `2823864138ef1ee7eb722b7a6c54d3a028a55403` was published and
 verified with upstream configured; remote `main` stayed at
 `5c03fabb1c8090497c0b03c9059a6e51fdb91d03`, with no tags or backup branch published.
-The first CI run built successfully but failed to load TypeScript tests on Node
-22.13.1. The shared test command now enables type stripping explicitly; the next
-remote run must pass before the next gate. No Phase 2 branch has been created.
+The Node 22 TypeScript test-command repair passed GitHub run 33304773397.
+The owner requested a development checkpoint for transfer to another computer;
+current database changes are not covered by that older green run. This handoff is
+not a phase acceptance or authorization to repair the old host's ACL. Follow
+[`CONTINUE_ON_ANOTHER_SYSTEM.md`](../../CONTINUE_ON_ANOTHER_SYSTEM.md).
+The official PostgreSQL 17.11 installer is now verified and extracted; local startup
+is blocked by a sandbox-versus-owner Windows ACL mismatch on the new project-owned
+cluster. Permission repair was requested, not bypassed. See
+[`POSTGRES_FOUNDATION_CHECKPOINT.md`](POSTGRES_FOUNDATION_CHECKPOINT.md) for current
+tests, implemented controls, and unverified integration work. No Phase 2 branch has
+been created.
 PostgreSQL integration, server-side portfolios, historical
 backfill, and the real baseline remain pending. See
 [`PHASE_1_STABILIZATION_AUDIT.md`](../../PHASE_1_STABILIZATION_AUDIT.md).
@@ -158,7 +165,8 @@ backfill, and the real baseline remain pending. See
   quality, source-priority, and observation-time rules, so a valid keyed Navasan rate
   outranks a valid manual Rahavard duplicate without depending on insertion order.
 - **Repository:** private GitHub authentication, Phase 1 branch publication, and
-  upstream tracking are verified. The first remote CI failure is under repair. The
+  upstream tracking are verified. The initial remote CI failure is resolved at the
+  published repair HEAD; current database work is a development handoff, not a release. The
   active canonical directory is the `gold-silver-phase1` linked worktree under the
   Codex visualization directory named in the root README. Its development history
   and running UI supersede the older OneDrive copies; both older copies are preserved.
@@ -176,7 +184,11 @@ backfill, and the real baseline remain pending. See
   the revalidation-and-commit path is wired to the transactional repository behind
   an explicit enable flag and loopback-only PostgreSQL URL. Runtime PostgreSQL,
   applied migration, integration evidence, and persistence history are not connected
-  yet, so the current host still fails closed. In the fresh-session laboratory, a fixed
+  yet, so the current host still fails closed. The development checkpoint adds migration
+  checksums/rollback, database probes, immutable batch/truncate protection, correction
+  constraints, exact decimal limits and server-controlled collection time; real
+  PostgreSQL integration and restore evidence remain blocked by the ACL issue above.
+  In the fresh-session laboratory, a fixed
   five-row CSV sample exercises preview plus a memory-only commit result (three
   accepted, one duplicate, one quarantined) without reaching the server or implying
   persistence.
@@ -188,7 +200,9 @@ backfill, and the real baseline remain pending. See
   web, market, persistence, scenario, and financial-decision readiness without secrets.
   The response remains `evaluation_only`. A read-only GitHub Actions workflow now
   encodes install, lint, typecheck, build, test, and production-audit gates; the first
-  remote run exposed the Node 22 TypeScript test-command issue described above.
+  remote run exposed the now-resolved Node 22 TypeScript test-command issue. The
+  pending database job adds a real PostgreSQL service and matching in-container
+  backup/restore clients; it has not yet executed.
 - **Open-source review:** high-star same-concept projects were license-screened.
   AGPL product code was not copied; compatible patterns were independently implemented
   and recorded in `docs/07-engineering/OPEN_SOURCE_ADOPTION.md`.

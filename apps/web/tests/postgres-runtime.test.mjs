@@ -4,6 +4,7 @@ import test from "node:test";
 import {
   createPgTransactionRunner,
   inspectOperatorDatabaseEnvironment,
+  probeObservationDatabase,
 } from "../db/postgres-runtime.ts";
 
 test("operator database requires an explicit enable flag and a loopback PostgreSQL URL", () => {
@@ -28,6 +29,23 @@ test("operator database requires an explicit enable flag and a loopback PostgreS
     DATABASE_URL: "postgresql://operator:secret@127.0.0.1:5432/asha",
   });
   assert.equal(local.available, true);
+});
+
+test("connection options cannot override the validated local host", () => {
+  for (const suffix of ["?host=db.example.com", "?hostaddr=192.0.2.1", "?sslmode=disable", "?options=-csearch_path=evil", "#fragment"]) {
+    assert.equal(inspectOperatorDatabaseEnvironment({
+      ASHA_OPERATOR_COMMIT_ENABLED: "true", DATABASE_URL: `postgresql://operator:fixture@127.0.0.1/asha${suffix}`,
+    }).available, false);
+  }
+});
+
+test("health requires an actual successful probe, schema and least-privilege role", async () => {
+  assert.equal((await probeObservationDatabase({ async query() { return { rows: [{ migrated: true, least_privilege: true }] }; } })).state, "connected");
+  assert.equal((await probeObservationDatabase({ async query() { return { rows: [{ migrated: false, least_privilege: true }] }; } })).reason, "database_schema_missing");
+  assert.equal((await probeObservationDatabase({ async query() { return { rows: [{ migrated: true, least_privilege: false }] }; } })).reason, "database_role_too_privileged");
+  const failed = await probeObservationDatabase({ async query() { throw new Error("private-connection-details"); } });
+  assert.equal(failed.reason, "database_unreachable_or_probe_failed");
+  assert.doesNotMatch(JSON.stringify(failed), /private-connection-details/);
 });
 
 test("PostgreSQL runner commits successful work and releases the connection", async () => {

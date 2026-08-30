@@ -46,7 +46,13 @@ function canonicalUtc(value: string | null, field: string, issues: ValidationIss
     issues.push({ code: "invalid_utc_timestamp", field, message: `${field} must be an ISO-8601 UTC timestamp` });
     return null;
   }
-  return new Date(value).toISOString();
+  const canonical = new Date(value).toISOString();
+  const expected = value.includes(".") ? value : value.replace(/Z$/, ".000Z");
+  if (canonical !== expected) {
+    issues.push({ code: "invalid_utc_timestamp", field, message: `${field} must identify a real calendar date` });
+    return null;
+  }
+  return canonical;
 }
 
 function pushFutureIssue(field: string, value: string | null, nowMs: number, issues: ValidationIssue[]) {
@@ -71,6 +77,12 @@ export async function validateObservation(
   const value = canonicalDecimal(input.value);
   if (value === null) issues.push({ code: "invalid_decimal", field: "value", message: "value must be an unsigned base-10 decimal string" });
   else if (!isPositiveDecimal(value)) issues.push({ code: "non_positive_value", field: "value", message: "value must be greater than zero" });
+  if (value !== null) {
+    const [whole, fraction = ""] = value.split(".");
+    if (whole.length > 26 || fraction.length > 12) {
+      issues.push({ code: "decimal_precision_exceeded", field: "value", message: "value must fit numeric(38,12) exactly without rounding" });
+    }
+  }
 
   if (instrument && input.currency !== instrument.canonicalCurrency) {
     issues.push({ code: "currency_mismatch", field: "currency", message: `expected ${instrument.canonicalCurrency}` });
@@ -117,6 +129,8 @@ export async function validateObservation(
     input.unit,
     observedAt,
     publishedAt ?? "",
+    // Preserve original v1 IDs; corrections get a distinct, replayable revision ID.
+    ...(input.correctionOf ? ["correction-v2", input.correctionOf, effectiveFrom, effectiveTo ?? ""] : []),
   ].join("|");
   const payloadHash = await sha256Hex(stableJson(input.rawPayload));
   const idempotencyKey = await sha256Hex(identity);

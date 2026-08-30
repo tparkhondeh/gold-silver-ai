@@ -14,8 +14,19 @@ implemented. This is not a production financial-advice system.
 The active canonical checkout is
 `C:\Users\Saraytell\.codex\visualizations\2026\08\17\01a01094-baba-78a0-aca5-29b34bd4235d\gold-silver-phase1`.
 Its private origin is `tparkhondeh/gold-silver-ai`. The Phase 1 branch is published
-and remote HEAD/upstream/main integrity were verified; remote CI is being repaired
-before the next gate. The older OneDrive copies are preserved. See
+and remote HEAD/upstream/main integrity were verified. GitHub quality run
+[33304773397](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33304773397)
+passed for the runtime-command repair. The official PostgreSQL 17.11 installer is
+now complete, signature-verified and extracted. Local startup is blocked by the
+new cluster folder belonging to the temporary sandbox account rather than the
+Windows owner; permission repair requires explicit approval. No incomplete binary
+was run. Current database work and its verification boundary are in
+[`POSTGRES_FOUNDATION_CHECKPOINT.md`](docs/10-project-state/POSTGRES_FOUNDATION_CHECKPOINT.md).
+For another computer, follow
+[`CONTINUE_ON_ANOTHER_SYSTEM.md`](CONTINUE_ON_ANOTHER_SYSTEM.md). This development
+handoff preserves work in progress; it is not a production release. Local secrets,
+database files and browser portfolios are intentionally not transferred by Git.
+The older OneDrive copies are preserved. See
 `docs/10-project-state/CURRENT_STATE.md` and `PHASE_1_STABILIZATION_AUDIT.md`.
 
 ## Local evaluation
@@ -24,7 +35,7 @@ From `apps/web`, with Node.js >=22.13 and npm installed:
 
 ```sh
 npm ci
-npm run dev -- --host 127.0.0.1 --port 4174
+npm run dev -- --port 4174
 ```
 
 Open [the local application](http://localhost:4174/). A fresh browser session opens

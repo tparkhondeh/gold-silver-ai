@@ -102,7 +102,7 @@ const errorLabels: Record<string, string> = {
   invalid_csv_structure: "ساختار ستون‌های CSV با قرارداد نسخهٔ یک سازگار نیست.",
   request_too_large: "حجم فایل از سقف یک مگابایت بیشتر است.",
   database_not_configured: "PostgreSQL هنوز متصل نیست؛ هیچ داده‌ای ذخیره نشد.",
-  database_unavailable: "تراکنش PostgreSQL کامل نشد؛ هیچ ثبت ناقصی انجام نشد.",
+  database_unavailable: "نتیجهٔ ثبت تأیید نشد؛ پس از بررسی اتصال، همان فایل را دوباره بفرستید. ورود مجدد همان فایل تکراری ثبت نمی‌شود.",
   operator_intent_mismatch: "نوع عملیات با درخواست امن اپراتور مطابقت ندارد.",
 };
 

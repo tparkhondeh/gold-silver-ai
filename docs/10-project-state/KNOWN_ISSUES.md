@@ -7,16 +7,16 @@
 1. **Resolved: private Git publication.** Browser-authorized Git Credential Manager
    now authenticates successfully. The development branch was published with verified
    HEAD/upstream and unchanged remote `main`; no tag or backup branch was published.
-2. **Remote CI needs a passing rerun.** Run 33303448183 passed locked install, lint,
-   typecheck, and build, then failed with `ERR_UNKNOWN_FILE_EXTENSION` because Node
-   22.13.1 does not enable TypeScript stripping by default. The test command now
-   enables it explicitly and has a regression contract test. Remote verification of
-   the fix and production dependency audit remain pending; branch protection is not
-   configured.
-3. **PostgreSQL is wired but not running.** Schema version 1, migration SQL,
-   repository code, guarded runtime adapter, preview/commit route, and isolated tests
-   exist, but PostgreSQL/Docker/`psql` are not installed on the current development
-   host. Commit therefore returns an explicit unavailable state and stores nothing.
+2. **Original CI failure resolved; current database work unverified remotely.**
+   Run 33304773397 passed the Node 22 repair at HEAD 2823864. The new real PostgreSQL
+   CI job accompanies the transfer checkpoint; only its own run can validate it.
+   Branch protection is not configured.
+3. **PostgreSQL startup blocked by local ownership mismatch.** Verified 17.11
+   binaries and a fresh cluster exist, but the private directory was created as
+   `CodexSandboxOffline`; the owner-run server receives Permission denied. Explicit
+   permission was requested before repairing that directory's ACL. No application
+   migrations, real integration/restore tests or server-side portfolio persistence
+   have passed. Details: `POSTGRES_FOUNDATION_CHECKPOINT.md`.
 4. **Iranian source continuity and redundancy are missing.** Navasan has a tested
    toman/per-symbol scale adapter but is paused until its exposed key is revoked and
    replaced. The rotation flag is an operator declaration, not proof from the vendor.

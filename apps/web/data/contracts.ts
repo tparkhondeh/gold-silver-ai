@@ -45,6 +45,7 @@ export type ValidationIssueCode =
   | "inactive_source"
   | "source_mismatch"
   | "invalid_decimal"
+  | "decimal_precision_exceeded"
   | "non_positive_value"
   | "currency_mismatch"
   | "unit_mismatch"

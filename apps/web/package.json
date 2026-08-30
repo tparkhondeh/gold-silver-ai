@@ -14,7 +14,9 @@
     "test:unit": "node --experimental-strip-types --test tests/*.test.mjs",
     "lint": "eslint . --ignore-pattern dist --ignore-pattern .next",
     "configure:market-apis": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/configure-market-apis.ps1",
-    "db:generate": "drizzle-kit generate"
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "node --experimental-strip-types scripts/migrate-postgres.mjs",
+    "test:db": "node --experimental-strip-types --test tests/integration/*.test.mjs"
   },
   "dependencies": {
     "@fontsource-variable/vazirmatn": "5.3.0",

@@ -4,14 +4,22 @@
 
 ## Immediate Next Step
 
-1. Verify the Node 22 test-command repair locally, commit it on `codex/phase-1-data-ui`,
-   and push only that branch. The four stabilization commits are already published;
-   HEAD/upstream/main integrity are verified. Never include `.env.local` or backups.
-2. Require a passing GitHub quality run after the repair. The first run failed to
-   load `.ts` tests; remote CI, not GitHub sign-in, is the current gate.
-3. After stabilization is verified, continue the Phase 1 Data Foundation: provision
-   an isolated PostgreSQL runtime, apply versioned migrations, and test transactions,
-   rollback, idempotent replay, corrections, quarantine, and point-in-time cutoffs.
+The owner now requests saving the latest development state for another system.
+Transfer instructions are in `CONTINUE_ON_ANOTHER_SYSTEM.md` at repository root.
+The checkpoint push is explicitly authorized even though local PostgreSQL tests
+remain blocked; it is not release approval. On a new machine, provision independently
+instead of applying the old machine's path, SID or ACL repair.
+
+1. Obtain the requested narrow permission to repair the fresh PostgreSQL cluster's
+   Windows ACL for the owner account. Do not reinitialize, move, delete or expose the
+   cluster to work around the access failure. See `POSTGRES_FOUNDATION_CHECKPOINT.md`.
+2. Run the reviewed local bootstrap as the Windows owner, then execute the real
+   PostgreSQL integration/restore suite. Do not enable observation commit from a
+   configuration string alone or count unexecuted tests as passed.
+3. After local gates pass, commit/push only the development branch and verify both
+   GitHub quality and database jobs at the new HEAD. The older Node 22 repair already
+   passed run 33304773397; it does not validate the later checkpoint. Preserve
+   `main`, backups, tags, credentials and existing personal browser data.
 4. Add secure user-scoped server-side holding/transaction/valuation persistence.
    Preserve browser data during explicit migration, keep sandbox separate, and test
    refresh plus two independent browser sessions under the same authenticated scope.

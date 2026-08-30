@@ -56,6 +56,11 @@ export function inspectOperatorDatabaseEnvironment(
   if (!LOOPBACK_DATABASE_HOSTS.has(databaseUrl.hostname.toLowerCase())) {
     return { available: false, reason: "Phase 1 operator database must be loopback-only" };
   }
+  // pg-connection-string lets query parameters override host and other options.
+  // Validate the complete supported contract, not only URL.hostname.
+  if (databaseUrl.search || databaseUrl.hash) {
+    return { available: false, reason: "PostgreSQL URL options and fragments are not permitted" };
+  }
 
   return { available: true, connectionString };
 }
@@ -100,17 +105,53 @@ function getRuntimePool(connectionString: string) {
     max: 4,
     connectionTimeoutMillis: 3_000,
     idleTimeoutMillis: 10_000,
+    query_timeout: 3_000,
     allowExitOnIdle: true,
+  });
+  runtimePool.on("error", () => {
+    // pg removes failed idle clients; health probes report a sanitized failure.
   });
   return runtimePool;
 }
 
-export function resolveOperatorObservationRepository(
+export type DatabaseProbe = {
+  query(sql: string): Promise<{ rows: Array<{ migrated: boolean; least_privilege: boolean }> }>;
+};
+
+export async function probeObservationDatabase(pool: DatabaseProbe) {
+  try {
+    const result = await pool.query(`SELECT
+      to_regclass('public.observations') IS NOT NULL
+        AND to_regclass('public.validation_results') IS NOT NULL
+        AND to_regclass('public.asha_schema_migrations') IS NOT NULL AS migrated,
+      NOT rolsuper AND NOT rolcreatedb AND NOT rolcreaterole AND NOT rolbypassrls
+        AND NOT has_schema_privilege(current_user, 'public', 'CREATE') AS least_privilege
+      FROM pg_roles WHERE rolname = current_user`);
+    if (result.rows[0]?.migrated !== true) return { state: "blocked", reason: "database_schema_missing" } as const;
+    if (result.rows[0]?.least_privilege !== true) return { state: "blocked", reason: "database_role_too_privileged" } as const;
+    return { state: "connected", reason: "database_connected_schema_present" } as const;
+  } catch {
+    return { state: "blocked", reason: "database_unreachable_or_probe_failed" } as const;
+  }
+}
+
+export async function inspectObservationDatabaseHealth(environment: RuntimeEnvironment = process.env) {
+  const configuration = inspectOperatorDatabaseEnvironment(environment);
+  if (!configuration.available) return { state: "blocked", reason: configuration.reason } as const;
+  try {
+    return await probeObservationDatabase(getRuntimePool(configuration.connectionString));
+  } catch {
+    return { state: "blocked", reason: "database_unreachable_or_probe_failed" } as const;
+  }
+}
+
+export async function resolveOperatorObservationRepository(
   environment: RuntimeEnvironment = process.env,
-): OperatorRepositoryResolution {
+): Promise<OperatorRepositoryResolution> {
   const configuration = inspectOperatorDatabaseEnvironment(environment);
   if (!configuration.available) return configuration;
-
+  const health = await inspectObservationDatabaseHealth(environment);
+  if (health.state !== "connected") return { available: false, reason: health.reason };
   const runner = createPgTransactionRunner(getRuntimePool(configuration.connectionString));
   return { available: true, repository: new PostgresObservationRepository(runner) };
 }

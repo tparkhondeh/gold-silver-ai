@@ -148,7 +148,8 @@ export async function ingestManualCsv(options: {
       continue;
     }
     seen.add(result.observation.idempotencyKey);
-    accepted.push(result.observation);
+    // CSV-reported collection time remains in rawPayload, never as system receipt.
+    accepted.push({ ...result.observation, collectedAt: now.toISOString() });
   }
 
   return {

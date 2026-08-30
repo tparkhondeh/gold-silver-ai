@@ -115,3 +115,19 @@ test("operator rejects a commit body paired with a preview intent header", async
   assert.equal(response.status, 403);
   assert.equal((await response.json()).code, "operator_intent_mismatch");
 });
+
+test("operator awaits a failed health probe and never invokes persistence", async () => {
+  const post = createOperatorCsvPost(async () => ({ available: false, reason: "database_role_too_privileged" }));
+  const response = await post(operatorRequest({ action: "commit", fileName: "test.csv", sourceId: PHASE1_MANUAL_SOURCE_ID, text: `${headers}\n${validRow}\n` }));
+  assert.equal(response.status, 503);
+  assert.equal((await response.json()).code, "database_not_configured");
+});
+
+test("an uncertain commit is not reported as definitely absent or successful", async () => {
+  const post = createOperatorCsvPost(() => ({ available: true, repository: { async persistBatch() { throw new Error("private PostgreSQL details"); } } }));
+  const response = await post(operatorRequest({ action: "commit", fileName: "test.csv", sourceId: PHASE1_MANUAL_SOURCE_ID, text: `${headers}\n${validRow}\n` }));
+  const body = await response.json();
+  assert.equal(response.status, 503);
+  assert.match(body.message, /unconfirmed/);
+  assert.doesNotMatch(JSON.stringify(body), /private PostgreSQL details|not committed/);
+});

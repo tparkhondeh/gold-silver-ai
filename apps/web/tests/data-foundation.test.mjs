@@ -81,11 +81,43 @@ test("ingests unique CSV rows, reports duplicates, and quarantines invalid rows"
   });
 
   assert.equal(batch.accepted.length, 1);
+  assert.equal(batch.accepted[0].collectedAt, "2026-08-20T12:00:00.000Z");
+  assert.equal(batch.accepted[0].rawPayload.collected_at, "2026-08-20T10:01:00Z");
   assert.equal(batch.duplicates.length, 1);
   assert.equal(batch.duplicates[0].rowNumber, 3);
   assert.equal(batch.quarantined.length, 1);
   assert.equal(batch.quarantined[0].rowNumber, 4);
   assert.equal(batch.quarantined[0].issues.some((issue) => issue.code === "currency_mismatch"), true);
+});
+
+test("accepted decimals fit PostgreSQL exactly without rounding", async () => {
+  for (const value of ["99999999999999999999999999.999999999999", "1.123456789012000", "0.000000000001"]) {
+    const result = await validateObservation({ ...validRawObservation, value }, registry, new Date("2026-08-20T12:00:00Z"));
+    assert.deepEqual(result.issues, [], value);
+  }
+  for (const value of ["100000000000000000000000000", "1.1234567890123", "0.0000000000001"]) {
+    const result = await validateObservation({ ...validRawObservation, value }, registry, new Date("2026-08-20T12:00:00Z"));
+    assert.equal(result.observation, null);
+    assert.equal(result.issues.some((issue) => issue.code === "decimal_precision_exceeded"), true, value);
+  }
+});
+
+test("impossible calendar dates are rejected rather than normalized", async () => {
+  for (const observedAt of ["2026-02-30T10:00:00Z", "2026-02-29T10:00:00.000Z"]) {
+    const result = await validateObservation({ ...validRawObservation, observedAt }, registry, new Date("2026-08-20T12:00:00Z"));
+    assert.equal(result.observation, null);
+    assert.equal(result.issues.some((issue) => issue.code === "invalid_utc_timestamp"), true);
+  }
+});
+
+test("metadata-only corrections have distinct stable identities", async () => {
+  const now = new Date("2026-08-20T12:00:00Z");
+  const original = (await validateObservation(validRawObservation, registry, now)).observation;
+  const input = { ...validRawObservation, correctionOf: original.id, effectiveFrom: "2026-08-20T10:00:01Z" };
+  const revision = (await validateObservation(input, registry, now)).observation;
+  assert.notEqual(revision.id, original.id);
+  assert.equal(revision.correctionOf, original.id);
+  assert.equal((await validateObservation(input, registry, now)).observation.id, revision.id);
 });
 
 test("redacts secret-like fields before raw payload storage", () => {
