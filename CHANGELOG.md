@@ -7,6 +7,15 @@ state is recorded in `docs/10-project-state/CURRENT_STATE.md`.
 
 ## [Unreleased]
 
+### Private publication and CI repair — ۱۴۰۵/۰۶/۰۸
+
+- Published only `codex/phase-1-data-ui` at `b58f393` and verified matching remote
+  HEAD/upstream, unchanged `main`, and no remote tags or backup branch.
+- Diagnosed the first GitHub quality-run failure: Node 22.13.1 could not load `.ts`
+  tests without explicit type stripping. Shared test scripts now enable it.
+- Added a runtime-command regression test; local typecheck, lint, and 51 tests pass.
+  Remote verification of the repaired command follows this commit.
+
 ### Phase 1 local stabilization — ۱۴۰۵/۰۶/۰۸
 
 - Preserved and reviewed the accumulated market-adapter, synthetic-intelligence,

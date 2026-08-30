@@ -2,6 +2,9 @@
 
 **Version 1.0.0** · Local engineering evidence · ۱۴۰۵/۰۶/۰۸ · Evaluation only
 
+Publication follow-up: the original blocked-state evidence below is historical.
+See section 8 for the verified private push and first CI failure/repair.
+
 ## AI READING INSTRUCTION
 
 Read all `[SPEC]` and `[BUG]` blocks as scoped local evidence. `[?]` identifies
@@ -191,3 +194,30 @@ git credential-manager github login --username tparkhondeh --browser
 
 - 1.0.0 — Recorded local stabilization, actual tests, thematic code commits, preserved
   checkouts, credential/typography fixes, and unresolved sequential gates.
+
+## 8. Publication Follow-up — ۱۴۰۵/۰۶/۰۸
+
+**[SPEC]**
+
+- Git Credential Manager browser authorization completed without extracting tokens.
+- Browser confirmed `Private repository`; authenticated Git fetched remote refs.
+- Pushed exactly `refs/heads/codex/phase-1-data-ui` to the same remote branch.
+- Remote development HEAD: `b58f393aa29d3299595cce71ba238e23eba424cd`.
+- Remote main before and after: `5c03fabb1c8090497c0b03c9059a6e51fdb91d03`.
+- Remote refs after verification: only main and the development branch; no tags.
+- Upstream: `origin/codex/phase-1-data-ui`; divergence `0 / 0`; working tree clean
+  immediately after the first push. No backup deletion or force operation occurred.
+
+**[BUG] First remote CI run**
+
+- Symptom: [run 33303448183](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33303448183)
+  passed installation/lint/typecheck/build, then reported `ERR_UNKNOWN_FILE_EXTENSION`
+  for `.ts` test imports; only 4 test cases passed while 14 test files failed to load.
+- Cause: CI uses Node 22.13.1, whereas local Node 24 enables native type stripping
+  by default; the shared test command did not explicitly enable it.
+- Fix: `npm test` delegates after build to the shared `test:unit` command using
+  `--experimental-strip-types`. A regression test protects the runtime contract.
+- Local verification: typecheck, lint, and all 51 tests pass. No financial logic,
+  dependency version, hosting metadata, or real-engine gate was changed.
+- Remote repair verification is pending the next pushed commit; no Data Foundation
+  implementation proceeds on the assumption that this CI gate passed.

@@ -8,10 +8,14 @@ _Last updated in the product calendar: ۱۴۰۵/۰۶/۰۸ (Phase 1 active)_
 
 The owner authorized staged Data Foundation and deterministic-baseline development,
 with each stage dependent on the previous quality gate. Local Phase 1 stabilization
-passes typecheck, lint, build, and 50 tests. Private GitHub authentication is absent:
-the non-interactive fetch fails before remote refs can be inspected. Publication,
-remote HEAD/main comparison, and upstream verification remain blocked. No Phase 2
-branch has been created. PostgreSQL integration, server-side portfolios, historical
+passed typecheck, lint, build, and 50 tests. Private GitHub authentication is now
+working: Phase 1 HEAD `b58f393aa29d3299595cce71ba238e23eba424cd` was published and
+verified with upstream configured; remote `main` stayed at
+`5c03fabb1c8090497c0b03c9059a6e51fdb91d03`, with no tags or backup branch published.
+The first CI run built successfully but failed to load TypeScript tests on Node
+22.13.1. The shared test command now enables type stripping explicitly; the next
+remote run must pass before the next gate. No Phase 2 branch has been created.
+PostgreSQL integration, server-side portfolios, historical
 backfill, and the real baseline remain pending. See
 [`PHASE_1_STABILIZATION_AUDIT.md`](../../PHASE_1_STABILIZATION_AUDIT.md).
 
@@ -153,12 +157,12 @@ backfill, and the real baseline remain pending. See
   validated online feed. Duplicate instruments are selected by explicit status,
   quality, source-priority, and observation-time rules, so a valid keyed Navasan rate
   outranks a valid manual Rahavard duplicate without depending on insertion order.
-- **Repository:** private GitHub origin is configured. Remote authentication and
-  branch publication must be verified before claiming this branch is stored. The
+- **Repository:** private GitHub authentication, Phase 1 branch publication, and
+  upstream tracking are verified. The first remote CI failure is under repair. The
   active canonical directory is the `gold-silver-phase1` linked worktree under the
   Codex visualization directory named in the root README. Its development history
   and running UI supersede the older OneDrive copies; both older copies are preserved.
-  There is no verified upstream or remote-tracking ref on this host.
+  The published branch tracks `origin/codex/phase-1-data-ui`; `main` is not modified.
 - **Decision record:** Phase 1 scope, wealth UI scope, live-source boundary, and the
   temporary Rahavard manual-snapshot boundary are in ADR 0001 through ADR 0004.
 - **Data Foundation:** schema version 1 now defines instrument, source, observation,
@@ -183,8 +187,8 @@ backfill, and the real baseline remain pending. See
 - **Operational visibility:** `GET /api/health` and the Data Trust engine panel expose
   web, market, persistence, scenario, and financial-decision readiness without secrets.
   The response remains `evaluation_only`. A read-only GitHub Actions workflow now
-  encodes install, lint, typecheck, build, test, and production-audit gates; its first
-  remote run is pending branch publication.
+  encodes install, lint, typecheck, build, test, and production-audit gates; the first
+  remote run exposed the Node 22 TypeScript test-command issue described above.
 - **Open-source review:** high-star same-concept projects were license-screened.
   AGPL product code was not copied; compatible patterns were independently implemented
   and recorded in `docs/07-engineering/OPEN_SOURCE_ADOPTION.md`.

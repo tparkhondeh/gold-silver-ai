@@ -24,7 +24,16 @@
 
 `STATUS: PARTIAL`. Phase 1 uses Node's built-in test runner for deterministic unit,
 contract, repository, rendered-output, and API tests; ESLint and the Vinext build are
-separate gates. CI integration and a numeric coverage target remain `STATUS: TBD`.
+separate gates. The GitHub Actions workflow runs these gates on the development
+branch; its first run identified a runtime-command mismatch. A numeric coverage
+target remains `STATUS: TBD`.
+
+`npm test` builds first, then delegates to `npm run test:unit`. The latter must use
+`node --experimental-strip-types --test tests/*.test.mjs` so direct `.ts` imports
+also work on the declared Node 22.13 minimum. Native type stripping became enabled
+by default only in 22.18; see the [official Node history](https://nodejs.org/docs/latest-v22.x/api/typescript.html#modules-typescript).
+A runtime-contract regression test protects the shared command. This strips types
+for execution; it does not replace the separate TypeScript typecheck gate.
 
 The synthetic intelligence suite separately verifies deterministic repeatability,
 hand-reconstructable weighted score arithmetic, ordering of best/worst scenarios,

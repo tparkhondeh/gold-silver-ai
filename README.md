@@ -13,8 +13,9 @@ implemented. This is not a production financial-advice system.
 
 The active canonical checkout is
 `C:\Users\Saraytell\.codex\visualizations\2026\08\17\01a01094-baba-78a0-aca5-29b34bd4235d\gold-silver-phase1`.
-Its private origin is `tparkhondeh/gold-silver-ai`. Remote authentication and push
-verification are pending; the older OneDrive copies are preserved. See
+Its private origin is `tparkhondeh/gold-silver-ai`. The Phase 1 branch is published
+and remote HEAD/upstream/main integrity were verified; remote CI is being repaired
+before the next gate. The older OneDrive copies are preserved. See
 `docs/10-project-state/CURRENT_STATE.md` and `PHASE_1_STABILIZATION_AUDIT.md`.
 
 ## Local evaluation
@@ -30,6 +31,8 @@ Open [the local application](http://localhost:4174/). A fresh browser session op
 the labelled synthetic laboratory. Personal data is not shared between browsers.
 Run `npm run typecheck`, `npm run lint`, and `npm test` for the local gates;
 `npm test` builds before testing the rendered application and API contracts.
+The shared unit-test command explicitly enables Node's TypeScript type stripping,
+which is not enabled by default in the minimum supported Node 22.13 release.
 
 Secrets belong only in Git-ignored server-side configuration. The previously
 pasted Navasan credential is considered compromised: ingestion remains paused

@@ -4,13 +4,11 @@
 
 ## Immediate Next Step
 
-1. Complete local thematic stabilization commits on `codex/phase-1-data-ui`. The
-   local build, lint, typecheck, and 50-test suite pass; preserve every reviewed
-   existing change. Do not include `.env.local` or backup branches.
-2. Have the owner sign in securely to GitHub on this host. Fetch and inspect remote
-   refs, record remote `main`, push only the development branch without force, and
-   verify remote branch HEAD, unchanged `main`, upstream, and remote CI. Authentication
-   currently blocks this stage; do not claim remote publication or bypass the gate.
+1. Verify the Node 22 test-command repair locally, commit it on `codex/phase-1-data-ui`,
+   and push only that branch. The four stabilization commits are already published;
+   HEAD/upstream/main integrity are verified. Never include `.env.local` or backups.
+2. Require a passing GitHub quality run after the repair. The first run failed to
+   load `.ts` tests; remote CI, not GitHub sign-in, is the current gate.
 3. After stabilization is verified, continue the Phase 1 Data Foundation: provision
    an isolated PostgreSQL runtime, apply versioned migrations, and test transactions,
    rollback, idempotent replay, corrections, quarantine, and point-in-time cutoffs.

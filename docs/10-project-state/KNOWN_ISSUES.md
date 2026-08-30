@@ -4,15 +4,15 @@
 
 ## Phase 1 Limitations
 
-1. **The Phase 1 branch is not confirmed on GitHub.** The private `origin` is
-   configured, but the ۱۴۰۵/۰۶/۰۸ non-interactive fetch failed because no GitHub
-   credential is available. The branch has no verified upstream. Local history is
-   intact; no `main` write was attempted. Remote `main` integrity cannot yet be
-   compared because remote refs could not be read.
-2. **CI is defined but not remotely verified.** The read-only Phase 1 quality workflow
-   runs locked install, lint, typecheck, build, tests, and production audit. It cannot
-   be claimed operational until the branch is published and the first GitHub run passes;
-   branch protection is still not configured.
+1. **Resolved: private Git publication.** Browser-authorized Git Credential Manager
+   now authenticates successfully. The development branch was published with verified
+   HEAD/upstream and unchanged remote `main`; no tag or backup branch was published.
+2. **Remote CI needs a passing rerun.** Run 33303448183 passed locked install, lint,
+   typecheck, and build, then failed with `ERR_UNKNOWN_FILE_EXTENSION` because Node
+   22.13.1 does not enable TypeScript stripping by default. The test command now
+   enables it explicitly and has a regression contract test. Remote verification of
+   the fix and production dependency audit remain pending; branch protection is not
+   configured.
 3. **PostgreSQL is wired but not running.** Schema version 1, migration SQL,
    repository code, guarded runtime adapter, preview/commit route, and isolated tests
    exist, but PostgreSQL/Docker/`psql` are not installed on the current development

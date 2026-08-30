@@ -60,7 +60,16 @@ requirements. Full details: `PHASE_0_AUDIT.md` § 15.
 ## Phase 1 — Completed Units on the Working Branch
 
 **Status:** completed units below are on `codex/phase-1-data-ui`, not merged to
-`main` and not yet confirmed on the private remote.
+`main`. The stabilization commits are now confirmed on the private remote;
+subsequent changes still require their own push and CI verification.
+
+### Private publication and runtime-command repair — ۱۴۰۵/۰۶/۰۸
+
+- Verified the initial Phase 1 push at `b58f393`, its upstream, and unchanged remote
+  main `5c03fabb1c8090497c0b03c9059a6e51fdb91d03`; no backup or tag was pushed.
+- Repaired the `.ts` test loader command exposed by the first Linux/Node 22 CI run.
+- Local typecheck/lint and 51 tests pass; the repair's remote CI is not yet claimed.
+
 
 ### Local stabilization — ۱۴۰۵/۰۶/۰۸
 
