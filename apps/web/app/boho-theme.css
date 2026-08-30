@@ -261,34 +261,23 @@ select:focus-visible {
   box-shadow: 0 18px 42px rgba(93, 86, 61, 0.11);
 }
 
-.metric-icon,
-.asset-dot,
 .instrument > i {
   border: 1px solid rgba(145, 129, 91, 0.14);
 }
 
-.metric-icon.gold,
-.instrument > i.gold,
-.asset-dot {
+.instrument > i.gold {
   background: #f1e1bd;
   color: #846b3e;
 }
 
-.metric-icon.green,
 .instrument > i.silver {
   background: #e4e7ce;
   color: #68734f;
 }
 
-.metric-icon.blue,
 .instrument > i.blue {
   background: #dfe7e2;
   color: #647c7a;
-}
-
-.metric-icon.neutral {
-  background: #ebe4d5;
-  color: #77725f;
 }
 
 .empty-lock {
@@ -549,12 +538,6 @@ footer b {
   color: #626b4d;
   padding: 0 13px;
   font-size: 10px;
-}
-
-.notification-trigger::before {
-  content: "◉";
-  color: #8b7650;
-  font-size: 13px;
 }
 
 .notification-trigger:hover {
@@ -924,6 +907,7 @@ footer b {
 .metric-grid article {
   min-height: 82px;
   padding: 13px;
+  display: block;
 }
 
 .metric-grid strong {
@@ -1306,7 +1290,7 @@ footer b {
   color: var(--ink);
   padding: 10px 11px;
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto auto;
+  grid-template-columns: minmax(0, 1fr) auto auto;
   align-items: center;
   gap: 10px;
   text-align: right;
@@ -1431,12 +1415,8 @@ footer b {
   justify-content: space-between;
 }
 
-.opportunity-list article > div span {
-  color: #9c754f;
-  font-size: 14px;
-}
-
 .opportunity-list article > div b {
+  margin-inline-start: auto;
   border-radius: 99px;
   background: #e9d6ba;
   color: #8b6240;
@@ -1478,11 +1458,6 @@ footer b {
   background: rgba(240, 236, 221, 0.55);
   padding: 15px;
   text-align: center;
-}
-
-.opportunity-empty span {
-  color: #929a73;
-  font-size: 20px;
 }
 
 .opportunity-empty strong {

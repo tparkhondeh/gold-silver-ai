@@ -11,12 +11,13 @@ import {
   type JalaliDateParts,
 } from "./jalali-calendar";
 
-export function PersianDatePicker({ name }: { name: string }) {
+export function PersianDatePicker({ name, initialValue = "" }: { name: string; initialValue?: string }) {
   const today = currentJalaliParts();
-  const [value, setValue] = useState("");
+  const initialParts = initialValue.match(/^(\d{4})\/(\d{2})\/(\d{2})$/);
+  const [value, setValue] = useState(initialValue);
   const [open, setOpen] = useState(false);
-  const [visibleYear, setVisibleYear] = useState(today.year);
-  const [visibleMonth, setVisibleMonth] = useState(today.month);
+  const [visibleYear, setVisibleYear] = useState(initialParts ? Number(initialParts[1]) : today.year);
+  const [visibleMonth, setVisibleMonth] = useState(initialParts ? Number(initialParts[2]) : today.month);
   const id = useId();
   const calendarId = `${id}-calendar`;
   const labelId = `${id}-label`;
@@ -71,7 +72,6 @@ export function PersianDatePicker({ name }: { name: string }) {
       <input type="hidden" name={name} value={value} readOnly />
       <button type="button" className={`persian-date-trigger${value ? " has-value" : ""}`} aria-labelledby={`${labelId} ${valueId}`} aria-expanded={open} aria-controls={calendarId} onClick={() => setOpen((current) => !current)}>
         <span id={valueId}>{value ? `${toPersianDigits(value)} شمسی` : "انتخاب از تقویم"}</span>
-        <i aria-hidden="true">▣</i>
       </button>
       {open && <div className="persian-calendar" id={calendarId} role="group" aria-label="انتخاب تاریخ خرید در تقویم شمسی">
         <div className="persian-calendar-head">
