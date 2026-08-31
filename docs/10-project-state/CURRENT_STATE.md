@@ -41,6 +41,9 @@ foundation. It is runtime-read-only and `evaluation_only`; no real event/value i
 seeded and no financial methodology is selected. A plain-language Persian production
 identity proposal now includes a dated official pricing/terms snapshot. Iran account
 eligibility is still unverified, and audience/provider approval remains owner-required.
+The read-only owner-server preflight found an existing local override for Cloudflare's
+API hostname; no remote setting was changed and that candidate is not host-ready. See
+`docs/09-operations/DEPLOYMENT.md`.
 Checkpoint `d0ea16f` passed both GitHub jobs in run 33396556534.
 
 ## Snapshot

@@ -12,6 +12,9 @@ state is recorded in `docs/10-project-state/CURRENT_STATE.md`.
 - Added a plain-language Persian Tier-A production identity proposal and a dated
   official pricing/terms snapshot without selecting or enabling a vendor; Iran access,
   real identity and portfolio migration remain owner-gated.
+- Recorded a read-only owner-server access preflight: general provider documentation
+  is reachable, but an existing local Cloudflare API hostname override blocks that
+  candidate's host-readiness; no server configuration was changed.
 - Added migrations 0007–0009 and an append-only, forced-RLS transaction and evaluation-only
   valuation ledger with exact Dataset, Methodology, observation and event lineage.
 - The normal runtime is read-only for the new ledger. No real transaction/value or

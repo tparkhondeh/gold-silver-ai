@@ -18,6 +18,28 @@ The local application remains the only approved operator surface. PostgreSQL,
 environment separation for persistent data, monitoring, backup, and a stable release
 process remain `STATUS: TBD` or partial in their respective operations documents.
 
+## Owner-hosted server preflight
+
+`STATUS: NOT READY` for a Cloudflare access gateway. A read-only SSH preflight was
+run on `2026-08-31` against the owner-provided server; it changed no file, service,
+DNS record, deployment or account.
+
+- Cloudflare's HTTPS trace identified the server connection as `loc=IR`.
+- Certificate-verified HTTPS returned `200` for Cloudflare developer documentation,
+  Supabase terms and the Keycloak site. Cloudflare dashboard and Access hostnames also
+  completed TLS verification, so general outbound HTTPS is not wholly blocked.
+- The server's existing `/etc/hosts` maps both `www.cloudflare.com` and
+  `api.cloudflare.com` to `127.0.0.1`. The mapped `www` endpoint presents a self-signed
+  non-Cloudflare certificate. Normal certificate validation therefore rejects it, and
+  Cloudflare API readiness on this host is not established.
+
+Do not remove or bypass those mappings merely to make a test pass. First obtain the
+hosting administrator's explanation and authorization, then correct the host/network
+configuration if appropriate and repeat certificate, API and tunnel tests. Passing
+this technical preflight would still not prove account eligibility, legal availability
+or email delivery from Iran; those remain owner/provider gates in
+[`IDENTITY_RECOMMENDATION.md`](../02-architecture/IDENTITY_RECOMMENDATION.md).
+
 ## Principle (to hold regardless of eventual approach)
 
 Only code that is on `main` (stable, owner-approved — see

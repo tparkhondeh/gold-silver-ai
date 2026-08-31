@@ -18,7 +18,10 @@ financial engine remain separate gates.
    but Iran account eligibility remains unverified. Then approve third-party versus
    self-hosted identity and a provider only after written regional confirmation; do not
    trust production identity or migrate browser holdings before approval and two
-   authenticated-session tests.
+   authenticated-session tests. A read-only preflight also found the current server's
+   Cloudflare API hostname locally overridden; if Cloudflare is later approved, obtain
+   hosting-administrator authorization and clear the technical gate documented in
+   `docs/09-operations/DEPLOYMENT.md` before implementation.
 2. After the owner revokes and replaces the exposed Navasan key, implement the
    documented historical endpoints and durable quota accounting. Backfill only
    licensed data within quota; acquire an independent Iranian cross-check if needed.
