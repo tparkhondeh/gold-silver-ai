@@ -178,7 +178,8 @@ Checkpoint `d0ea16f` passed both GitHub jobs in run 33396556534.
   while Gold-API.com is an independent public cross-check and becomes the display
   fallback only if XAUS fails. Their status remains informational and cannot unlock a
   decision. A hidden-input PowerShell setup command writes provider keys only
-  to Git-ignored `.env.local`. An owner-approved Rahavard browser capture supplies a local-only manual
+  to Git-ignored `.env.local`; its owner-facing prompts are now Persian and keep the
+  revoked-key confirmation mandatory. An owner-approved Rahavard browser capture supplies a local-only manual
   snapshot for 13 instruments; raw IRR provenance is retained, display values use an
   exact IRR/10 conversion, and every observation becomes stale after 60 minutes. It is
   not an automated feed and stale values are excluded from portfolio valuation. No

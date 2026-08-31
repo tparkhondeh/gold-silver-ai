@@ -56,28 +56,38 @@ function Set-DotEnvValue {
   Set-Content -LiteralPath $envPath -Value $lines -Encoding utf8
 }
 
-Write-Host "Asha market API setup" -ForegroundColor Cyan
-Write-Host "Secrets are hidden while typing and are written only to apps/web/.env.local."
-Write-Host "Press Enter at a secret prompt to leave that provider unchanged."
+Write-Host "راه‌اندازی امن قیمت‌های بازار اشا" -ForegroundColor Cyan
+Write-Host "کلیدها هنگام تایپ دیده نمی‌شوند و فقط در فایل محلیِ خارج از Git ذخیره می‌شوند."
+Write-Host "کلید را داخل چت یا Git نفرستید. برای ردکردن هر بخش فقط Enter بزنید."
 
-$navasanSecret = Read-Host "Navasan API key" -AsSecureString
+$navasanSecret = Read-Host "کلید جدید نوسان (اگر هنوز نگرفته‌اید Enter بزنید)" -AsSecureString
 $navasanKey = ConvertFrom-SecretInput $navasanSecret
 if ($navasanKey.Length -gt 0) {
-  $rotationConfirmation = (Read-Host "Revoke the key previously pasted in chat. Type ROTATED only if this is a newly issued replacement key").Trim()
-  if ($rotationConfirmation -cne "ROTATED") {
-    throw "Navasan remains disabled until the compromised key is revoked and replaced."
+  $rotationConfirmation = (Read-Host "فقط اگر کلید قبلی را لغو و کلید تازه گرفته‌اید بنویسید: تعویض شد").Trim()
+  if ($rotationConfirmation -cne "تعویض شد" -and $rotationConfirmation -cne "ROTATED") {
+    throw "نوسان غیرفعال می‌ماند تا کلید قبلی لغو و با کلید تازه جایگزین شود."
   }
-  $navasanUnit = (Read-Host "Confirmed Navasan contract unit (IRR or TOMAN)").Trim().ToUpperInvariant()
+  $navasanUnit = (Read-Host "واحد قیمت نوسان (TOMAN یا IRR) [TOMAN]").Trim().ToUpperInvariant()
+  if ($navasanUnit.Length -eq 0) { $navasanUnit = "TOMAN" }
   if ($navasanUnit -notin @("IRR", "TOMAN")) {
-    throw "Navasan unit must be IRR or TOMAN. Confirm it with the provider before continuing."
+    throw "واحد نوسان باید TOMAN یا IRR باشد."
   }
-  $navasanPlan = (Read-Host "Navasan plan (free, standard, or gold) [free]").Trim().ToLowerInvariant()
-  if ($navasanPlan.Length -eq 0) { $navasanPlan = "free" }
+  $navasanPlanInput = (Read-Host "طرح نوسان: رایگان، استاندارد یا طلایی [رایگان]").Trim().ToLowerInvariant()
+  $navasanPlan = switch ($navasanPlanInput) {
+    "" { "free" }
+    "رایگان" { "free" }
+    "free" { "free" }
+    "استاندارد" { "standard" }
+    "standard" { "standard" }
+    "طلایی" { "gold" }
+    "gold" { "gold" }
+    "golden" { "gold" }
+    default { throw "طرح نوسان باید رایگان، استاندارد یا طلایی باشد." }
+  }
   $refreshSeconds = switch ($navasanPlan) {
     "free" { "21600" }
     "standard" { "120" }
     "gold" { "30" }
-    default { throw "Navasan plan must be free, standard, or gold." }
   }
   Set-DotEnvValue -Name "NAVASAN_API_KEY" -Value $navasanKey
   Set-DotEnvValue -Name "NAVASAN_VALUE_UNIT" -Value $navasanUnit
@@ -85,7 +95,7 @@ if ($navasanKey.Length -gt 0) {
   Set-DotEnvValue -Name "NAVASAN_KEY_ROTATION_CONFIRMED" -Value "true"
 }
 
-$goldApiSecret = Read-Host "GoldAPI.io token" -AsSecureString
+$goldApiSecret = Read-Host "کلید GoldAPI.io (اگر ندارید Enter بزنید)" -AsSecureString
 $goldApiToken = ConvertFrom-SecretInput $goldApiSecret
 if ($goldApiToken.Length -gt 0) {
   Set-DotEnvValue -Name "GOLD_API_TOKEN" -Value $goldApiToken
@@ -95,4 +105,4 @@ $navasanKey = $null
 $goldApiToken = $null
 [GC]::Collect()
 
-Write-Host "Local configuration updated. Restart the web server, then check /api/health and /api/market." -ForegroundColor Green
+Write-Host "تنظیمات محلی با موفقیت ذخیره شد. حالا برنامه را دوباره اجرا و وضعیت اتصال را بررسی کنید." -ForegroundColor Green

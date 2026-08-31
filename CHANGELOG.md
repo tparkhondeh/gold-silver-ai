@@ -9,6 +9,9 @@ state is recorded in `docs/10-project-state/CURRENT_STATE.md`.
 
 ### Identity proposal and evaluation ledger foundation — ۱۴۰۵/۰۶/۰۹
 
+- Simplified the local hidden-input market-key setup for the nontechnical owner with
+  Persian guidance, safe defaults and Persian plan names; secret values remain local
+  and Git-ignored, and the revoked-key confirmation remains mandatory.
 - Accepted the staged identity timing in ADR 0008: current local/demo work stays
   simple, while production owner authentication is a fail-closed prerequisite before
   any real personal financial data is hosted or synchronized. Existing controls are
