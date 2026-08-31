@@ -34,7 +34,8 @@ real PostgreSQL jobs in run 33392420564; verification details are tracked in
 `POSTGRES_FOUNDATION_CHECKPOINT.md`.
 Migration 0006 now requires a reason for every append-only correction and stores exact
 point-in-time source-reconciliation candidates, ranks, selections and reason codes.
-It does not define empirical price-divergence thresholds or activate financial use.
+Checkpoint `0d1c2e9` passed both GitHub jobs in run 33393986374. It does not define
+empirical price-divergence thresholds or activate financial use.
 
 ## Snapshot
 

@@ -11,14 +11,14 @@ not a Data Foundation acceptance report or a financial-readiness claim.
 
 **[SPEC]**
 
-- Branch: `codex/phase-1-data-ui`; provenance-registry code checkpoint:
-  `61ab33ce8c5669f6da1bbb122feb5b2717877bd6` (later documentation commits may follow).
+- Branch: `codex/phase-1-data-ui`; reconciliation/correction code checkpoint:
+  `0d1c2e9c2b166f89a134ac4f68110a98c017b7bb` (later documentation commits may follow).
 - Initial dirty README preserved and corrected; implementation is a development checkpoint.
 - Owner subsequently authorized committing/pushing this work for transfer to another computer despite the local database blocker. See the root `CONTINUE_ON_ANOTHER_SYSTEM.md`.
 - No merge, public deployment, Phase 2 branch, market ingestion or financial activation is authorized by this handoff.
 - Previous CI [33304773397](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33304773397) passed for the published HEAD only.
 - Current local gates: typecheck, lint, build, **74 unit/contract tests passed; zero skipped**.
-- GitHub [run 33392420564](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33392420564) **PASSED** for checkpoint `61ab33c`: quality job (lint/typecheck/build/tests/production audit) and real PostgreSQL migration/integration/restore job.
+- GitHub [run 33393986374](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33393986374) **PASSED** for checkpoint `0d1c2e9`: quality job (lint/typecheck/build/tests/production audit) and real PostgreSQL migration/integration/restore job.
 - Transferred Windows-host PostgreSQL migration/integration/restore: **PASSED**
   (12/12), including versioned portfolio rows, subject isolation, provenance chain,
   point-in-time dataset rejection and immutable restore comparison. Production
@@ -130,7 +130,8 @@ locally verified signed file, not an independently published checksum comparison
 
 - 0.8.0: added migration 0006, mandatory append-only correction reasons and exact
   source-reconciliation candidates/ranks/cutoffs/reason codes; 74 unit and 12 real
-  PostgreSQL tests pass locally. Empirical divergence thresholds remain unchosen.
+  PostgreSQL tests pass locally and both GitHub jobs pass in run 33393986374.
+  Empirical divergence thresholds remain unchosen.
 - 0.7.0: added migration 0005, source-versioned observations, exact point-in-time
   datasets and immutable evaluation-only decision lineage; 71 unit and 11 real
   PostgreSQL tests pass locally and both GitHub jobs pass in run 33392420564.
