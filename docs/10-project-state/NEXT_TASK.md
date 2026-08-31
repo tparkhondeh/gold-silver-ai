@@ -10,15 +10,15 @@ as one versioned, row-level-secured snapshot. Existing browser data is never upl
 or overwritten automatically. Production account authentication and public
 multi-user hosting remain separate, unapproved gates.
 
-1. Publish and verify the preference-persistence checkpoint on the development
-   branch. Preserve `main`, backups, tags, credentials and personal browser data.
+1. Complete observation provenance/version fields, source reconciliation, and the
+   Source, Dataset, Assumption, Feature, Model, Methodology, and Decision registries.
+   Preserve `main`, backups, tags, credentials and personal browser data.
 2. Prepare a plain-language production identity recommendation; the owner must make
    the final provider/access decision before replacing the local
    owner scope with real account subjects. Then test two authenticated browser
    sessions without weakening the tested PostgreSQL policies.
 3. Define the append-only transaction/valuation storage contract without inventing
-   financial methodology. Complete observation provenance/version fields, source reconciliation, and the
-   Source, Dataset, Assumption, Feature, Model, Methodology, and Decision registries.
+   financial methodology or transaction values.
 4. After the owner revokes and replaces the exposed Navasan key, implement the
    documented historical endpoints and durable quota accounting. Backfill only
    licensed data within quota; acquire an independent Iranian cross-check if needed.

@@ -11,13 +11,14 @@ not a Data Foundation acceptance report or a financial-readiness claim.
 
 **[SPEC]**
 
-- Branch: `codex/phase-1-data-ui`; code checkpoint: `ec3f41029549918965f2b74fa27222a32af28679` (later documentation commits may follow).
+- Branch: `codex/phase-1-data-ui`; preference-persistence checkpoint:
+  `c5a5d168128e516fe6c2f3628db5842f1d6123e7` (later documentation commits may follow).
 - Initial dirty README preserved and corrected; implementation is a development checkpoint.
 - Owner subsequently authorized committing/pushing this work for transfer to another computer despite the local database blocker. See the root `CONTINUE_ON_ANOTHER_SYSTEM.md`.
 - No merge, public deployment, Phase 2 branch, market ingestion or financial activation is authorized by this handoff.
 - Previous CI [33304773397](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33304773397) passed for the published HEAD only.
 - Current local gates: typecheck, lint, build, **66 unit/contract tests passed; zero skipped**.
-- GitHub [run 33316064205](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33316064205) **PASSED** for code checkpoint `ec3f410`: quality job (lint/typecheck/build/tests/production audit) and real PostgreSQL migration/integration/restore job.
+- GitHub [run 33389444502](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33389444502) **PASSED** for checkpoint `c5a5d16`: quality job (lint/typecheck/build/tests/production audit) and real PostgreSQL migration/integration/restore job.
 - Transferred Windows-host PostgreSQL migration/integration/restore: **PASSED** (10/10), including versioned portfolio rows and subject isolation. Production authenticated two-browser persistence remains **NOT IMPLEMENTED**.
 - Two independent read-only reviews inspected database safety and readiness/CI. They did not approve financial use or execute real database tests.
 - Local evaluation server at `http://localhost:4174/` returned HTTP 200 with

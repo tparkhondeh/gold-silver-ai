@@ -26,6 +26,8 @@ passed activation checks; with explicit process-environment forwarding,
 branch has been created. Local owner-scoped portfolio, constraint and horizon save/restore is implemented;
 production account authentication, historical backfill, and the real baseline remain pending. See
 [`PHASE_1_STABILIZATION_AUDIT.md`](../../PHASE_1_STABILIZATION_AUDIT.md).
+Preference-persistence checkpoint `c5a5d16` passed both GitHub quality and real
+PostgreSQL jobs in run 33389444502.
 
 ## Snapshot
 
