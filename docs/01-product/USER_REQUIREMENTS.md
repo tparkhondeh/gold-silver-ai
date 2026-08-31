@@ -15,6 +15,10 @@ document is about the user(s) driving those capabilities.
   valuations, financial calculations and analyses must not be sent to that service.
   The exact provider remains unresolved. See
   `docs/08-decisions/ADR/0007-third-party-identity-boundary.md`.
+- The current development/review experience stays simple and does not add production
+  login. Strong owner-only identity becomes mandatory before real personal financial
+  data is hosted, synchronized or enabled in production persistence. See
+  `docs/08-decisions/ADR/0008-defer-production-identity-to-real-data-gate.md`.
 - The owner has no programming background — see
   `docs/00-governance/PROJECT_RULES.md` § 2 for how technical material must be
   communicated.

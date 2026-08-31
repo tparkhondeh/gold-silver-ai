@@ -43,6 +43,8 @@ identity proposal now includes a dated official pricing/terms snapshot. Iran acc
 eligibility is still unverified. The owner accepted an owner-only next real release in
 ADR 0006 and accepted an external identity service limited to minimum login data in
 ADR 0007; the exact provider, terms, cost and Iran eligibility remain owner-required.
+ADR 0008 keeps the current local/demo experience without new production login and
+makes strong owner-only identity a fail-closed gate before hosted real financial data.
 The read-only owner-server preflight found an existing local override for Cloudflare's
 API hostname; no remote setting was changed and that candidate is not host-ready. See
 `docs/09-operations/DEPLOYMENT.md`.

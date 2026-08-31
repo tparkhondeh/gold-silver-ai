@@ -62,3 +62,4 @@ What this decision implies for future work — including what it forecloses.
 - ADR 0005: notification and opportunity-alert safety boundary
 - ADR 0006: owner-only audience for the next real release
 - ADR 0007: third-party identity boundary for the owner-only release
+- ADR 0008: defer production identity until the real-data gate

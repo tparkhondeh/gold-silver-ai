@@ -9,6 +9,10 @@ state is recorded in `docs/10-project-state/CURRENT_STATE.md`.
 
 ### Identity proposal and evaluation ledger foundation — ۱۴۰۵/۰۶/۰۹
 
+- Accepted the staged identity timing in ADR 0008: current local/demo work stays
+  simple, while production owner authentication is a fail-closed prerequisite before
+  any real personal financial data is hosted or synchronized. Existing controls are
+  not weakened and no provider was selected.
 - Accepted the third-party identity boundary in ADR 0007: an external service may
   handle only minimum login identifiers/session evidence and must never receive
   portfolio or financial data. No provider was selected or activated.

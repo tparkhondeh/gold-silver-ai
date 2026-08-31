@@ -23,7 +23,10 @@ The owner-only audience for the next real release is accepted in
 accepted an external identity service limited to minimum login identifiers and
 session evidence; portfolio and financial data remain outside that provider under
 [`ADR 0007`](../08-decisions/ADR/0007-third-party-identity-boundary.md). Exact provider
-selection and production access mechanics remain `DECISION REQUIRED: YES` in
+selection is deliberately deferred during the simple local/demo stage, but becomes a
+fail-closed prerequisite before hosted real financial data under
+[`ADR 0008`](../08-decisions/ADR/0008-defer-production-identity-to-real-data-gate.md).
+Production access mechanics remain `DECISION REQUIRED: YES` in
 [`IDENTITY_RECOMMENDATION.md`](IDENTITY_RECOMMENDATION.md).
 Broader security tooling is a Tier B / Implementation decision
 (`docs/00-governance/PROJECT_RULES.md` § 3): Claude Code selects baseline
