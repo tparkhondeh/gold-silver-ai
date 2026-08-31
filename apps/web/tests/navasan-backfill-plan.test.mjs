@@ -18,6 +18,7 @@ test("builds a no-network OHLC plan with one request per approved instrument", (
   assert.deepEqual(plan.gates.map((gate) => gate.id), [
     "licensed_date_scope",
     "gap_policy",
+    "continuity_audit",
     "independent_cross_check",
   ]);
 });

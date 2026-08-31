@@ -17,7 +17,7 @@ not a Data Foundation acceptance report or a financial-readiness claim.
 - Owner subsequently authorized committing/pushing this work for transfer to another computer despite the local database blocker. See the root `CONTINUE_ON_ANOTHER_SYSTEM.md`.
 - No merge, public deployment, Phase 2 branch, market ingestion or financial activation is authorized by this handoff.
 - Previous CI [33304773397](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33304773397) passed for the published HEAD only.
-- Current local gates: typecheck, lint, build, **87 unit/contract tests and 14 real
+- Current local gates: typecheck, lint, build, **90 unit/contract tests and 14 real
   PostgreSQL migration/concurrency/restore tests passed; zero skipped**.
 - GitHub [run 33396556534](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33396556534) **PASSED** for checkpoint `d0ea16f`: quality job (lint/typecheck/build/tests/production audit) and real PostgreSQL migration/integration/restore job.
 - GitHub [run 33417744818](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33417744818) **PASSED** for Navasan quota/history checkpoint `b0bb80a`: quality job and real PostgreSQL migration/concurrency/restore job.
@@ -137,8 +137,9 @@ locally verified signed file, not an independently published checksum comparison
 
 - 0.10.0: added migration 0010, immutable rolling Navasan request reservations,
   loopback-only normalized daily/OHLC history adapters, fail-closed quota health and
-  a no-network backfill readiness planner; 87 unit and 14 real PostgreSQL tests pass
-  locally. No history was backfilled.
+  a no-network backfill readiness planner plus offline synthetic-fixture continuity
+  auditing; 90 unit and 14 real PostgreSQL tests pass locally. No history was
+  backfilled.
 - 0.9.0: added the owner-gated production identity proposal and migrations 0007–0009 with
   forced-RLS append-only transactions plus exact evaluation-only valuation lineage;
   77 unit and 13 real PostgreSQL tests pass locally and both GitHub jobs pass in run

@@ -26,6 +26,7 @@ export type NormalizedNavasanDailyPoint = {
 export type NormalizedNavasanOhlcPoint = {
   instrumentCode: string;
   providerCode: NavasanProviderCode;
+  providerDateJalali: string;
   open: number;
   high: number;
   low: number;
@@ -96,6 +97,7 @@ export function normalizeNavasanOhlcPayload(
 ): NormalizedNavasanOhlcPoint[] {
   return historyRows(payload).map((row) => {
     const ohlc = row as OhlcRow;
+    const providerDateJalali = normalizeNavasanJalaliDate(ohlc.date);
     const normalized = {
       open: normalizeNavasanValue(providerCode, ohlc.open, declaredUnit).value,
       high: normalizeNavasanValue(providerCode, ohlc.high, declaredUnit).value,
@@ -110,6 +112,7 @@ export function normalizeNavasanOhlcPayload(
     return {
       instrumentCode: mapping.instrumentCode,
       providerCode,
+      providerDateJalali,
       ...normalized,
       currency: "TOMAN",
       unit: mapping.unit,

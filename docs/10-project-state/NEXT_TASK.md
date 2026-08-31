@@ -7,7 +7,7 @@
 Migrations 0003–0009 now cover the owner snapshot, immutable provenance,
 exact point-in-time dataset/decision lineage, source-reconciliation records and
 mandatory correction reasons, plus the read-only transaction/evaluation-valuation
-ledger foundation. Local build, 87 unit tests, 14 real PostgreSQL tests,
+ledger foundation. Local build, 90 unit tests, 14 real PostgreSQL tests,
 restore, activation, and health checks pass. Production account authentication,
 empirical divergence thresholds, historical backfill, and the real
 financial engine remain separate gates.
@@ -42,6 +42,10 @@ financial engine remain separate gates.
    prepared in `docs/05-data/HISTORICAL_BACKFILL_PROPOSAL.md`. The owner authorized
    and sent the no-secret Navasan inquiry on 2026-08-31; a written response is pending.
    The inquiry does not authorize a purchase or API call.
+7. **SAFE PARALLEL IMPLEMENTATION COMPLETE:** the deterministic offline OHLC
+   continuity audit now reports unobserved dates, duplicates, range/instrument
+   violations and Tehran timestamp mismatches using synthetic fixtures. It never
+   interpolates values, calls the provider, writes history or unlocks execution.
 
 The autonomous implementation slice is complete. The next action changes the real
 historical dataset and source-policy boundary, so it pauses at item 6 for a Tier-A

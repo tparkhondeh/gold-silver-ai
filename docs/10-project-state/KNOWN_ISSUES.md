@@ -45,8 +45,11 @@
    `dailyCurrency` and `ohlcSearch` are normalized behind a local-only route. No
    historical call was made. A no-network readiness planner now exposes the proposed
    range, exact call count and unresolved gates without enabling execution. Licensed
-   date scope, retention, gap policy, empirical disagreement thresholds and
-   independent cross-check coverage remain pending.
+   date scope, retention, market-calendar interpretation, empirical disagreement
+   thresholds and independent cross-check coverage remain pending. An offline
+   synthetic-fixture audit can already report raw calendar gaps and mark
+   date/range/instrument inconsistencies as quarantine-required without
+   interpolation, but it does not resolve those source-policy requirements.
 10. **The approved real baseline is not implemented.** The independent locked Python
     laboratory, complete registries, train-only feature normalization, calibrated
     confidence, benchmark comparisons, nested walk-forward, and immutable decision

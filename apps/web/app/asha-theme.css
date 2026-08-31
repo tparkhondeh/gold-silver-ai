@@ -737,7 +737,7 @@ footer b {
 
 .backfill-gates {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 8px;
 }
 
@@ -775,6 +775,15 @@ footer b {
 .backfill-gates article.recommended > span {
   background: #e7d6b8;
   color: #785a33;
+}
+
+.backfill-gates article.ready {
+  background: #e9f4ef;
+}
+
+.backfill-gates article.ready > span {
+  background: #c7e5d8;
+  color: #28684f;
 }
 
 .backfill-gates b,

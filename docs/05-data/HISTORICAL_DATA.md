@@ -39,6 +39,12 @@ option, exact acceptance gate, and Persian messages ready for the owner to send 
 in `HISTORICAL_BACKFILL_PROPOSAL.md`. That file is explicitly a proposal, not a
 decision or permission to call either provider.
 
+An offline continuity audit is now implemented and tested with synthetic OHLC rows.
+It records unobserved Jalali dates, duplicates, range violations, mixed instruments,
+and Tehran timestamp/date mismatches, while producing zero interpolated points. This
+is a validation building block only: it does not know the Iranian trading calendar,
+call Navasan, write history, or grant source-policy permission.
+
 ## Status
 
 `STATUS: PARTIAL`. PostgreSQL append-only observations now encode the complete
@@ -47,7 +53,9 @@ instrument contract. Immutability triggers prevent update/delete of observations
 validation results, quarantine records, resolution events, and provider quota
 reservations. The historical provider adapter is implemented and tested, but
 licensed backfill, retention, gap reporting, and historical restore evidence remain
-`STATUS: TBD`.
+`STATUS: TBD`. The mechanics for detecting raw calendar gaps are implemented; the
+licensed range, market-calendar interpretation, retention and operational restore
+evidence remain unresolved.
 
 ## Related Documents
 

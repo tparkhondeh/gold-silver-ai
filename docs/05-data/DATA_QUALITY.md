@@ -40,6 +40,13 @@ events are identified through SHA-256 idempotency keys. Secret-like raw-payload 
 are redacted before persistence. Exact ordered source-reconciliation candidates,
 cutoffs, selections and deterministic reason codes are stored append-only.
 
+The offline OHLC continuity audit now validates provider Jalali dates against Tehran
+timestamps, detects duplicate dates, mixed instruments and rows outside the requested
+range, and records every unobserved calendar date. It explicitly reports that the
+Iranian market calendar is still unknown, inserts zero interpolated points, and
+cannot authorize storage or financial use. All checks run on synthetic fixtures only;
+no provider request or historical market row was created.
+
 `STATUS: TBD` remains for empirical anomaly/divergence thresholds,
 source-reliability scoring, and operator resolution UI. These are Tier B decisions
 (`docs/00-governance/PROJECT_RULES.md` § 3): Claude Code proposes standard

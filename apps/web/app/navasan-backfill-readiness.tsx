@@ -126,7 +126,7 @@ export function NavasanBackfillReadiness() {
           <p className="backfill-range">بازهٔ بررسی: <b dir="ltr">{plan.start}</b> تا <b dir="ltr">{plan.end}</b></p>
           <div className="backfill-gates">
             {plan.gates.map((gate) => <article className={gate.state} key={gate.id}>
-              <span>{gate.state === "blocked" ? "×" : "i"}</span>
+              <span>{gate.state === "blocked" ? "×" : gate.state === "ready" ? "✓" : "i"}</span>
               <div><b>{gate.label}</b><p>{gate.detail}</p></div>
             </article>)}
           </div>

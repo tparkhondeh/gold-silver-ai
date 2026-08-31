@@ -51,6 +51,10 @@ Both paths feed the same validation step (`DATA_QUALITY.md`) — there is no
   approved symbols, reports the exact OHLC request count, and sends no provider call.
   Its execution control stays disabled until the source-policy gates in
   `HISTORICAL_DATA.md` are resolved.
+- A deterministic offline continuity stage is ready for a future permitted OHLC
+  response. It records unobserved provider dates without interpreting holidays,
+  marks date/timestamp/range/instrument inconsistencies as quarantine-required, and
+  creates no interpolated prices. It does not contact or persist provider data.
 
 `STATUS: PARTIAL` for scheduling and alerting. The live local database and migration
 verification pass, but future scheduling must use Tehran time and the Iranian market

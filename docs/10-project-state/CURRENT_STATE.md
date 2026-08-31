@@ -54,11 +54,16 @@ credential, durable quota health, eight-quote live normalization, historical end
 contracts and backup/restore path pass locally; no historical backfill was requested.
 The local Persian readiness planner validates proposed Jalali ranges, approved
 symbols and exact request counts without network or storage, while execution remains
-locked. Local verification now covers 87 unit and 14 real PostgreSQL tests.
+locked. Local verification now covers 90 unit and 14 real PostgreSQL tests.
 Code checkpoint `b0bb80a` passed both GitHub quality and real PostgreSQL jobs in
 run 33417744818.
 Backfill-readiness checkpoint `8a21a97` passed both GitHub quality and real
 PostgreSQL jobs in run 33421273488.
+The safe parallel history-quality checkpoint adds an offline deterministic OHLC
+continuity audit. Synthetic fixtures prove detection of unobserved Jalali dates,
+duplicates, rows outside the requested range, mixed instruments and Tehran
+timestamp/date mismatches; zero values are interpolated and the audit cannot permit
+storage or financial use.
 The public Navasan and TGJU material has now been reviewed and a plain-language
 licensed-backfill proposal plus ready-to-send Persian inquiries are recorded in
 `docs/05-data/HISTORICAL_BACKFILL_PROPOSAL.md`. On 2026-08-31 the owner authorized
@@ -256,7 +261,7 @@ written answer; it cannot send a follow-up, accept terms/cost, or run a backfill
   Migration 0006 adds immutable source-reconciliation records and requires a bounded
   plain-language reason on every correction. Migrations 0007–0010 add exact transaction and
   evaluation-only valuation lineage plus immutable provider-call reservations;
-  87 unit and 14 real PostgreSQL tests pass locally.
+  90 unit and 14 real PostgreSQL tests pass locally.
   In the fresh-session laboratory, a fixed
   five-row CSV sample exercises preview plus a memory-only commit result (three
   accepted, one duplicate, one quarantined) without reaching the server or implying

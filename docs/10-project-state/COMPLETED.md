@@ -74,7 +74,10 @@ subsequent changes still require their own push and CI verification.
 - Added a local Persian plan-only surface that validates a proposed Jalali range,
   deduplicates the eight approved symbols, calculates one OHLC request per symbol,
   and visibly keeps real execution locked without consuming provider quota.
-- Passed typecheck, lint, production build, 87 unit tests and 14 real PostgreSQL
+- Added a deterministic offline OHLC continuity audit for unobserved provider dates,
+  duplicates, range/instrument violations and Tehran timestamp/date mismatches. It
+  uses synthetic fixtures, inserts no values and cannot authorize storage.
+- Passed typecheck, lint, production build, 90 unit tests and 14 real PostgreSQL
   migration/isolation/concurrency/backup-restore tests.
 - Checkpoint `8a21a97` passed both GitHub quality jobs in run 33421273488.
 - Prepared the researched licensed-backfill proposal, explicit no-interpolation gap

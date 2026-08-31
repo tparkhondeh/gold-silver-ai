@@ -27,8 +27,8 @@ export type NavasanBackfillPlan = {
   requestCount: number;
   canExecute: false;
   gates: Array<{
-    id: "licensed_date_scope" | "gap_policy" | "independent_cross_check";
-    state: "blocked" | "recommended";
+    id: "licensed_date_scope" | "gap_policy" | "continuity_audit" | "independent_cross_check";
+    state: "blocked" | "recommended" | "ready";
     label: string;
     detail: string;
   }>;
@@ -67,6 +67,12 @@ export function buildNavasanBackfillPlan(
         state: "recommended",
         label: "رفتار با روزهای بدون داده",
         detail: "پیشنهاد امن: فاصله‌ها ثبت شوند و هیچ قیمت ساختگی یا میان‌یابی‌شده‌ای جای آن‌ها ننشیند.",
+      },
+      {
+        id: "continuity_audit",
+        state: "ready",
+        label: "کنترل فاصله و تکرار",
+        detail: "موتور آزمایشی روزهای مشاهده‌نشده، تاریخ تکراری، خروج از بازه و اختلاف تاریخ/زمان را بدون ساختن قیمت گزارش می‌کند.",
       },
       {
         id: "independent_cross_check",
