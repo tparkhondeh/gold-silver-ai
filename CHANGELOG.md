@@ -7,6 +7,15 @@ state is recorded in `docs/10-project-state/CURRENT_STATE.md`.
 
 ## [Unreleased]
 
+### Identity proposal and evaluation ledger foundation — ۱۴۰۵/۰۶/۰۹
+
+- Added a Tier-A production identity proposal without selecting or enabling a vendor;
+  real identity and portfolio migration remain owner-gated.
+- Added migrations 0007–0009 and an append-only, forced-RLS transaction and evaluation-only
+  valuation ledger with exact Dataset, Methodology, observation and event lineage.
+- The normal runtime is read-only for the new ledger. No real transaction/value or
+  financial methodology was created; 77 unit and 13 real PostgreSQL tests pass locally.
+
 ### Private publication and CI repair — ۱۴۰۵/۰۶/۰۸
 
 - Published only `codex/phase-1-data-ui` at `b58f393` and verified matching remote

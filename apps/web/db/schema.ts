@@ -238,3 +238,60 @@ export const sourceReconciliationCandidates = pgTable("source_reconciliation_can
   primaryKey({ columns: [table.reconciliationId, table.observationId] }),
   uniqueIndex("source_reconciliation_rank_once_idx").on(table.reconciliationId, table.rank),
 ]);
+
+export const portfolioTransactionEvents = pgTable("portfolio_transaction_events", {
+  id: text("id").primaryKey(),
+  schemaVersion: smallint("schema_version").notNull().default(1),
+  subjectId: text("subject_id").notNull().references(() => userPortfolios.subjectId),
+  eventKind: text("event_kind").notNull(),
+  assetKey: text("asset_key").notNull(),
+  quantityDelta: numeric("quantity_delta", { precision: 38, scale: 12 }),
+  quantityUnit: text("quantity_unit"),
+  cashDelta: numeric("cash_delta", { precision: 38, scale: 2 }),
+  cashCurrency: text("cash_currency"),
+  feeAmount: numeric("fee_amount", { precision: 38, scale: 2 }).notNull().default("0"),
+  occurredAt: utcTimestamp("occurred_at").notNull(),
+  correctionOf: text("correction_of").references((): AnyPgColumn => portfolioTransactionEvents.id),
+  correctionReason: text("correction_reason"),
+  evidenceHash: text("evidence_hash"),
+  payloadHash: text("payload_hash").notNull(),
+  recordedAt: utcTimestamp("recorded_at").notNull().defaultNow(),
+}, (table) => [index("portfolio_transaction_subject_time_idx").on(table.subjectId, table.occurredAt)]);
+
+export const portfolioValuationSnapshots = pgTable("portfolio_valuation_snapshots", {
+  id: text("id").primaryKey(),
+  schemaVersion: smallint("schema_version").notNull().default(1),
+  subjectId: text("subject_id").notNull().references(() => userPortfolios.subjectId),
+  portfolioVersion: integer("portfolio_version").notNull(),
+  asOf: utcTimestamp("as_of").notNull(),
+  datasetKind: text("dataset_kind").notNull().default("dataset"),
+  datasetId: text("dataset_id").notNull(),
+  datasetVersion: integer("dataset_version").notNull(),
+  methodologyKind: text("methodology_kind").notNull().default("methodology"),
+  methodologyId: text("methodology_id").notNull(),
+  methodologyVersion: integer("methodology_version").notNull(),
+  reportingCurrency: text("reporting_currency").notNull(),
+  totalValue: numeric("total_value", { precision: 38, scale: 2 }).notNull(),
+  inputHash: text("input_hash").notNull(),
+  outputHash: text("output_hash").notNull(),
+  status: text("status").notNull().default("evaluation_only"),
+  createdAt: utcTimestamp("created_at").notNull().defaultNow(),
+});
+
+export const portfolioValuationPositions = pgTable("portfolio_valuation_positions", {
+  valuationId: text("valuation_id").notNull().references(() => portfolioValuationSnapshots.id),
+  positionKey: text("position_key").notNull(),
+  assetKey: text("asset_key").notNull(),
+  quantity: numeric("quantity", { precision: 38, scale: 12 }).notNull(),
+  unit: text("unit").notNull(),
+  observationId: text("observation_id").notNull().references(() => observations.id),
+  price: numeric("price", { precision: 38, scale: 12 }).notNull(),
+  value: numeric("value", { precision: 38, scale: 2 }).notNull(),
+  inputHash: text("input_hash").notNull(),
+  recordedAt: utcTimestamp("recorded_at").notNull().defaultNow(),
+}, (table) => [primaryKey({ columns: [table.valuationId, table.positionKey] })]);
+
+export const portfolioValuationTransactions = pgTable("portfolio_valuation_transactions", {
+  valuationId: text("valuation_id").notNull().references(() => portfolioValuationSnapshots.id),
+  transactionId: text("transaction_id").notNull().references(() => portfolioTransactionEvents.id),
+}, (table) => [primaryKey({ columns: [table.valuationId, table.transactionId] })]);

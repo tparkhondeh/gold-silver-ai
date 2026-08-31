@@ -1,6 +1,6 @@
 # PostgreSQL Foundation Checkpoint
 
-**Version 0.8.0** · ASHA engineering · ۱۴۰۵/۰۶/۰۹ (2026-08-31) · Work in progress
+**Version 0.9.0** · ASHA engineering · ۱۴۰۵/۰۶/۰۹ (2026-08-31) · Work in progress
 
 ## AI READING INSTRUCTION
 
@@ -17,10 +17,10 @@ not a Data Foundation acceptance report or a financial-readiness claim.
 - Owner subsequently authorized committing/pushing this work for transfer to another computer despite the local database blocker. See the root `CONTINUE_ON_ANOTHER_SYSTEM.md`.
 - No merge, public deployment, Phase 2 branch, market ingestion or financial activation is authorized by this handoff.
 - Previous CI [33304773397](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33304773397) passed for the published HEAD only.
-- Current local gates: typecheck, lint, build, **74 unit/contract tests passed; zero skipped**.
+- Current local gates: typecheck, lint, build, **77 unit/contract tests passed; zero skipped**.
 - GitHub [run 33393986374](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33393986374) **PASSED** for checkpoint `0d1c2e9`: quality job (lint/typecheck/build/tests/production audit) and real PostgreSQL migration/integration/restore job.
 - Transferred Windows-host PostgreSQL migration/integration/restore: **PASSED**
-  (12/12), including versioned portfolio rows, subject isolation, provenance chain,
+  (13/13), including versioned portfolio rows, subject isolation, provenance chain,
   point-in-time dataset rejection and immutable restore comparison. Production
   authenticated two-browser persistence remains **NOT IMPLEMENTED**.
 - Two independent read-only reviews inspected database safety and readiness/CI. They did not approve financial use or execute real database tests.
@@ -117,8 +117,9 @@ locally verified signed file, not an independently published checksum comparison
 1. Repeat applicable gates for future changes, push only the development branch and
    verify each new CI/remote HEAD. Remote main remains unchanged at
    `5c03fabb1c8090497c0b03c9059a6e51fdb91d03`.
-2. Secure user/session isolation and durable portfolios/transactions/preferences;
-   non-destructive migration of existing browser data.
+2. Owner approval of the production audience/access/provider; then secure session
+   isolation and non-destructive migration of existing browser data. Transaction and
+   evaluation-valuation storage exists but remains runtime-read-only.
 3. Complete provenance/registries, cross-batch duplicate lineage/count semantics and correction reasons; do not claim full provenance v2.
 4. Owner revocation/replacement of the disclosed Navasan credential through a secure local input path; no key in chat or Git.
 5. Durable quotas/cache/concurrency, permitted history and independent Iranian cross-check coverage.
@@ -128,6 +129,9 @@ locally verified signed file, not an independently published checksum comparison
 
 **[SPEC]**
 
+- 0.9.0: added the owner-gated production identity proposal and migrations 0007–0009 with
+  forced-RLS append-only transactions plus exact evaluation-only valuation lineage;
+  77 unit and 13 real PostgreSQL tests pass locally. No real values or method were added.
 - 0.8.0: added migration 0006, mandatory append-only correction reasons and exact
   source-reconciliation candidates/ranks/cutoffs/reason codes; 74 unit and 12 real
   PostgreSQL tests pass locally and both GitHub jobs pass in run 33393986374.

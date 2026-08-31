@@ -50,6 +50,7 @@ including confirming the owner's actual portfolio structure and constraints
 
 ## Related Documents
 
+- Storage-only transaction and valuation contract: `TRANSACTION_AND_VALUATION_STORAGE.md`
 - Allocation proposals: `ALLOCATION_ENGINE.md`
 - Rotation proposals: `ROTATION_ENGINE.md`
 - Risk analysis: `RISK_MODEL.md`

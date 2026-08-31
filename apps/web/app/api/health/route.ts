@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-import { inspectLocalPortfolioDatabaseHealth, inspectObservationDatabaseHealth, inspectProvenanceDatabaseHealth } from "../../../db/postgres-runtime";
+import { inspectLedgerDatabaseHealth, inspectLocalPortfolioDatabaseHealth, inspectObservationDatabaseHealth, inspectProvenanceDatabaseHealth } from "../../../db/postgres-runtime";
 import { decisionFramework } from "../../decision-support";
 import { inspectNavasanConfiguration } from "../../navasan-adapter";
 import { scenarioMethodology } from "../../scenario-engine";
@@ -13,6 +13,7 @@ export async function GET() {
   const database = await inspectObservationDatabaseHealth();
   const portfolioDatabase = await inspectLocalPortfolioDatabaseHealth();
   const provenanceDatabase = await inspectProvenanceDatabaseHealth();
+  const ledgerDatabase = await inspectLedgerDatabaseHealth();
   const databaseReason = ({
     "operator database commit is not explicitly enabled": "Commit پایگاه داده صریحاً فعال نشده است",
     "DATABASE_URL is not configured": "آدرس PostgreSQL تنظیم نشده است",
@@ -41,6 +42,7 @@ export async function GET() {
       { id: "observation-persistence", state: database.state, reason: databaseReason },
       { id: "portfolio-persistence", state: portfolioDatabase.state, reason: portfolioDatabase.state === "local_ready" ? "ذخیرهٔ محلیِ نسخه‌دار و تفکیک‌شده آماده است؛ ورود حساب تولیدی هنوز دروازهٔ جداگانه دارد" : "ذخیرهٔ محلی سبد یا سیاست امنیتی آن آماده نیست" },
       { id: "provenance-registry", state: provenanceDatabase.state, reason: provenanceDatabase.state === "registry_ready" ? "رجیستری نسخه‌دار و فقط‌خواندنی برای زنجیرهٔ منشأ آماده است؛ تصمیم مالی واقعی هنوز ثبت نمی‌شود" : "ساختار یا دسترسی رجیستری منشأ کامل نیست" },
+      { id: "portfolio-ledger", state: ledgerDatabase.state, reason: ledgerDatabase.state === "ledger_ready" ? "قرارداد فقط‌خواندنی تراکنش و ارزش‌گذاری آزمایشگاهی آماده است؛ ورود تولیدی و روش مالی هنوز تأیید نشده‌اند" : "ساختار یا دسترسی دفتر تراکنش و ارزش‌گذاری کامل نیست" },
       { id: "scenario", state: "demo_only", reason: `${scenarioMethodology.id} هنوز کالیبره و بک‌تست نشده است` },
       { id: "financial-decision", state: "blocked", reason: `${decisionFramework.id} رابط دروازه‌هاست و توصیهٔ مالی تولید نمی‌کند` },
     ],

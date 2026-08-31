@@ -6,7 +6,7 @@ exposes or stores.
 ## Status
 
 `STATUS: PARTIAL`. The Phase 1 normalized quote contract is implemented at
-`/api/market`. Durable observation and provenance contracts, six PostgreSQL
+`/api/market`. Durable observation, provenance and evaluation-ledger contracts, nine PostgreSQL
 migrations, repositories, and a live owner-local database are active. Historical
 backfill, empirical divergence thresholds and production configuration remain pending.
 

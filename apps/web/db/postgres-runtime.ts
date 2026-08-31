@@ -202,6 +202,26 @@ export async function inspectProvenanceDatabaseHealth(environment: RuntimeEnviro
   }
 }
 
+export async function inspectLedgerDatabaseHealth(environment: RuntimeEnvironment = process.env) {
+  const configuration = inspectOperatorDatabaseEnvironment(environment);
+  if (!configuration.available) return { state: "blocked", reason: configuration.reason } as const;
+  try {
+    const result = await getRuntimePool(configuration.connectionString).query<{ ready: boolean }>(`SELECT
+      count(*) = 4
+      AND bool_and(c.relrowsecurity AND c.relforcerowsecurity)
+      AND bool_and(has_table_privilege(current_user,c.oid,'SELECT'))
+      AND bool_and(NOT has_table_privilege(current_user,c.oid,'INSERT,UPDATE,DELETE,TRUNCATE,TRIGGER')) AS ready
+      FROM pg_class c JOIN pg_namespace n ON n.oid=c.relnamespace
+      WHERE n.nspname='public' AND c.relkind='r' AND c.relname IN
+        ('portfolio_transaction_events','portfolio_valuation_snapshots','portfolio_valuation_positions','portfolio_valuation_transactions')`);
+    return result.rows[0]?.ready === true
+      ? { state: "ledger_ready", reason: "portfolio_ledger_foundation_ready_read_only" } as const
+      : { state: "blocked", reason: "portfolio_ledger_or_privileges_missing" } as const;
+  } catch {
+    return { state: "blocked", reason: "database_unreachable_or_probe_failed" } as const;
+  }
+}
+
 export async function resolveLocalPortfolioRepository(environment: RuntimeEnvironment = process.env) {
   const configuration = inspectOperatorDatabaseEnvironment(environment);
   if (!configuration.available) return { available: false as const, reason: configuration.reason };

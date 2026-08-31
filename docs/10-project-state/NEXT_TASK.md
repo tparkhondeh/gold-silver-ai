@@ -4,23 +4,26 @@
 
 ## Immediate Next Step
 
-Migrations 0003–0006 now cover the owner snapshot, immutable provenance,
+Migrations 0003–0009 now cover the owner snapshot, immutable provenance,
 exact point-in-time dataset/decision lineage, source-reconciliation records and
-mandatory correction reasons. Local build, 74 unit tests, 12 real PostgreSQL tests,
+mandatory correction reasons, plus the read-only transaction/evaluation-valuation
+ledger foundation. Local build, 77 unit tests, 13 real PostgreSQL tests,
 restore, activation, and health checks pass. Production account authentication,
 empirical divergence thresholds, historical backfill, and the real
 financial engine remain separate gates.
 
-1. Prepare a plain-language production identity recommendation; the owner must make
-   the final provider/access decision before replacing the local
-   owner scope with real account subjects. Then test two authenticated browser
-   sessions without weakening the tested PostgreSQL policies.
-2. Define the append-only transaction/valuation storage contract without inventing
-   financial methodology or transaction values.
-3. After the owner revokes and replaces the exposed Navasan key, implement the
+1. **OWNER DECISION REQUIRED:** confirm whether the next real release is owner-only,
+   invited trusted users, or public customer accounts. Then approve third-party versus
+   self-hosted identity and a provider after terms/cost/Iran-access review. Use
+   `docs/02-architecture/IDENTITY_RECOMMENDATION.md`; do not trust production identity
+   or migrate browser holdings before approval and two authenticated-session tests.
+2. After the owner revokes and replaces the exposed Navasan key, implement the
    documented historical endpoints and durable quota accounting. Backfill only
    licensed data within quota; acquire an independent Iranian cross-check if needed.
    Never silently fill missing history or pass stale/invalid data into real analysis.
+
+No remaining implementation item in this immediate list is independent of an
+owner-critical access/provider/source decision.
 
 ## Next Gate: Independent Financial Laboratory
 

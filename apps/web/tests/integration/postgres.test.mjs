@@ -12,6 +12,7 @@ import { PostgresObservationRepository } from "../../data/postgres-observation-r
 import { PortfolioVersionConflictError, PostgresPortfolioRepository } from "../../data/postgres-portfolio-repository.ts";
 import { PostgresProvenanceRepository, buildArtifactVersion } from "../../data/provenance-registry.ts";
 import { PostgresSourceReconciliationRepository } from "../../data/source-reconciliation.ts";
+import { PostgresPortfolioLedgerRepository } from "../../data/portfolio-ledger.ts";
 
 // Never use DATABASE_URL or load .env.local: only an explicitly disposable database.
 const connectionString = process.env.ASHA_TEST_DATABASE_URL;
@@ -66,6 +67,7 @@ test("real PostgreSQL migration, isolation, persistence and restore", async (t) 
   await admin.query(`GRANT INSERT, UPDATE, DELETE ON user_portfolios, portfolio_holdings, portfolio_preferences TO "${role}"`);
   await admin.query(`GRANT INSERT ON artifact_versions, dataset_observations, decision_records, decision_assumptions, decision_features TO "${role}"`);
   await admin.query(`GRANT INSERT ON source_reconciliations, source_reconciliation_candidates TO "${role}"`);
+  await admin.query(`GRANT INSERT ON portfolio_transaction_events, portfolio_valuation_snapshots, portfolio_valuation_positions, portfolio_valuation_transactions TO "${role}"`);
   const runtimePool = { async connect() {
     const client = await pool.connect();
     await client.query(`SET ROLE "${role}"`);
@@ -76,6 +78,7 @@ test("real PostgreSQL migration, isolation, persistence and restore", async (t) 
   const portfolioRepository = new PostgresPortfolioRepository(createPgTransactionRunner(runtimePool));
   const provenanceRepository = new PostgresProvenanceRepository(createPgTransactionRunner(runtimePool));
   const reconciliationRepository = new PostgresSourceReconciliationRepository(createPgTransactionRunner(runtimePool));
+  const ledgerRepository = new PostgresPortfolioLedgerRepository(createPgTransactionRunner(runtimePool));
   const valid = "TEST_ONLY,test-only,1.00,TOMAN,gram,2026-08-20T10:00:00Z,,2026-08-20T10:01:00Z,2026-08-20T10:00:00Z,,";
   const batch = await ingestManualCsv({ text: `${manualCsvHeaders.join(",")}\n${valid}\n${valid}\n${valid.replace(",1.00,", ",0,")}\n`, fileName: "synthetic-integration.csv", sourceId: "test-only", registry, now: new Date("2026-08-20T12:00:00Z") });
   await t.test("least-privilege writer commits and concurrently replays without duplicates", async () => {
@@ -91,13 +94,13 @@ test("real PostgreSQL migration, isolation, persistence and restore", async (t) 
   await t.test("runtime cannot mutate/truncate audit data, registries or schema", async () => {
     const client = await runtimePool.connect();
     try {
-    for (const sql of ["UPDATE observations SET value=2", "DELETE FROM observations", "TRUNCATE observations CASCADE", "ALTER TABLE observations DISABLE TRIGGER ALL", "UPDATE instruments SET display_name='changed'", "UPDATE ingestion_batches SET accepted_count=99", "UPDATE source_contract_versions SET active=false", "TRUNCATE decision_records CASCADE", "UPDATE source_reconciliations SET reason_code='stable_identity'", "CREATE TABLE forbidden(id integer)"]) {
+      for (const sql of ["UPDATE observations SET value=2", "DELETE FROM observations", "TRUNCATE observations CASCADE", "ALTER TABLE observations DISABLE TRIGGER ALL", "UPDATE instruments SET display_name='changed'", "UPDATE ingestion_batches SET accepted_count=99", "UPDATE source_contract_versions SET active=false", "TRUNCATE decision_records CASCADE", "UPDATE source_reconciliations SET reason_code='stable_identity'", "UPDATE portfolio_transaction_events SET fee_amount=1", "CREATE TABLE forbidden(id integer)"]) {
         await assert.rejects(client.query(sql), /permission denied|must be owner/);
       }
     } finally { client.release(); }
   });
   await t.test("owner is also blocked by immutable audit triggers", async () => {
-    for (const sql of ["UPDATE observations SET value=2", "DELETE FROM observations", "TRUNCATE observations CASCADE", "UPDATE ingestion_batches SET accepted_count=99", "TRUNCATE ingestion_batches CASCADE", "TRUNCATE quarantine_records CASCADE", "TRUNCATE validation_results CASCADE", "TRUNCATE quarantine_resolutions CASCADE", "UPDATE source_contract_versions SET active=false", "TRUNCATE decision_records CASCADE", "TRUNCATE source_reconciliations CASCADE"]) {
+    for (const sql of ["UPDATE observations SET value=2", "DELETE FROM observations", "TRUNCATE observations CASCADE", "UPDATE ingestion_batches SET accepted_count=99", "TRUNCATE ingestion_batches CASCADE", "TRUNCATE quarantine_records CASCADE", "TRUNCATE validation_results CASCADE", "TRUNCATE quarantine_resolutions CASCADE", "UPDATE source_contract_versions SET active=false", "TRUNCATE decision_records CASCADE", "TRUNCATE source_reconciliations CASCADE", "TRUNCATE portfolio_transaction_events CASCADE", "TRUNCATE portfolio_valuation_snapshots CASCADE"]) {
       await admin.query("BEGIN");
       try { await assert.rejects(admin.query(sql), /immutable data records/); }
       finally { await admin.query("ROLLBACK"); }
@@ -230,6 +233,51 @@ test("real PostgreSQL migration, isolation, persistence and restore", async (t) 
     assert.deepEqual(chain.rows[0], { status: "evaluation_only", execution_allowed: false, methodology_kind: "methodology", dataset_kind: "dataset", assumptions: 1, features: 1 });
     await assert.rejects(provenanceRepository.createDatasetSnapshot({ entityId: "future_dataset", version: 1, description: "Invalid future dataset", purpose: "integration test only", cutoffAt: "2026-08-20T11:00:00.000Z", observationIds: [observationId] }), /not-yet-known/);
   });
+  await t.test("transaction and valuation ledger is exact, isolated and evaluation-only", async () => {
+    const subjectId = "integration-owner-a";
+    const observationId = (await admin.query("SELECT id FROM observations ORDER BY created_at LIMIT 1")).rows[0].id;
+    const transactionInput = {
+      subjectId, eventKind: "trade", assetKey: "TEST_ONLY", quantityDelta: "1", quantityUnit: "gram",
+      cashDelta: "-1", cashCurrency: "TOMAN", feeAmount: "0", occurredAt: "2026-08-20T09:00:00.000Z",
+      correctionOf: null, correctionReason: null, evidenceHash: null,
+    };
+    const transaction = await ledgerRepository.recordTransaction(transactionInput);
+    assert.equal(transaction.alreadyRecorded, false);
+    assert.equal((await ledgerRepository.recordTransaction(transactionInput)).alreadyRecorded, true);
+    const valuationInput = {
+      subjectId, portfolioVersion: 1, asOf: "2026-08-20T13:00:00.000Z",
+      dataset: { entityId: "test_dataset", version: 1 }, methodology: { entityId: "test_methodology", version: 1 },
+      reportingCurrency: "TOMAN", totalValue: "1", transactionIds: [transaction.id],
+      positions: [{ positionKey: "position-test", assetKey: "TEST_ONLY", quantity: "1", unit: "gram", observationId, price: "1", value: "1" }],
+    };
+    const valuation = await ledgerRepository.recordValuation(valuationInput);
+    assert.equal(valuation.alreadyRecorded, false);
+    const stored = await admin.query(`SELECT s.status,s.total_value::text,count(p.*)::integer AS positions,count(vt.*)::integer AS transactions
+      FROM portfolio_valuation_snapshots s JOIN portfolio_valuation_positions p ON p.valuation_id=s.id
+      JOIN portfolio_valuation_transactions vt ON vt.valuation_id=s.id
+      WHERE s.id=$1 GROUP BY s.status,s.total_value`, [valuation.id]);
+    assert.deepEqual(stored.rows[0], { status: "evaluation_only", total_value: "1.00", positions: 1, transactions: 1 });
+    const isolated = await runtimePool.connect();
+    try {
+      await isolated.query("BEGIN");
+      await isolated.query("SELECT set_config('asha.subject_id','integration-owner-b',true)");
+      assert.equal(Number((await isolated.query("SELECT count(*) FROM portfolio_transaction_events")).rows[0].count), 0);
+    } finally { await isolated.query("ROLLBACK"); isolated.release(); }
+    await admin.query("BEGIN");
+    try { await assert.rejects(admin.query("UPDATE portfolio_transaction_events SET fee_amount=2"), /immutable data records/); }
+    finally { await admin.query("ROLLBACK"); }
+    await assert.rejects(ledgerRepository.recordTransaction({ ...transactionInput, assetKey: "OTHER_ASSET", correctionOf: transaction.id, correctionReason: "Synthetic wrong-asset correction" }), /correction target/);
+    const otherOwnerTransaction = await ledgerRepository.recordTransaction({ ...transactionInput, subjectId: "integration-owner-b" });
+    await assert.rejects(ledgerRepository.recordValuation({
+      subjectId, portfolioVersion: 1, asOf: "2026-08-20T13:00:00.000Z",
+      dataset: { entityId: "test_dataset", version: 1 }, methodology: { entityId: "test_methodology", version: 1 },
+      reportingCurrency: "TOMAN", totalValue: "1", transactionIds: [otherOwnerTransaction.id],
+      positions: [{ positionKey: "position-cross-owner", assetKey: "TEST_ONLY", quantity: "1", unit: "gram", observationId, price: "1", value: "1" }],
+    }), /owner lineage|query returned no rows/);
+    const currentPortfolio = await portfolioRepository.load(subjectId);
+    assert.equal((await portfolioRepository.save(subjectId, 1, currentPortfolio.holdings, currentPortfolio.preferences)).version, 2);
+    assert.equal((await ledgerRepository.recordValuation(valuationInput)).alreadyRecorded, true);
+  });
   await t.test("backup restores into an independently created test schema", async () => {
     const url = new URL(connectionString);
     const env = { ...process.env, PGPASSWORD: decodeURIComponent(url.password) };
@@ -247,7 +295,7 @@ test("real PostgreSQL migration, isolation, persistence and restore", async (t) 
     // pg_dump plain output includes psql meta commands; use psql's parser.
     clientCommand("psql", [...args, "--set", "ON_ERROR_STOP=1", "--single-transaction"], dump);
     restoredCreated = true;
-    for (const table of ["asha_schema_migrations", "instruments", "sources", "source_contract_versions", "ingestion_batches", "observations", "quarantine_records", "quarantine_resolutions", "validation_results", "user_portfolios", "portfolio_holdings", "portfolio_preferences", "artifact_versions", "dataset_observations", "decision_records", "decision_assumptions", "decision_features", "source_reconciliations", "source_reconciliation_candidates"]) {
+    for (const table of ["asha_schema_migrations", "instruments", "sources", "source_contract_versions", "ingestion_batches", "observations", "quarantine_records", "quarantine_resolutions", "validation_results", "user_portfolios", "portfolio_holdings", "portfolio_preferences", "artifact_versions", "dataset_observations", "decision_records", "decision_assumptions", "decision_features", "source_reconciliations", "source_reconciliation_candidates", "portfolio_transaction_events", "portfolio_valuation_snapshots", "portfolio_valuation_positions", "portfolio_valuation_transactions"]) {
       const allRows = async (schemaName) => (await admin.query(`SELECT to_jsonb(t) AS row FROM "${schemaName}"."${table}" t ORDER BY to_jsonb(t)::text`)).rows;
       assert.deepEqual(await allRows(restoredSchema), await allRows(schema));
     }
@@ -259,6 +307,7 @@ test("real PostgreSQL migration, isolation, persistence and restore", async (t) 
       await admin.query(`GRANT INSERT, UPDATE, DELETE ON user_portfolios, portfolio_holdings, portfolio_preferences TO "${role}"`);
       await admin.query(`GRANT INSERT ON artifact_versions, dataset_observations, decision_records, decision_assumptions, decision_features TO "${role}"`);
       await admin.query(`GRANT INSERT ON source_reconciliations, source_reconciliation_candidates TO "${role}"`);
+      await admin.query(`GRANT INSERT ON portfolio_transaction_events, portfolio_valuation_snapshots, portfolio_valuation_positions, portfolio_valuation_transactions TO "${role}"`);
       const restoredPool = { async connect() {
         const client = await pool.connect();
         await client.query(`SET ROLE "${role}"`);

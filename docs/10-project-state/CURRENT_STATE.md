@@ -19,7 +19,7 @@ not a phase acceptance or authorization to repair the old host's ACL. Follow
 [`CONTINUE_ON_ANOTHER_SYSTEM.md`](../../CONTINUE_ON_ANOTHER_SYSTEM.md).
 On the transferred Windows host, the official PostgreSQL 17.11 runtime was verified,
 the project-owned cluster was initialized as the interactive Windows owner, and the
-real local integration/restore suite passed (12/12). The protected runtime environment
+real local integration/restore suite passed (13/13). The protected runtime environment
 passed activation checks; with explicit process-environment forwarding,
 `/api/health` reports observation persistence as connected. See
 [`POSTGRES_FOUNDATION_CHECKPOINT.md`](POSTGRES_FOUNDATION_CHECKPOINT.md). No Phase 2
@@ -36,6 +36,10 @@ Migration 0006 now requires a reason for every append-only correction and stores
 point-in-time source-reconciliation candidates, ranks, selections and reason codes.
 Checkpoint `0d1c2e9` passed both GitHub jobs in run 33393986374. It does not define
 empirical price-divergence thresholds or activate financial use.
+Migrations 0007–0009 add an owner-isolated, append-only transaction and valuation storage
+foundation. It is runtime-read-only and `evaluation_only`; no real event/value is
+seeded and no financial methodology is selected. A plain-language production identity
+proposal is documented, but audience/provider approval remains owner-required.
 
 ## Snapshot
 
@@ -216,7 +220,8 @@ empirical price-divergence thresholds or activate financial use.
   cannot be updated, deleted, or truncated. Runtime access is read-only, and no real
   financial decision has been created or enabled.
   Migration 0006 adds immutable source-reconciliation records and requires a bounded
-  plain-language reason on every correction; 74 unit and 12 real PostgreSQL tests pass locally.
+  plain-language reason on every correction. Migrations 0007–0009 add exact transaction and
+  evaluation-only valuation lineage; 77 unit and 13 real PostgreSQL tests pass locally.
   In the fresh-session laboratory, a fixed
   five-row CSV sample exercises preview plus a memory-only commit result (three
   accepted, one duplicate, one quarantined) without reaching the server or implying
