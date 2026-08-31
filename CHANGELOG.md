@@ -20,6 +20,8 @@ state is recorded in `docs/10-project-state/CURRENT_STATE.md`.
   was made.
 - Local typecheck, lint, production build, 85 unit tests, and 14 real PostgreSQL
   migration/concurrency/restore tests pass.
+- Code checkpoint `b0bb80a` passed both GitHub quality and real PostgreSQL jobs in
+  run 33417744818.
 
 ### Identity proposal and evaluation ledger foundation — ۱۴۰۵/۰۶/۰۹
 

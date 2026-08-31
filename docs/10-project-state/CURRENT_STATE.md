@@ -53,6 +53,8 @@ Migration 0010 adds the immutable Navasan request-reservation ledger. The replac
 credential, durable quota health, eight-quote live normalization, historical endpoint
 contracts and backup/restore path pass locally; no historical backfill was requested.
 Local verification now covers 85 unit and 14 real PostgreSQL tests.
+Code checkpoint `b0bb80a` passed both GitHub quality and real PostgreSQL jobs in
+run 33417744818.
 
 ## Snapshot
 
