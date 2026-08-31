@@ -49,7 +49,9 @@ owner decision; Phase 2 remains blocked until the Data Foundation gate is accept
 
 The next external action is to receive and record Navasan's written answer. Do not
 interpret Telegram delivery/read state as permission, and do not accept terms,
-commit a cost, or request history before the answer is reviewed with the owner.
+commit a cost, or request history before the answer is reviewed with the owner. An
+hourly read-only thread heartbeat is active so the owner does not need to prompt for
+each check; it is not authorized to send another message or accept terms.
 
 ## Next Gate: Independent Financial Laboratory
 

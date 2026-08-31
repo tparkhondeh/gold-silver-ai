@@ -35,6 +35,9 @@ state is recorded in `docs/10-project-state/CURRENT_STATE.md`.
 - With explicit owner authorization, sent the proposal's no-secret storage/licensing
   inquiry through Navasan's official contact bot. Telegram marked the outgoing message
   read; a written vendor response is still pending and no permission is inferred.
+- Added an hourly read-only thread heartbeat to detect a written vendor response
+  without requiring repeated owner prompts. It cannot send messages, accept terms or
+  cost, consume provider quota, or run the historical backfill.
 
 ### Identity proposal and evaluation ledger foundation — ۱۴۰۵/۰۶/۰۹
 

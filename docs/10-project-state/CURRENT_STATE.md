@@ -65,6 +65,8 @@ licensed-backfill proposal plus ready-to-send Persian inquiries are recorded in
 and sent the no-secret Navasan permission inquiry through the official contact bot;
 Telegram displayed it as read, but no written vendor answer has been received or
 treated as permission. No purchase was authorized and no historical request was made.
+An hourly read-only thread heartbeat now monitors that official conversation for a
+written answer; it cannot send a follow-up, accept terms/cost, or run a backfill.
 
 ## Snapshot
 

@@ -11,6 +11,11 @@ read message. That is evidence of transmission only; it is not a vendor answer o
 permission. No API key, portfolio value, holding, or other personal financial data
 was included. A written vendor response remains pending.
 
+An hourly thread heartbeat now checks the same official Telegram conversation for a
+new answer. It is read-only: it may summarize and record a response, but it may not
+send another message, accept terms/cost, request history, or run a backfill without
+new explicit owner authorization.
+
 ## Plain-Language Decision
 
 Before the application downloads historical Iranian market prices, the project
