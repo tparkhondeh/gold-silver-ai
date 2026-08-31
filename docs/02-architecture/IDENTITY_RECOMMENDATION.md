@@ -1,81 +1,95 @@
-# Production Identity Recommendation
+# پیشنهاد ورود امن و تشخیص مالک سبد
 
-**Source of truth for:** the owner decision required before real portfolio data can
-be separated by production user identity.
+**مرجع اصلی برای:** تصمیم مالک پروژه پیش از آنکه اطلاعات واقعی هر سبد با هویت
+کاربر واقعی تفکیک شود.
 
-`STATUS: PROPOSAL` — `DECISION REQUIRED: YES` (Tier A: access model and provider).
-No provider is selected and no production authentication is enabled.
+`STATUS: PROPOSAL` — `DECISION REQUIRED: YES`
 
-## What is being decided
+این موضوع یک تصمیم سطح A و مخصوص مالک پروژه است، چون هم مدل دسترسی و هم شرکت
+ارائه‌دهنده سرویس ورود را مشخص می‌کند. هنوز هیچ شرکت یا روشی انتخاب نشده و ورود
+واقعی کاربران نیز فعال نیست.
 
-The system needs a trustworthy, stable identifier for the person who owns each
-portfolio. Authentication means proving who a person is; authorization means deciding
-which portfolio that proven person may access. They are separate controls.
+## چه چیزی باید تصمیم‌گیری شود؟
 
-The current `local-owner-v1` value is safe only on the owner's loopback computer. An
-email address must not replace it as the database key: emails can change and should be
-used only for display/contact. The database should receive an opaque provider subject
-ID, verify it on the server, and continue enforcing forced row-level security.
+سیستم باید بتواند مالک هر سبد را با یک شناسه مطمئن و پایدار تشخیص دهد.
 
-## Options
+- **احراز هویت (Authentication):** ثابت می‌کند شخصی که وارد شده چه کسی است.
+- **مجوز دسترسی (Authorization):** مشخص می‌کند آن شخص اجازه دیدن یا تغییر کدام
+  سبد را دارد.
 
-### A. Private owner-only access gateway — recommended for the next production pilot
+این دو کنترل جدا هستند و هر دو لازم‌اند.
 
-A trusted gateway authenticates the owner before traffic reaches the application. The
-application accepts only a server-verified opaque subject ID; portfolio routes remain
-closed if it is missing. Cloudflare Access is one example of this category and supports
-protected self-hosted applications and identity policies, but naming it here is not a
-vendor approval: [official Access application documentation](https://developers.cloudflare.com/cloudflare-one/access-controls/applications/).
+شناسه فعلی `local-owner-v1` فقط روی کامپیوتر شخصی مالک و آدرس محلی
+(`localhost`) امن است. ایمیل نباید جای این شناسه را در پایگاه داده بگیرد، چون
+ایمیل ممکن است عوض شود. ایمیل فقط برای نمایش یا تماس مناسب است. پایگاه داده باید
+یک شناسه ناشناس و تغییرناپذیر از سرویس ورود دریافت کند؛ سرور باید درستی آن را
+بررسی کند و محدودیت امنیتی هر سطر (Row-Level Security) همچنان اجباری بماند.
 
-- Advantages: smallest exposure, no password database in this codebase, easiest
-  two-browser owner test, and reversible before a multi-user launch.
-- Disadvantages: depends on the chosen gateway's availability, account terms and
-  Iran accessibility; it is not yet a customer account system.
-- Wrong-call cost: low to moderate because the application stores an opaque subject ID
-  behind an adapter, but vendor outage or account restrictions could block access.
+## گزینه‌ها
 
-### B. Managed multi-user identity service
+### گزینه A: درگاه خصوصی فقط برای مالک — پیشنهاد ما برای آزمایش واقعی بعدی
 
-An external provider handles sign-in, recovery and optional MFA/passkeys while the
-application maps the verified subject to PostgreSQL. Supabase Auth is one example that
-documents JWT identity with PostgreSQL row-level security; it is not selected here:
-[official Auth/RLS documentation](https://supabase.com/docs/guides/database/postgres/row-level-security#auth).
+یک درگاه مورد اعتماد، پیش از رسیدن درخواست به برنامه، هویت مالک را بررسی می‌کند.
+برنامه فقط شناسه ناشناسی را قبول می‌کند که سرور درستی آن را تأیید کرده باشد؛ اگر
+شناسه معتبر وجود نداشته باشد، مسیرهای سبد بسته می‌مانند.
 
-- Advantages: faster invited-user/customer onboarding and less security machinery to
-  operate personally.
-- Disadvantages: recurring cost or limits, vendor lock-in, personal-data processing,
-  legal/terms review and possible regional availability risk.
-- Wrong-call cost: moderate to high after many real accounts exist because migration,
-  recovery and user communication become material.
+Cloudflare Access فقط یک نمونه از این گروه است و می‌تواند برنامه خصوصی را با
+قانون دسترسی محافظت کند. آوردن نام آن به معنی انتخاب یا تأیید این شرکت نیست:
+[راهنمای رسمی برنامه‌های Access](https://developers.cloudflare.com/cloudflare-one/access-controls/applications/).
 
-### C. Self-hosted identity server
+- مزایا: کمترین سطح عمومی‌شدن، بدون نگهداری رمز عبور در این پروژه، آزمایش ساده
+  مالک در دو مرورگر، و امکان تغییر مسیر پیش از اضافه‌شدن کاربران دیگر.
+- معایب: وابستگی به در دسترس بودن سرویس، قوانین حساب و امکان استفاده از ایران؛
+  این گزینه هنوز سامانه حساب مشتریان نیست.
+- هزینه انتخاب اشتباه: کم تا متوسط؛ چون برنامه فقط شناسه ناشناس را از یک رابط
+  قابل تعویض می‌گیرد، اما قطع سرویس یا محدودشدن حساب می‌تواند ورود را متوقف کند.
 
-The owner operates an OpenID Connect identity system on controlled infrastructure.
-Keycloak is one established example and documents standard application integration;
-it is not selected here: [official Keycloak guides](https://www.keycloak.org/guides#securing-apps).
+### گزینه B: سرویس آماده ورود برای چند کاربر
 
-- Advantages: maximum infrastructure control and less dependence on a hosted identity
-  vendor.
-- Disadvantages: highest operational burden; patching, email delivery, recovery,
-  monitoring and incident response become the owner's responsibility.
-- Wrong-call cost: high if operations are under-resourced, because identity downtime or
-  a security mistake can expose or lock out sensitive financial data.
+یک شرکت بیرونی، ورود، بازیابی حساب و در صورت نیاز احراز هویت دومرحله‌ای یا
+Passkey را مدیریت می‌کند. برنامه شناسه تأییدشده را به PostgreSQL متصل می‌کند.
 
-## Recommendation and decision needed
+Supabase Auth فقط یک نمونه است که اتصال هویت JWT به محدودیت امنیتی سطرهای
+PostgreSQL را مستند کرده است؛ این سرویس هنوز انتخاب نشده:
+[راهنمای رسمی Auth و RLS](https://supabase.com/docs/guides/database/postgres/row-level-security#auth).
 
-Use **Option A for an owner-only production pilot**, with MFA/passkey capability where
-the chosen gateway supports it. Keep an adapter boundary so Option B or C can later
-provide the same opaque subject ID without changing portfolio ownership rows.
+- مزایا: اضافه‌کردن کاربران دعوت‌شده یا مشتریان سریع‌تر است و نگهداری بخش بزرگی
+  از امنیت ورود بر عهده مالک پروژه نیست.
+- معایب: هزینه یا سقف مصرف، وابستگی به شرکت، پردازش اطلاعات شخصی، نیاز به بررسی
+  حقوقی و احتمال محدودیت منطقه‌ای.
+- هزینه انتخاب اشتباه: پس از ایجاد تعداد زیادی حساب واقعی، متوسط تا زیاد است؛
+  زیرا انتقال حساب‌ها، بازیابی و اطلاع‌رسانی به کاربران دشوار می‌شود.
 
-Before implementation, the owner must answer:
+### گزینه C: سرویس ورود روی سرور خودمان
 
-1. Is the next real release only for the owner, for invited trusted users, or public
-   customer accounts?
-2. May a third party process login identifiers such as email, or must identity be
-   self-hosted?
-3. Which provider/account terms, recurring cost and Iran accessibility have been
-   reviewed and accepted?
+سامانه استاندارد ورود (OpenID Connect) روی زیرساخت تحت کنترل خود پروژه نگهداری
+می‌شود. Keycloak یک نمونه شناخته‌شده است، اما در اینجا انتخاب نشده:
+[راهنمای رسمی Keycloak](https://www.keycloak.org/guides#securing-apps).
 
-Until those answers are approved, the public review site remains demo/session-only,
-real holdings remain on the loopback owner host, and no production identity headers
-are trusted.
+- مزایا: بیشترین کنترل روی زیرساخت و وابستگی کمتر به شرکت ارائه‌دهنده سرویس.
+- معایب: بیشترین مسئولیت نگهداری؛ به‌روزرسانی امنیتی، ارسال ایمیل، بازیابی حساب،
+  پایش و پاسخ به حادثه همگی بر عهده تیم پروژه می‌شوند.
+- هزینه انتخاب اشتباه: زیاد است؛ کمبود توان نگهداری می‌تواند موجب افشای اطلاعات
+  مالی یا قفل‌شدن دسترسی کاربران شود.
+
+## پیشنهاد فعلی
+
+برای یک نسخه آزمایشی واقعی که **فقط مالک** از آن استفاده می‌کند، گزینه A مناسب‌تر
+است. اگر درگاه انتخابی پشتیبانی کند، احراز هویت دومرحله‌ای یا Passkey نیز فعال
+شود. رابط فنی قابل تعویض باقی می‌ماند تا بعداً گزینه B یا C همان نوع شناسه ناشناس
+را تحویل دهد و نیازی به تغییر مالکیت سبدهای ثبت‌شده نباشد.
+
+## سه پاسخ لازم از مالک
+
+پیش از پیاده‌سازی ورود واقعی، مالک پروژه باید این سه مورد را تعیین کند:
+
+1. نسخه واقعی بعدی فقط برای خود مالک است، برای چند کاربر دعوت‌شده است، یا ثبت‌نام
+   عمومی مشتریان دارد؟
+2. آیا یک شرکت بیرونی می‌تواند اطلاعات ورود مانند ایمیل را پردازش کند، یا سرویس
+   ورود حتماً باید روی سرور خودمان باشد؟
+3. قوانین حساب، هزینه دوره‌ای و امکان استفاده از ایران برای کدام سرویس بررسی و
+   پذیرفته شده است؟
+
+تا زمان تأیید این پاسخ‌ها، سایت نمایشی عمومی فقط با داده نمایشی/موقت کار می‌کند،
+اطلاعات واقعی سبد روی کامپیوتر محلی مالک باقی می‌ماند و برنامه به هیچ شناسه
+هویتی که از بیرون ارسال شده اعتماد نمی‌کند.
