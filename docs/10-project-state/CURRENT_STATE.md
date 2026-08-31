@@ -2,7 +2,7 @@
 
 **Source of truth for:** where the project stands right now.
 
-_Last updated in the product calendar: ۱۴۰۵/۰۶/۰۸ (Phase 1 active)_
+_Last updated in the product calendar: ۱۴۰۵/۰۶/۰۹ (Phase 1 active)_
 
 ## Current Execution Gate
 
@@ -19,12 +19,12 @@ not a phase acceptance or authorization to repair the old host's ACL. Follow
 [`CONTINUE_ON_ANOTHER_SYSTEM.md`](../../CONTINUE_ON_ANOTHER_SYSTEM.md).
 On the transferred Windows host, the official PostgreSQL 17.11 runtime was verified,
 the project-owned cluster was initialized as the interactive Windows owner, and the
-real local integration/restore suite passed (9/9). The protected runtime environment
+real local integration/restore suite passed (10/10). The protected runtime environment
 passed activation checks; with explicit process-environment forwarding,
 `/api/health` reports observation persistence as connected. See
 [`POSTGRES_FOUNDATION_CHECKPOINT.md`](POSTGRES_FOUNDATION_CHECKPOINT.md). No Phase 2
-branch has been created. Server-side authenticated portfolios, historical backfill,
-and the real baseline remain pending. See
+branch has been created. Local owner-scoped portfolio save/restore is implemented;
+production account authentication, historical backfill, and the real baseline remain pending. See
 [`PHASE_1_STABILIZATION_AUDIT.md`](../../PHASE_1_STABILIZATION_AUDIT.md).
 
 ## Snapshot
@@ -64,8 +64,9 @@ and the real baseline remain pending. See
   remains the lower-level constraint calculation feeding this engine; every surface is
   labelled synthetic, execution remains disabled, and the prior personal portfolio
   is restored when the laboratory is closed. These are product-experience fixtures,
-  not market claims or financial recommendations. A personal-mode choice is remembered
-  only in that browser session; no cross-browser portfolio sharing is implied. The UI
+  not market claims or financial recommendations. Personal mode now offers explicit
+  local PostgreSQL save/restore; browser data is never uploaded or overwritten
+  automatically, and demo holdings are never persisted. The UI
   uses Asha's matte-white and pastel-violet token layer,
   organic radii, accessible contrast, a custom inline SVG mark, and a matching favicon.
   Persian typography now bundles the variable Vazirmatn font and uses a readable
@@ -191,8 +192,10 @@ and the real baseline remain pending. See
   checksums/rollback, database probes, immutable batch/truncate protection, correction
   constraints, exact decimal limits and server-controlled collection time; real
   PostgreSQL integration and fixture restore passed both isolated GitHub CI and the
-  transferred Windows owner host. Local observation persistence is connected; this
-  does not implement authenticated portfolio persistence.
+  transferred Windows owner host. Local observation persistence is connected.
+  Migration 0003 adds versioned portfolio tables with forced row-level security,
+  least-privilege grants and conflict detection. The API remains loopback-only;
+  production identity and public multi-user persistence are not implemented.
   In the fresh-session laboratory, a fixed
   five-row CSV sample exercises preview plus a memory-only commit result (three
   accepted, one duplicate, one quarantined) without reaching the server or implying

@@ -9,6 +9,7 @@ import { createPgTransactionRunner, inspectOperatorDatabaseEnvironment } from ".
 import { ingestManualCsv, manualCsvHeaders } from "../../data/csv-ingestion.ts";
 import { validateObservation } from "../../data/validation.ts";
 import { PostgresObservationRepository } from "../../data/postgres-observation-repository.ts";
+import { PortfolioVersionConflictError, PostgresPortfolioRepository } from "../../data/postgres-portfolio-repository.ts";
 
 // Never use DATABASE_URL or load .env.local: only an explicitly disposable database.
 const connectionString = process.env.ASHA_TEST_DATABASE_URL;
@@ -59,6 +60,7 @@ test("real PostgreSQL migration, isolation, persistence and restore", async (t) 
   await admin.query(`GRANT USAGE ON SCHEMA "${schema}" TO "${role}"`);
   await admin.query(`GRANT SELECT ON ALL TABLES IN SCHEMA "${schema}" TO "${role}"`);
   await admin.query(`GRANT INSERT ON ingestion_batches, observations, quarantine_records, validation_results, quarantine_resolutions TO "${role}"`);
+  await admin.query(`GRANT INSERT, UPDATE, DELETE ON user_portfolios, portfolio_holdings TO "${role}"`);
   const runtimePool = { async connect() {
     const client = await pool.connect();
     await client.query(`SET ROLE "${role}"`);
@@ -66,6 +68,7 @@ test("real PostgreSQL migration, isolation, persistence and restore", async (t) 
     return client;
   } };
   const repository = new PostgresObservationRepository(createPgTransactionRunner(runtimePool));
+  const portfolioRepository = new PostgresPortfolioRepository(createPgTransactionRunner(runtimePool));
   const valid = "TEST_ONLY,test-only,1.00,TOMAN,gram,2026-08-20T10:00:00Z,,2026-08-20T10:01:00Z,2026-08-20T10:00:00Z,,";
   const batch = await ingestManualCsv({ text: `${manualCsvHeaders.join(",")}\n${valid}\n${valid}\n${valid.replace(",1.00,", ",0,")}\n`, fileName: "synthetic-integration.csv", sourceId: "test-only", registry, now: new Date("2026-08-20T12:00:00Z") });
   await t.test("least-privilege writer commits and concurrently replays without duplicates", async () => {
@@ -120,6 +123,35 @@ test("real PostgreSQL migration, isolation, persistence and restore", async (t) 
     await admin.query("INSERT INTO sources VALUES ('test-other',1,'Other test source','test_only','test',true)");
     await assert.rejects(repository.persistBatch({ ...batch, id: "cross-source-correction", accepted: [{ ...revision, id: 'obs_' + 'c'.repeat(64), idempotencyKey: 'c'.repeat(64), sourceId: 'test-other' }], quarantined: [], duplicates: [] }), /correction target/);
   });
+  await t.test("portfolio rows are durable, versioned and isolated by owner subject", async () => {
+    const ownerA = "integration-owner-a";
+    const ownerB = "integration-owner-b";
+    const first = await portfolioRepository.save(ownerA, 0, [{
+      id: "owner-a-gold",
+      name: "Synthetic holding A",
+      amount: 2.5,
+      unit: "gram",
+      costToman: 1000,
+      purchaseDate: "2026-08-20",
+      note: "test only",
+    }]);
+    assert.equal(first.version, 1);
+    assert.deepEqual(await portfolioRepository.load(ownerA), first);
+    assert.deepEqual(await portfolioRepository.load(ownerB), { version: 0, holdings: [] });
+    await assert.rejects(portfolioRepository.save(ownerA, 0, []), PortfolioVersionConflictError);
+    const second = await portfolioRepository.save(ownerB, 0, [{
+      id: "owner-b-silver",
+      name: "Synthetic holding B",
+      amount: 3,
+      unit: "gram",
+      costToman: null,
+      purchaseDate: null,
+      note: "",
+    }]);
+    assert.equal(second.version, 1);
+    assert.equal((await portfolioRepository.load(ownerA)).holdings[0].id, "owner-a-gold");
+    assert.equal((await portfolioRepository.load(ownerB)).holdings[0].id, "owner-b-silver");
+  });
   await t.test("backup restores into an independently created test schema", async () => {
     const url = new URL(connectionString);
     const env = { ...process.env, PGPASSWORD: decodeURIComponent(url.password) };
@@ -137,7 +169,7 @@ test("real PostgreSQL migration, isolation, persistence and restore", async (t) 
     // pg_dump plain output includes psql meta commands; use psql's parser.
     clientCommand("psql", [...args, "--set", "ON_ERROR_STOP=1", "--single-transaction"], dump);
     restoredCreated = true;
-    for (const table of ["asha_schema_migrations", "instruments", "sources", "ingestion_batches", "observations", "quarantine_records", "quarantine_resolutions", "validation_results"]) {
+    for (const table of ["asha_schema_migrations", "instruments", "sources", "ingestion_batches", "observations", "quarantine_records", "quarantine_resolutions", "validation_results", "user_portfolios", "portfolio_holdings"]) {
       const allRows = async (schemaName) => (await admin.query(`SELECT to_jsonb(t) AS row FROM "${schemaName}"."${table}" t ORDER BY to_jsonb(t)::text`)).rows;
       assert.deepEqual(await allRows(restoredSchema), await allRows(schema));
     }
@@ -146,6 +178,7 @@ test("real PostgreSQL migration, isolation, persistence and restore", async (t) 
       await admin.query(`GRANT USAGE ON SCHEMA "${restoredSchema}" TO "${role}"`);
       await admin.query(`GRANT SELECT ON ALL TABLES IN SCHEMA "${restoredSchema}" TO "${role}"`);
       await admin.query(`GRANT INSERT ON ingestion_batches, observations, quarantine_records, validation_results, quarantine_resolutions TO "${role}"`);
+      await admin.query(`GRANT INSERT, UPDATE, DELETE ON user_portfolios, portfolio_holdings TO "${role}"`);
       const restoredPool = { async connect() {
         const client = await pool.connect();
         await client.query(`SET ROLE "${role}"`);

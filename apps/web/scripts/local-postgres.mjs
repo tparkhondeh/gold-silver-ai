@@ -59,16 +59,25 @@ async function verifyActivation(client) {
   if (stored.length !== expected.length || stored.some((row, index) => row.id !== expected[index].id || row.checksum !== expected[index].checksum)) throw new Error("Migration journal does not match reviewed SQL");
   const grants = await client.query(`SELECT bool_and(
     has_table_privilege(current_user,c.oid,'SELECT')
-    AND NOT has_table_privilege(current_user,c.oid,'UPDATE,DELETE,TRUNCATE,TRIGGER')
     AND NOT pg_has_role(current_user,c.relowner,'MEMBER')
-    AND CASE WHEN c.relname IN ('instruments','sources','asha_schema_migrations')
-      THEN NOT has_table_privilege(current_user,c.oid,'INSERT')
-      ELSE has_table_privilege(current_user,c.oid,'INSERT') END
+    AND CASE
+      WHEN c.relname IN ('instruments','sources','asha_schema_migrations')
+        THEN NOT has_table_privilege(current_user,c.oid,'INSERT')
+      WHEN c.relname IN ('user_portfolios','portfolio_holdings')
+        THEN has_table_privilege(current_user,c.oid,'INSERT,UPDATE,DELETE')
+          AND NOT has_table_privilege(current_user,c.oid,'TRUNCATE,TRIGGER')
+      ELSE has_table_privilege(current_user,c.oid,'INSERT')
+        AND NOT has_table_privilege(current_user,c.oid,'UPDATE,DELETE,TRUNCATE,TRIGGER')
+      END
     ) AS safe, count(*)::integer AS tables
     FROM pg_class c JOIN pg_namespace n ON n.oid=c.relnamespace
     WHERE n.nspname='public' AND c.relkind='r' AND c.relname IN
-      ('instruments','sources','asha_schema_migrations','ingestion_batches','observations','quarantine_records','validation_results','quarantine_resolutions')`);
-  if (grants.rows[0]?.safe !== true || grants.rows[0]?.tables !== 8) throw new Error("Runtime table privileges do not match the least-privilege contract");
+      ('instruments','sources','asha_schema_migrations','ingestion_batches','observations','quarantine_records','validation_results','quarantine_resolutions','user_portfolios','portfolio_holdings')`);
+  if (grants.rows[0]?.safe !== true || grants.rows[0]?.tables !== 10) throw new Error("Runtime table privileges do not match the least-privilege contract");
+  const portfolioPolicies = await client.query(`SELECT count(*)::integer AS tables, bool_and(c.relrowsecurity AND c.relforcerowsecurity) AS forced
+    FROM pg_class c JOIN pg_namespace n ON n.oid=c.relnamespace
+    WHERE n.nspname='public' AND c.relname IN ('user_portfolios','portfolio_holdings')`);
+  if (portfolioPolicies.rows[0]?.tables !== 2 || portfolioPolicies.rows[0]?.forced !== true) throw new Error("Portfolio row-level security is missing or not forced");
   const triggerNames = ["observations_are_immutable", "quarantine_records_are_immutable", "validation_results_are_immutable", "quarantine_resolutions_are_immutable", "ingestion_batches_are_immutable", "observation_contract_before_insert", "observations_cannot_be_truncated", "batches_cannot_be_truncated", "quarantine_cannot_be_truncated", "validations_cannot_be_truncated", "resolutions_cannot_be_truncated"];
   const triggers = (await client.query("SELECT t.tgname FROM pg_trigger t JOIN pg_class c ON c.oid=t.tgrelid JOIN pg_namespace n ON n.oid=c.relnamespace WHERE n.nspname='public' AND NOT t.tgisinternal AND t.tgenabled IN ('O','A')")).rows.map((row) => row.tgname);
   if (triggerNames.some((name) => !triggers.includes(name))) throw new Error("Required integrity trigger missing or disabled");
@@ -139,6 +148,7 @@ async function initialize(secret) {
     await owner.query("GRANT USAGE ON SCHEMA public TO asha_runtime");
     await owner.query("GRANT SELECT ON ALL TABLES IN SCHEMA public TO asha_runtime");
     await owner.query("GRANT INSERT ON ingestion_batches, observations, quarantine_records, validation_results, quarantine_resolutions TO asha_runtime");
+    await owner.query("GRANT INSERT, UPDATE, DELETE ON user_portfolios, portfolio_holdings TO asha_runtime");
     await owner.query("COMMIT");
     console.log(JSON.stringify({ localDatabase: "asha_local", testDatabase: "asha_integration", migrationsApplied: applied, syntheticMarketRowsSeeded: 0 }));
   } finally { await owner.end(); }
@@ -158,9 +168,12 @@ async function configure(secret) {
   // Never rewrite the user's .env.local. The protected runtime environment is
   // opt-in at server startup, and contains no market-provider credentials.
   const runtimeEnvPath = join(privateRoot, "runtime.env");
-  const contents = `DATABASE_URL=${runtimeUrl}\nASHA_OPERATOR_COMMIT_ENABLED=true\n`;
+  const legacyContents = `DATABASE_URL=${runtimeUrl}\nASHA_OPERATOR_COMMIT_ENABLED=true\n`;
+  const contents = `${legacyContents}ASHA_LOCAL_PORTFOLIO_ENABLED=true\n`;
   if (await exists(runtimeEnvPath)) {
-    if (await readFile(runtimeEnvPath, "utf8") !== contents) throw new Error("Existing runtime environment differs; manual review required");
+    const current = await readFile(runtimeEnvPath, "utf8");
+    if (current === legacyContents) await writeFile(runtimeEnvPath, contents, { mode: 0o600 });
+    else if (current !== contents) throw new Error("Existing runtime environment differs; manual review required");
   } else await writeFile(runtimeEnvPath, contents, { flag: "wx", mode: 0o600 });
   console.log("Protected runtime.env prepared; load it explicitly when starting the local server. Existing .env.local is unchanged. Portfolio authentication remains a separate gate.");
 }

@@ -6,11 +6,12 @@ import {
   type SqlExecutor,
   type TransactionRunner,
 } from "../data/postgres-observation-repository.ts";
+import { PostgresPortfolioRepository } from "../data/postgres-portfolio-repository.ts";
 
 type RuntimeEnvironment = Record<string, string | undefined>;
 
 type PoolClientLike = {
-  query(sql: string, parameters?: unknown[]): Promise<{ rowCount: number | null }>;
+  query<Row extends Record<string, unknown> = Record<string, unknown>>(sql: string, parameters?: unknown[]): Promise<{ rowCount: number | null; rows: Row[] }>;
   release(): void;
 };
 
@@ -70,9 +71,9 @@ export function createPgTransactionRunner(pool: PoolLike): TransactionRunner {
     async transaction<T>(work: (executor: SqlExecutor) => Promise<T>) {
       const client = await pool.connect();
       const executor: SqlExecutor = {
-        async query(sql: string, parameters: readonly unknown[] = []): Promise<QueryResult> {
+        async query<Row extends Record<string, unknown> = Record<string, unknown>>(sql: string, parameters: readonly unknown[] = []): Promise<QueryResult<Row>> {
           const result = await client.query(sql, [...parameters]);
-          return { rowCount: result.rowCount ?? 0 };
+          return { rowCount: result.rowCount ?? 0, rows: result.rows as Row[] };
         },
       };
 
@@ -103,6 +104,10 @@ function getRuntimePool(connectionString: string) {
   runtimePool = new Pool({
     connectionString,
     max: 4,
+    // Cloudflare's local request runtime cannot safely reuse a TCP client created
+    // in a previous request context. Retire it after release to avoid alternating
+    // healthy/failed probes while preserving transaction reuse within one request.
+    maxUses: 1,
     connectionTimeoutMillis: 3_000,
     idleTimeoutMillis: 10_000,
     query_timeout: 3_000,
@@ -154,4 +159,36 @@ export async function resolveOperatorObservationRepository(
   if (health.state !== "connected") return { available: false, reason: health.reason };
   const runner = createPgTransactionRunner(getRuntimePool(configuration.connectionString));
   return { available: true, repository: new PostgresObservationRepository(runner) };
+}
+
+export async function inspectLocalPortfolioDatabaseHealth(environment: RuntimeEnvironment = process.env) {
+  if (environment.ASHA_LOCAL_PORTFOLIO_ENABLED !== "true") {
+    return { state: "blocked", reason: "local_portfolio_not_enabled" } as const;
+  }
+  const configuration = inspectOperatorDatabaseEnvironment(environment);
+  if (!configuration.available) return { state: "blocked", reason: configuration.reason } as const;
+  try {
+    const result = await getRuntimePool(configuration.connectionString).query<{ ready: boolean }>(`SELECT
+      count(*) = 2
+      AND bool_and(c.relrowsecurity AND c.relforcerowsecurity)
+      AND bool_and(has_table_privilege(current_user, c.oid, 'SELECT,INSERT,UPDATE,DELETE')) AS ready
+      FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace
+      WHERE n.nspname = 'public' AND c.relname IN ('user_portfolios', 'portfolio_holdings')`);
+    return result.rows[0]?.ready === true
+      ? { state: "local_ready", reason: "local_portfolio_database_ready" } as const
+      : { state: "blocked", reason: "local_portfolio_schema_or_policy_missing" } as const;
+  } catch {
+    return { state: "blocked", reason: "database_unreachable_or_probe_failed" } as const;
+  }
+}
+
+export async function resolveLocalPortfolioRepository(environment: RuntimeEnvironment = process.env) {
+  const configuration = inspectOperatorDatabaseEnvironment(environment);
+  if (!configuration.available) return { available: false as const, reason: configuration.reason };
+  const health = await inspectLocalPortfolioDatabaseHealth(environment);
+  if (health.state !== "local_ready") return { available: false as const, reason: health.reason };
+  return {
+    available: true as const,
+    repository: new PostgresPortfolioRepository(createPgTransactionRunner(getRuntimePool(configuration.connectionString))),
+  };
 }

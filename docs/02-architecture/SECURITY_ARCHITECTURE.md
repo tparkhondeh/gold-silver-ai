@@ -5,13 +5,18 @@
 ## Status
 
 `STATUS: PARTIAL`. A public review deployment exists, but it has no account system,
-server-side portfolio storage, or production authentication and must not collect
-sensitive holdings. The Phase 1 local CSV operator establishes a baseline boundary:
+production portfolio storage, or production authentication and must not collect
+sensitive holdings. The owner-only local application now has versioned PostgreSQL
+portfolio storage with forced row-level security. Existing browser holdings move
+only after explicit save/restore actions, and the demo portfolio is excluded. The
+fixed local subject is not a production identity system. The Phase 1 local boundary uses:
 loopback host allowlisting, exact same-origin validation, `Sec-Fetch-Site` checking,
 a non-simple action-matched intent header, JSON-only input, strict size limits,
 no-store responses, and omission of raw payloads from preview output. Persistence
-also requires an explicit enable flag and a loopback-only PostgreSQL URL. It remains
-disabled until the local database is migrated and integration-tested.
+also requires explicit enable flags and a loopback-only PostgreSQL URL. Portfolio
+writes add optimistic version checks to prevent silent stale-browser overwrites. The
+transferred owner host is migrated and integration-tested; public persistence stays
+disabled until a production identity provider and deployment store are approved.
 Broader security tooling is a Tier B / Implementation decision
 (`docs/00-governance/PROJECT_RULES.md` § 3): Claude Code selects baseline
 tooling following standard security practice when an implementation phase

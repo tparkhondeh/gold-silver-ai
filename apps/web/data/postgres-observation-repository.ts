@@ -1,7 +1,7 @@
 import type { IngestionBatch, QuarantineRecord, ValidatedObservation } from "./contracts.ts";
 
-export type QueryResult = { rowCount: number };
-export type SqlExecutor = { query(sql: string, parameters?: readonly unknown[]): Promise<QueryResult> };
+export type QueryResult<Row extends Record<string, unknown> = Record<string, unknown>> = { rowCount: number; rows?: Row[] };
+export type SqlExecutor = { query<Row extends Record<string, unknown> = Record<string, unknown>>(sql: string, parameters?: readonly unknown[]): Promise<QueryResult<Row>> };
 export type TransactionRunner = { transaction<T>(work: (executor: SqlExecutor) => Promise<T>): Promise<T> };
 
 export type PersistBatchResult = {

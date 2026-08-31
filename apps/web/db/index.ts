@@ -4,6 +4,7 @@ export {
   createPgTransactionRunner,
   inspectOperatorDatabaseEnvironment,
   resolveOperatorObservationRepository,
+  resolveLocalPortfolioRepository,
 } from "./postgres-runtime.ts";
 
 export function createObservationRepository(runner: TransactionRunner) {

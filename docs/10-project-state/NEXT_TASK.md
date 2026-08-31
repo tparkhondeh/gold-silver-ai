@@ -4,23 +4,21 @@
 
 ## Immediate Next Step
 
-The transfer to the new Windows host is complete. The correct development branch is
-active, all 60 unit/contract tests pass, and the project-owned PostgreSQL 17.11
-cluster passed all 9 real migration/integration/restore tests. The local health
-endpoint reports observation persistence as connected when the protected runtime
-environment is explicitly forwarded to the Cloudflare development environment.
-The published code checkpoint `ec3f410` passed both quality and real PostgreSQL CI
-jobs in run 33316064205. Do not repeat the resolved Node 22 repair or infer local
-Windows/personal-data readiness from the isolated Linux test database.
+The transfer to the new Windows host is complete. Migration
+`0003_owner_portfolio.sql` now provides versioned, row-level-secured local portfolio
+storage. The UI exposes explicit save/restore controls, so existing browser data is
+never uploaded or overwritten automatically. Unit, build, real PostgreSQL isolation
+and backup/restore gates pass locally. Production account authentication and public
+multi-user hosting remain separate, unapproved gates.
 
-1. Commit/push this transferred-host verification only on the development branch and verify both
-   GitHub quality and database jobs at the new HEAD. The older Node 22 repair already
-   passed run 33304773397; it does not validate the later checkpoint. Preserve
-   `main`, backups, tags, credentials and existing personal browser data.
-2. Add secure user-scoped server-side holding/transaction/valuation persistence.
-   Preserve browser data during explicit migration, keep sandbox separate, and test
-   refresh plus two independent browser sessions under the same authenticated scope.
-3. Complete observation provenance/version fields, source reconciliation, and the
+1. Publish the local-portfolio checkpoint only on the development branch and verify
+   both GitHub quality and database jobs at the new HEAD. Preserve `main`, backups,
+   tags, credentials and existing personal browser data.
+2. Choose and approve the production identity provider before replacing the local
+   owner scope with real account subjects. Then test two authenticated browser
+   sessions without weakening the tested PostgreSQL policies.
+3. Add transaction/valuation/preferences persistence and complete observation
+   provenance/version fields, source reconciliation, and the
    Source, Dataset, Assumption, Feature, Model, Methodology, and Decision registries.
 4. After the owner revokes and replaces the exposed Navasan key, implement the
    documented historical endpoints and durable quota accounting. Backfill only

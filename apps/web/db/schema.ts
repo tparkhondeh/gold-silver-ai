@@ -103,3 +103,25 @@ export const validationResults = pgTable("validation_results", {
   issues: jsonb("issues").notNull(),
   createdAt: utcTimestamp("created_at").notNull().defaultNow(),
 });
+
+export const userPortfolios = pgTable("user_portfolios", {
+  id: text("id").primaryKey(),
+  schemaVersion: smallint("schema_version").notNull().default(1),
+  subjectId: text("subject_id").notNull().unique(),
+  version: integer("version").notNull().default(0),
+  createdAt: utcTimestamp("created_at").notNull().defaultNow(),
+  updatedAt: utcTimestamp("updated_at").notNull().defaultNow(),
+});
+
+export const portfolioHoldings = pgTable("portfolio_holdings", {
+  id: text("id").primaryKey(),
+  portfolioId: text("portfolio_id").notNull().references(() => userPortfolios.id, { onDelete: "cascade" }),
+  assetName: text("asset_name").notNull(),
+  amount: numeric("amount", { precision: 38, scale: 12 }).notNull(),
+  unit: text("unit").notNull(),
+  costToman: numeric("cost_toman", { precision: 38, scale: 2 }),
+  purchaseDate: text("purchase_date"),
+  note: text("note").notNull().default(""),
+  createdAt: utcTimestamp("created_at").notNull().defaultNow(),
+  updatedAt: utcTimestamp("updated_at").notNull().defaultNow(),
+}, (table) => [index("portfolio_holdings_portfolio_idx").on(table.portfolioId)]);
