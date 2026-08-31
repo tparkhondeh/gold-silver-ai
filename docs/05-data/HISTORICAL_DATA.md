@@ -34,6 +34,11 @@ the first backfill. The Persian local readiness planner can validate a proposed 
 and calculate one OHLC request per selected approved symbol, but it cannot execute,
 consume quota, or store data.
 
+The researched recommendation, reviewed public-provider evidence, rejected unsafe
+option, exact acceptance gate, and Persian messages ready for the owner to send are
+in `HISTORICAL_BACKFILL_PROPOSAL.md`. That file is explicitly a proposal, not a
+decision or permission to call either provider.
+
 ## Status
 
 `STATUS: PARTIAL`. PostgreSQL append-only observations now encode the complete
@@ -48,5 +53,6 @@ licensed backfill, retention, gap reporting, and historical restore evidence rem
 
 - Integrity principles: `docs/02-architecture/DATA_ARCHITECTURE.md`
 - Validation before storage: `DATA_QUALITY.md`
+- Pending owner/vendor package: `HISTORICAL_BACKFILL_PROPOSAL.md`
 - What this data enables: `docs/03-market/BUBBLE_MODEL.md`,
   `docs/03-market/HISTORICAL_ANALYSIS.md`

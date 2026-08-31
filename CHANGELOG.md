@@ -28,6 +28,10 @@ state is recorded in `docs/10-project-state/CURRENT_STATE.md`.
   run 33417744818.
 - Backfill-readiness checkpoint `8a21a97` passed both GitHub jobs in run
   33421273488.
+- Added a plain-language licensed-backfill proposal using reviewed official Navasan
+  and TGJU material, with safe/rejected options, an exact acceptance gate and Persian
+  vendor messages ready for owner authorization. It makes no provider request,
+  purchase, source decision or market-data write.
 
 ### Identity proposal and evaluation ledger foundation — ۱۴۰۵/۰۶/۰۹
 

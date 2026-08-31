@@ -77,6 +77,10 @@ subsequent changes still require their own push and CI verification.
 - Passed typecheck, lint, production build, 87 unit tests and 14 real PostgreSQL
   migration/isolation/concurrency/backup-restore tests.
 - Checkpoint `8a21a97` passed both GitHub quality jobs in run 33421273488.
+- Prepared the researched licensed-backfill proposal, explicit no-interpolation gap
+  policy, acceptance evidence checklist and no-secret Persian vendor inquiries. This
+  documentation checkpoint does not record an owner decision, contact a vendor,
+  authorize a purchase or load historical data.
 
 ### Private publication and runtime-command repair — ۱۴۰۵/۰۶/۰۸
 

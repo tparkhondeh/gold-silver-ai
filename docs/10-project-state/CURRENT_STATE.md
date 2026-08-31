@@ -59,6 +59,10 @@ Code checkpoint `b0bb80a` passed both GitHub quality and real PostgreSQL jobs in
 run 33417744818.
 Backfill-readiness checkpoint `8a21a97` passed both GitHub quality and real
 PostgreSQL jobs in run 33421273488.
+The public Navasan and TGJU material has now been reviewed and a plain-language
+licensed-backfill proposal plus ready-to-send Persian inquiries are recorded in
+`docs/05-data/HISTORICAL_BACKFILL_PROPOSAL.md`. The proposal is not accepted, no
+message was sent, no purchase was authorized and no historical request was made.
 
 ## Snapshot
 

@@ -37,11 +37,18 @@ financial engine remain separate gates.
 6. **OWNER DECISION REQUIRED BEFORE BACKFILL:** confirm the licensed date scope,
    retention/gap policy and an independent Iranian cross-check. Backfill only data
    explicitly permitted within quota. Never silently fill missing history or pass
-   stale/invalid data into real analysis.
+   stale/invalid data into real analysis. The recommended option, rejected unsafe
+   alternative, evidence, exact gate and ready-to-send Persian vendor messages are
+   prepared in `docs/05-data/HISTORICAL_BACKFILL_PROPOSAL.md`; they have not been
+   sent and do not authorize a purchase or API call.
 
 The autonomous implementation slice is complete. The next action changes the real
 historical dataset and source-policy boundary, so it pauses at item 6 for a Tier-A
 owner decision; Phase 2 remains blocked until the Data Foundation gate is accepted.
+
+The next external action is deliberately simple: the owner authorizes sending the
+prepared no-secret Navasan permission question. The project must not communicate as
+the owner, accept vendor terms, or commit a cost without that authorization.
 
 ## Next Gate: Independent Financial Laboratory
 
