@@ -19,7 +19,7 @@ not a phase acceptance or authorization to repair the old host's ACL. Follow
 [`CONTINUE_ON_ANOTHER_SYSTEM.md`](../../CONTINUE_ON_ANOTHER_SYSTEM.md).
 On the transferred Windows host, the official PostgreSQL 17.11 runtime was verified,
 the project-owned cluster was initialized as the interactive Windows owner, and the
-real local integration/restore suite passed (10/10). The protected runtime environment
+real local integration/restore suite passed (11/11). The protected runtime environment
 passed activation checks; with explicit process-environment forwarding,
 `/api/health` reports observation persistence as connected. See
 [`POSTGRES_FOUNDATION_CHECKPOINT.md`](POSTGRES_FOUNDATION_CHECKPOINT.md). No Phase 2
@@ -29,7 +29,8 @@ production account authentication, historical backfill, and the real baseline re
 Preference-persistence checkpoint `c5a5d16` passed both GitHub quality and real
 PostgreSQL jobs in run 33389444502.
 Migration 0005 now adds the immutable provenance registry and exact dataset/decision
-lineage foundation; verification for this later checkpoint is tracked in
+lineage foundation. Provenance checkpoint `61ab33c` passed both GitHub quality and
+real PostgreSQL jobs in run 33392420564; verification details are tracked in
 `POSTGRES_FOUNDATION_CHECKPOINT.md`.
 
 ## Snapshot

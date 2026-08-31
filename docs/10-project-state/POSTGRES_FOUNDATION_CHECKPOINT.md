@@ -11,14 +11,14 @@ not a Data Foundation acceptance report or a financial-readiness claim.
 
 **[SPEC]**
 
-- Branch: `codex/phase-1-data-ui`; preference-persistence checkpoint:
-  `c5a5d168128e516fe6c2f3628db5842f1d6123e7` (later documentation commits may follow).
+- Branch: `codex/phase-1-data-ui`; provenance-registry code checkpoint:
+  `61ab33ce8c5669f6da1bbb122feb5b2717877bd6` (later documentation commits may follow).
 - Initial dirty README preserved and corrected; implementation is a development checkpoint.
 - Owner subsequently authorized committing/pushing this work for transfer to another computer despite the local database blocker. See the root `CONTINUE_ON_ANOTHER_SYSTEM.md`.
 - No merge, public deployment, Phase 2 branch, market ingestion or financial activation is authorized by this handoff.
 - Previous CI [33304773397](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33304773397) passed for the published HEAD only.
 - Current local gates: typecheck, lint, build, **71 unit/contract tests passed; zero skipped**.
-- GitHub [run 33389444502](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33389444502) **PASSED** for checkpoint `c5a5d16`: quality job (lint/typecheck/build/tests/production audit) and real PostgreSQL migration/integration/restore job.
+- GitHub [run 33392420564](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33392420564) **PASSED** for checkpoint `61ab33c`: quality job (lint/typecheck/build/tests/production audit) and real PostgreSQL migration/integration/restore job.
 - Transferred Windows-host PostgreSQL migration/integration/restore: **PASSED**
   (11/11), including versioned portfolio rows, subject isolation, provenance chain,
   point-in-time dataset rejection and immutable restore comparison. Production
@@ -130,7 +130,7 @@ locally verified signed file, not an independently published checksum comparison
 
 - 0.7.0: added migration 0005, source-versioned observations, exact point-in-time
   datasets and immutable evaluation-only decision lineage; 71 unit and 11 real
-  PostgreSQL tests pass locally.
+  PostgreSQL tests pass locally and both GitHub jobs pass in run 33392420564.
 - 0.6.0: added migration 0004 and atomic save/restore of owner constraints and
   analysis/decision horizons; 66 unit and 10 real PostgreSQL tests pass locally.
 - 0.5.0: added local owner-scoped portfolio tables, forced RLS, version conflicts,

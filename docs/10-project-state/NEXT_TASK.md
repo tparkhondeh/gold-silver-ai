@@ -10,8 +10,7 @@ registry and exact point-in-time dataset/decision lineage. Local build, 71 unit 
 account authentication, source reconciliation, historical backfill, and the real
 financial engine remain separate gates.
 
-1. Publish and verify the provenance-registry checkpoint on the development branch.
-   Then implement deterministic source-reconciliation records and correction reasons
+1. Implement deterministic source-reconciliation records and correction reasons
    without choosing financial thresholds. Preserve `main`, backups, tags, credentials
    and personal browser data.
 2. Prepare a plain-language production identity recommendation; the owner must make
