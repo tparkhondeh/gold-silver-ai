@@ -4,21 +4,20 @@
 
 ## Immediate Next Step
 
-The transfer to the new Windows host is complete. Migration
-`0003_owner_portfolio.sql` now provides versioned, row-level-secured local portfolio
-storage. The UI exposes explicit save/restore controls, so existing browser data is
-never uploaded or overwritten automatically. Unit, build, real PostgreSQL isolation
-and backup/restore gates pass locally. Production account authentication and public
+The local-portfolio checkpoint is published and passed both GitHub jobs. Migrations
+0003 and 0004 now store holdings, owner constraints and analysis/decision horizons
+as one versioned, row-level-secured snapshot. Existing browser data is never uploaded
+or overwritten automatically. Production account authentication and public
 multi-user hosting remain separate, unapproved gates.
 
-1. Publish the local-portfolio checkpoint only on the development branch and verify
-   both GitHub quality and database jobs at the new HEAD. Preserve `main`, backups,
-   tags, credentials and existing personal browser data.
-2. Choose and approve the production identity provider before replacing the local
+1. Publish and verify the preference-persistence checkpoint on the development
+   branch. Preserve `main`, backups, tags, credentials and personal browser data.
+2. Prepare a plain-language production identity recommendation; the owner must make
+   the final provider/access decision before replacing the local
    owner scope with real account subjects. Then test two authenticated browser
    sessions without weakening the tested PostgreSQL policies.
-3. Add transaction/valuation/preferences persistence and complete observation
-   provenance/version fields, source reconciliation, and the
+3. Define the append-only transaction/valuation storage contract without inventing
+   financial methodology. Complete observation provenance/version fields, source reconciliation, and the
    Source, Dataset, Assumption, Feature, Model, Methodology, and Decision registries.
 4. After the owner revokes and replaces the exposed Navasan key, implement the
    documented historical endpoints and durable quota accounting. Backfill only

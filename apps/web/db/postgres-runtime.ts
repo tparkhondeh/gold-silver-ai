@@ -169,11 +169,11 @@ export async function inspectLocalPortfolioDatabaseHealth(environment: RuntimeEn
   if (!configuration.available) return { state: "blocked", reason: configuration.reason } as const;
   try {
     const result = await getRuntimePool(configuration.connectionString).query<{ ready: boolean }>(`SELECT
-      count(*) = 2
+      count(*) = 3
       AND bool_and(c.relrowsecurity AND c.relforcerowsecurity)
       AND bool_and(has_table_privilege(current_user, c.oid, 'SELECT,INSERT,UPDATE,DELETE')) AS ready
       FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace
-      WHERE n.nspname = 'public' AND c.relname IN ('user_portfolios', 'portfolio_holdings')`);
+      WHERE n.nspname = 'public' AND c.relname IN ('user_portfolios', 'portfolio_holdings', 'portfolio_preferences')`);
     return result.rows[0]?.ready === true
       ? { state: "local_ready", reason: "local_portfolio_database_ready" } as const
       : { state: "blocked", reason: "local_portfolio_schema_or_policy_missing" } as const;

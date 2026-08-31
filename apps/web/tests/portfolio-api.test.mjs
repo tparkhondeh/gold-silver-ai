@@ -5,7 +5,16 @@ import { createPortfolioGet, createPortfolioPut } from "../app/api/portfolio/rou
 import { PortfolioVersionConflictError } from "../data/postgres-portfolio-repository.ts";
 
 const enabled = { ASHA_LOCAL_PORTFOLIO_ENABLED: "true" };
-const emptySnapshot = { version: 0, updatedAt: null, holdings: [] };
+const preferences = {
+  liquidityReservePercent: "",
+  maxSingleAssetPercent: "",
+  maxAcceptableDrawdownPercent: "",
+  shortTermMonths: "",
+  longTermYears: "",
+  analysisHorizon: "short",
+  decisionHorizon: "short",
+};
+const emptySnapshot = { version: 0, holdings: [], preferences };
 
 function resolution(repository) {
   return async () => ({ available: true, repository });
@@ -21,7 +30,7 @@ function saveRequest(payload, overrides = {}) {
       "x-asha-portfolio-request": "save",
       ...overrides,
     },
-    body: JSON.stringify(payload),
+    body: JSON.stringify({ preferences, ...payload }),
   });
 }
 
@@ -52,6 +61,7 @@ test("portfolio PUT validates intent and saves a complete snapshot", async () =>
   assert.equal(saved[0], "local-owner-v1");
   assert.equal(saved[1], 0);
   assert.deepEqual(saved[2], [holding]);
+  assert.deepEqual(saved[3], preferences);
 });
 
 test("portfolio PUT rejects cross-origin and duplicate holdings before database access", async () => {
@@ -75,4 +85,13 @@ test("portfolio version conflict is explicit and database errors do not leak det
   const failedResponse = await failed(saveRequest({ expectedVersion: 0, holdings: [] }));
   assert.equal(failedResponse.status, 503);
   assert.doesNotMatch(await failedResponse.text(), /secret|password/i);
+});
+
+test("portfolio PUT rejects invalid owner preferences", async () => {
+  let called = false;
+  const handler = createPortfolioPut(resolution({ save: async () => { called = true; return emptySnapshot; } }), enabled);
+  const response = await handler(saveRequest({ expectedVersion: 0, holdings: [], preferences: { ...preferences, maxSingleAssetPercent: "101" } }));
+  assert.equal(response.status, 422);
+  assert.equal((await response.json()).code, "invalid_preferences");
+  assert.equal(called, false);
 });

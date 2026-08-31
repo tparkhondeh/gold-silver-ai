@@ -60,7 +60,7 @@ test("real PostgreSQL migration, isolation, persistence and restore", async (t) 
   await admin.query(`GRANT USAGE ON SCHEMA "${schema}" TO "${role}"`);
   await admin.query(`GRANT SELECT ON ALL TABLES IN SCHEMA "${schema}" TO "${role}"`);
   await admin.query(`GRANT INSERT ON ingestion_batches, observations, quarantine_records, validation_results, quarantine_resolutions TO "${role}"`);
-  await admin.query(`GRANT INSERT, UPDATE, DELETE ON user_portfolios, portfolio_holdings TO "${role}"`);
+  await admin.query(`GRANT INSERT, UPDATE, DELETE ON user_portfolios, portfolio_holdings, portfolio_preferences TO "${role}"`);
   const runtimePool = { async connect() {
     const client = await pool.connect();
     await client.query(`SET ROLE "${role}"`);
@@ -126,6 +126,15 @@ test("real PostgreSQL migration, isolation, persistence and restore", async (t) 
   await t.test("portfolio rows are durable, versioned and isolated by owner subject", async () => {
     const ownerA = "integration-owner-a";
     const ownerB = "integration-owner-b";
+    const preferences = {
+      liquidityReservePercent: "15",
+      maxSingleAssetPercent: "40",
+      maxAcceptableDrawdownPercent: "20",
+      shortTermMonths: "6",
+      longTermYears: "5",
+      analysisHorizon: "long",
+      decisionHorizon: "short",
+    };
     const first = await portfolioRepository.save(ownerA, 0, [{
       id: "owner-a-gold",
       name: "Synthetic holding A",
@@ -134,11 +143,23 @@ test("real PostgreSQL migration, isolation, persistence and restore", async (t) 
       costToman: 1000,
       purchaseDate: "2026-08-20",
       note: "test only",
-    }]);
+    }], preferences);
     assert.equal(first.version, 1);
     assert.deepEqual(await portfolioRepository.load(ownerA), first);
-    assert.deepEqual(await portfolioRepository.load(ownerB), { version: 0, holdings: [] });
-    await assert.rejects(portfolioRepository.save(ownerA, 0, []), PortfolioVersionConflictError);
+    assert.deepEqual(await portfolioRepository.load(ownerB), {
+      version: 0,
+      holdings: [],
+      preferences: {
+        liquidityReservePercent: "",
+        maxSingleAssetPercent: "",
+        maxAcceptableDrawdownPercent: "",
+        shortTermMonths: "",
+        longTermYears: "",
+        analysisHorizon: "short",
+        decisionHorizon: "short",
+      },
+    });
+    await assert.rejects(portfolioRepository.save(ownerA, 0, [], preferences), PortfolioVersionConflictError);
     const second = await portfolioRepository.save(ownerB, 0, [{
       id: "owner-b-silver",
       name: "Synthetic holding B",
@@ -147,7 +168,7 @@ test("real PostgreSQL migration, isolation, persistence and restore", async (t) 
       costToman: null,
       purchaseDate: null,
       note: "",
-    }]);
+    }], { ...preferences, liquidityReservePercent: "" });
     assert.equal(second.version, 1);
     assert.equal((await portfolioRepository.load(ownerA)).holdings[0].id, "owner-a-gold");
     assert.equal((await portfolioRepository.load(ownerB)).holdings[0].id, "owner-b-silver");
@@ -169,7 +190,7 @@ test("real PostgreSQL migration, isolation, persistence and restore", async (t) 
     // pg_dump plain output includes psql meta commands; use psql's parser.
     clientCommand("psql", [...args, "--set", "ON_ERROR_STOP=1", "--single-transaction"], dump);
     restoredCreated = true;
-    for (const table of ["asha_schema_migrations", "instruments", "sources", "ingestion_batches", "observations", "quarantine_records", "quarantine_resolutions", "validation_results", "user_portfolios", "portfolio_holdings"]) {
+    for (const table of ["asha_schema_migrations", "instruments", "sources", "ingestion_batches", "observations", "quarantine_records", "quarantine_resolutions", "validation_results", "user_portfolios", "portfolio_holdings", "portfolio_preferences"]) {
       const allRows = async (schemaName) => (await admin.query(`SELECT to_jsonb(t) AS row FROM "${schemaName}"."${table}" t ORDER BY to_jsonb(t)::text`)).rows;
       assert.deepEqual(await allRows(restoredSchema), await allRows(schema));
     }
@@ -178,7 +199,7 @@ test("real PostgreSQL migration, isolation, persistence and restore", async (t) 
       await admin.query(`GRANT USAGE ON SCHEMA "${restoredSchema}" TO "${role}"`);
       await admin.query(`GRANT SELECT ON ALL TABLES IN SCHEMA "${restoredSchema}" TO "${role}"`);
       await admin.query(`GRANT INSERT ON ingestion_batches, observations, quarantine_records, validation_results, quarantine_resolutions TO "${role}"`);
-      await admin.query(`GRANT INSERT, UPDATE, DELETE ON user_portfolios, portfolio_holdings TO "${role}"`);
+      await admin.query(`GRANT INSERT, UPDATE, DELETE ON user_portfolios, portfolio_holdings, portfolio_preferences TO "${role}"`);
       const restoredPool = { async connect() {
         const client = await pool.connect();
         await client.query(`SET ROLE "${role}"`);

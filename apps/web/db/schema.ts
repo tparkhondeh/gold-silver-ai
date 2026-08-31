@@ -125,3 +125,15 @@ export const portfolioHoldings = pgTable("portfolio_holdings", {
   createdAt: utcTimestamp("created_at").notNull().defaultNow(),
   updatedAt: utcTimestamp("updated_at").notNull().defaultNow(),
 }, (table) => [index("portfolio_holdings_portfolio_idx").on(table.portfolioId)]);
+
+export const portfolioPreferences = pgTable("portfolio_preferences", {
+  portfolioId: text("portfolio_id").primaryKey().references(() => userPortfolios.id, { onDelete: "cascade" }),
+  liquidityReservePercent: numeric("liquidity_reserve_percent", { precision: 5, scale: 2 }),
+  maxSingleAssetPercent: numeric("max_single_asset_percent", { precision: 5, scale: 2 }),
+  maxAcceptableDrawdownPercent: numeric("max_acceptable_drawdown_percent", { precision: 5, scale: 2 }),
+  shortTermMonths: smallint("short_term_months"),
+  longTermYears: smallint("long_term_years"),
+  analysisHorizon: text("analysis_horizon").notNull().default("short"),
+  decisionHorizon: text("decision_horizon").notNull().default("short"),
+  updatedAt: utcTimestamp("updated_at").notNull().defaultNow(),
+});

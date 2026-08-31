@@ -1,6 +1,6 @@
 # PostgreSQL Foundation Checkpoint
 
-**Version 0.5.0** · ASHA engineering · ۱۴۰۵/۰۶/۰۹ (2026-08-31) · Work in progress
+**Version 0.6.0** · ASHA engineering · ۱۴۰۵/۰۶/۰۹ (2026-08-31) · Work in progress
 
 ## AI READING INSTRUCTION
 
@@ -16,11 +16,15 @@ not a Data Foundation acceptance report or a financial-readiness claim.
 - Owner subsequently authorized committing/pushing this work for transfer to another computer despite the local database blocker. See the root `CONTINUE_ON_ANOTHER_SYSTEM.md`.
 - No merge, public deployment, Phase 2 branch, market ingestion or financial activation is authorized by this handoff.
 - Previous CI [33304773397](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33304773397) passed for the published HEAD only.
-- Current local gates: typecheck, lint, build, **60 unit/contract tests passed; zero skipped**.
+- Current local gates: typecheck, lint, build, **66 unit/contract tests passed; zero skipped**.
 - GitHub [run 33316064205](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33316064205) **PASSED** for code checkpoint `ec3f410`: quality job (lint/typecheck/build/tests/production audit) and real PostgreSQL migration/integration/restore job.
 - Transferred Windows-host PostgreSQL migration/integration/restore: **PASSED** (10/10), including versioned portfolio rows and subject isolation. Production authenticated two-browser persistence remains **NOT IMPLEMENTED**.
 - Two independent read-only reviews inspected database safety and readiness/CI. They did not approve financial use or execute real database tests.
-- Local evaluation server restarted at `http://localhost:4174/` (IPv6 loopback); `/api/health` returned HTTP 200 with `evaluation_only`, connected observation persistence, blocked portfolio persistence and blocked financial decisions. This is not an authenticated-browser end-to-end test.
+- Local evaluation server at `http://localhost:4174/` returned HTTP 200 with
+  `evaluation_only`, connected observation persistence, `local_ready` portfolio
+  persistence and blocked financial decisions. Four consecutive portfolio reads
+  returned the preference-aware snapshot successfully. This is not an authenticated
+  production-browser end-to-end test.
 
 ## 2. Verified official runtime
 
@@ -71,12 +75,15 @@ locally verified signed file, not an independently published checksum comparison
 - CSV system receipt time is assigned at ingestion; supplied timestamps remain raw provenance, not trusted system availability.
 - Explicit correction revisions have distinct identities; original observation IDs remain compatible.
 - Database URLs reject query/fragment options that could override the loopback host.
-- Health performs actual queries. Local portfolio readiness also verifies both
+- Health performs actual queries. Local portfolio readiness verifies all three
   portfolio tables, forced row-level security and least-privilege mutation grants.
 - Local portfolio writes require loopback, same-origin browser metadata and an
   explicit intent header. Optimistic versions reject stale-browser overwrites.
 - Browser holdings move only after an explicit owner click; demo holdings never enter
   the persistence API.
+- Owner constraints and selected analysis/decision horizons share the same optimistic
+  version and database transaction as holdings. Empty inputs remain empty; no risk
+  tolerance or financial preference is guessed.
 - Preview/commit await the database probe. Failed or uncertain commit responses do not falsely assert either success or absence.
 - Local setup separates owner/runtime roles, protects generated secrets, seeds registries only and never replaces the owner's `.env.local`.
 - Activation requires migration checksums, required triggers, restricted runtime grants and recent successful integration evidence matching current source files.
@@ -112,6 +119,8 @@ locally verified signed file, not an independently published checksum comparison
 
 **[SPEC]**
 
+- 0.6.0: added migration 0004 and atomic save/restore of owner constraints and
+  analysis/decision horizons; 66 unit and 10 real PostgreSQL tests pass locally.
 - 0.5.0: added local owner-scoped portfolio tables, forced RLS, version conflicts,
   explicit browser save/restore and 10/10 real database tests.
 - 0.4.0: recorded successful transferred-Windows-host bootstrap, 9/9 real

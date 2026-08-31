@@ -21,8 +21,8 @@
    TGJU still requires licensed access; the manual Rahavard snapshot is expired.
    Even after rotation, Navasan alone cannot satisfy independent cross-checking.
 5. **Financial decisions remain intentionally locked.** The owner-constraint form is
-   implemented and session-local; this audit cannot establish another browser's
-   saved values. Iran-specific
+   implemented and can be explicitly versioned with the local portfolio; production
+   account synchronization is still absent. Iran-specific
    history, methodology approval, backtesting, and walk-forward validation are also
    incomplete.
 6. **The demo portfolio is synthetic and session-local.** It opens by default in a

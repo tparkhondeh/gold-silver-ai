@@ -23,7 +23,7 @@ real local integration/restore suite passed (10/10). The protected runtime envir
 passed activation checks; with explicit process-environment forwarding,
 `/api/health` reports observation persistence as connected. See
 [`POSTGRES_FOUNDATION_CHECKPOINT.md`](POSTGRES_FOUNDATION_CHECKPOINT.md). No Phase 2
-branch has been created. Local owner-scoped portfolio save/restore is implemented;
+branch has been created. Local owner-scoped portfolio, constraint and horizon save/restore is implemented;
 production account authentication, historical backfill, and the real baseline remain pending. See
 [`PHASE_1_STABILIZATION_AUDIT.md`](../../PHASE_1_STABILIZATION_AUDIT.md).
 
@@ -112,9 +112,11 @@ production account authentication, historical backfill, and the real baseline re
   The separately labelled sandbox decision engine can render a complete interaction
   flow, but its six passing gates are synthetic UI fixtures and do not unlock or alter
   this real readiness state.
-  The Decisions tab now captures the owner's five explicit constraints (liquidity
-  reserve, concentration cap, tolerated drawdown, and short/long horizons) in
-  session storage only. Completing them opens only that single gate.
+  The Decisions tab captures the owner's five explicit constraints (liquidity
+  reserve, concentration cap, tolerated drawdown, and short/long horizons). They
+  remain session-local until the owner explicitly saves the personal portfolio;
+  that action persists and versions them atomically with holdings. Completing them
+  opens only that single gate.
 - **Bubble boundary:** for supported gram-based gold and silver holdings, the UI can
   compute a raw current metal-content premium only when the domestic quote, global
   ounce quote, and USD/IRR quote are all present and valid. Historical minimum,
@@ -193,8 +195,10 @@ production account authentication, historical backfill, and the real baseline re
   constraints, exact decimal limits and server-controlled collection time; real
   PostgreSQL integration and fixture restore passed both isolated GitHub CI and the
   transferred Windows owner host. Local observation persistence is connected.
-  Migration 0003 adds versioned portfolio tables with forced row-level security,
-  least-privilege grants and conflict detection. The API remains loopback-only;
+  Migrations 0003 and 0004 add versioned portfolio, holding and preference tables
+  with forced row-level security, least-privilege grants and conflict detection.
+  Owner constraints and analysis/decision horizons save and restore in the same
+  transaction as holdings, with no assumed financial defaults. The API remains loopback-only;
   production identity and public multi-user persistence are not implemented.
   In the fresh-session laboratory, a fixed
   five-row CSV sample exercises preview plus a memory-only commit result (three

@@ -7,8 +7,9 @@
 `STATUS: PARTIAL`. A public review deployment exists, but it has no account system,
 production portfolio storage, or production authentication and must not collect
 sensitive holdings. The owner-only local application now has versioned PostgreSQL
-portfolio storage with forced row-level security. Existing browser holdings move
-only after explicit save/restore actions, and the demo portfolio is excluded. The
+portfolio storage with forced row-level security. Existing browser holdings,
+constraints and horizon preferences move only after explicit save/restore actions,
+and the demo portfolio is excluded. The
 fixed local subject is not a production identity system. The Phase 1 local boundary uses:
 loopback host allowlisting, exact same-origin validation, `Sec-Fetch-Site` checking,
 a non-simple action-matched intent header, JSON-only input, strict size limits,
