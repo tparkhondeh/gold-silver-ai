@@ -9,8 +9,9 @@ state is recorded in `docs/10-project-state/CURRENT_STATE.md`.
 
 ### Identity proposal and evaluation ledger foundation — ۱۴۰۵/۰۶/۰۹
 
-- Added a plain-language Persian Tier-A production identity proposal without selecting
-  or enabling a vendor; real identity and portfolio migration remain owner-gated.
+- Added a plain-language Persian Tier-A production identity proposal and a dated
+  official pricing/terms snapshot without selecting or enabling a vendor; Iran access,
+  real identity and portfolio migration remain owner-gated.
 - Added migrations 0007–0009 and an append-only, forced-RLS transaction and evaluation-only
   valuation ledger with exact Dataset, Methodology, observation and event lineage.
 - The normal runtime is read-only for the new ledger. No real transaction/value or

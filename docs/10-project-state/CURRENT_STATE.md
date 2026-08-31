@@ -39,7 +39,8 @@ empirical price-divergence thresholds or activate financial use.
 Migrations 0007–0009 add an owner-isolated, append-only transaction and valuation storage
 foundation. It is runtime-read-only and `evaluation_only`; no real event/value is
 seeded and no financial methodology is selected. A plain-language Persian production
-identity proposal is documented, but audience/provider approval remains owner-required.
+identity proposal now includes a dated official pricing/terms snapshot. Iran account
+eligibility is still unverified, and audience/provider approval remains owner-required.
 Checkpoint `d0ea16f` passed both GitHub jobs in run 33396556534.
 
 ## Snapshot

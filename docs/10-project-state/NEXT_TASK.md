@@ -13,10 +13,12 @@ empirical divergence thresholds, historical backfill, and the real
 financial engine remain separate gates.
 
 1. **OWNER DECISION REQUIRED:** confirm whether the next real release is owner-only,
-   invited trusted users, or public customer accounts. Then approve third-party versus
-   self-hosted identity and a provider after terms/cost/Iran-access review. Use
-   `docs/02-architecture/IDENTITY_RECOMMENDATION.md`; do not trust production identity
-   or migrate browser holdings before approval and two authenticated-session tests.
+   invited trusted users, or public customer accounts. A dated preliminary official
+   pricing/terms review is recorded in `docs/02-architecture/IDENTITY_RECOMMENDATION.md`,
+   but Iran account eligibility remains unverified. Then approve third-party versus
+   self-hosted identity and a provider only after written regional confirmation; do not
+   trust production identity or migrate browser holdings before approval and two
+   authenticated-session tests.
 2. After the owner revokes and replaces the exposed Navasan key, implement the
    documented historical endpoints and durable quota accounting. Backfill only
    licensed data within quota; acquire an independent Iranian cross-check if needed.
