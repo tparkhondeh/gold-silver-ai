@@ -9,8 +9,10 @@ chosen yet.
 
 `STATUS: PARTIAL`. ADR 0003 accepts Navasan and GoldAPI.io as keyed Phase 1
 adapters, with XAUS/Gold-API.com restricted to informational fallback use. The
-adapters exist behind the normalized `/api/market` boundary. Credentials, Navasan's
-contract unit, an independent licensed Iranian cross-check, and operational cadence
+adapters exist behind the normalized `/api/market` boundary. A replacement Navasan
+credential and toman unit are configured only on the owner-local host; durable quota
+reservation now gates current and local history calls. Hosted credentials, licensed
+historical backfill, an independent Iranian cross-check, and operational decision use
 remain unresolved; see `docs/05-data/DATA_SOURCES.md`.
 
 ## Principle: Provider Abstraction

@@ -7,6 +7,20 @@ state is recorded in `docs/10-project-state/CURRENT_STATE.md`.
 
 ## [Unreleased]
 
+### Navasan quota and history foundation — ۱۴۰۵/۰۶/۰۹
+
+- Replaced the exposed Navasan credential through the official bot and transferred
+  it directly into Git-ignored local configuration; a live check normalized all
+  eight approved Iranian quotes without exposing the key.
+- Added migration 0010 and an immutable PostgreSQL request-reservation ledger. All
+  application workers share a conservative 115-call rolling 31-day ceiling, leaving
+  five calls below the provider's free-plan limit as safety headroom.
+- Added strict shared normalization for Navasan `dailyCurrency` and `ohlcSearch`
+  responses behind a loopback/same-origin route. No historical request or backfill
+  was made.
+- Local typecheck, lint, production build, 85 unit tests, and 14 real PostgreSQL
+  migration/concurrency/restore tests pass.
+
 ### Identity proposal and evaluation ledger foundation — ۱۴۰۵/۰۶/۰۹
 
 - Simplified the local hidden-input market-key setup for the nontechnical owner with

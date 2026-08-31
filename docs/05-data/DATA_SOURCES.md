@@ -7,7 +7,7 @@ and permitted product use. Source-selection rationale is recorded in ADR 0003.
 
 | ID | Provider | Coverage | Access and cadence | Timestamp / unit contract | Product use | Status |
 |---|---|---|---|---|---|---|
-| `navasan` | [Navasan](https://www.navasan.tech/api/) | Iranian 18k gold, mesghal, Emami, Azadi, half, quarter and gram coins, and USD sell | Keyed HTTPS `latest` API. Owner-provided plan: 120 requests/month. The six-hour process cache is best-effort, not a quota guarantee across restarts/workers. Historical endpoints and durable accounting are pending. | Unix `timestamp`; decimal strings. The existing tested mapping uses direct toman values for 18k/USD and a thousand-toman scale for mesghal/coins; strict unit/range checks fail closed. | Intended primary Iranian display feed, never sufficient alone for financial recommendations. | PAUSED on ۱۴۰۵/۰۶/۰۸: the previously pasted key is considered compromised. Revoke/replace it before confirming rotation. The earlier eight-observation live check on ۱۴۰۵/۰۶/۰۷ is historical evidence, not current connectivity. |
+| `navasan` | [Navasan](https://www.navasan.tech/api/) | Iranian 18k gold, mesghal, Emami, Azadi, half, quarter and gram coins, and USD sell | Keyed HTTPS `latest`, `dailyCurrency`, and `ohlcSearch` APIs. Free plan: 120 requests/month and three-month validity. PostgreSQL reserves every application call before network access, with a conservative 115-call rolling 31-day ceiling and five-call safety reserve. | Unix `timestamp`; decimal strings. The tested mapping uses direct toman values for 18k/USD and a thousand-toman scale for mesghal/coins; current, intraday, and OHLC paths share strict unit/range checks. | Intended primary Iranian display feed; history is local-operator-only and remains excluded from financial decisions until licensed backfill and validation pass. | ACTIVE LOCALLY on ۱۴۰۵/۰۶/۰۹: a replacement key was issued through the official bot, installed without chat/Git exposure, and returned eight normalized approved quotes. Historical adapters and the quota-guarded local route are implemented; no historical backfill has been requested. |
 | `goldapi-io` | [GoldAPI.io](https://www.goldapi.io/) | XAU/USD and XAG/USD | Keyed HTTPS JSON. Sandbox quota is provider-plan dependent. | Provider Unix timestamp; USD per troy ounce. | Preferred primary global-metals feed. | Adapter implemented; inactive until `GOLD_API_TOKEN` is configured. |
 | `xaus` | [XAUS](https://xaus.com/api/) | XAU/USD and XAG/USD | Public keyless JSON, approximately 30-second edge cache. | ISO-8601 UTC plus explicit `fresh` / `stale` / `unavailable` state. USD per troy ounce. | Informational local UI only. Never sufficient by itself for a recommendation, backtest, settlement, or execution. | Active keyless display feed when reachable. |
 | `gold-api-com` | [Gold-API.com](https://gold-api.com/docs) | XAU/USD and XAG/USD | Public keyless JSON. | ISO-8601 `updatedAt`; USD per troy ounce. | Independent informational cross-check and display fallback only; provider terms disclaim accuracy and availability guarantees. | Active keyless cross-check on every refresh; becomes the displayed fallback only if XAUS fails. |
@@ -33,14 +33,16 @@ and permitted product use. Source-selection rationale is recorded in ADR 0003.
 - `apps/web/scripts/configure-market-apis.ps1` accepts Navasan and GoldAPI.io secrets
   through hidden terminal input and writes only to Git-ignored `.env.local`; it never
   obtains, prints, validates by leaking, or commits a provider credential.
-- Navasan requires `NAVASAN_KEY_ROTATION_CONFIRMED=true` only after the operator
-  revokes the exposed key and installs a replacement. The setup acknowledgement is
-  an operator declaration, not vendor verification. The script cannot revoke keys.
-  Without that declaration, the API makes no Navasan request and health reports the
-  rotation blocker. Tests use dummy credentials and mocked network responses.
-- With Navasan paused and the manual snapshot expired, no current Iranian primary
-  feed is established by this audit. Even after rotation, independent licensed
-  cross-checking and historical point-in-time capture remain required.
+- Navasan still requires `NAVASAN_KEY_ROTATION_CONFIRMED=true`; the owner completed
+  replacement on ۱۴۰۵/۰۶/۰۹. The acknowledgement remains an operator declaration,
+  not cryptographic vendor proof. Tests use dummy credentials and mocked responses.
+- Every application request must first reserve one immutable PostgreSQL ledger row.
+  Missing database/grants or a full 115-call rolling window fails closed before the
+  network. This local count does not prove the provider's account counter, so five
+  calls remain unused as safety headroom.
+- The manual snapshot remains expired and Navasan is still the only active Iranian
+  primary feed. Independent licensed cross-checking and validated point-in-time
+  history remain required before operational analysis.
 - A quote is displayed only after positive-number, plausible-range, timestamp, future-
   time, and freshness checks.
 - `publishedAt` and `collectedAt` are separately recorded in UTC.

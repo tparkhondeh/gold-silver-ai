@@ -1,6 +1,6 @@
 # PostgreSQL Foundation Checkpoint
 
-**Version 0.9.0** · ASHA engineering · ۱۴۰۵/۰۶/۰۹ (2026-08-31) · Work in progress
+**Version 0.10.0** · ASHA engineering · ۱۴۰۵/۰۶/۰۹ (2026-08-31) · Work in progress
 
 ## AI READING INSTRUCTION
 
@@ -121,14 +121,20 @@ locally verified signed file, not an independently published checksum comparison
    isolation and non-destructive migration of existing browser data. Transaction and
    evaluation-valuation storage exists but remains runtime-read-only.
 3. Complete provenance/registries, cross-batch duplicate lineage/count semantics and correction reasons; do not claim full provenance v2.
-4. Owner revocation/replacement of the disclosed Navasan credential through a secure local input path; no key in chat or Git.
-5. Durable quotas/cache/concurrency, permitted history and independent Iranian cross-check coverage.
+4. **Completed ۱۴۰۵/۰۶/۰۹:** owner replacement of the disclosed Navasan credential
+   through the secure local input path; no key entered chat or Git.
+5. Durable quota/cache/concurrency and the two documented history adapters are
+   implemented. Permitted backfill scope, retention/gap policy and independent
+   Iranian cross-check coverage remain owner-gated.
 6. Only after Data Foundation passes: independent deterministic baseline, real-data evaluation and separate owner-approved financial-readiness gate.
 
 ## 6. Changelog
 
 **[SPEC]**
 
+- 0.10.0: added migration 0010, immutable rolling Navasan request reservations,
+  loopback-only normalized daily/OHLC history adapters and fail-closed quota health;
+  85 unit and 14 real PostgreSQL tests pass locally. No history was backfilled.
 - 0.9.0: added the owner-gated production identity proposal and migrations 0007–0009 with
   forced-RLS append-only transactions plus exact evaluation-only valuation lineage;
   77 unit and 13 real PostgreSQL tests pass locally and both GitHub jobs pass in run

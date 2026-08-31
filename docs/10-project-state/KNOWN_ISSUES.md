@@ -16,10 +16,10 @@
    and restore tests. Local save/restore is loopback-only; production authentication
    and hosted multi-user storage are still open.
 4. **Iranian source continuity and redundancy are missing.** Navasan has a tested
-   toman/per-symbol scale adapter but is paused until its exposed key is revoked and
-   replaced. The rotation flag is an operator declaration, not proof from the vendor.
+   replacement key, toman/per-symbol scale adapter and durable local quota gate.
+   The rotation flag remains an operator declaration, not proof from the vendor.
    TGJU still requires licensed access; the manual Rahavard snapshot is expired.
-   Even after rotation, Navasan alone cannot satisfy independent cross-checking.
+   Navasan alone cannot satisfy independent cross-checking.
 5. **Financial decisions remain intentionally locked.** The owner-constraint form is
    implemented and can be explicitly versioned with the local portfolio; production
    account synchronization is still absent. Iran-specific
@@ -40,11 +40,11 @@
    `drizzle-kit` across a breaking boundary, so it was not forced; the local migration
    generator must not process untrusted input and should be upgraded when its upstream
    chain removes the legacy esbuild loader.
-9. **Navasan quota/backfill are incomplete.** Only `latest` is implemented. The
-   six-hour in-process cache does not enforce a monthly quota across restarts or
-   workers. Durable accounting, `dailyCurrency`, `ohlcSearch`, permitted backfill,
-   empirical disagreement thresholds and permitted backfill remain pending. Exact
-   reconciliation inputs/results and point-in-time correction reasons are now persisted.
+9. **Navasan backfill is not authorized.** Durable append-only accounting now
+   serializes workers and caps application calls at 115 per rolling 31 days;
+   `dailyCurrency` and `ohlcSearch` are normalized behind a local-only route. No
+   historical call was made. Licensed date scope, retention, gap policy, empirical
+   disagreement thresholds and independent cross-check coverage remain pending.
 10. **The approved real baseline is not implemented.** The independent locked Python
     laboratory, complete registries, train-only feature normalization, calibrated
     confidence, benchmark comparisons, nested walk-forward, and immutable decision

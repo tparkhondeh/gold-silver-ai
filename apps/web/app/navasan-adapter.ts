@@ -53,18 +53,36 @@ export const navasanInstrumentMappings = [
   { providerCode: "usd_sell", instrumentCode: "USD_IRR", unit: "usd", providerScale: 1, rangeToman: [10_000, 1_000_000] },
 ] as const;
 
-function positiveNumber(value: unknown, label: string) {
+export function positiveNavasanNumber(value: unknown, label: string) {
   const parsed = typeof value === "string" ? Number(value.replaceAll(",", "")) : Number(value);
   if (!Number.isFinite(parsed) || parsed <= 0) throw new Error(`${label} is not a positive number`);
   return parsed;
 }
 
-function unixTimestamp(value: unknown, nowMs: number) {
-  const seconds = positiveNumber(value, "Navasan timestamp");
+export function normalizeNavasanTimestamp(value: unknown, nowMs = Date.now()) {
+  const seconds = positiveNavasanNumber(value, "Navasan timestamp");
   const date = new Date(seconds * 1000);
   if (!Number.isFinite(date.getTime())) throw new Error("Navasan timestamp is invalid");
   if (date.getTime() > nowMs + 5 * 60_000) throw new Error("Navasan timestamp is in the future");
   return date.toISOString();
+}
+
+export type NavasanProviderCode = (typeof navasanInstrumentMappings)[number]["providerCode"];
+
+export function normalizeNavasanValue(
+  providerCode: NavasanProviderCode,
+  rawValue: unknown,
+  declaredUnit: NavasanDeclaredUnit,
+) {
+  const mapping = navasanInstrumentMappings.find((candidate) => candidate.providerCode === providerCode);
+  if (!mapping) throw new Error("Navasan item is not approved");
+  const denominationScale = declaredUnit === "IRR" ? 0.1 : 1;
+  const value = positiveNavasanNumber(rawValue, providerCode) * mapping.providerScale * denominationScale;
+  if (!Number.isSafeInteger(Math.round(value))) throw new Error(`${providerCode} exceeds safe integer range`);
+  if (value < mapping.rangeToman[0] || value > mapping.rangeToman[1]) {
+    throw new Error(`${providerCode} failed declared-unit range validation`);
+  }
+  return { mapping, value };
 }
 
 export function normalizeNavasanPayload(
@@ -73,25 +91,18 @@ export function normalizeNavasanPayload(
   collectedAt: string,
   nowMs = Date.now(),
 ): NormalizedNavasanQuote[] {
-  const denominationScale = declaredUnit === "IRR" ? 0.1 : 1;
-
-  return navasanInstrumentMappings.flatMap(({ providerCode, instrumentCode, unit, providerScale, rangeToman }) => {
+  return navasanInstrumentMappings.flatMap(({ providerCode }) => {
     const item = payload[providerCode];
     if (!item) return [];
 
-    const value = positiveNumber(item.value, providerCode) * providerScale * denominationScale;
-    if (!Number.isSafeInteger(Math.round(value))) throw new Error(`${providerCode} exceeds safe integer range`);
-    if (value < rangeToman[0] || value > rangeToman[1]) {
-      throw new Error(`${providerCode} failed declared-unit range validation`);
-    }
-
-    const publishedAt = unixTimestamp(item.timestamp, nowMs);
+    const { mapping, value } = normalizeNavasanValue(providerCode, item.value, declaredUnit);
+    const publishedAt = normalizeNavasanTimestamp(item.timestamp, nowMs);
     const status = nowMs - new Date(publishedAt).getTime() > 60 * 60_000 ? "stale" : "valid";
     return [{
-      instrumentCode,
+      instrumentCode: mapping.instrumentCode,
       value,
       currency: "TOMAN" as const,
-      unit,
+      unit: mapping.unit,
       publishedAt,
       collectedAt,
       sourceId: "navasan" as const,

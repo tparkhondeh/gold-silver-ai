@@ -1,4 +1,6 @@
 import { NextResponse } from "next/server";
+import { fingerprintNavasanRequest } from "../../../data/navasan-quota-ledger.ts";
+import { resolveNavasanQuotaLedger } from "../../../db/postgres-runtime.ts";
 import { inspectNavasanConfiguration, normalizeNavasanPayload, type NavasanPayload } from "../../navasan-adapter";
 import { selectPreferredQuotes } from "../../quote-priority";
 import { rahavardManualSnapshot } from "./rahavard-snapshot";
@@ -61,6 +63,16 @@ const DEFAULT_NAVASAN_REFRESH_SECONDS = 21_600;
 let cached: { expiresAt: number; payload: FeedResult } | null = null;
 let cachedIran: { expiresAt: number; quotes: Quote[] } | null = null;
 
+class NavasanQuotaError extends Error {
+  readonly code: "ledger_unavailable" | "quota_exhausted";
+
+  constructor(code: "ledger_unavailable" | "quota_exhausted") {
+    super(code);
+    this.name = "NavasanQuotaError";
+    this.code = code;
+  }
+}
+
 function navasanRefreshSeconds() {
   const configuredSeconds = Number(process.env.NAVASAN_REFRESH_SECONDS ?? DEFAULT_NAVASAN_REFRESH_SECONDS);
   return Number.isFinite(configuredSeconds)
@@ -82,6 +94,11 @@ function asPublishedAt(value: unknown) {
 }
 
 function navasanFailureMessage(error: unknown) {
+  if (error instanceof NavasanQuotaError) {
+    return error.code === "quota_exhausted"
+      ? "سقف امن سهمیهٔ نوسان در پنجرهٔ ۳۱روزه پر شده است؛ هیچ درخواست تازه‌ای ارسال نشد"
+      : "دفتر پایدار سهمیهٔ نوسان آماده نیست؛ برای جلوگیری از مصرف کنترل‌نشده هیچ درخواستی ارسال نشد";
+  }
   const name = error instanceof Error ? error.name : "";
   const message = error instanceof Error ? error.message.toLowerCase() : "";
   const networkFailure = name === "AbortError"
@@ -213,6 +230,12 @@ async function fetchIranQuotes(apiKey: string, declaredUnit: "IRR" | "TOMAN", co
   if (cachedIran && cachedIran.expiresAt > Date.now()) {
     return cachedIran.quotes.map((quote) => ({ ...quote, status: quoteStatus(quote.publishedAt, quote.collectedAt) }));
   }
+
+  const quota = await resolveNavasanQuotaLedger();
+  if (!quota.available) throw new NavasanQuotaError("ledger_unavailable");
+  const requestHash = fingerprintNavasanRequest("latest", { item: "approved-phase-1-set" });
+  const reservation = await quota.ledger.reserve("latest", requestHash);
+  if (!reservation.allowed) throw new NavasanQuotaError("quota_exhausted");
 
   const payload = await fetchJson(`https://api.navasan.tech/latest/?api_key=${encodeURIComponent(apiKey)}`) as NavasanPayload;
   const quotes = normalizeNavasanPayload(payload, declaredUnit, collectedAt);

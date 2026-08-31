@@ -63,6 +63,17 @@ requirements. Full details: `PHASE_0_AUDIT.md` § 15.
 `main`. The stabilization commits are now confirmed on the private remote;
 subsequent changes still require their own push and CI verification.
 
+### Navasan quota and history foundation — ۱۴۰۵/۰۶/۰۹
+
+- Replaced the exposed key through the official bot and stored it only in local,
+  Git-ignored configuration; eight approved live quotes passed normalization.
+- Added migration 0010 with immutable request reservations, one cross-worker advisory
+  lock, a 115-call rolling 31-day ceiling and five-call safety reserve.
+- Implemented and tested the official daily-update and OHLC history contracts behind
+  a local-only same-origin route. No historical request or row was loaded.
+- Passed typecheck, lint, production build, 85 unit tests and 14 real PostgreSQL
+  migration/isolation/concurrency/backup-restore tests.
+
 ### Private publication and runtime-command repair — ۱۴۰۵/۰۶/۰۸
 
 - Verified the initial Phase 1 push at `b58f393`, its upstream, and unchanged remote

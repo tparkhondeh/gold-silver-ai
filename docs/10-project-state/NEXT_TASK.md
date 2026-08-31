@@ -28,13 +28,18 @@ financial engine remain separate gates.
    A read-only preflight found the current server's Cloudflare API hostname locally
    overridden; if Cloudflare is later approved, obtain hosting-administrator
    authorization and clear `docs/09-operations/DEPLOYMENT.md` first.
-5. After the owner revokes and replaces the exposed Navasan key, implement the
-   documented historical endpoints and durable quota accounting. Backfill only
-   licensed data within quota; acquire an independent Iranian cross-check if needed.
-   Never silently fill missing history or pass stale/invalid data into real analysis.
+5. **IMPLEMENTATION COMPLETE:** the owner replaced the exposed Navasan key; the
+   application now reserves every call in an immutable PostgreSQL ledger with a
+   conservative rolling limit. The documented `dailyCurrency` and `ohlcSearch`
+   contracts are normalized behind a local-only route. No historical call was made.
+6. **OWNER DECISION REQUIRED BEFORE BACKFILL:** confirm the licensed date scope,
+   retention/gap policy and an independent Iranian cross-check. Backfill only data
+   explicitly permitted within quota. Never silently fill missing history or pass
+   stale/invalid data into real analysis.
 
-With provider selection intentionally deferred to the pre-real-data gate, the
-remaining immediate implementation item depends on the Navasan source/key decision.
+The autonomous implementation slice is complete. The next action changes the real
+historical dataset and source-policy boundary, so it pauses at item 6 for a Tier-A
+owner decision; Phase 2 remains blocked until the Data Foundation gate is accepted.
 
 ## Next Gate: Independent Financial Laboratory
 

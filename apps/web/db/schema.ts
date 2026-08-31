@@ -49,6 +49,17 @@ export const sourceContractVersions = pgTable("source_contract_versions", {
   registeredAt: utcTimestamp("registered_at").notNull().defaultNow(),
 }, (table) => [primaryKey({ columns: [table.sourceId, table.version] })]);
 
+export const providerRequestReservations = pgTable("provider_request_reservations", {
+  id: text("id").primaryKey(),
+  providerId: text("provider_id").notNull(),
+  endpoint: text("endpoint").notNull(),
+  requestHash: text("request_hash").notNull(),
+  reservedAt: utcTimestamp("reserved_at").notNull().defaultNow(),
+  windowDays: smallint("window_days").notNull(),
+  limitSnapshot: smallint("limit_snapshot").notNull(),
+  createdAt: utcTimestamp("created_at").notNull().defaultNow(),
+}, (table) => [index("provider_request_reservations_window_idx").on(table.providerId, table.reservedAt)]);
+
 export const ingestionBatches = pgTable("ingestion_batches", {
   id: text("id").primaryKey(),
   schemaVersion: smallint("schema_version").notNull(),

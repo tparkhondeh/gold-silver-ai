@@ -49,6 +49,10 @@ The read-only owner-server preflight found an existing local override for Cloudf
 API hostname; no remote setting was changed and that candidate is not host-ready. See
 `docs/09-operations/DEPLOYMENT.md`.
 Checkpoint `d0ea16f` passed both GitHub jobs in run 33396556534.
+Migration 0010 adds the immutable Navasan request-reservation ledger. The replacement
+credential, durable quota health, eight-quote live normalization, historical endpoint
+contracts and backup/restore path pass locally; no historical backfill was requested.
+Local verification now covers 85 unit and 14 real PostgreSQL tests.
 
 ## Snapshot
 
@@ -160,19 +164,22 @@ Checkpoint `d0ea16f` passed both GitHub jobs in run 33396556534.
   disabled until an approved, backtested, walk-forward-validated methodology exists.
 - **Live data:** the normalized `/api/market` boundary supports an eight-symbol keyed
   Navasan adapter for 18k gold, mesghal, five coin products, and free-market USD.
-  A historical live check on ۱۴۰۵/۰۶/۰۷ returned eight valid observations. That is
-  not the current readiness state: the pasted key is considered compromised and
-  Navasan requests are now paused until revocation/replacement is confirmed in
-  server-side local configuration. The setup script does not revoke provider keys.
-  Its string values
+  On ۱۴۰۵/۰۶/۰۹ the owner obtained a replacement key from the official bot; it was
+  transferred directly into Git-ignored local configuration and a fresh live check
+  returned all eight normalized observations. The setup script itself does not revoke
+  provider keys. Provider `dailyCurrency` and `ohlcSearch` contracts are now
+  implemented behind a loopback/same-origin route, but no historical request or
+  backfill has been made. Its string values
   and Unix timestamps are normalized deterministically. The official public table
   establishes a toman contract; direct-toman 18k/USD values and fixed thousand-toman
   mesghal/coin scales are encoded per symbol, while wrong scale/unit ranges fail closed.
   A later provider connection timeout was reported explicitly; stale Rahavard values
   remain visible only as provenance and are never presented or used as a current rate.
-  The six-hour process-local cache is best-effort only: restarts and concurrent
-  workers can exceed the quota. A durable quota ledger and historical endpoints
-  are still required. GoldAPI.io remains a
+  The six-hour process-local cache remains a performance optimization only. Before
+  every uncached Navasan call, PostgreSQL now serializes workers and appends an
+  immutable reservation; a conservative 115-call rolling 31-day limit preserves five
+  calls of safety headroom below the provider's 120-call plan. Missing quota storage
+  or exhausted allowance fails closed before network access. GoldAPI.io remains a
   keyed global adapter. XAUS and Gold-API.com are now fetched independently on each
   uncached refresh: XAUS supplies the displayed informational XAU/XAG feed when valid,
   while Gold-API.com is an independent public cross-check and becomes the display
@@ -230,8 +237,9 @@ Checkpoint `d0ea16f` passed both GitHub jobs in run 33396556534.
   cannot be updated, deleted, or truncated. Runtime access is read-only, and no real
   financial decision has been created or enabled.
   Migration 0006 adds immutable source-reconciliation records and requires a bounded
-  plain-language reason on every correction. Migrations 0007–0009 add exact transaction and
-  evaluation-only valuation lineage; 77 unit and 13 real PostgreSQL tests pass locally.
+  plain-language reason on every correction. Migrations 0007–0010 add exact transaction and
+  evaluation-only valuation lineage plus immutable provider-call reservations;
+  85 unit and 14 real PostgreSQL tests pass locally.
   In the fresh-session laboratory, a fixed
   five-row CSV sample exercises preview plus a memory-only commit result (three
   accepted, one duplicate, one quarantined) without reaching the server or implying

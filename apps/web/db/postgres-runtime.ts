@@ -7,6 +7,7 @@ import {
   type TransactionRunner,
 } from "../data/postgres-observation-repository.ts";
 import { PostgresPortfolioRepository } from "../data/postgres-portfolio-repository.ts";
+import { PostgresNavasanQuotaLedger } from "../data/navasan-quota-ledger.ts";
 
 type RuntimeEnvironment = Record<string, string | undefined>;
 
@@ -26,6 +27,10 @@ export type OperatorRepositoryResolution =
 export type OperatorDatabaseConfiguration =
   | { available: false; reason: string }
   | { available: true; connectionString: string };
+
+export type NavasanQuotaLedgerResolution =
+  | { available: false; reason: string }
+  | { available: true; ledger: PostgresNavasanQuotaLedger };
 
 const LOOPBACK_DATABASE_HOSTS = new Set(["localhost", "127.0.0.1", "[::1]", "::1"]);
 
@@ -160,6 +165,35 @@ export async function resolveOperatorObservationRepository(
   if (health.state !== "connected") return { available: false, reason: health.reason };
   const runner = createPgTransactionRunner(getRuntimePool(configuration.connectionString));
   return { available: true, repository: new PostgresObservationRepository(runner) };
+}
+
+export async function inspectNavasanQuotaDatabaseHealth(environment: RuntimeEnvironment = process.env) {
+  const configuration = inspectOperatorDatabaseEnvironment(environment);
+  if (!configuration.available) return { state: "blocked", reason: configuration.reason } as const;
+  try {
+    const result = await getRuntimePool(configuration.connectionString).query<{ ready: boolean }>(`SELECT
+      to_regclass('public.provider_request_reservations') IS NOT NULL
+      AND has_table_privilege(current_user,'public.provider_request_reservations','SELECT,INSERT')
+      AND NOT has_table_privilege(current_user,'public.provider_request_reservations','UPDATE,DELETE,TRUNCATE,TRIGGER') AS ready`);
+    return result.rows[0]?.ready === true
+      ? { state: "quota_ready", reason: "navasan_quota_ledger_ready" } as const
+      : { state: "blocked", reason: "navasan_quota_schema_or_privileges_missing" } as const;
+  } catch {
+    return { state: "blocked", reason: "database_unreachable_or_probe_failed" } as const;
+  }
+}
+
+export async function resolveNavasanQuotaLedger(
+  environment: RuntimeEnvironment = process.env,
+): Promise<NavasanQuotaLedgerResolution> {
+  const configuration = inspectOperatorDatabaseEnvironment(environment);
+  if (!configuration.available) return configuration;
+  const health = await inspectNavasanQuotaDatabaseHealth(environment);
+  if (health.state !== "quota_ready") return { available: false, reason: health.reason };
+  return {
+    available: true,
+    ledger: new PostgresNavasanQuotaLedger(createPgTransactionRunner(getRuntimePool(configuration.connectionString))),
+  };
 }
 
 export async function inspectLocalPortfolioDatabaseHealth(environment: RuntimeEnvironment = process.env) {

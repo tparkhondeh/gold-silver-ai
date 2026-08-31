@@ -3,7 +3,9 @@ import { PostgresObservationRepository, type TransactionRunner } from "../data/p
 export {
   createPgTransactionRunner,
   inspectOperatorDatabaseEnvironment,
+  inspectNavasanQuotaDatabaseHealth,
   resolveOperatorObservationRepository,
+  resolveNavasanQuotaLedger,
   resolveLocalPortfolioRepository,
 } from "./postgres-runtime.ts";
 
