@@ -36,6 +36,7 @@ export type RawObservationInput = {
   effectiveFrom: string;
   effectiveTo: string | null;
   correctionOf: string | null;
+  correctionReason?: string | null;
   rawPayload: Record<string, unknown>;
 };
 
@@ -52,7 +53,8 @@ export type ValidationIssueCode =
   | "invalid_utc_timestamp"
   | "future_timestamp"
   | "timestamp_order"
-  | "invalid_correction_reference";
+  | "invalid_correction_reference"
+  | "invalid_correction_reason";
 
 export type ValidationIssue = {
   code: ValidationIssueCode;
@@ -77,6 +79,7 @@ export type ValidatedObservation = {
   effectiveFrom: string;
   effectiveTo: string | null;
   correctionOf: string | null;
+  correctionReason: string | null;
   rawPayload: Record<string, unknown>;
 };
 

@@ -115,6 +115,11 @@ export async function validateObservation(
   if (input.correctionOf !== null && !/^obs_[a-f0-9]{64}$/.test(input.correctionOf)) {
     issues.push({ code: "invalid_correction_reference", field: "correctionOf", message: "correctionOf must reference an immutable observation id" });
   }
+  const correctionReason = input.correctionReason?.trim() || null;
+  if ((input.correctionOf === null && correctionReason !== null)
+    || (input.correctionOf !== null && (correctionReason === null || correctionReason.length < 3 || correctionReason.length > 500))) {
+    issues.push({ code: "invalid_correction_reason", field: "correctionReason", message: "a correction requires a 3-500 character reason, and non-corrections cannot carry one" });
+  }
 
   if (!instrument || !source || value === null || !observedAt || !collectedAt || !effectiveFrom || issues.length > 0) {
     return { observation: null, issues };
@@ -130,7 +135,7 @@ export async function validateObservation(
     observedAt,
     publishedAt ?? "",
     // Preserve original v1 IDs; corrections get a distinct, replayable revision ID.
-    ...(input.correctionOf ? ["correction-v2", input.correctionOf, effectiveFrom, effectiveTo ?? ""] : []),
+    ...(input.correctionOf ? ["correction-v3", input.correctionOf, correctionReason, effectiveFrom, effectiveTo ?? ""] : []),
   ].join("|");
   const payloadHash = await sha256Hex(stableJson(input.rawPayload));
   const idempotencyKey = await sha256Hex(identity);
@@ -154,6 +159,7 @@ export async function validateObservation(
       effectiveFrom,
       effectiveTo,
       correctionOf: input.correctionOf,
+      correctionReason,
       rawPayload: input.rawPayload,
     },
   };

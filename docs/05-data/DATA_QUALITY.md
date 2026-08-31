@@ -35,11 +35,12 @@ Every data point entering the system must be checked for:
 `STATUS: PARTIAL`. Schema version 1 now deterministically validates registry
 membership, active-source state, positive canonical decimal syntax, currency/unit
 agreement, UTC timestamp syntax, future-time tolerance, point-in-time ordering, and
-correction references. Invalid CSV rows enter immutable quarantine; duplicate source
+correction references and mandatory correction reasons. Invalid CSV rows enter immutable quarantine; duplicate source
 events are identified through SHA-256 idempotency keys. Secret-like raw-payload keys
-are redacted before persistence.
+are redacted before persistence. Exact ordered source-reconciliation candidates,
+cutoffs, selections and deterministic reason codes are stored append-only.
 
-`STATUS: TBD` remains for empirical anomaly thresholds, cross-source divergence,
+`STATUS: TBD` remains for empirical anomaly/divergence thresholds,
 source-reliability scoring, and operator resolution UI. These are Tier B decisions
 (`docs/00-governance/PROJECT_RULES.md` § 3): Claude Code proposes standard
 statistical practice at design time, escalating only if a threshold choice would

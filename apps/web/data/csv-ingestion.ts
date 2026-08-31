@@ -20,7 +20,9 @@ const CSV_HEADERS = [
   "effective_from",
   "effective_to",
   "correction_of",
+  "correction_reason",
 ] as const;
+const REQUIRED_CSV_HEADERS = CSV_HEADERS.filter((name) => name !== "correction_reason");
 
 const SENSITIVE_KEY = /(authorization|password|secret|token|api[_-]?key)/i;
 
@@ -74,7 +76,7 @@ export function parseCsv(text: string) {
 function requiredHeaderIndexes(header: string[]) {
   const duplicates = header.filter((value, index) => header.indexOf(value) !== index);
   if (duplicates.length) throw new CsvStructureError(`CSV contains duplicate headers: ${[...new Set(duplicates)].join(", ")}`);
-  const missing = CSV_HEADERS.filter((required) => !header.includes(required));
+  const missing = REQUIRED_CSV_HEADERS.filter((required) => !header.includes(required));
   if (missing.length) throw new CsvStructureError(`CSV is missing required headers: ${missing.join(", ")}`);
   return Object.fromEntries(CSV_HEADERS.map((name) => [name, header.indexOf(name)])) as Record<(typeof CSV_HEADERS)[number], number>;
 }
@@ -97,6 +99,7 @@ function rawInputFromRow(row: string[], indexes: ReturnType<typeof requiredHeade
     effectiveFrom: payload.effective_from,
     effectiveTo: payload.effective_to || null,
     correctionOf: payload.correction_of || null,
+    correctionReason: payload.correction_reason || null,
     rawPayload: sanitizeRawPayload(payload) as Record<string, unknown>,
   };
 }

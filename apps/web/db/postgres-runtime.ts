@@ -188,12 +188,12 @@ export async function inspectProvenanceDatabaseHealth(environment: RuntimeEnviro
   if (!configuration.available) return { state: "blocked", reason: configuration.reason } as const;
   try {
     const result = await getRuntimePool(configuration.connectionString).query<{ ready: boolean }>(`SELECT
-      count(*) = 6
+      count(*) = 8
       AND bool_and(has_table_privilege(current_user, c.oid, 'SELECT'))
       AND bool_and(NOT has_table_privilege(current_user, c.oid, 'INSERT,UPDATE,DELETE,TRUNCATE,TRIGGER')) AS ready
       FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace
       WHERE n.nspname='public' AND c.relkind='r' AND c.relname IN
-        ('source_contract_versions','artifact_versions','dataset_observations','decision_records','decision_assumptions','decision_features')`);
+        ('source_contract_versions','artifact_versions','dataset_observations','decision_records','decision_assumptions','decision_features','source_reconciliations','source_reconciliation_candidates')`);
     return result.rows[0]?.ready === true
       ? { state: "registry_ready", reason: "provenance_registry_ready_read_only" } as const
       : { state: "blocked", reason: "provenance_registry_or_privileges_missing" } as const;

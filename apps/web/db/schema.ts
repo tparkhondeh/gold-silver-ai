@@ -78,6 +78,7 @@ export const observations = pgTable("observations", {
   effectiveFrom: utcTimestamp("effective_from").notNull(),
   effectiveTo: utcTimestamp("effective_to"),
   correctionOf: text("correction_of").references((): AnyPgColumn => observations.id),
+  correctionReason: text("correction_reason"),
   rawPayload: jsonb("raw_payload").notNull(),
   createdAt: utcTimestamp("created_at").notNull().defaultNow(),
 }, (table) => [
@@ -213,3 +214,27 @@ export const decisionFeatures = pgTable("decision_features", {
   featureId: text("feature_id").notNull(),
   featureVersion: integer("feature_version").notNull(),
 }, (table) => [primaryKey({ columns: [table.decisionId, table.decisionVersion, table.featureId, table.featureVersion] })]);
+
+export const sourceReconciliations = pgTable("source_reconciliations", {
+  id: text("id").primaryKey(),
+  policyId: text("policy_id").notNull(),
+  policyVersion: integer("policy_version").notNull(),
+  instrumentCode: text("instrument_code").notNull().references(() => instruments.code),
+  cutoffAt: utcTimestamp("cutoff_at").notNull(),
+  selectedObservationId: text("selected_observation_id").notNull().references(() => observations.id),
+  reasonCode: text("reason_code").notNull(),
+  candidateCount: integer("candidate_count").notNull(),
+  inputHash: text("input_hash").notNull(),
+  createdAt: utcTimestamp("created_at").notNull().defaultNow(),
+});
+
+export const sourceReconciliationCandidates = pgTable("source_reconciliation_candidates", {
+  reconciliationId: text("reconciliation_id").notNull().references(() => sourceReconciliations.id),
+  observationId: text("observation_id").notNull().references(() => observations.id),
+  rank: integer("rank").notNull(),
+  selected: boolean("selected").notNull(),
+  recordedAt: utcTimestamp("recorded_at").notNull().defaultNow(),
+}, (table) => [
+  primaryKey({ columns: [table.reconciliationId, table.observationId] }),
+  uniqueIndex("source_reconciliation_rank_once_idx").on(table.reconciliationId, table.rank),
+]);

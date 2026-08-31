@@ -23,8 +23,8 @@ const INSERT_OBSERVATION = `
   INSERT INTO observations (
     id, schema_version, idempotency_key, payload_hash, instrument_code, source_id, source_contract_version,
     value, currency, unit, observed_at, published_at, collected_at,
-    effective_from, effective_to, correction_of, raw_payload
-  ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8::numeric, $9, $10, $11, $12, $13, $14, $15, $16, $17::jsonb)
+    effective_from, effective_to, correction_of, correction_reason, raw_payload
+  ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8::numeric, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18::jsonb)
   ON CONFLICT (idempotency_key) DO NOTHING
 `;
 
@@ -60,6 +60,7 @@ function observationParameters(observation: ValidatedObservation) {
     observation.effectiveFrom,
     observation.effectiveTo,
     observation.correctionOf,
+    observation.correctionReason,
     JSON.stringify(observation.rawPayload),
   ] as const;
 }

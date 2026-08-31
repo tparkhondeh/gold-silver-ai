@@ -2,8 +2,8 @@
 
 import { ChangeEvent, FormEvent, useState, useSyncExternalStore } from "react";
 
-const EMPTY_TEMPLATE = "instrument_code,source_id,value,currency,unit,observed_at,published_at,collected_at,effective_from,effective_to,correction_of\n";
-const SANDBOX_TEMPLATE = `instrument_code,source_id,value,currency,unit,observed_at,published_at,collected_at,effective_from,effective_to,correction_of
+const EMPTY_TEMPLATE = "instrument_code,source_id,value,currency,unit,observed_at,published_at,collected_at,effective_from,effective_to,correction_of,correction_reason\n";
+const SANDBOX_TEMPLATE = `instrument_code,source_id,value,currency,unit,observed_at,published_at,collected_at,effective_from,effective_to,correction_of,correction_reason
 GOLD_18K_IRR,asha-sandbox,21480700,TOMAN,gram,2026-08-28T09:00:00.000Z,2026-08-28T09:00:00.000Z,2026-08-28T09:01:00.000Z,,,
 SILVER_999_IRR,asha-sandbox,446860,TOMAN,gram,2026-08-28T09:00:00.000Z,2026-08-28T09:00:00.000Z,2026-08-28T09:01:00.000Z,,,
 USD_IRR,asha-sandbox,160000,TOMAN,usd,2026-08-28T09:00:00.000Z,2026-08-28T09:00:00.000Z,2026-08-28T09:01:00.000Z,,,

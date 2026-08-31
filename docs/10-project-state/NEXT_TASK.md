@@ -4,22 +4,20 @@
 
 ## Immediate Next Step
 
-Migrations 0003–0005 now cover the owner snapshot plus an immutable provenance
-registry and exact point-in-time dataset/decision lineage. Local build, 71 unit tests,
-11 real PostgreSQL tests, restore, activation, and health checks pass. Production
-account authentication, source reconciliation, historical backfill, and the real
+Migrations 0003–0006 now cover the owner snapshot, immutable provenance,
+exact point-in-time dataset/decision lineage, source-reconciliation records and
+mandatory correction reasons. Local build, 74 unit tests, 12 real PostgreSQL tests,
+restore, activation, and health checks pass. Production account authentication,
+empirical divergence thresholds, historical backfill, and the real
 financial engine remain separate gates.
 
-1. Implement deterministic source-reconciliation records and correction reasons
-   without choosing financial thresholds. Preserve `main`, backups, tags, credentials
-   and personal browser data.
-2. Prepare a plain-language production identity recommendation; the owner must make
+1. Prepare a plain-language production identity recommendation; the owner must make
    the final provider/access decision before replacing the local
    owner scope with real account subjects. Then test two authenticated browser
    sessions without weakening the tested PostgreSQL policies.
-3. Define the append-only transaction/valuation storage contract without inventing
+2. Define the append-only transaction/valuation storage contract without inventing
    financial methodology or transaction values.
-4. After the owner revokes and replaces the exposed Navasan key, implement the
+3. After the owner revokes and replaces the exposed Navasan key, implement the
    documented historical endpoints and durable quota accounting. Backfill only
    licensed data within quota; acquire an independent Iranian cross-check if needed.
    Never silently fill missing history or pass stale/invalid data into real analysis.

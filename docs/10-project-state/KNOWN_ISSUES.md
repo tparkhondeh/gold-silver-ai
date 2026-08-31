@@ -43,7 +43,8 @@
 9. **Navasan quota/backfill are incomplete.** Only `latest` is implemented. The
    six-hour in-process cache does not enforce a monthly quota across restarts or
    workers. Durable accounting, `dailyCurrency`, `ohlcSearch`, permitted backfill,
-   persisted source disagreement, and point-in-time revisions remain pending.
+   empirical disagreement thresholds and permitted backfill remain pending. Exact
+   reconciliation inputs/results and point-in-time correction reasons are now persisted.
 10. **The approved real baseline is not implemented.** The independent locked Python
     laboratory, complete registries, train-only feature normalization, calibrated
     confidence, benchmark comparisons, nested walk-forward, and immutable decision

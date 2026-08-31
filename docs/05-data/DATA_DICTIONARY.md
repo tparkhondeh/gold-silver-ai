@@ -6,9 +6,9 @@ exposes or stores.
 ## Status
 
 `STATUS: PARTIAL`. The Phase 1 normalized quote contract is implemented at
-`/api/market`. Durable observation and provenance contracts, five PostgreSQL
+`/api/market`. Durable observation and provenance contracts, six PostgreSQL
 migrations, repositories, and a live owner-local database are active. Historical
-backfill, reconciliation records and production configuration remain pending.
+backfill, empirical divergence thresholds and production configuration remain pending.
 
 ## Durable Observation Contract (schema version 1)
 
@@ -27,6 +27,7 @@ backfill, reconciliation records and production configuration remain pending.
 | `collectedAt` | UTC ISO-8601, required | When this system received it. |
 | `effectiveFrom` / `effectiveTo` | UTC ISO-8601; end nullable | Point-in-time validity interval. |
 | `correctionOf` | observation id or null | Append-only correction link; originals are never overwritten. |
+| `correctionReason` | trimmed string (3–500 chars) or null | Required for every correction and forbidden for a non-correction; explains why the revision exists. |
 | `rawPayload` | sanitized JSON, required | Source row retained for audit; secret-like keys are redacted before storage. |
 
 Validation results and quarantined rows are separate immutable records. A quarantine
@@ -44,6 +45,14 @@ point-in-time cutoff inside the immutable fingerprint. Evaluation-only Decision 
 versions, an optional Model version, explicit Assumption and Feature versions, risk
 state, input/output fingerprints, timestamp, and structured output. All registry and
 decision rows are append-only and runtime-read-only.
+
+## Source Reconciliation Contract
+
+Migration 0006 stores each reconciliation as an immutable record containing the
+versioned policy reference, instrument, point-in-time cutoff, exact ordered candidate
+observations, selected observation, rank and a closed reason code. Candidates must
+already exist, belong to one instrument and have been known by the cutoff. This records
+an explainable choice but does not invent or approve price-divergence thresholds.
 
 ## Normalized Quote Contract (schema version 1)
 

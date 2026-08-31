@@ -36,7 +36,7 @@ CREATE TABLE artifact_versions (
   PRIMARY KEY (kind, entity_id, version),
   UNIQUE (kind, entity_id, content_hash),
   CHECK (valid_until IS NULL OR valid_from IS NULL OR valid_until >= valid_from),
-  CHECK (kind <> 'dataset' OR content ?& ARRAY['cutoffAt', 'purpose', 'observationIds']),
+  CHECK (kind <> 'dataset' OR content ?& ARRAY['cutoffAt', 'purpose']),
   CHECK (kind <> 'assumption' OR content ?& ARRAY['value', 'unit', 'source', 'sourceDate', 'confidence']),
   CHECK (kind <> 'feature' OR content ?& ARRAY['dataType', 'unit', 'transformation']),
   CHECK (kind <> 'model' OR content ? 'implementationRef'),

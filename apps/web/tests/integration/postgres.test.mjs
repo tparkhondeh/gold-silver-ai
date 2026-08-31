@@ -11,6 +11,7 @@ import { validateObservation } from "../../data/validation.ts";
 import { PostgresObservationRepository } from "../../data/postgres-observation-repository.ts";
 import { PortfolioVersionConflictError, PostgresPortfolioRepository } from "../../data/postgres-portfolio-repository.ts";
 import { PostgresProvenanceRepository, buildArtifactVersion } from "../../data/provenance-registry.ts";
+import { PostgresSourceReconciliationRepository } from "../../data/source-reconciliation.ts";
 
 // Never use DATABASE_URL or load .env.local: only an explicitly disposable database.
 const connectionString = process.env.ASHA_TEST_DATABASE_URL;
@@ -23,7 +24,7 @@ const registry = {
   instruments: new Map([["TEST_ONLY", { schemaVersion: 1, code: "TEST_ONLY", displayName: "Synthetic integration fixture", assetClass: "test", canonicalCurrency: "TOMAN", canonicalUnit: "gram", activeFrom: "2026-01-01T00:00:00Z", retiredAt: null }]]),
   sources: new Map([["test-only", { schemaVersion: 1, id: "test-only", displayName: "Synthetic test source", quality: "test_only", accessMode: "test", active: true }]]),
 };
-const raw = { instrumentCode: "TEST_ONLY", sourceId: "test-only", value: "1.00", currency: "TOMAN", unit: "gram", observedAt: "2026-08-20T10:00:00Z", publishedAt: null, collectedAt: "2026-08-20T10:01:00Z", effectiveFrom: "2026-08-20T10:00:00Z", effectiveTo: null, correctionOf: null, rawPayload: { synthetic: true } };
+const raw = { instrumentCode: "TEST_ONLY", sourceId: "test-only", value: "1.00", currency: "TOMAN", unit: "gram", observedAt: "2026-08-20T10:00:00Z", publishedAt: null, collectedAt: "2026-08-20T10:01:00Z", effectiveFrom: "2026-08-20T10:00:00Z", effectiveTo: null, correctionOf: null, correctionReason: null, rawPayload: { synthetic: true } };
 
 test("real PostgreSQL migration, isolation, persistence and restore", async (t) => {
   const admin = new Client({ connectionString, connectionTimeoutMillis: 3000 });
@@ -64,6 +65,7 @@ test("real PostgreSQL migration, isolation, persistence and restore", async (t) 
   await admin.query(`GRANT INSERT ON ingestion_batches, observations, quarantine_records, validation_results, quarantine_resolutions TO "${role}"`);
   await admin.query(`GRANT INSERT, UPDATE, DELETE ON user_portfolios, portfolio_holdings, portfolio_preferences TO "${role}"`);
   await admin.query(`GRANT INSERT ON artifact_versions, dataset_observations, decision_records, decision_assumptions, decision_features TO "${role}"`);
+  await admin.query(`GRANT INSERT ON source_reconciliations, source_reconciliation_candidates TO "${role}"`);
   const runtimePool = { async connect() {
     const client = await pool.connect();
     await client.query(`SET ROLE "${role}"`);
@@ -73,6 +75,7 @@ test("real PostgreSQL migration, isolation, persistence and restore", async (t) 
   const repository = new PostgresObservationRepository(createPgTransactionRunner(runtimePool));
   const portfolioRepository = new PostgresPortfolioRepository(createPgTransactionRunner(runtimePool));
   const provenanceRepository = new PostgresProvenanceRepository(createPgTransactionRunner(runtimePool));
+  const reconciliationRepository = new PostgresSourceReconciliationRepository(createPgTransactionRunner(runtimePool));
   const valid = "TEST_ONLY,test-only,1.00,TOMAN,gram,2026-08-20T10:00:00Z,,2026-08-20T10:01:00Z,2026-08-20T10:00:00Z,,";
   const batch = await ingestManualCsv({ text: `${manualCsvHeaders.join(",")}\n${valid}\n${valid}\n${valid.replace(",1.00,", ",0,")}\n`, fileName: "synthetic-integration.csv", sourceId: "test-only", registry, now: new Date("2026-08-20T12:00:00Z") });
   await t.test("least-privilege writer commits and concurrently replays without duplicates", async () => {
@@ -88,13 +91,13 @@ test("real PostgreSQL migration, isolation, persistence and restore", async (t) 
   await t.test("runtime cannot mutate/truncate audit data, registries or schema", async () => {
     const client = await runtimePool.connect();
     try {
-      for (const sql of ["UPDATE observations SET value=2", "DELETE FROM observations", "TRUNCATE observations CASCADE", "ALTER TABLE observations DISABLE TRIGGER ALL", "UPDATE instruments SET display_name='changed'", "UPDATE ingestion_batches SET accepted_count=99", "UPDATE source_contract_versions SET active=false", "TRUNCATE decision_records CASCADE", "CREATE TABLE forbidden(id integer)"]) {
+    for (const sql of ["UPDATE observations SET value=2", "DELETE FROM observations", "TRUNCATE observations CASCADE", "ALTER TABLE observations DISABLE TRIGGER ALL", "UPDATE instruments SET display_name='changed'", "UPDATE ingestion_batches SET accepted_count=99", "UPDATE source_contract_versions SET active=false", "TRUNCATE decision_records CASCADE", "UPDATE source_reconciliations SET reason_code='stable_identity'", "CREATE TABLE forbidden(id integer)"]) {
         await assert.rejects(client.query(sql), /permission denied|must be owner/);
       }
     } finally { client.release(); }
   });
   await t.test("owner is also blocked by immutable audit triggers", async () => {
-    for (const sql of ["UPDATE observations SET value=2", "DELETE FROM observations", "TRUNCATE observations CASCADE", "UPDATE ingestion_batches SET accepted_count=99", "TRUNCATE ingestion_batches CASCADE", "TRUNCATE quarantine_records CASCADE", "TRUNCATE validation_results CASCADE", "TRUNCATE quarantine_resolutions CASCADE", "UPDATE source_contract_versions SET active=false", "TRUNCATE decision_records CASCADE"]) {
+    for (const sql of ["UPDATE observations SET value=2", "DELETE FROM observations", "TRUNCATE observations CASCADE", "UPDATE ingestion_batches SET accepted_count=99", "TRUNCATE ingestion_batches CASCADE", "TRUNCATE quarantine_records CASCADE", "TRUNCATE validation_results CASCADE", "TRUNCATE quarantine_resolutions CASCADE", "UPDATE source_contract_versions SET active=false", "TRUNCATE decision_records CASCADE", "TRUNCATE source_reconciliations CASCADE"]) {
       await admin.query("BEGIN");
       try { await assert.rejects(admin.query(sql), /immutable data records/); }
       finally { await admin.query("ROLLBACK"); }
@@ -116,9 +119,10 @@ test("real PostgreSQL migration, isolation, persistence and restore", async (t) 
   });
   await t.test("corrections remain append-only and cannot rewrite earlier cutoffs", async () => {
     const original = batch.accepted[0];
-    const revision = (await validateObservation({ ...raw, correctionOf: original.id, effectiveFrom: "2026-08-20T10:00:01Z", collectedAt: "2026-08-21T12:00:00Z" }, registry, new Date("2026-08-22T12:00:00Z"))).observation;
+    const revision = (await validateObservation({ ...raw, correctionOf: original.id, correctionReason: "Provider issued a corrected synthetic fixture", effectiveFrom: "2026-08-20T10:00:01Z", collectedAt: "2026-08-21T12:00:00Z" }, registry, new Date("2026-08-22T12:00:00Z"))).observation;
     await repository.persistBatch({ ...batch, id: "correction-batch", accepted: [revision], quarantined: [], duplicates: [] });
     assert.notEqual(revision.id, original.id);
+    assert.equal((await admin.query("SELECT correction_reason FROM observations WHERE id=$1", [revision.id])).rows[0].correction_reason, "Provider issued a corrected synthetic fixture");
     assert.equal(Number((await admin.query("SELECT count(*) FROM observations WHERE id=$1", [original.id])).rows[0].count), 1);
     const known = async (cutoff) => (await admin.query("SELECT id FROM observations WHERE id=ANY($1::text[]) AND greatest(observed_at,published_at,collected_at) <= $2::timestamptz ORDER BY id", [[original.id, revision.id], cutoff])).rows.map((row) => row.id);
     assert.deepEqual(await known("2026-08-20T11:00:00Z"), []);
@@ -126,6 +130,27 @@ test("real PostgreSQL migration, isolation, persistence and restore", async (t) 
     assert.equal((await known("2026-08-22T13:00:00Z")).length, 2);
     await admin.query("INSERT INTO sources VALUES ('test-other',1,'Other test source','test_only','test',true)");
     await assert.rejects(repository.persistBatch({ ...batch, id: "cross-source-correction", accepted: [{ ...revision, id: 'obs_' + 'c'.repeat(64), idempotencyKey: 'c'.repeat(64), sourceId: 'test-other' }], quarantined: [], duplicates: [] }), /correction target/);
+  });
+  await t.test("source reconciliation records exact ranks, reasons and cutoffs immutably", async () => {
+    const candidateIds = (await admin.query("SELECT id FROM observations WHERE instrument_code='TEST_ONLY' ORDER BY collected_at DESC, id LIMIT 2")).rows.map((row) => row.id);
+    assert.equal(candidateIds.length, 2);
+    const input = {
+      policyId: "source_precedence_v1",
+      policyVersion: 1,
+      instrumentCode: "TEST_ONLY",
+      cutoffAt: "2026-08-22T13:00:00.000Z",
+      orderedCandidateIds: candidateIds,
+      selectedObservationId: candidateIds[0],
+      reasonCode: "latest_availability",
+    };
+    assert.equal((await reconciliationRepository.record(input)).alreadyRecorded, false);
+    assert.equal((await reconciliationRepository.record(input)).alreadyRecorded, true);
+    const stored = await admin.query(`SELECT r.reason_code, count(c.*)::integer AS candidates,
+      count(*) FILTER (WHERE c.selected)::integer AS selected
+      FROM source_reconciliations r JOIN source_reconciliation_candidates c ON c.reconciliation_id=r.id
+      GROUP BY r.reason_code`);
+    assert.deepEqual(stored.rows[0], { reason_code: "latest_availability", candidates: 2, selected: 1 });
+    await assert.rejects(reconciliationRepository.record({ ...input, cutoffAt: "2026-08-20T11:00:00.000Z" }), /unavailable at the cutoff/);
   });
   await t.test("portfolio rows are durable, versioned and isolated by owner subject", async () => {
     const ownerA = "integration-owner-a";
@@ -222,7 +247,7 @@ test("real PostgreSQL migration, isolation, persistence and restore", async (t) 
     // pg_dump plain output includes psql meta commands; use psql's parser.
     clientCommand("psql", [...args, "--set", "ON_ERROR_STOP=1", "--single-transaction"], dump);
     restoredCreated = true;
-    for (const table of ["asha_schema_migrations", "instruments", "sources", "source_contract_versions", "ingestion_batches", "observations", "quarantine_records", "quarantine_resolutions", "validation_results", "user_portfolios", "portfolio_holdings", "portfolio_preferences", "artifact_versions", "dataset_observations", "decision_records", "decision_assumptions", "decision_features"]) {
+    for (const table of ["asha_schema_migrations", "instruments", "sources", "source_contract_versions", "ingestion_batches", "observations", "quarantine_records", "quarantine_resolutions", "validation_results", "user_portfolios", "portfolio_holdings", "portfolio_preferences", "artifact_versions", "dataset_observations", "decision_records", "decision_assumptions", "decision_features", "source_reconciliations", "source_reconciliation_candidates"]) {
       const allRows = async (schemaName) => (await admin.query(`SELECT to_jsonb(t) AS row FROM "${schemaName}"."${table}" t ORDER BY to_jsonb(t)::text`)).rows;
       assert.deepEqual(await allRows(restoredSchema), await allRows(schema));
     }
@@ -233,6 +258,7 @@ test("real PostgreSQL migration, isolation, persistence and restore", async (t) 
       await admin.query(`GRANT INSERT ON ingestion_batches, observations, quarantine_records, validation_results, quarantine_resolutions TO "${role}"`);
       await admin.query(`GRANT INSERT, UPDATE, DELETE ON user_portfolios, portfolio_holdings, portfolio_preferences TO "${role}"`);
       await admin.query(`GRANT INSERT ON artifact_versions, dataset_observations, decision_records, decision_assumptions, decision_features TO "${role}"`);
+      await admin.query(`GRANT INSERT ON source_reconciliations, source_reconciliation_candidates TO "${role}"`);
       const restoredPool = { async connect() {
         const client = await pool.connect();
         await client.query(`SET ROLE "${role}"`);

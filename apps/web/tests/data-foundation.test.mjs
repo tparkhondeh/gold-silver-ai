@@ -40,6 +40,7 @@ const validRawObservation = {
   effectiveFrom: "2026-08-20T10:00:00Z",
   effectiveTo: null,
   correctionOf: null,
+  correctionReason: null,
   rawPayload: { fixture: "synthetic-test-only", value: "1.000" },
 };
 
@@ -110,13 +111,15 @@ test("impossible calendar dates are rejected rather than normalized", async () =
   }
 });
 
-test("metadata-only corrections have distinct stable identities", async () => {
+test("metadata-only corrections require reasons and have distinct stable identities", async () => {
   const now = new Date("2026-08-20T12:00:00Z");
   const original = (await validateObservation(validRawObservation, registry, now)).observation;
-  const input = { ...validRawObservation, correctionOf: original.id, effectiveFrom: "2026-08-20T10:00:01Z" };
+  assert.equal((await validateObservation({ ...validRawObservation, correctionOf: original.id }, registry, now)).observation, null);
+  const input = { ...validRawObservation, correctionOf: original.id, correctionReason: "Provider corrected the published value", effectiveFrom: "2026-08-20T10:00:01Z" };
   const revision = (await validateObservation(input, registry, now)).observation;
   assert.notEqual(revision.id, original.id);
   assert.equal(revision.correctionOf, original.id);
+  assert.equal(revision.correctionReason, "Provider corrected the published value");
   assert.equal((await validateObservation(input, registry, now)).observation.id, revision.id);
 });
 
@@ -192,6 +195,9 @@ test("PostgreSQL migration preserves point-in-time fields and immutable audit re
   assert.match(provenanceMigration, /source_contract_version/);
   assert.match(provenanceMigration, /CREATE TABLE artifact_versions/);
   assert.match(provenanceMigration, /CREATE TABLE decision_records/);
+  const reconciliationMigration = await readFile(new URL("../db/migrations/0006_reconciliation_and_corrections.sql", import.meta.url), "utf8");
+  assert.match(reconciliationMigration, /correction_reason/);
+  assert.match(reconciliationMigration, /CREATE TABLE source_reconciliations/);
   assert.match(migration, /reject_immutable_data_mutation/);
   assert.match(migration, /value numeric\(38, 12\).*CHECK \(value > 0\)/);
   assert.match(drizzleConfig, /dialect: "postgresql"/);
