@@ -9,6 +9,9 @@ state is recorded in `docs/10-project-state/CURRENT_STATE.md`.
 
 ### Identity proposal and evaluation ledger foundation — ۱۴۰۵/۰۶/۰۹
 
+- Accepted the owner-only audience for the next real release in ADR 0006. This does
+  not select a provider or enable production identity, public registration or holding
+  migration.
 - Added a plain-language Persian Tier-A production identity proposal and a dated
   official pricing/terms snapshot without selecting or enabling a vendor; Iran access,
   real identity and portfolio migration remain owner-gated.

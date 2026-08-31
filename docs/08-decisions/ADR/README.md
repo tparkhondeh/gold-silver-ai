@@ -60,3 +60,4 @@ What this decision implies for future work — including what it forecloses.
 - ADR 0003: live-market source boundary
 - ADR 0004: temporary Rahavard manual snapshot
 - ADR 0005: notification and opportunity-alert safety boundary
+- ADR 0006: owner-only audience for the next real release

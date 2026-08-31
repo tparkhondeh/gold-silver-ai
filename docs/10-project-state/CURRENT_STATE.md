@@ -40,7 +40,8 @@ Migrations 0007–0009 add an owner-isolated, append-only transaction and valuat
 foundation. It is runtime-read-only and `evaluation_only`; no real event/value is
 seeded and no financial methodology is selected. A plain-language Persian production
 identity proposal now includes a dated official pricing/terms snapshot. Iran account
-eligibility is still unverified, and audience/provider approval remains owner-required.
+eligibility is still unverified. The owner accepted an owner-only next real release in
+ADR 0006; provider and third-party login-data handling remain owner-required.
 The read-only owner-server preflight found an existing local override for Cloudflare's
 API hostname; no remote setting was changed and that candidate is not host-ready. See
 `docs/09-operations/DEPLOYMENT.md`.

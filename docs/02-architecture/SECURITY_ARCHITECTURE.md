@@ -18,9 +18,10 @@ also requires explicit enable flags and a loopback-only PostgreSQL URL. Portfoli
 writes add optimistic version checks to prevent silent stale-browser overwrites. The
 transferred owner host is migrated and integration-tested; public persistence stays
 disabled until a production identity provider and deployment store are approved.
-The owner-facing options and recommended owner-only pilot boundary are documented in
-[`IDENTITY_RECOMMENDATION.md`](IDENTITY_RECOMMENDATION.md); provider/access selection
-remains `DECISION REQUIRED: YES`.
+The owner-only audience for the next real release is accepted in
+[`ADR 0006`](../08-decisions/ADR/0006-owner-only-real-release.md). Provider, third-party
+login-data handling and production access mechanics remain `DECISION REQUIRED: YES` in
+[`IDENTITY_RECOMMENDATION.md`](IDENTITY_RECOMMENDATION.md).
 Broader security tooling is a Tier B / Implementation decision
 (`docs/00-governance/PROJECT_RULES.md` § 3): Claude Code selects baseline
 tooling following standard security practice when an implementation phase

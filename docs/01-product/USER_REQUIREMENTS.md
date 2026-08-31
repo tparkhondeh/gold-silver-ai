@@ -7,6 +7,9 @@ document is about the user(s) driving those capabilities.
 ## Known
 
 - The initial and primary user is the project owner.
+- The next real release is owner-only. It has no public registration, customer
+  accounts or invited-user access; any later multi-user expansion requires a new
+  owner-critical decision. See `docs/08-decisions/ADR/0006-owner-only-real-release.md`.
 - The owner has no programming background — see
   `docs/00-governance/PROJECT_RULES.md` § 2 for how technical material must be
   communicated.
@@ -33,8 +36,6 @@ document is about the user(s) driving those capabilities.
 
 The following have not been specified by the owner and must not be assumed:
 
-- **Single-user vs. multi-user:** is this a personal tool only, or should it
-  eventually support other users? `DECISION REQUIRED: YES`.
 - **Interface language:** Persian, English, or both? `DECISION REQUIRED: YES`.
 - **Access channel:** web app, desktop app, chat interface, report/document output,
   or some combination? `DECISION REQUIRED: YES`.
