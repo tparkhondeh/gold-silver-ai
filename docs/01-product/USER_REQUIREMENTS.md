@@ -10,6 +10,11 @@ document is about the user(s) driving those capabilities.
 - The next real release is owner-only. It has no public registration, customer
   accounts or invited-user access; any later multi-user expansion requires a new
   owner-critical decision. See `docs/08-decisions/ADR/0006-owner-only-real-release.md`.
+- For that owner-only release, an external identity service may process only the
+  minimum login identifiers and session evidence. Portfolio holdings, transactions,
+  valuations, financial calculations and analyses must not be sent to that service.
+  The exact provider remains unresolved. See
+  `docs/08-decisions/ADR/0007-third-party-identity-boundary.md`.
 - The owner has no programming background — see
   `docs/00-governance/PROJECT_RULES.md` § 2 for how technical material must be
   communicated.

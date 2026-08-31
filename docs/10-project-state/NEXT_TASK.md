@@ -14,20 +14,22 @@ financial engine remain separate gates.
 
 1. **OWNER DECISION RECORDED:** the next real release is owner-only; no invited users
    or public registration. See ADR 0006.
-2. **OWNER DECISION REQUIRED:** approve whether a third party may process login
-   identifiers or identity must be self-hosted, then select a provider only after
-   written Iran-access and cost/terms confirmation. Do not trust production identity
-   or migrate browser holdings before approval and two authenticated-session tests.
+2. **OWNER DECISION RECORDED:** an external identity service may process only minimum
+   login identifiers and session evidence. Portfolio holdings, transactions,
+   valuations, calculations and analyses must not be sent to it. See ADR 0007.
+3. **OWNER DECISION REQUIRED:** select the exact provider only after written
+   Iran-access and cost/terms confirmation. Do not trust production identity or
+   migrate browser holdings before approval and two authenticated-session tests.
    A read-only preflight found the current server's Cloudflare API hostname locally
    overridden; if Cloudflare is later approved, obtain hosting-administrator
    authorization and clear `docs/09-operations/DEPLOYMENT.md` first.
-3. After the owner revokes and replaces the exposed Navasan key, implement the
+4. After the owner revokes and replaces the exposed Navasan key, implement the
    documented historical endpoints and durable quota accounting. Backfill only
    licensed data within quota; acquire an independent Iranian cross-check if needed.
    Never silently fill missing history or pass stale/invalid data into real analysis.
 
 No remaining implementation item in this immediate list is independent of an
-owner-critical provider/data-handling or source decision.
+owner-critical provider or source decision.
 
 ## Next Gate: Independent Financial Laboratory
 
