@@ -1,8 +1,15 @@
 # Historical Backfill Proposal
 
-**Status:** `PROPOSAL — NOT ACCEPTED`. This is research and a recommendation, not
-an owner decision, vendor permission, purchase authorization, or backfill approval.
-No historical provider request or database write is authorized by this document.
+**Status:** `VENDOR CONFIRMATION PENDING — NOT ACCEPTED`. This is research and a
+recommendation, not an owner decision, vendor permission, purchase authorization,
+or backfill approval. No historical provider request or database write is authorized
+by this document.
+
+On 2026-08-31 the owner explicitly authorized sending the no-secret Navasan inquiry
+below through `@navasan_contact_bot`. Telegram displayed the message as an outgoing,
+read message. That is evidence of transmission only; it is not a vendor answer or
+permission. No API key, portfolio value, holding, or other personal financial data
+was included. A written vendor response remains pending.
 
 ## Plain-Language Decision
 
@@ -58,10 +65,10 @@ Choosing an unclear scope could force deletion and re-collection later, invalida
 backtests, expose the owner to contract risk, or make apparently precise financial
 results depend on data the project was not entitled to keep.
 
-## Ready-to-Send Navasan Message
+## Navasan Message Sent on 2026-08-31
 
-The owner may send this unchanged through Navasan's official support channel; do not
-include the API key.
+The owner authorized and sent this unchanged through Navasan's official support bot.
+The API key was not included.
 
 > سلام. برای یک پروژه شخصی و خصوصی تحلیل بازار ایران، آیا مجاز هستم خروجی OHLC
 > وب‌سرویس نوسان را برای طلای ۱۸ عیار، مثقال طلا، دلار آزاد و انواع سکه، برای

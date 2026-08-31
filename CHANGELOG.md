@@ -32,6 +32,9 @@ state is recorded in `docs/10-project-state/CURRENT_STATE.md`.
   and TGJU material, with safe/rejected options, an exact acceptance gate and Persian
   vendor messages ready for owner authorization. It makes no provider request,
   purchase, source decision or market-data write.
+- With explicit owner authorization, sent the proposal's no-secret storage/licensing
+  inquiry through Navasan's official contact bot. Telegram marked the outgoing message
+  read; a written vendor response is still pending and no permission is inferred.
 
 ### Identity proposal and evaluation ledger foundation — ۱۴۰۵/۰۶/۰۹
 

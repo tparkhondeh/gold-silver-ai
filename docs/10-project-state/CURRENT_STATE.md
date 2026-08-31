@@ -61,8 +61,10 @@ Backfill-readiness checkpoint `8a21a97` passed both GitHub quality and real
 PostgreSQL jobs in run 33421273488.
 The public Navasan and TGJU material has now been reviewed and a plain-language
 licensed-backfill proposal plus ready-to-send Persian inquiries are recorded in
-`docs/05-data/HISTORICAL_BACKFILL_PROPOSAL.md`. The proposal is not accepted, no
-message was sent, no purchase was authorized and no historical request was made.
+`docs/05-data/HISTORICAL_BACKFILL_PROPOSAL.md`. On 2026-08-31 the owner authorized
+and sent the no-secret Navasan permission inquiry through the official contact bot;
+Telegram displayed it as read, but no written vendor answer has been received or
+treated as permission. No purchase was authorized and no historical request was made.
 
 ## Snapshot
 

@@ -81,6 +81,10 @@ subsequent changes still require their own push and CI verification.
   policy, acceptance evidence checklist and no-secret Persian vendor inquiries. This
   documentation checkpoint does not record an owner decision, contact a vendor,
   authorize a purchase or load historical data.
+- After explicit owner authorization, sent the no-secret licensing/storage inquiry
+  through Navasan's official contact bot. The Telegram client showed the outgoing
+  message as read; this is not recorded as vendor permission, purchase authorization,
+  or backfill approval.
 
 ### Private publication and runtime-command repair — ۱۴۰۵/۰۶/۰۸
 
