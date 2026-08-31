@@ -43,8 +43,10 @@
 9. **Navasan backfill is not authorized.** Durable append-only accounting now
    serializes workers and caps application calls at 115 per rolling 31 days;
    `dailyCurrency` and `ohlcSearch` are normalized behind a local-only route. No
-   historical call was made. Licensed date scope, retention, gap policy, empirical
-   disagreement thresholds and independent cross-check coverage remain pending.
+   historical call was made. A no-network readiness planner now exposes the proposed
+   range, exact call count and unresolved gates without enabling execution. Licensed
+   date scope, retention, gap policy, empirical disagreement thresholds and
+   independent cross-check coverage remain pending.
 10. **The approved real baseline is not implemented.** The independent locked Python
     laboratory, complete registries, train-only feature normalization, calibrated
     confidence, benchmark comparisons, nested walk-forward, and immutable decision

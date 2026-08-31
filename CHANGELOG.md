@@ -18,7 +18,11 @@ state is recorded in `docs/10-project-state/CURRENT_STATE.md`.
 - Added strict shared normalization for Navasan `dailyCurrency` and `ohlcSearch`
   responses behind a loopback/same-origin route. No historical request or backfill
   was made.
-- Local typecheck, lint, production build, 85 unit tests, and 14 real PostgreSQL
+- Added a Persian, local-only backfill readiness planner that validates Jalali dates
+  and approved symbols, calculates the exact request count, and keeps execution
+  disabled while licensing and independent-source gates remain open. Planning sends
+  no provider request and stores no market data.
+- Local typecheck, lint, production build, 87 unit tests, and 14 real PostgreSQL
   migration/concurrency/restore tests pass.
 - Code checkpoint `b0bb80a` passed both GitHub quality and real PostgreSQL jobs in
   run 33417744818.

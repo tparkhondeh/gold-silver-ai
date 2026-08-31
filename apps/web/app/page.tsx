@@ -25,6 +25,7 @@ import {
 import { navItems, type View } from "./workspace-navigation";
 import { formatToman, formatTomanAndUsd, formatUsd, isUsableUsdTomanRate } from "./currency-display";
 import { OperatorCsvImport } from "./operator-csv-import";
+import { NavasanBackfillReadiness } from "./navasan-backfill-readiness";
 import { assetCategories, assetOptions, getAssetCategoryForAsset, getAssetOptionsForCategory } from "./asset-catalog";
 import { currentJalaliDate, currentJalaliParts, formatJalaliDate, toPersianDigits } from "./jalali-calendar";
 import { PersianDatePicker } from "./persian-date-picker";
@@ -1044,6 +1045,7 @@ export default function Home() {
               </>}</div>
             </section>
             <OperatorCsvImport key={portfolioMode} demoMode={portfolioMode === "demo"}/>
+            {portfolioMode !== "demo" && <NavasanBackfillReadiness/>}
             <section className="panel audit-timeline"><h3>زنجیرهٔ اعتماد هر قیمت</h3>{["شناسه ابزار و واحد", "شناسه و قرارداد منبع", "زمان انتشار به UTC", "زمان دریافت به UTC", "اعتبارسنجی قطعی", "نسخهٔ تبدیل و اثر انگشت رکورد"].map((item, index) => <div key={item}><span>{(index + 1).toLocaleString("fa-IR")}</span><p>{item}</p><b>{portfolioMode === "demo" ? "آمادهٔ آزمایشی" : index < 5 && liveQuoteCount ? "ثبت شده" : index < 2 ? "تعریف شده" : "در انتظار داده"}</b></div>)}</section>
           </section>}
 

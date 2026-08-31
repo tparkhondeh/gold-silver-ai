@@ -30,7 +30,9 @@ implemented for the eight Phase 1 symbols behind a loopback/same-origin operator
 route. Every call requires an immutable durable quota reservation. No historical
 call or row has been committed: permitted date range, retention, provider license
 scope, gap policy, and independent Iranian cross-check remain `STATUS: TBD` before
-the first backfill.
+the first backfill. The Persian local readiness planner can validate a proposed range
+and calculate one OHLC request per selected approved symbol, but it cannot execute,
+consume quota, or store data.
 
 ## Status
 

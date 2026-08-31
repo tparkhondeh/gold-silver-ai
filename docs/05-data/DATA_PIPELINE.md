@@ -44,12 +44,17 @@ Both paths feed the same validation step (`DATA_QUALITY.md`) — there is no
 - The commit path now revalidates the submitted batch and delegates to the same
   parameterized transactional repository. It requires both an explicit enable flag
   and a loopback-only PostgreSQL URL; request intent must exactly match preview or
-  commit. Connection, migration application, and live integration tests remain
-  pending, so commit still fails closed on the current host.
+  commit. The owner-host PostgreSQL connection, migrations, least-privilege checks,
+  integration tests, and restore test pass locally; production authentication and
+  hosted persistence remain separate gates.
+- A local-only Navasan backfill readiness planner validates proposed Jalali dates and
+  approved symbols, reports the exact OHLC request count, and sends no provider call.
+  Its execution control stays disabled until the source-policy gates in
+  `HISTORICAL_DATA.md` are resolved.
 
-`STATUS: PARTIAL` for a live database connection, migration verification, scheduling,
-and alerting. Future scheduling must use Tehran time and the Iranian market calendar;
-see `docs/02-architecture/INTEGRATION_ARCHITECTURE.md`.
+`STATUS: PARTIAL` for scheduling and alerting. The live local database and migration
+verification pass, but future scheduling must use Tehran time and the Iranian market
+calendar; see `docs/02-architecture/INTEGRATION_ARCHITECTURE.md`.
 
 ## Related Documents
 

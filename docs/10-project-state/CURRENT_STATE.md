@@ -52,7 +52,9 @@ Checkpoint `d0ea16f` passed both GitHub jobs in run 33396556534.
 Migration 0010 adds the immutable Navasan request-reservation ledger. The replacement
 credential, durable quota health, eight-quote live normalization, historical endpoint
 contracts and backup/restore path pass locally; no historical backfill was requested.
-Local verification now covers 85 unit and 14 real PostgreSQL tests.
+The local Persian readiness planner validates proposed Jalali ranges, approved
+symbols and exact request counts without network or storage, while execution remains
+locked. Local verification now covers 87 unit and 14 real PostgreSQL tests.
 Code checkpoint `b0bb80a` passed both GitHub quality and real PostgreSQL jobs in
 run 33417744818.
 
@@ -175,6 +177,9 @@ run 33417744818.
   and Unix timestamps are normalized deterministically. The official public table
   establishes a toman contract; direct-toman 18k/USD values and fixed thousand-toman
   mesghal/coin scales are encoded per symbol, while wrong scale/unit ranges fail closed.
+  A local Persian plan-only surface now validates proposed Jalali ranges and approved
+  symbols, reports one planned OHLC call per selected symbol, and keeps execution
+  disabled without consuming quota or storing data.
   A later provider connection timeout was reported explicitly; stale Rahavard values
   remain visible only as provenance and are never presented or used as a current rate.
   The six-hour process-local cache remains a performance optimization only. Before
@@ -241,7 +246,7 @@ run 33417744818.
   Migration 0006 adds immutable source-reconciliation records and requires a bounded
   plain-language reason on every correction. Migrations 0007–0010 add exact transaction and
   evaluation-only valuation lineage plus immutable provider-call reservations;
-  85 unit and 14 real PostgreSQL tests pass locally.
+  87 unit and 14 real PostgreSQL tests pass locally.
   In the fresh-session laboratory, a fixed
   five-row CSV sample exercises preview plus a memory-only commit result (three
   accepted, one duplicate, one quarantined) without reaching the server or implying

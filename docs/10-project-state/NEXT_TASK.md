@@ -7,7 +7,7 @@
 Migrations 0003–0009 now cover the owner snapshot, immutable provenance,
 exact point-in-time dataset/decision lineage, source-reconciliation records and
 mandatory correction reasons, plus the read-only transaction/evaluation-valuation
-ledger foundation. Local build, 77 unit tests, 13 real PostgreSQL tests,
+ledger foundation. Local build, 87 unit tests, 14 real PostgreSQL tests,
 restore, activation, and health checks pass. Production account authentication,
 empirical divergence thresholds, historical backfill, and the real
 financial engine remain separate gates.
@@ -31,7 +31,9 @@ financial engine remain separate gates.
 5. **IMPLEMENTATION COMPLETE:** the owner replaced the exposed Navasan key; the
    application now reserves every call in an immutable PostgreSQL ledger with a
    conservative rolling limit. The documented `dailyCurrency` and `ohlcSearch`
-   contracts are normalized behind a local-only route. No historical call was made.
+   contracts are normalized behind a local-only route. A Persian plan-only surface
+   validates a proposed range and exact request count without network or storage;
+   real execution remains disabled and no historical call was made.
 6. **OWNER DECISION REQUIRED BEFORE BACKFILL:** confirm the licensed date scope,
    retention/gap policy and an independent Iranian cross-check. Backfill only data
    explicitly permitted within quota. Never silently fill missing history or pass

@@ -71,7 +71,10 @@ subsequent changes still require their own push and CI verification.
   lock, a 115-call rolling 31-day ceiling and five-call safety reserve.
 - Implemented and tested the official daily-update and OHLC history contracts behind
   a local-only same-origin route. No historical request or row was loaded.
-- Passed typecheck, lint, production build, 85 unit tests and 14 real PostgreSQL
+- Added a local Persian plan-only surface that validates a proposed Jalali range,
+  deduplicates the eight approved symbols, calculates one OHLC request per symbol,
+  and visibly keeps real execution locked without consuming provider quota.
+- Passed typecheck, lint, production build, 87 unit tests and 14 real PostgreSQL
   migration/isolation/concurrency/backup-restore tests.
 
 ### Private publication and runtime-command repair — ۱۴۰۵/۰۶/۰۸
