@@ -11,14 +11,14 @@ not a Data Foundation acceptance report or a financial-readiness claim.
 
 **[SPEC]**
 
-- Branch: `codex/phase-1-data-ui`; reconciliation/correction code checkpoint:
-  `0d1c2e9c2b166f89a134ac4f68110a98c017b7bb` (later documentation commits may follow).
+- Branch: `codex/phase-1-data-ui`; identity-proposal/ledger code checkpoint:
+  `d0ea16f` (later documentation commits may follow).
 - Initial dirty README preserved and corrected; implementation is a development checkpoint.
 - Owner subsequently authorized committing/pushing this work for transfer to another computer despite the local database blocker. See the root `CONTINUE_ON_ANOTHER_SYSTEM.md`.
 - No merge, public deployment, Phase 2 branch, market ingestion or financial activation is authorized by this handoff.
 - Previous CI [33304773397](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33304773397) passed for the published HEAD only.
 - Current local gates: typecheck, lint, build, **77 unit/contract tests passed; zero skipped**.
-- GitHub [run 33393986374](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33393986374) **PASSED** for checkpoint `0d1c2e9`: quality job (lint/typecheck/build/tests/production audit) and real PostgreSQL migration/integration/restore job.
+- GitHub [run 33396556534](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33396556534) **PASSED** for checkpoint `d0ea16f`: quality job (lint/typecheck/build/tests/production audit) and real PostgreSQL migration/integration/restore job.
 - Transferred Windows-host PostgreSQL migration/integration/restore: **PASSED**
   (13/13), including versioned portfolio rows, subject isolation, provenance chain,
   point-in-time dataset rejection and immutable restore comparison. Production
@@ -131,7 +131,8 @@ locally verified signed file, not an independently published checksum comparison
 
 - 0.9.0: added the owner-gated production identity proposal and migrations 0007–0009 with
   forced-RLS append-only transactions plus exact evaluation-only valuation lineage;
-  77 unit and 13 real PostgreSQL tests pass locally. No real values or method were added.
+  77 unit and 13 real PostgreSQL tests pass locally and both GitHub jobs pass in run
+  33396556534. No real values or method were added.
 - 0.8.0: added migration 0006, mandatory append-only correction reasons and exact
   source-reconciliation candidates/ranks/cutoffs/reason codes; 74 unit and 12 real
   PostgreSQL tests pass locally and both GitHub jobs pass in run 33393986374.
