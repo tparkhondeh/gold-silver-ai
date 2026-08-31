@@ -128,6 +128,7 @@ export async function probeObservationDatabase(pool: DatabaseProbe) {
     const result = await pool.query(`SELECT
       to_regclass('public.observations') IS NOT NULL
         AND to_regclass('public.validation_results') IS NOT NULL
+        AND to_regclass('public.source_contract_versions') IS NOT NULL
         AND to_regclass('public.asha_schema_migrations') IS NOT NULL AS migrated,
       NOT rolsuper AND NOT rolcreatedb AND NOT rolcreaterole AND NOT rolbypassrls
         AND NOT has_schema_privilege(current_user, 'public', 'CREATE') AS least_privilege
@@ -177,6 +178,25 @@ export async function inspectLocalPortfolioDatabaseHealth(environment: RuntimeEn
     return result.rows[0]?.ready === true
       ? { state: "local_ready", reason: "local_portfolio_database_ready" } as const
       : { state: "blocked", reason: "local_portfolio_schema_or_policy_missing" } as const;
+  } catch {
+    return { state: "blocked", reason: "database_unreachable_or_probe_failed" } as const;
+  }
+}
+
+export async function inspectProvenanceDatabaseHealth(environment: RuntimeEnvironment = process.env) {
+  const configuration = inspectOperatorDatabaseEnvironment(environment);
+  if (!configuration.available) return { state: "blocked", reason: configuration.reason } as const;
+  try {
+    const result = await getRuntimePool(configuration.connectionString).query<{ ready: boolean }>(`SELECT
+      count(*) = 6
+      AND bool_and(has_table_privilege(current_user, c.oid, 'SELECT'))
+      AND bool_and(NOT has_table_privilege(current_user, c.oid, 'INSERT,UPDATE,DELETE,TRUNCATE,TRIGGER')) AS ready
+      FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace
+      WHERE n.nspname='public' AND c.relkind='r' AND c.relname IN
+        ('source_contract_versions','artifact_versions','dataset_observations','decision_records','decision_assumptions','decision_features')`);
+    return result.rows[0]?.ready === true
+      ? { state: "registry_ready", reason: "provenance_registry_ready_read_only" } as const
+      : { state: "blocked", reason: "provenance_registry_or_privileges_missing" } as const;
   } catch {
     return { state: "blocked", reason: "database_unreachable_or_probe_failed" } as const;
   }

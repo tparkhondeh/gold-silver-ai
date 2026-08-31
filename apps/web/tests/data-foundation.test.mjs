@@ -154,7 +154,8 @@ test("persists a batch transactionally with parameterized PostgreSQL statements"
   assert.deepEqual(result, { alreadyProcessed: false, insertedObservations: 1, duplicateObservations: 0, insertedQuarantineRecords: 1 });
   assert.equal(calls.some((call) => call.sql.includes("INSERT INTO observations")), true);
   assert.equal(calls.some((call) => call.sql.includes("INSERT INTO quarantine_records")), true);
-  assert.equal(postgresRepositoryStatements.insertObservation.includes("$7::numeric"), true);
+  assert.equal(postgresRepositoryStatements.insertObservation.includes("$8::numeric"), true);
+  assert.equal(batch.accepted[0].sourceContractVersion, 1);
   assert.equal(postgresRepositoryStatements.insertObservation.includes(validRawObservation.value), false);
 });
 
@@ -187,6 +188,10 @@ test("PostgreSQL migration preserves point-in-time fields and immutable audit re
   for (const field of ["observed_at", "published_at", "collected_at", "effective_from", "effective_to", "correction_of", "idempotency_key", "payload_hash"]) {
     assert.match(migration, new RegExp(field));
   }
+  const provenanceMigration = await readFile(new URL("../db/migrations/0005_provenance_registry.sql", import.meta.url), "utf8");
+  assert.match(provenanceMigration, /source_contract_version/);
+  assert.match(provenanceMigration, /CREATE TABLE artifact_versions/);
+  assert.match(provenanceMigration, /CREATE TABLE decision_records/);
   assert.match(migration, /reject_immutable_data_mutation/);
   assert.match(migration, /value numeric\(38, 12\).*CHECK \(value > 0\)/);
   assert.match(drizzleConfig, /dialect: "postgresql"/);

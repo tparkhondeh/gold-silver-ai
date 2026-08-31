@@ -4,15 +4,16 @@
 
 ## Immediate Next Step
 
-The local-portfolio checkpoint is published and passed both GitHub jobs. Migrations
-0003 and 0004 now store holdings, owner constraints and analysis/decision horizons
-as one versioned, row-level-secured snapshot. Existing browser data is never uploaded
-or overwritten automatically. Production account authentication and public
-multi-user hosting remain separate, unapproved gates.
+Migrations 0003–0005 now cover the owner snapshot plus an immutable provenance
+registry and exact point-in-time dataset/decision lineage. Local build, 71 unit tests,
+11 real PostgreSQL tests, restore, activation, and health checks pass. Production
+account authentication, source reconciliation, historical backfill, and the real
+financial engine remain separate gates.
 
-1. Complete observation provenance/version fields, source reconciliation, and the
-   Source, Dataset, Assumption, Feature, Model, Methodology, and Decision registries.
-   Preserve `main`, backups, tags, credentials and personal browser data.
+1. Publish and verify the provenance-registry checkpoint on the development branch.
+   Then implement deterministic source-reconciliation records and correction reasons
+   without choosing financial thresholds. Preserve `main`, backups, tags, credentials
+   and personal browser data.
 2. Prepare a plain-language production identity recommendation; the owner must make
    the final provider/access decision before replacing the local
    owner scope with real account subjects. Then test two authenticated browser

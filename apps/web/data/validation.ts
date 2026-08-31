@@ -144,6 +144,7 @@ export async function validateObservation(
       payloadHash,
       instrumentCode: input.instrumentCode,
       sourceId: input.sourceId,
+      sourceContractVersion: source.schemaVersion,
       value,
       currency: input.currency as Currency,
       unit: input.unit as ObservationUnit,

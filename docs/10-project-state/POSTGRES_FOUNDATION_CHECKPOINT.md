@@ -1,6 +1,6 @@
 # PostgreSQL Foundation Checkpoint
 
-**Version 0.6.0** · ASHA engineering · ۱۴۰۵/۰۶/۰۹ (2026-08-31) · Work in progress
+**Version 0.7.0** · ASHA engineering · ۱۴۰۵/۰۶/۰۹ (2026-08-31) · Work in progress
 
 ## AI READING INSTRUCTION
 
@@ -17,9 +17,12 @@ not a Data Foundation acceptance report or a financial-readiness claim.
 - Owner subsequently authorized committing/pushing this work for transfer to another computer despite the local database blocker. See the root `CONTINUE_ON_ANOTHER_SYSTEM.md`.
 - No merge, public deployment, Phase 2 branch, market ingestion or financial activation is authorized by this handoff.
 - Previous CI [33304773397](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33304773397) passed for the published HEAD only.
-- Current local gates: typecheck, lint, build, **66 unit/contract tests passed; zero skipped**.
+- Current local gates: typecheck, lint, build, **71 unit/contract tests passed; zero skipped**.
 - GitHub [run 33389444502](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33389444502) **PASSED** for checkpoint `c5a5d16`: quality job (lint/typecheck/build/tests/production audit) and real PostgreSQL migration/integration/restore job.
-- Transferred Windows-host PostgreSQL migration/integration/restore: **PASSED** (10/10), including versioned portfolio rows and subject isolation. Production authenticated two-browser persistence remains **NOT IMPLEMENTED**.
+- Transferred Windows-host PostgreSQL migration/integration/restore: **PASSED**
+  (11/11), including versioned portfolio rows, subject isolation, provenance chain,
+  point-in-time dataset rejection and immutable restore comparison. Production
+  authenticated two-browser persistence remains **NOT IMPLEMENTED**.
 - Two independent read-only reviews inspected database safety and readiness/CI. They did not approve financial use or execute real database tests.
 - Local evaluation server at `http://localhost:4174/` returned HTTP 200 with
   `evaluation_only`, connected observation persistence, `local_ready` portfolio
@@ -85,6 +88,11 @@ locally verified signed file, not an independently published checksum comparison
 - Owner constraints and selected analysis/decision horizons share the same optimistic
   version and database transaction as holdings. Empty inputs remain empty; no risk
   tolerance or financial preference is guessed.
+- Migration 0005 adds immutable Source contract versions; typed, fingerprinted
+  Dataset/Assumption/Feature/Model/Methodology artifacts; exact dataset observation
+  membership; and evaluation-only Decision records with complete version references,
+  risk state and input/output hashes. Runtime can read but cannot create or mutate
+  these records. Health reports the registry separately from financial readiness.
 - Preview/commit await the database probe. Failed or uncertain commit responses do not falsely assert either success or absence.
 - Local setup separates owner/runtime roles, protects generated secrets, seeds registries only and never replaces the owner's `.env.local`.
 - Activation requires migration checksums, required triggers, restricted runtime grants and recent successful integration evidence matching current source files.
@@ -120,6 +128,9 @@ locally verified signed file, not an independently published checksum comparison
 
 **[SPEC]**
 
+- 0.7.0: added migration 0005, source-versioned observations, exact point-in-time
+  datasets and immutable evaluation-only decision lineage; 71 unit and 11 real
+  PostgreSQL tests pass locally.
 - 0.6.0: added migration 0004 and atomic save/restore of owner constraints and
   analysis/decision horizons; 66 unit and 10 real PostgreSQL tests pass locally.
 - 0.5.0: added local owner-scoped portfolio tables, forced RLS, version conflicts,

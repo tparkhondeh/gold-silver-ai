@@ -5,10 +5,10 @@ exposes or stores.
 
 ## Status
 
-`STATUS: PARTIAL`. The Phase 1 read-only normalized quote contract is implemented at
-`/api/market`. Durable schema version 1 contracts and a PostgreSQL migration now
-exist under `apps/web/data/` and `apps/web/db/migrations/`; a live database is not
-configured yet.
+`STATUS: PARTIAL`. The Phase 1 normalized quote contract is implemented at
+`/api/market`. Durable observation and provenance contracts, five PostgreSQL
+migrations, repositories, and a live owner-local database are active. Historical
+backfill, reconciliation records and production configuration remain pending.
 
 ## Durable Observation Contract (schema version 1)
 
@@ -18,7 +18,8 @@ configured yet.
 | `idempotencyKey` | SHA-256 hex, required/unique | Prevents a repeated source event from being stored twice. |
 | `payloadHash` | SHA-256 hex, required | Fingerprint of the sanitized raw payload using stable key ordering. |
 | `instrumentCode` | string, required | Versioned instrument-registry key. |
-| `sourceId` | string, required | Versioned source-contract key. |
+| `sourceId` | string, required | Stable source-contract key. |
+| `sourceContractVersion` | positive integer, required | Exact immutable source-contract version in effect when the observation was accepted. |
 | `value` | canonical positive decimal string | Parsed by PostgreSQL as `numeric(38,12)`; never converted through binary floating point in ingestion. |
 | `currency` / `unit` | closed enums, required | Must exactly match the instrument contract. |
 | `observedAt` | UTC ISO-8601, required | When the underlying value/event occurred. |
@@ -30,6 +31,19 @@ configured yet.
 
 Validation results and quarantined rows are separate immutable records. A quarantine
 decision is appended to `quarantine_resolutions` instead of mutating the original.
+
+## Provenance Registry Contract
+
+Migration 0005 implements immutable version records for Source contracts and for
+Dataset, Assumption, Feature, Model, and Methodology artifacts. Every artifact has a
+stable kind/ID, positive version, lifecycle status, plain-language description,
+structured JSON content, SHA-256 content fingerprint, validity interval, and creation
+time. Kind-specific checks require the minimum metadata defined by the architecture.
+Dataset versions additionally bind their exact sorted observation membership and a
+point-in-time cutoff inside the immutable fingerprint. Evaluation-only Decision records reference exact Dataset and Methodology
+versions, an optional Model version, explicit Assumption and Feature versions, risk
+state, input/output fingerprints, timestamp, and structured output. All registry and
+decision rows are append-only and runtime-read-only.
 
 ## Normalized Quote Contract (schema version 1)
 

@@ -65,7 +65,8 @@ auditable trail so that:
 
 ## Decision Provenance
 
-**Architecture requirement, established 2026-08-11. Not implemented in Phase 0.**
+**Architecture requirement, established 2026-08-11. Storage foundation implemented
+in Phase 1; no real decision engine is implemented.**
 This section is a formal, binding reference — it is not to be deleted, only
 superseded by an ADR if the project's traceability approach fundamentally changes.
 
@@ -98,7 +99,7 @@ must be possible to re-run it against the same data, model version, methodology
 version, and assumptions and get the same output — that reproducibility is what
 "auditable" actually means here, not just "logged."
 
-**How this should eventually be implemented (not now):** each decision-producing
+**Implementation boundary:** each future decision-producing
 component should emit its output already attached to this chain (e.g. as
 structured metadata alongside the result), not have provenance reconstructed after
 the fact from logs. The exact storage mechanism is Tier B
@@ -165,13 +166,13 @@ a bad decision could otherwise reach the owner looking like a normal one.
 
 ## Status
 
-`STATUS: TBD` for storage format and retention of decision history, the internal
-structure of the decision engine, and the concrete implementation of Decision
-Provenance and the Assumption Registry (Tier B — see
-`docs/10-project-state/OPEN_DECISIONS.md`). The *requirement* that these exist and
-take this shape is fixed as of this document; only the implementation mechanics
-are open. Deferred to the implementation phase that first produces a real
-deterministic output.
+`STATUS: PARTIAL`. Migration 0005 and the provenance repository implement immutable
+Source, Dataset, Assumption, Feature, Model, Methodology, and evaluation-only Decision
+version records, exact observation membership, point-in-time dataset cutoffs,
+content/input/output fingerprints, risk state, and typed cross-version references.
+The runtime account is read-only for these registries. Retention, operational state
+transition governance, and the real deterministic engine remain `STATUS: TBD`; no
+financial output has been registered or unlocked by this storage foundation.
 
 ## Related Documents
 

@@ -28,6 +28,9 @@ production account authentication, historical backfill, and the real baseline re
 [`PHASE_1_STABILIZATION_AUDIT.md`](../../PHASE_1_STABILIZATION_AUDIT.md).
 Preference-persistence checkpoint `c5a5d16` passed both GitHub quality and real
 PostgreSQL jobs in run 33389444502.
+Migration 0005 now adds the immutable provenance registry and exact dataset/decision
+lineage foundation; verification for this later checkpoint is tracked in
+`POSTGRES_FOUNDATION_CHECKPOINT.md`.
 
 ## Snapshot
 
@@ -202,6 +205,11 @@ PostgreSQL jobs in run 33389444502.
   Owner constraints and analysis/decision horizons save and restore in the same
   transaction as holdings, with no assumed financial defaults. The API remains loopback-only;
   production identity and public multi-user persistence are not implemented.
+  Migration 0005 attaches observations to immutable Source contract versions and
+  adds versioned Dataset, Assumption, Feature, Model, Methodology, and evaluation-only
+  Decision records. Dataset membership is exact and cutoff-bounded; registry rows
+  cannot be updated, deleted, or truncated. Runtime access is read-only, and no real
+  financial decision has been created or enabled.
   In the fresh-session laboratory, a fixed
   five-row CSV sample exercises preview plus a memory-only commit result (three
   accepted, one duplicate, one quarantined) without reaching the server or implying
@@ -217,6 +225,8 @@ PostgreSQL jobs in run 33389444502.
   remote run exposed the now-resolved Node 22 TypeScript test-command issue. The
   database job uses a real PostgreSQL service and matching in-container
   backup/restore clients; it passed for the code checkpoint described above.
+  Health exposes `provenance-registry: registry_ready` separately from the still
+  blocked financial-decision engine.
 - **Open-source review:** high-star same-concept projects were license-screened.
   AGPL product code was not copied; compatible patterns were independently implemented
   and recorded in `docs/07-engineering/OPEN_SOURCE_ADOPTION.md`.

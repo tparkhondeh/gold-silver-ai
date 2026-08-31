@@ -21,10 +21,10 @@ const INSERT_BATCH = `
 
 const INSERT_OBSERVATION = `
   INSERT INTO observations (
-    id, schema_version, idempotency_key, payload_hash, instrument_code, source_id,
+    id, schema_version, idempotency_key, payload_hash, instrument_code, source_id, source_contract_version,
     value, currency, unit, observed_at, published_at, collected_at,
     effective_from, effective_to, correction_of, raw_payload
-  ) VALUES ($1, $2, $3, $4, $5, $6, $7::numeric, $8, $9, $10, $11, $12, $13, $14, $15, $16::jsonb)
+  ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8::numeric, $9, $10, $11, $12, $13, $14, $15, $16, $17::jsonb)
   ON CONFLICT (idempotency_key) DO NOTHING
 `;
 
@@ -50,6 +50,7 @@ function observationParameters(observation: ValidatedObservation) {
     observation.payloadHash,
     observation.instrumentCode,
     observation.sourceId,
+    observation.sourceContractVersion,
     observation.value,
     observation.currency,
     observation.unit,

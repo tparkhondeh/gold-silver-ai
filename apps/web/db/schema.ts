@@ -7,6 +7,7 @@ import {
   jsonb,
   numeric,
   pgTable,
+  primaryKey,
   smallint,
   text,
   timestamp,
@@ -36,6 +37,18 @@ export const sources = pgTable("sources", {
   active: boolean("active").notNull().default(true),
 });
 
+export const sourceContractVersions = pgTable("source_contract_versions", {
+  sourceId: text("source_id").notNull().references(() => sources.id),
+  version: smallint("version").notNull(),
+  displayName: text("display_name").notNull(),
+  quality: text("quality").notNull(),
+  accessMode: text("access_mode").notNull(),
+  active: boolean("active").notNull(),
+  validFrom: utcTimestamp("valid_from"),
+  validUntil: utcTimestamp("valid_until"),
+  registeredAt: utcTimestamp("registered_at").notNull().defaultNow(),
+}, (table) => [primaryKey({ columns: [table.sourceId, table.version] })]);
+
 export const ingestionBatches = pgTable("ingestion_batches", {
   id: text("id").primaryKey(),
   schemaVersion: smallint("schema_version").notNull(),
@@ -55,6 +68,7 @@ export const observations = pgTable("observations", {
   payloadHash: text("payload_hash").notNull(),
   instrumentCode: text("instrument_code").notNull().references(() => instruments.code),
   sourceId: text("source_id").notNull().references(() => sources.id),
+  sourceContractVersion: smallint("source_contract_version").notNull().default(1),
   value: numeric("value", { precision: 38, scale: 12 }).notNull(),
   currency: text("currency").notNull(),
   unit: text("unit").notNull(),
@@ -137,3 +151,65 @@ export const portfolioPreferences = pgTable("portfolio_preferences", {
   decisionHorizon: text("decision_horizon").notNull().default("short"),
   updatedAt: utcTimestamp("updated_at").notNull().defaultNow(),
 });
+
+export const artifactVersions = pgTable("artifact_versions", {
+  kind: text("kind").notNull(),
+  entityId: text("entity_id").notNull(),
+  version: integer("version").notNull(),
+  status: text("status").notNull(),
+  description: text("description").notNull(),
+  content: jsonb("content").notNull(),
+  contentHash: text("content_hash").notNull(),
+  validFrom: utcTimestamp("valid_from"),
+  validUntil: utcTimestamp("valid_until"),
+  createdAt: utcTimestamp("created_at").notNull().defaultNow(),
+}, (table) => [
+  primaryKey({ columns: [table.kind, table.entityId, table.version] }),
+  uniqueIndex("artifact_versions_content_once_idx").on(table.kind, table.entityId, table.contentHash),
+]);
+
+export const datasetObservations = pgTable("dataset_observations", {
+  datasetKind: text("dataset_kind").notNull().default("dataset"),
+  datasetId: text("dataset_id").notNull(),
+  datasetVersion: integer("dataset_version").notNull(),
+  observationId: text("observation_id").notNull().references(() => observations.id),
+  recordedAt: utcTimestamp("recorded_at").notNull().defaultNow(),
+}, (table) => [primaryKey({ columns: [table.datasetId, table.datasetVersion, table.observationId] })]);
+
+export const decisionRecords = pgTable("decision_records", {
+  id: text("id").notNull(),
+  version: integer("version").notNull(),
+  modelKind: text("model_kind"),
+  modelId: text("model_id"),
+  modelVersion: integer("model_version"),
+  methodologyKind: text("methodology_kind").notNull().default("methodology"),
+  methodologyId: text("methodology_id").notNull(),
+  methodologyVersion: integer("methodology_version").notNull(),
+  datasetKind: text("dataset_kind").notNull().default("dataset"),
+  datasetId: text("dataset_id").notNull(),
+  datasetVersion: integer("dataset_version").notNull(),
+  producedAt: utcTimestamp("produced_at").notNull(),
+  riskState: text("risk_state").notNull(),
+  inputHash: text("input_hash").notNull(),
+  output: jsonb("output").notNull(),
+  outputHash: text("output_hash").notNull(),
+  status: text("status").notNull(),
+  executionAllowed: boolean("execution_allowed").notNull().default(false),
+  createdAt: utcTimestamp("created_at").notNull().defaultNow(),
+}, (table) => [primaryKey({ columns: [table.id, table.version] })]);
+
+export const decisionAssumptions = pgTable("decision_assumptions", {
+  decisionId: text("decision_id").notNull(),
+  decisionVersion: integer("decision_version").notNull(),
+  assumptionKind: text("assumption_kind").notNull().default("assumption"),
+  assumptionId: text("assumption_id").notNull(),
+  assumptionVersion: integer("assumption_version").notNull(),
+}, (table) => [primaryKey({ columns: [table.decisionId, table.decisionVersion, table.assumptionId, table.assumptionVersion] })]);
+
+export const decisionFeatures = pgTable("decision_features", {
+  decisionId: text("decision_id").notNull(),
+  decisionVersion: integer("decision_version").notNull(),
+  featureKind: text("feature_kind").notNull().default("feature"),
+  featureId: text("feature_id").notNull(),
+  featureVersion: integer("feature_version").notNull(),
+}, (table) => [primaryKey({ columns: [table.decisionId, table.decisionVersion, table.featureId, table.featureVersion] })]);

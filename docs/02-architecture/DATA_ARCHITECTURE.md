@@ -8,10 +8,12 @@ from here.
 ## Status
 
 `STATUS: PARTIAL`. ADR 0001 selects PostgreSQL behind repository interfaces for
-Phase 1. The first append-only migration, point-in-time observation contract,
-validation/quarantine contract, manual CSV boundary, and parameterized repository
-are implemented. A live database connection, production configuration, retention,
-backup, and historical backfill remain `STATUS: TBD`.
+Phase 1. The append-only point-in-time observation contract, validation/quarantine,
+manual CSV boundary, parameterized repositories, live local database, exact source
+contract version, versioned provenance artifacts, dataset membership and
+evaluation-only decision lineage are implemented. Production configuration,
+retention, off-host backup, source reconciliation, and historical backfill remain
+`STATUS: TBD`.
 
 ## Data Flow Principle
 

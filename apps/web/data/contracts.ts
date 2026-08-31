@@ -67,6 +67,7 @@ export type ValidatedObservation = {
   payloadHash: string;
   instrumentCode: string;
   sourceId: string;
+  sourceContractVersion: number;
   value: string;
   currency: Currency;
   unit: ObservationUnit;

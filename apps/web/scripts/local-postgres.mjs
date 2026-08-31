@@ -61,8 +61,8 @@ async function verifyActivation(client) {
     has_table_privilege(current_user,c.oid,'SELECT')
     AND NOT pg_has_role(current_user,c.relowner,'MEMBER')
     AND CASE
-      WHEN c.relname IN ('instruments','sources','asha_schema_migrations')
-        THEN NOT has_table_privilege(current_user,c.oid,'INSERT')
+      WHEN c.relname IN ('instruments','sources','asha_schema_migrations','source_contract_versions','artifact_versions','dataset_observations','decision_records','decision_assumptions','decision_features')
+        THEN NOT has_table_privilege(current_user,c.oid,'INSERT,UPDATE,DELETE,TRUNCATE,TRIGGER')
       WHEN c.relname IN ('user_portfolios','portfolio_holdings','portfolio_preferences')
         THEN has_table_privilege(current_user,c.oid,'INSERT,UPDATE,DELETE')
           AND NOT has_table_privilege(current_user,c.oid,'TRUNCATE,TRIGGER')
@@ -72,13 +72,13 @@ async function verifyActivation(client) {
     ) AS safe, count(*)::integer AS tables
     FROM pg_class c JOIN pg_namespace n ON n.oid=c.relnamespace
     WHERE n.nspname='public' AND c.relkind='r' AND c.relname IN
-      ('instruments','sources','asha_schema_migrations','ingestion_batches','observations','quarantine_records','validation_results','quarantine_resolutions','user_portfolios','portfolio_holdings','portfolio_preferences')`);
-  if (grants.rows[0]?.safe !== true || grants.rows[0]?.tables !== 11) throw new Error("Runtime table privileges do not match the least-privilege contract");
+      ('instruments','sources','asha_schema_migrations','ingestion_batches','observations','quarantine_records','validation_results','quarantine_resolutions','user_portfolios','portfolio_holdings','portfolio_preferences','source_contract_versions','artifact_versions','dataset_observations','decision_records','decision_assumptions','decision_features')`);
+  if (grants.rows[0]?.safe !== true || grants.rows[0]?.tables !== 17) throw new Error("Runtime table privileges do not match the least-privilege contract");
   const portfolioPolicies = await client.query(`SELECT count(*)::integer AS tables, bool_and(c.relrowsecurity AND c.relforcerowsecurity) AS forced
     FROM pg_class c JOIN pg_namespace n ON n.oid=c.relnamespace
     WHERE n.nspname='public' AND c.relname IN ('user_portfolios','portfolio_holdings','portfolio_preferences')`);
   if (portfolioPolicies.rows[0]?.tables !== 3 || portfolioPolicies.rows[0]?.forced !== true) throw new Error("Portfolio row-level security is missing or not forced");
-  const triggerNames = ["observations_are_immutable", "quarantine_records_are_immutable", "validation_results_are_immutable", "quarantine_resolutions_are_immutable", "ingestion_batches_are_immutable", "observation_contract_before_insert", "observations_cannot_be_truncated", "batches_cannot_be_truncated", "quarantine_cannot_be_truncated", "validations_cannot_be_truncated", "resolutions_cannot_be_truncated"];
+  const triggerNames = ["observations_are_immutable", "quarantine_records_are_immutable", "validation_results_are_immutable", "quarantine_resolutions_are_immutable", "ingestion_batches_are_immutable", "observation_contract_before_insert", "observations_cannot_be_truncated", "batches_cannot_be_truncated", "quarantine_cannot_be_truncated", "validations_cannot_be_truncated", "resolutions_cannot_be_truncated", "source_contract_versions_are_immutable", "artifact_versions_are_immutable", "dataset_observations_are_immutable", "decision_records_are_immutable", "decision_assumptions_are_immutable", "decision_features_are_immutable", "source_contract_versions_cannot_be_truncated", "artifact_versions_cannot_be_truncated", "dataset_observations_cannot_be_truncated", "decision_records_cannot_be_truncated", "decision_assumptions_cannot_be_truncated", "decision_features_cannot_be_truncated"];
   const triggers = (await client.query("SELECT t.tgname FROM pg_trigger t JOIN pg_class c ON c.oid=t.tgrelid JOIN pg_namespace n ON n.oid=c.relnamespace WHERE n.nspname='public' AND NOT t.tgisinternal AND t.tgenabled IN ('O','A')")).rows.map((row) => row.tgname);
   if (triggerNames.some((name) => !triggers.includes(name))) throw new Error("Required integrity trigger missing or disabled");
   const evidence = JSON.parse(await readFile(evidenceFile, "utf8"));
@@ -144,7 +144,11 @@ async function initialize(secret) {
     const applied = await applyMigrations(owner, await readMigrations());
     await owner.query("BEGIN");
     for (const i of phase1Instruments) await owner.query("INSERT INTO instruments VALUES ($1,$2,$3,$4,$5,$6,$7,$8) ON CONFLICT (code) DO NOTHING", [i.code,i.schemaVersion,i.displayName,i.assetClass,i.canonicalCurrency,i.canonicalUnit,i.activeFrom,i.retiredAt]);
-    for (const s of phase1Sources) await owner.query("INSERT INTO sources VALUES ($1,$2,$3,$4,$5,$6) ON CONFLICT (id) DO NOTHING", [s.id,s.schemaVersion,s.displayName,s.quality,s.accessMode,s.active]);
+    for (const s of phase1Sources) {
+      await owner.query("INSERT INTO sources VALUES ($1,$2,$3,$4,$5,$6) ON CONFLICT (id) DO NOTHING", [s.id,s.schemaVersion,s.displayName,s.quality,s.accessMode,s.active]);
+      await owner.query(`INSERT INTO source_contract_versions (source_id,version,display_name,quality,access_mode,active)
+        VALUES ($1,$2,$3,$4,$5,$6) ON CONFLICT (source_id,version) DO NOTHING`, [s.id,s.schemaVersion,s.displayName,s.quality,s.accessMode,s.active]);
+    }
     await owner.query("GRANT USAGE ON SCHEMA public TO asha_runtime");
     await owner.query("GRANT SELECT ON ALL TABLES IN SCHEMA public TO asha_runtime");
     await owner.query("GRANT INSERT ON ingestion_batches, observations, quarantine_records, validation_results, quarantine_resolutions TO asha_runtime");
