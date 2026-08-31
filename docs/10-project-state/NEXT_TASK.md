@@ -4,31 +4,25 @@
 
 ## Immediate Next Step
 
-The owner now requests saving the latest development state for another system.
-Transfer instructions are in `CONTINUE_ON_ANOTHER_SYSTEM.md` at repository root.
-The checkpoint push is explicitly authorized even though local PostgreSQL tests
-remain blocked; it is not release approval. On a new machine, provision independently
-instead of applying the old machine's path, SID or ACL repair.
+The transfer to the new Windows host is complete. The correct development branch is
+active, all 60 unit/contract tests pass, and the project-owned PostgreSQL 17.11
+cluster passed all 9 real migration/integration/restore tests. The local health
+endpoint reports observation persistence as connected when the protected runtime
+environment is explicitly forwarded to the Cloudflare development environment.
 The published code checkpoint `ec3f410` passed both quality and real PostgreSQL CI
 jobs in run 33316064205. Do not repeat the resolved Node 22 repair or infer local
 Windows/personal-data readiness from the isolated Linux test database.
 
-1. Obtain the requested narrow permission to repair the fresh PostgreSQL cluster's
-   Windows ACL for the owner account. Do not reinitialize, move, delete or expose the
-   cluster to work around the access failure. See `POSTGRES_FOUNDATION_CHECKPOINT.md`.
-2. Run the reviewed local bootstrap as the Windows owner, then execute the real
-   PostgreSQL integration/restore suite. Do not enable observation commit from a
-   configuration string alone or count unexecuted tests as passed.
-3. After local gates pass, commit/push only the development branch and verify both
+1. Commit/push this transferred-host verification only on the development branch and verify both
    GitHub quality and database jobs at the new HEAD. The older Node 22 repair already
    passed run 33304773397; it does not validate the later checkpoint. Preserve
    `main`, backups, tags, credentials and existing personal browser data.
-4. Add secure user-scoped server-side holding/transaction/valuation persistence.
+2. Add secure user-scoped server-side holding/transaction/valuation persistence.
    Preserve browser data during explicit migration, keep sandbox separate, and test
    refresh plus two independent browser sessions under the same authenticated scope.
-5. Complete observation provenance/version fields, source reconciliation, and the
+3. Complete observation provenance/version fields, source reconciliation, and the
    Source, Dataset, Assumption, Feature, Model, Methodology, and Decision registries.
-6. After the owner revokes and replaces the exposed Navasan key, implement the
+4. After the owner revokes and replaces the exposed Navasan key, implement the
    documented historical endpoints and durable quota accounting. Backfill only
    licensed data within quota; acquire an independent Iranian cross-check if needed.
    Never silently fill missing history or pass stale/invalid data into real analysis.

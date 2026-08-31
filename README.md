@@ -11,16 +11,18 @@ adapters, and initial database contracts exist. PostgreSQL is not operational,
 portfolios remain browser-session-local, and the real financial engine is not
 implemented. This is not a production financial-advice system.
 
-The active canonical checkout is
-`C:\Users\Saraytell\.codex\visualizations\2026\08\17\01a01094-baba-78a0-aca5-29b34bd4235d\gold-silver-phase1`.
-Its private origin is `tparkhondeh/gold-silver-ai`. The Phase 1 branch is published
+The active canonical checkout is the current repository working tree; historical
+absolute paths from the previous Windows host are not authoritative.
+Its origin is `tparkhondeh/gold-silver-ai`; the repository was made public for this
+transfer. The Phase 1 branch is published
 and remote HEAD/upstream/main integrity were verified. GitHub quality run
 [33304773397](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33304773397)
-passed for the runtime-command repair. The official PostgreSQL 17.11 installer is
-now complete, signature-verified and extracted. Local startup is blocked by the
-new cluster folder belonging to the temporary sandbox account rather than the
-Windows owner; permission repair requires explicit approval. No incomplete binary
-was run. Current database work and its verification boundary are in
+passed for the runtime-command repair. On the transferred Windows host, the official
+PostgreSQL 17.11 runtime was signature/hash verified, extracted into the ignored
+project cache, initialized as the interactive owner, and passed the real
+migration/integration/restore suite. The local health endpoint reports observation
+persistence as connected when the protected runtime environment is explicitly
+loaded. Current database work and its verification boundary are in
 [`POSTGRES_FOUNDATION_CHECKPOINT.md`](docs/10-project-state/POSTGRES_FOUNDATION_CHECKPOINT.md).
 For another computer, follow
 [`CONTINUE_ON_ANOTHER_SYSTEM.md`](CONTINUE_ON_ANOTHER_SYSTEM.md). This development

@@ -17,14 +17,14 @@ the code checkpoint `ec3f410` subsequently passed GitHub quality and real Postgr
 integration/restore in run 33316064205. This handoff is
 not a phase acceptance or authorization to repair the old host's ACL. Follow
 [`CONTINUE_ON_ANOTHER_SYSTEM.md`](../../CONTINUE_ON_ANOTHER_SYSTEM.md).
-The official PostgreSQL 17.11 installer is now verified and extracted; local startup
-is blocked by a sandbox-versus-owner Windows ACL mismatch on the new project-owned
-cluster. Permission repair was requested, not bypassed. See
-[`POSTGRES_FOUNDATION_CHECKPOINT.md`](POSTGRES_FOUNDATION_CHECKPOINT.md) for current
-tests, implemented controls, and unverified owner-host integration work. No Phase 2 branch has
-been created.
-PostgreSQL integration, server-side portfolios, historical
-backfill, and the real baseline remain pending. See
+On the transferred Windows host, the official PostgreSQL 17.11 runtime was verified,
+the project-owned cluster was initialized as the interactive Windows owner, and the
+real local integration/restore suite passed (9/9). The protected runtime environment
+passed activation checks; with explicit process-environment forwarding,
+`/api/health` reports observation persistence as connected. See
+[`POSTGRES_FOUNDATION_CHECKPOINT.md`](POSTGRES_FOUNDATION_CHECKPOINT.md). No Phase 2
+branch has been created. Server-side authenticated portfolios, historical backfill,
+and the real baseline remain pending. See
 [`PHASE_1_STABILIZATION_AUDIT.md`](../../PHASE_1_STABILIZATION_AUDIT.md).
 
 ## Snapshot
@@ -165,12 +165,13 @@ backfill, and the real baseline remain pending. See
   validated online feed. Duplicate instruments are selected by explicit status,
   quality, source-priority, and observation-time rules, so a valid keyed Navasan rate
   outranks a valid manual Rahavard duplicate without depending on insertion order.
-- **Repository:** private GitHub authentication, Phase 1 branch publication, and
-  upstream tracking are verified. The initial remote CI failure is resolved at the
+- **Repository:** Phase 1 branch publication and upstream tracking are verified. The
+  repository was made public for transfer; access policy should be reviewed before
+  licensed data, operational configuration, or sensitive functionality is added.
+  The initial remote CI failure is resolved at the
   published repair HEAD; current database work is a development handoff, not a release. The
-  active canonical directory is the `gold-silver-phase1` linked worktree under the
-  Codex visualization directory named in the root README. Its development history
-  and running UI supersede the older OneDrive copies; both older copies are preserved.
+  active canonical directory is the current checkout on this Windows host. Its
+  development history supersedes older copies, which remain preserved.
   The published branch tracks `origin/codex/phase-1-data-ui`; `main` is not modified.
 - **Decision record:** Phase 1 scope, wealth UI scope, live-source boundary, and the
   temporary Rahavard manual-snapshot boundary are in ADR 0001 through ADR 0004.
@@ -184,12 +185,14 @@ backfill, and the real baseline remain pending. See
   reports accepted, duplicate, and quarantined rows without returning raw payloads;
   the revalidation-and-commit path is wired to the transactional repository behind
   an explicit enable flag and loopback-only PostgreSQL URL. Runtime PostgreSQL,
-  applied migration, integration evidence, and persistence history are not connected
-  yet, so the current host still fails closed. The development checkpoint adds migration
+  applied migrations and current-source integration evidence are connected on the
+  transferred host; no real market observations have been committed yet. The
+  development checkpoint adds migration
   checksums/rollback, database probes, immutable batch/truncate protection, correction
   constraints, exact decimal limits and server-controlled collection time; real
-  PostgreSQL integration and fixture restore passed in isolated GitHub CI, while
-  owner-host integration remains blocked by the ACL issue above.
+  PostgreSQL integration and fixture restore passed both isolated GitHub CI and the
+  transferred Windows owner host. Local observation persistence is connected; this
+  does not implement authenticated portfolio persistence.
   In the fresh-session laboratory, a fixed
   five-row CSV sample exercises preview plus a memory-only commit result (three
   accepted, one duplicate, one quarantined) without reaching the server or implying
