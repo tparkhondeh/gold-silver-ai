@@ -76,6 +76,7 @@ subsequent changes still require their own push and CI verification.
   and visibly keeps real execution locked without consuming provider quota.
 - Passed typecheck, lint, production build, 87 unit tests and 14 real PostgreSQL
   migration/isolation/concurrency/backup-restore tests.
+- Checkpoint `8a21a97` passed both GitHub quality jobs in run 33421273488.
 
 ### Private publication and runtime-command repair — ۱۴۰۵/۰۶/۰۸
 

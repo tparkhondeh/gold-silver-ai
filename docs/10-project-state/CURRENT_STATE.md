@@ -57,6 +57,8 @@ symbols and exact request counts without network or storage, while execution rem
 locked. Local verification now covers 87 unit and 14 real PostgreSQL tests.
 Code checkpoint `b0bb80a` passed both GitHub quality and real PostgreSQL jobs in
 run 33417744818.
+Backfill-readiness checkpoint `8a21a97` passed both GitHub quality and real
+PostgreSQL jobs in run 33421273488.
 
 ## Snapshot
 

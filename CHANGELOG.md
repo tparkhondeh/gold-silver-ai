@@ -26,6 +26,8 @@ state is recorded in `docs/10-project-state/CURRENT_STATE.md`.
   migration/concurrency/restore tests pass.
 - Code checkpoint `b0bb80a` passed both GitHub quality and real PostgreSQL jobs in
   run 33417744818.
+- Backfill-readiness checkpoint `8a21a97` passed both GitHub jobs in run
+  33421273488.
 
 ### Identity proposal and evaluation ledger foundation — ۱۴۰۵/۰۶/۰۹
 
