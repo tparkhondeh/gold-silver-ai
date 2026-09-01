@@ -333,6 +333,12 @@ licensed real data, validation, financial methodology and production operations.
   readiness fails if the lock is missing or authorized during Phase 1.
   History-lock checkpoint `12728ee` passed both GitHub jobs in run 33500322761;
   remote `main` remained unchanged.
+  Monitoring checkpoint `58c3325` passed both GitHub jobs in run 33500854728.
+  The local Persian history planner now consumes the same strict health contract:
+  only `navasan-history: locked` produces a safe label; missing, malformed or
+  authorized state produces a visible stop warning, and the execution button stays
+  disabled. Local build, lint, typecheck, 129 unit tests and 16 real PostgreSQL tests
+  pass with 93.78% line, 79.51% branch and 94.67% function coverage.
   In the fresh-session laboratory, a fixed
   five-row CSV sample exercises preview plus a memory-only commit result (three
   accepted, one duplicate, one quarantined) without reaching the server or implying

@@ -18,10 +18,17 @@ state is recorded in `docs/10-project-state/CURRENT_STATE.md`.
 - Health now reports Navasan history separately as `locked`. The strict local
   readiness check fails if that state is missing or becomes authorized during the
   Phase 1 local-only stage.
-- Local build, lint, typecheck, 127 unit tests and 16 real PostgreSQL tests pass with
-  93.79% line, 79.30% branch and 94.64% function coverage.
+- The owner-local history planner now reads that monitored state instead of showing
+  a fixed safety label. It displays `قفل فنی فعال` only for the exact locked contract;
+  missing, malformed or authorized states produce `توقف ایمنی`, while the execution
+  button remains disabled in every state.
+- Local build, lint, typecheck, 129 unit tests and 16 real PostgreSQL tests pass with
+  93.78% line, 79.51% branch and 94.67% function coverage.
 - Working-branch checkpoint `12728ee` passed both GitHub Actions jobs in run
   [33500322761](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33500322761);
+  `main` remained unchanged.
+- History-lock monitoring checkpoint `58c3325` passed both GitHub Actions jobs in run
+  [33500854728](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33500854728);
   `main` remained unchanged.
 
 ### Dependency security re-audit — ۱۴۰۵/۰۶/۱۰

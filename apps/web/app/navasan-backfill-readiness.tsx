@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useState, useSyncExternalStore } from "react";
+import { FormEvent, useEffect, useState, useSyncExternalStore } from "react";
 
 import { currentJalaliParts } from "./jalali-calendar";
 import {
@@ -9,6 +9,7 @@ import {
   type NavasanBackfillPlan,
 } from "./navasan-backfill-plan";
 import type { NavasanProviderCode } from "./navasan-adapter";
+import { parseNavasanHistoryLockHealth, type NavasanHistoryLockView } from "./navasan-history-view";
 
 const LOOPBACK_HOSTS = new Set(["localhost", "127.0.0.1", "[::1]", "::1"]);
 
@@ -37,7 +38,27 @@ export function NavasanBackfillReadiness() {
   );
   const [plan, setPlan] = useState<NavasanBackfillPlan | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [historyLock, setHistoryLock] = useState<NavasanHistoryLockView>({
+    state: "loading",
+    message: "در حال بررسی قفل فنی تاریخچه…",
+  });
   const isLoopback = useSyncExternalStore(subscribeToLocation, getLoopbackSnapshot, getServerLoopbackSnapshot);
+
+  useEffect(() => {
+    if (isLoopback !== true) return;
+    let active = true;
+    void fetch("/api/health", { cache: "no-store" })
+      .then(async (response) => {
+        const payload = await response.json() as unknown;
+        if (active) setHistoryLock(response.ok
+          ? parseNavasanHistoryLockHealth(payload)
+          : { state: "warning", message: "بررسی قفل تاریخچه ناموفق بود؛ اجرای واقعی متوقف می‌ماند." });
+      })
+      .catch(() => {
+        if (active) setHistoryLock({ state: "warning", message: "ارتباط با پایش محلی برقرار نشد؛ اجرای واقعی متوقف می‌ماند." });
+      });
+    return () => { active = false; };
+  }, [isLoopback]);
 
   function toggleInstrument(providerCode: NavasanProviderCode) {
     setSelected((current) => current.includes(providerCode)
@@ -78,9 +99,11 @@ export function NavasanBackfillReadiness() {
         <div className="section-title">
           <span>HISTORY READINESS</span>
           <h2 id="backfill-readiness-title">برنامه‌ریزی امن تاریخچهٔ نوسان</h2>
-          <p>قبل از مصرف سهمیه یا ورود داده، بازه و تعداد تماس‌ها را ببین. این بخش عمداً امکان دریافت واقعی ندارد.</p>
+          <p>{historyLock.message}</p>
         </div>
-        <span className="status-chip safe">صفر درخواست واقعی</span>
+        <span className={`status-chip ${historyLock.state === "locked" ? "safe" : "warning"}`}>
+          {historyLock.state === "loading" ? "در حال بررسی" : historyLock.state === "locked" ? "قفل فنی فعال" : "توقف ایمنی"}
+        </span>
       </div>
 
       <form className="operator-form" onSubmit={createPlan}>

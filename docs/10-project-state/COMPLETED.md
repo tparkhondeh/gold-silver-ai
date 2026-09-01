@@ -73,10 +73,16 @@ subsequent changes still require their own push and CI verification.
 - `/api/health` exposes the history boundary separately, and the no-provider local
   readiness command now requires its exact `locked` state. An accidental enablement
   therefore blocks Phase 1 readiness instead of remaining silent.
-- Local typecheck, lint, build, 127 unit tests and 16 real PostgreSQL tests pass with
-  93.79% line, 79.30% branch and 94.64% function coverage.
+- The local Persian history planner reads the same health contract. It shows a safe
+  lock label only for the exact `locked` state and otherwise shows a fail-closed
+  warning; its execution control remains disabled in every state.
+- Local typecheck, lint, build, 129 unit tests and 16 real PostgreSQL tests pass with
+  93.78% line, 79.51% branch and 94.67% function coverage.
 - Working-branch checkpoint `12728ee` passed both GitHub Actions jobs in run
   [33500322761](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33500322761);
+  remote `main` remained unchanged.
+- Monitoring checkpoint `58c3325` passed both GitHub Actions jobs in run
+  [33500854728](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33500854728);
   remote `main` remained unchanged.
 
 ### Dependency security re-audit — ۱۴۰۵/۰۶/۱۰

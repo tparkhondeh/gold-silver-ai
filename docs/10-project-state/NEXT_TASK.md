@@ -98,6 +98,10 @@ financial engine remain separate gates.
 19. **HISTORY LOCK MONITORING COMPLETE:** `/api/health` reports Navasan history as a
     separate engine, and the strict no-provider local-readiness command requires the
     exact `locked` state throughout Phase 1. Accidental authorization fails closed.
+20. **OWNER-LOCAL LOCK VISIBILITY COMPLETE:** the Persian history planner reads the
+    monitored health contract and labels only the exact `locked` state as safe.
+    Missing, malformed or accidentally authorized states show a stop warning; real
+    execution remains disabled and the check makes no provider request.
 
 All implementation available from published provider contracts is complete; real
 provider history execution remains paused at item 6 for Tier-A licensing/cost decisions.
