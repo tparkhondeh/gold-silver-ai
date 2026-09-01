@@ -7,7 +7,7 @@
 Migrations 0003–0011 now cover the owner snapshot, immutable provenance,
 exact point-in-time dataset/decision lineage, source-reconciliation records and
 mandatory correction reasons, plus the read-only transaction/evaluation-valuation
-ledger, provider quota and latest operational status. Local build, 127 unit tests,
+ledger, provider quota and latest operational status. Local build, 129 unit tests,
 16 real PostgreSQL tests,
 restore, activation, and health checks pass. Production account authentication,
 empirical divergence thresholds, historical backfill, and the real

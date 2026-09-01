@@ -84,6 +84,9 @@ subsequent changes still require their own push and CI verification.
 - Monitoring checkpoint `58c3325` passed both GitHub Actions jobs in run
   [33500854728](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33500854728);
   remote `main` remained unchanged.
+- Owner-local visibility checkpoint `2908564` passed both GitHub Actions jobs in run
+  [33501750783](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33501750783);
+  remote `main` remained unchanged.
 
 ### Dependency security re-audit — ۱۴۰۵/۰۶/۱۰
 

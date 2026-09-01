@@ -30,6 +30,9 @@ state is recorded in `docs/10-project-state/CURRENT_STATE.md`.
 - History-lock monitoring checkpoint `58c3325` passed both GitHub Actions jobs in run
   [33500854728](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33500854728);
   `main` remained unchanged.
+- Owner-local lock-visibility checkpoint `2908564` passed both GitHub Actions jobs in
+  run [33501750783](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33501750783);
+  `main` remained unchanged.
 
 ### Dependency security re-audit — ۱۴۰۵/۰۶/۱۰
 

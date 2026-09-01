@@ -311,8 +311,8 @@ licensed real data, validation, financial methodology and production operations.
   plain-language reason on every correction. Migrations 0007–0011 add exact transaction
   and evaluation-only valuation lineage, immutable provider-call reservations and a
   bounded latest provider-runtime status and a pre-quota dual authorization lock for
-  real Navasan history; 127 unit and 16 real PostgreSQL tests pass locally. Source
-  coverage is 93.79% lines, 79.30% branches and 94.64% functions.
+  real Navasan history; 129 unit and 16 real PostgreSQL tests pass locally. Source
+  coverage is 93.78% lines, 79.51% branches and 94.67% functions.
   GoldAPI global-history checkpoint `eab4b16` passed GitHub quality/audit and real
   PostgreSQL jobs in run 33489418166; remote `main` remained unchanged.
   Navasan free-plan safety checkpoint `6b64e16` also passed both GitHub jobs in run
@@ -339,6 +339,8 @@ licensed real data, validation, financial methodology and production operations.
   authorized state produces a visible stop warning, and the execution button stays
   disabled. Local build, lint, typecheck, 129 unit tests and 16 real PostgreSQL tests
   pass with 93.78% line, 79.51% branch and 94.67% function coverage.
+  Owner-local visibility checkpoint `2908564` passed both GitHub jobs in run
+  33501750783; remote `main` remained unchanged.
   In the fresh-session laboratory, a fixed
   five-row CSV sample exercises preview plus a memory-only commit result (three
   accepted, one duplicate, one quarantined) without reaching the server or implying
