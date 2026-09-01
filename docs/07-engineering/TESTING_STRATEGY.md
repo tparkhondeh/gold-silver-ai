@@ -69,7 +69,10 @@ that a cutoff sees only then-known observations. Artifact/replay tests also reje
 duplicate JSON keys, invalid UTF-8, non-canonical or oversized documents, a resealed
 but false result, and a result belonging to another model. Twenty laboratory tests
 pass. These tests establish mechanics and a safety boundary; they are not market
-validation or evidence for a real methodology.
+validation or evidence for a real methodology. Five additional control tests verify
+hand-computed cash/1/N cumulative change and drawdown, delayed-observation carry
+forward, exact reference identity, invalid ranges, missing cash, and rejection of a
+resealed false control result. Twenty-five laboratory tests now pass.
 
 ## Related Documents
 

@@ -32,6 +32,13 @@ alternate formatting, oversized documents and contract violations. Exact replay
 recomputes the no-decision result and rejects a resealed false result or result from a
 different model. Twenty laboratory tests pass locally; this is mechanics evidence,
 not a selected methodology.
+Canonical artifact checkpoint `10de1d7` passed all three GitHub jobs in run
+33509410256. Constant synthetic-cash and period-rebalanced synthetic 1/N comparison
+controls now use only then-known levels, count carried-forward delays, and expose
+deterministic cumulative-change and maximum-drawdown metrics. The 1–110 reference
+result is pinned to an exact identity; twenty-five laboratory tests pass locally.
+Every output remains `no_decision`, financial-use-disabled, execution-disabled and
+methodology-unapproved.
 
 The owner authorized staged Data Foundation and deterministic-baseline development,
 with each stage dependent on the previous quality gate. Private GitHub authentication

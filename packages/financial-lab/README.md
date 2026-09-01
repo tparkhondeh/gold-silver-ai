@@ -27,3 +27,13 @@ The decoder rejects duplicate keys, invalid Unicode, non-canonical formatting,
 oversized documents and contract violations. `replay_no_decision_artifacts()` then
 recomputes the stored result and accepts it only when every byte-level input identity
 and every output field agree exactly.
+
+`evaluate_comparison_controls()` implements two laboratory rulers: the constant
+`SYNTH_CASH` path and a 1/N path rebalanced at every ordinal period across every
+synthetic fixture instrument. At each period it uses only the highest-period
+observation whose `periodIndex` and `availableAtIndex` are both then known; a delayed
+row is carried forward visibly and counted. It compounds arithmetic-mean period
+returns under the registered synthetic full-liquidity/zero-cost assumptions, computes
+maximum peak-to-trough drawdown, and rounds only the final percentages to eight decimal
+places with half-even rounding. These are comparison controls, not an approved
+allocation methodology or recommendation.
