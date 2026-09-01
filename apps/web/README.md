@@ -24,6 +24,7 @@ npm run lint
 npm test
 npm run test:db
 npm run db:backup
+npm run ops:check-local
 ```
 
 `npm test` builds the application, runs the unit/contract/API suites, and enforces
@@ -32,6 +33,9 @@ source-only coverage floors. `npm run test:db` requires the explicitly disposabl
 portfolio data. `npm run db:backup` creates an owner-only local backup and proves it
 by restoring it into a temporary database before reporting success; it never replaces
 the main database.
+`npm run ops:check-local` contacts only the exact local health endpoint on port 4174;
+it fails if persistence is unavailable or the financial-use lock is missing. It does
+not contact a market-data provider.
 
 ## Safety boundaries
 

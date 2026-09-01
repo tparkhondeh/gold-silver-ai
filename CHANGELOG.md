@@ -7,6 +7,16 @@ state is recorded in `docs/10-project-state/CURRENT_STATE.md`.
 
 ## [Unreleased]
 
+### Fail-closed local readiness — ۱۴۰۵/۰۶/۱۰
+
+- Added `npm run ops:check-local`, restricted to the exact loopback health endpoint
+  on port 4174; it cannot contact a provider or arbitrary URL.
+- The command requires all local database-backed Phase 1 surfaces and treats the
+  financial-use lock as mandatory. It exits with failure for a broken contract.
+- The running local application passed. Typecheck, lint, production build, 100 unit
+  tests and 14 real PostgreSQL tests pass locally; total source coverage is 93.68%
+  lines, 75.64% branches and 93.92% functions.
+
 ### Verified local backup — ۱۴۰۵/۰۶/۰۹
 
 - Added `npm run db:backup` for unique PostgreSQL custom-format backups in the

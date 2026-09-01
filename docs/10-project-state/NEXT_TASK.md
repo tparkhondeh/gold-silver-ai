@@ -7,7 +7,7 @@
 Migrations 0003–0009 now cover the owner snapshot, immutable provenance,
 exact point-in-time dataset/decision lineage, source-reconciliation records and
 mandatory correction reasons, plus the read-only transaction/evaluation-valuation
-ledger foundation. Local build, 96 unit tests, 14 real PostgreSQL tests,
+ledger foundation. Local build, 100 unit tests, 14 real PostgreSQL tests,
 restore, activation, and health checks pass. Production account authentication,
 empirical divergence thresholds, historical backfill, and the real
 financial engine remain separate gates.
@@ -55,6 +55,9 @@ financial engine remain separate gates.
    migration journal and all 24 governed table counts, then removes the temporary
    database. Two real backups passed. Encryption, offsite storage, scheduling,
    retention, and production RPO/RTO remain deferred to the production storage gate.
+10. **LOCAL READINESS CHECK COMPLETE:** the no-provider command checks only the exact
+    loopback health endpoint, requires every database-backed Phase 1 surface, and
+    fails unless real financial use remains explicitly blocked.
 
 The API-dependent implementation slice is complete and remains paused at item 6 for
 a Tier-A owner decision. The owner explicitly authorized continued independent local

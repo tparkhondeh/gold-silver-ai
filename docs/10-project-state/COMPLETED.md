@@ -63,6 +63,15 @@ requirements. Full details: `PHASE_0_AUDIT.md` § 15.
 `main`. The stabilization commits are now confirmed on the private remote;
 subsequent changes still require their own push and CI verification.
 
+### Fail-closed local readiness command — ۱۴۰۵/۰۶/۱۰
+
+- Added a no-provider command that accepts only the exact loopback health endpoint
+  on port 4174 and reports a simple local-evaluation result.
+- It requires web, persistence, quota, provenance and ledger readiness, while also
+  requiring scenario/demo and financial-decision locks to remain in place.
+- The running application passed the command. Typecheck, lint, production build,
+  100 unit/contract/API tests and 14 real PostgreSQL tests pass locally.
+
 ### Verified owner-only local backup — ۱۴۰۵/۰۶/۰۹
 
 - Added a manual command that writes a unique custom-format backup only under the

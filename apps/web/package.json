@@ -18,6 +18,7 @@
     "db:generate": "drizzle-kit generate",
     "db:migrate": "node --experimental-strip-types scripts/migrate-postgres.mjs",
     "db:backup": "node --experimental-strip-types scripts/local-postgres.mjs backup",
+    "ops:check-local": "node --experimental-strip-types scripts/check-local-readiness.mjs",
     "test:db": "node --experimental-strip-types --test tests/integration/*.test.mjs"
   },
   "dependencies": {

@@ -35,6 +35,11 @@ coverage is below 80%. These are regression floors, not a reason to omit risk-ba
 tests: critical financial, persistence, security, and fail-closed paths still require
 direct tests even when the aggregate percentages pass.
 
+The local operations check is also contract-tested: it accepts only the exact
+loopback health endpoint on port 4174, requires every database-backed Phase 1 surface,
+and fails if the explicit financial-use lock is absent. Provider endpoints are never
+part of this check.
+
 `npm test` builds first, then delegates to `npm run test:coverage`. Both the coverage
 command and the faster `npm run test:unit` command use
 `node --experimental-strip-types --test tests/*.test.mjs` so direct `.ts` imports

@@ -15,22 +15,27 @@ history entries) must be identified, not just the code fixed going forward — t
 follows from the decision-history/audit-trail requirement in
 `docs/06-ai/DECISION_ENGINE.md`.
 
-## Response Steps (principle-level; concrete tooling `STATUS: TBD`)
+## Response Steps
 
-1. Identify the last known-good state on `main`.
-2. Contain: stop the incorrect behavior from continuing to affect new output.
-3. Assess blast radius: what analysis/decisions were affected, and when it started.
-4. Fix forward (preferred) or revert the offending change — never force-push over
+1. Run `npm run ops:check-local` from `apps/web` and preserve its non-secret result.
+   A failed command is evidence of an incident candidate, not permission to bypass a
+   gate.
+2. Identify the last known-good commit and GitHub Actions run. Do not assume `main`
+   is current while work remains on a development branch.
+3. Contain: stop the incorrect behavior from continuing to affect new output.
+4. Assess blast radius: what analysis/decisions were affected, and when it started.
+5. Fix forward (preferred) or revert the offending change — never force-push over
    `main` history (`docs/00-governance/STABILITY_POLICY.md` § 2).
-5. Communicate to the owner in plain language what happened, what was affected,
+6. Communicate to the owner in plain language what happened, what was affected,
    and what changed (`docs/00-governance/PROJECT_RULES.md` § 2).
-6. Record the incident and the fix; if it reveals a missing quality gate or
+7. Record the incident and the fix; if it reveals a missing quality gate or
    process gap, update `docs/00-governance/QUALITY_GATES.md` accordingly.
 
 ## Status
 
-`STATUS: TBD` for tooling (alerting, rollback mechanics) — depends on the
-deployment approach (`DEPLOYMENT.md`).
+`STATUS: PARTIAL`. A tested local readiness/containment signal exists. Alerting,
+production rollback mechanics, incident evidence storage and deployment-specific
+commands remain `STATUS: TBD` until the deployment approach is approved.
 
 ## Related Documents
 

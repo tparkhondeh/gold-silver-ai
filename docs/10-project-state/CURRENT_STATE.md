@@ -54,7 +54,7 @@ credential, durable quota health, eight-quote live normalization, historical end
 contracts and backup/restore path pass locally; no historical backfill was requested.
 The local Persian readiness planner validates proposed Jalali ranges, approved
 symbols and exact request counts without network or storage, while execution remains
-locked. Local verification now covers 96 unit and 14 real PostgreSQL tests.
+locked. Local verification now covers 100 unit and 14 real PostgreSQL tests.
 Code checkpoint `b0bb80a` passed both GitHub quality and real PostgreSQL jobs in
 run 33417744818.
 Backfill-readiness checkpoint `8a21a97` passed both GitHub quality and real
@@ -86,6 +86,9 @@ temporary database, compares all 24 governed table counts and the migration jour
 then removes the temporary database. Two real local backups passed this flow. It is
 not encrypted or offsite, so production backup policy remains open. Backup checkpoint
 `5fd67d0` passed both GitHub jobs in run 33478298802; remote `main` remained unchanged.
+The local operations command now checks only `localhost:4174/api/health`, requires all
+database-backed Phase 1 surfaces, and fails unless real financial use remains locked.
+The real running application passed this check without a provider request.
 
 ## Snapshot
 
@@ -275,7 +278,7 @@ not encrypted or offsite, so production backup policy remains open. Backup check
   Migration 0006 adds immutable source-reconciliation records and requires a bounded
   plain-language reason on every correction. Migrations 0007–0010 add exact transaction and
   evaluation-only valuation lineage plus immutable provider-call reservations;
-  96 unit and 14 real PostgreSQL tests pass locally.
+  100 unit and 14 real PostgreSQL tests pass locally.
   In the fresh-session laboratory, a fixed
   five-row CSV sample exercises preview plus a memory-only commit result (three
   accepted, one duplicate, one quarantined) without reaching the server or implying

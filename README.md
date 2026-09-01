@@ -58,6 +58,10 @@ The project-owned local database can be backed up with `npm run db:backup` from
 all governed tables before reporting success. Backups are Git-ignored and owner-only,
 but are not yet encrypted or offsite.
 
+While the local application is running on port 4174, `npm run ops:check-local`
+performs a no-provider readiness check. It confirms the database-backed Phase 1
+surfaces are ready and that real financial use is still safely blocked.
+
 ## Start here
 
 - **New to the project?** Read `docs/01-product/PRODUCT_VISION.md`.
