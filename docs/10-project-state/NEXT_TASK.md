@@ -112,6 +112,10 @@ financial engine remain separate gates.
     progression and approved an isolated synthetic-only laboratory. This does not
     approve a financial methodology, real data, paid API, recommendation, execution,
     `main` merge, or production use; see ADR 0009.
+22. **SYNTHETIC CONTRACT FOUNDATION COMPLETE:** the isolated Python 3.12 package has
+    exact v1 JSON contracts, canonical fingerprints, synthetic namespaces,
+    point-in-time availability and permanent no-use/no-execution locks. Its first six
+    tests and an independent CI job require no third-party runtime dependency.
 
 All implementation available from published provider contracts is complete; real
 provider history execution remains paused at item 6 for Tier-A licensing/cost decisions.

@@ -12,6 +12,12 @@ non-operational financial laboratory. ADR 0009 records the exact boundary. Branc
 `codex/phase-2-decision-engine` was created from verified Phase 1 HEAD `0f90210`;
 neither acceptance nor branching authorizes a merge to `main`, real data, a paid API,
 financial recommendations, or execution.
+The isolated `packages/financial-lab` Python 3.12 package now defines strict v1 JSON
+contracts for synthetic datasets and evaluation results. Canonical SHA-256 identities
+make exact replay/tampering visible; real namespaces, real units, premature
+availability, approved-method claims, financial use and execution fail closed. Six
+standard-library tests pass, and the project workflow now has a separate laboratory
+job without adding a Python runtime dependency.
 
 The owner authorized staged Data Foundation and deterministic-baseline development,
 with each stage dependent on the previous quality gate. Private GitHub authentication

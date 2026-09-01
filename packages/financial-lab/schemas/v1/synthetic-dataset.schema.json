@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://goldsilver.wealthos.ir/contracts/asha.synthetic.dataset.v1.schema.json",
+  "title": "Asha synthetic-only laboratory dataset v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "datasetId",
+    "datasetVersion",
+    "datasetKind",
+    "purpose",
+    "financialUseAllowed",
+    "instruments",
+    "observations",
+    "assumptionReferences",
+    "contentFingerprint"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "asha.synthetic.dataset.v1" },
+    "datasetId": { "type": "string", "pattern": "^ASHA_SYNTHETIC_[A-Z0-9_]{3,64}_V[1-9][0-9]*$" },
+    "datasetVersion": { "type": "integer", "minimum": 1 },
+    "datasetKind": { "const": "synthetic_fixture" },
+    "purpose": {
+      "enum": ["contract_test", "benchmark_evaluation", "walk_forward_mechanics_test"]
+    },
+    "financialUseAllowed": { "const": false },
+    "instruments": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 64,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["instrumentId", "displayName", "unit"],
+        "properties": {
+          "instrumentId": { "type": "string", "pattern": "^SYNTH_[A-Z0-9_]{2,64}$" },
+          "displayName": { "type": "string", "pattern": "^\\[SYNTHETIC\\] " },
+          "unit": { "const": "synthetic_index_point" }
+        }
+      }
+    },
+    "observations": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 100000,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["observationId", "instrumentId", "periodIndex", "availableAtIndex", "value"],
+        "properties": {
+          "observationId": { "type": "string", "pattern": "^SYNTH_OBS_[A-Z0-9_]{3,80}$" },
+          "instrumentId": { "type": "string", "pattern": "^SYNTH_[A-Z0-9_]{2,64}$" },
+          "periodIndex": { "type": "integer", "minimum": 0 },
+          "availableAtIndex": { "type": "integer", "minimum": 0 },
+          "value": { "type": "string", "pattern": "^(0|[1-9][0-9]{0,11})(\\.[0-9]{1,8})?$" }
+        }
+      }
+    },
+    "assumptionReferences": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["entityId", "version", "status"],
+        "properties": {
+          "entityId": { "type": "string", "pattern": "^ASHA_SYNTHETIC_ASSUMPTION_[A-Z0-9_]{2,64}$" },
+          "version": { "type": "integer", "minimum": 1 },
+          "status": { "const": "synthetic_only" }
+        }
+      }
+    },
+    "contentFingerprint": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+  }
+}

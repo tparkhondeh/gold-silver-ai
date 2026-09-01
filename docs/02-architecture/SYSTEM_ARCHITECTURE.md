@@ -7,11 +7,17 @@ specifics (`docs/05-data/`), AI behavior (`docs/06-ai/`), or market/portfolio lo
 
 ## Status
 
-`STATUS: ACTIVE FOR PHASE 1`. ADR 0001 establishes a TypeScript/React,
+`STATUS: ACTIVE FOR PHASE 2`. ADR 0001 establishes a TypeScript/React,
 server-rendered web boundary and PostgreSQL behind repository interfaces for the
 approved Phase 1 vertical slice. Deployment topology beyond the local web application
 remains `STATUS: TBD`; the accepted stack decision is not permission to deploy or
 merge to `main`.
+
+ADR 0009 adds `packages/financial-lab` as an isolated Python 3.12 evaluation package
+in the Decision Engines layer. It has no web-runtime or provider dependency and its
+contract permanently rejects real data, real financial use, and execution. Python is
+therefore a laboratory boundary, not a replacement for the accepted Phase 1 web/data
+stack or permission to choose a real financial methodology.
 
 ## Layered Shape (Target)
 

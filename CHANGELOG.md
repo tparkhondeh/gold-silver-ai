@@ -15,6 +15,11 @@ state is recorded in `docs/10-project-state/CURRENT_STATE.md`.
   merge or change to `main` was made.
 - Real data, paid APIs, financial recommendations, methodology promotion, production
   registry writes, and execution remain explicitly prohibited.
+- Added the isolated Python 3.12 laboratory with strict v1 JSON dataset/result
+  contracts, canonical replay fingerprints, machine-enforced synthetic namespaces,
+  point-in-time availability checks, and permanent no-use/no-execution output state.
+- Added six standard-library contract/tamper tests and a separate GitHub Actions job;
+  the initial laboratory has no third-party Python runtime dependency.
 
 ### Fail-closed Navasan history authorization — ۱۴۰۵/۰۶/۱۰
 

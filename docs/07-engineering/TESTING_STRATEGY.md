@@ -22,7 +22,7 @@
 
 ## Status
 
-`STATUS: ACTIVE FOR PHASE 1`. Phase 1 uses Node's built-in test runner for
+`STATUS: ACTIVE FOR PHASE 2`. Phase 1 uses Node's built-in test runner for
 deterministic unit, contract, repository, rendered-output, and API tests; ESLint and
 the Vinext build are separate gates. The GitHub Actions workflow runs these gates on
 the development branch; its first run identified a runtime-command mismatch.
@@ -57,6 +57,13 @@ hand-reconstructable weighted score arithmetic, ordering of best/worst scenarios
 and tangible technical/bubble/portfolio lens output. These tests validate the sandbox
 calculation path only; they are not a substitute for backtesting or walk-forward
 validation of a real Iranian-market methodology.
+
+The isolated Phase 2 Python laboratory uses Python 3.12's standard `unittest` runner
+in a separate GitHub Actions job. Its first contract suite verifies canonical replay
+fingerprints, exact schema keys, synthetic namespaces, point-in-time availability,
+permanent no-financial-use/no-execution flags, unapproved methodology state, and
+tamper rejection. These tests establish a laboratory boundary; they are not market
+validation or evidence for a real methodology.
 
 ## Related Documents
 

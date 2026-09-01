@@ -1,0 +1,100 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://goldsilver.wealthos.ir/contracts/asha.evaluation.result.v1.schema.json",
+  "title": "Asha evaluation-only laboratory result v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "resultId",
+    "status",
+    "financialUseAllowed",
+    "executionAllowed",
+    "decisionState",
+    "riskState",
+    "datasetReference",
+    "modelReference",
+    "methodologyReference",
+    "assumptionReferences",
+    "benchmarkResults",
+    "reasonCodes"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "asha.evaluation.result.v1" },
+    "resultId": { "type": "string", "pattern": "^ASHA_EVAL_[a-f0-9]{64}$" },
+    "status": { "const": "evaluation_only" },
+    "financialUseAllowed": { "const": false },
+    "executionAllowed": { "const": false },
+    "decisionState": { "const": "no_decision" },
+    "riskState": { "const": "execution_disabled" },
+    "datasetReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["datasetId", "version", "contentFingerprint"],
+      "properties": {
+        "datasetId": { "type": "string", "pattern": "^ASHA_SYNTHETIC_[A-Z0-9_]{3,64}_V[1-9][0-9]*$" },
+        "version": { "type": "integer", "minimum": 1 },
+        "contentFingerprint": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+      }
+    },
+    "modelReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["entityId", "version", "lifecycle"],
+      "properties": {
+        "entityId": { "type": "string", "pattern": "^ASHA_[A-Z0-9_]{3,80}_V[1-9][0-9]*$" },
+        "version": { "type": "integer", "minimum": 1 },
+        "lifecycle": { "const": "evaluation_only" }
+      }
+    },
+    "methodologyReference": {
+      "const": { "entityId": "STATUS_TBD", "version": 0, "approvalState": "unapproved" }
+    },
+    "assumptionReferences": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["entityId", "version", "status"],
+        "properties": {
+          "entityId": { "type": "string", "pattern": "^ASHA_SYNTHETIC_ASSUMPTION_[A-Z0-9_]{2,64}$" },
+          "version": { "type": "integer", "minimum": 1 },
+          "status": { "const": "synthetic_only" }
+        }
+      }
+    },
+    "benchmarkResults": {
+      "type": "array",
+      "maxItems": 32,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["benchmarkId", "status", "metrics", "reasonCodes"],
+        "properties": {
+          "benchmarkId": { "type": "string", "pattern": "^ASHA_BENCHMARK_[A-Z0-9_]{2,64}_V[1-9][0-9]*$" },
+          "status": { "enum": ["computed", "not_computable"] },
+          "metrics": {
+            "type": "object",
+            "propertyNames": { "pattern": "^[a-z][a-z0-9_]{2,64}$" },
+            "additionalProperties": { "type": "string", "pattern": "^-?(0|[1-9][0-9]{0,11})(\\.[0-9]{1,8})?$" }
+          },
+          "reasonCodes": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": { "type": "string", "pattern": "^[A-Z][A-Z0-9_]{2,80}$" }
+          }
+        }
+      }
+    },
+    "reasonCodes": {
+      "type": "array",
+      "uniqueItems": true,
+      "allOf": [
+        { "contains": { "const": "METHODOLOGY_NOT_APPROVED" } },
+        { "contains": { "const": "REAL_FINANCIAL_USE_DISABLED" } },
+        { "contains": { "const": "SYNTHETIC_DATA_ONLY" } }
+      ],
+      "items": { "type": "string", "pattern": "^[A-Z][A-Z0-9_]{2,80}$" }
+    }
+  }
+}

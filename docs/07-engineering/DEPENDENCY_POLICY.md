@@ -44,6 +44,12 @@ The open-source product review and adopt/defer/reject decisions are recorded in
 GitHub actions and receives read-only repository contents permission. No source code
 from the reviewed AGPL financial products is included.
 
+The initial Phase 2 laboratory declares no Python runtime dependency and is tested
+with the Python 3.12 standard library. GitHub CI uses the official MIT-licensed
+`actions/setup-python@v7`, reviewed on 2026-09-01. A future Parquet implementation
+must pass a separate dependency/license/security review before its package is pinned;
+the JSON contract does not silently pull in an optional binary stack.
+
 ## Related Documents
 
 - Security posture: `docs/02-architecture/SECURITY_ARCHITECTURE.md`

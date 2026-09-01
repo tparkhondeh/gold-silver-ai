@@ -85,3 +85,23 @@ jobs:
           ASHA_TEST_DATABASE_URL: postgresql://postgres:synthetic-ci-only@127.0.0.1:5432/asha_integration
           # Client tools are from the exact same reviewed server image.
           ASHA_PG_CONTAINER_ID: ${{ job.services.postgres.id }}
+
+  laboratory:
+    name: Synthetic Python financial laboratory
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: packages/financial-lab
+    steps:
+      - uses: actions/checkout@v6
+      - name: Use pinned Python
+        uses: actions/setup-python@v7
+        with:
+          python-version-file: packages/financial-lab/.python-version
+      - name: Verify standard-library-only dependency boundary
+        run: python -c "import pathlib,tomllib; data=tomllib.loads(pathlib.Path('pyproject.toml').read_text()); assert data['project']['dependencies'] == []"
+      - name: Compile laboratory source
+        run: python -m compileall -q src tests
+      - name: Test synthetic contracts and calculations
+        run: python -m unittest discover -s tests -v
