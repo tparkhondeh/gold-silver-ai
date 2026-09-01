@@ -83,6 +83,11 @@ fold and binds the result to the exact dataset, matrix, plan and fold. It still 
 no forecast, ranking or recommendation. The corresponding transform applies those
 frozen statistics to the complete test interval without refitting; its output remains
 an evaluation-only feature artifact, not a score or decision.
+The same train-only boundary now produces a deterministic population-covariance
+matrix for synthetic returns. It records zero-variance paths and exact provenance but
+does not choose a portfolio model. Inverse-volatility comparison weights and their
+single- or multi-fold evaluations remain permanently no-decision; the multi-fold
+report deliberately makes no aggregate performance claim.
 
 ## Decision History Requirement
 

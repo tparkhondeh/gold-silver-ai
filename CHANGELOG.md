@@ -91,6 +91,12 @@ state is recorded in `docs/10-project-state/CURRENT_STATE.md`.
   changes cannot refit earlier statistics or weights, and rejects incomplete or
   omitted/resealed folds. Its no-aggregation policy prevents a combined performance
   claim. Sixty-five tests pass.
+- Multi-fold comparison-report checkpoint `486fb6b` passed all three GitHub Actions
+  jobs in run [33514166000](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33514166000).
+- Added deterministic train-only population covariance for synthetic returns. The
+  versioned artifact records a symmetric matrix and zero-variance paths, binds the
+  exact dataset/matrix/plan/standardizer chain, and rejects future leakage or resealed
+  values. Seventy tests pass without selecting a risk or allocation methodology.
 
 ### Fail-closed Navasan history authorization — ۱۴۰۵/۰۶/۱۰
 

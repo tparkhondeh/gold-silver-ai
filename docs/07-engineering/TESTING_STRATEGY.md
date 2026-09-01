@@ -109,6 +109,11 @@ metrics, prove a changed future test value cannot refit the first fold's statist
 weights, require complete matrix coverage and canonical input-bound replay, pin the
 report identity, and reject an omitted/resealed fold. Sixty-five laboratory tests
 pass. The report intentionally makes no aggregate performance claim.
+Five covariance tests hand-check a symmetric two-path population matrix and explicit
+zero variance, prove future test changes cannot alter fitted training values, pin the
+exact artifact identity, require canonical replay with the exact standardizer, and
+reject a resealed false entry. Seventy laboratory tests pass; covariance remains a
+synthetic feature rather than a risk or allocation decision.
 
 ## Related Documents
 

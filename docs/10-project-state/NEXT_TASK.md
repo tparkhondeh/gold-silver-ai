@@ -175,6 +175,10 @@ financial engine remain separate gates.
     complete coverage, records exact artifact identities and per-fold metrics, and
     intentionally refuses to aggregate them into a performance claim. Future test
     changes cannot refit earlier statistics or weights.
+35. **TRAIN-ONLY COVARIANCE COMPLETE:** a versioned population-covariance matrix is
+    computed solely from one fold's complete synthetic training-return interval. It
+    is symmetric, records exact zero-variance paths, binds every upstream identity,
+    rejects future leakage/tampering, and produces no risk or allocation decision.
 
 All implementation available from published provider contracts is complete; real
 provider history execution remains paused at item 6 for Tier-A licensing/cost decisions.

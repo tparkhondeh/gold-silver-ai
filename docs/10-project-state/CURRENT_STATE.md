@@ -92,6 +92,14 @@ standardizer, weight and evaluation identities for each fold, while an explicit
 mutation test proves the first fold's fitted statistics and weights do not change.
 Sixty-five laboratory tests pass locally; the report remains no-decision and cannot
 enable financial use or execution.
+Multi-fold comparison-report checkpoint `486fb6b` passed all three GitHub jobs in run
+33514166000.
+A versioned train-only population-covariance artifact now computes the exact symmetric
+matrix for one synthetic fold. It is bound to the dataset, return matrix, walk-forward
+plan and standardizer, records zero-variance paths, and rejects future-influenced or
+resealed false values. Seventy laboratory tests pass locally. This is deterministic
+risk-feature plumbing only; no risk model, allocation method, recommendation or
+execution has been selected.
 
 The owner authorized staged Data Foundation and deterministic-baseline development,
 with each stage dependent on the previous quality gate. Private GitHub authentication

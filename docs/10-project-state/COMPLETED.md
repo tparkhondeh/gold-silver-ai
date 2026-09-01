@@ -133,6 +133,12 @@ Phase 1 checkpoint `0f90210`; not merged to `main`.
   walk-forward fold, preserves its exact training/test and artifact provenance, and
   rejects incomplete coverage or omitted/resealed folds. An explicit no-aggregation
   policy prevents a headline performance claim. Sixty-five tests pass.
+- Multi-fold comparison-report checkpoint `486fb6b` passed all three jobs in GitHub
+  run [33514166000](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33514166000).
+- Added versioned train-only population covariance with an exact symmetric synthetic
+  matrix, zero-variance disclosure, full upstream provenance and canonical replay.
+  Future test changes cannot alter fitted values and resealed false entries fail
+  closed. Seventy tests pass; it makes no risk or allocation decision.
 
 ## Phase 1 — Completed Units on the Working Branch
 

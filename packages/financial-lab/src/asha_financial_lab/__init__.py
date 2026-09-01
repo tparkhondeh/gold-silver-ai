@@ -7,6 +7,7 @@ from .artifacts import (
     decode_return_matrix,
     decode_synthetic_dataset,
     decode_train_only_standardizer,
+    decode_train_only_covariance,
     decode_walk_forward_plan,
     decode_walk_forward_control_report,
     decode_weighted_control_evaluation,
@@ -16,6 +17,7 @@ from .artifacts import (
     encode_return_matrix,
     encode_synthetic_dataset,
     encode_train_only_standardizer,
+    encode_train_only_covariance,
     encode_walk_forward_plan,
     encode_walk_forward_control_report,
     encode_weighted_control_evaluation,
@@ -46,6 +48,11 @@ from .control_evaluation import (
     WEIGHTED_CONTROL_EVALUATION_SCHEMA_VERSION,
     evaluate_inverse_volatility_control_fold,
     validate_inverse_volatility_control_evaluation,
+)
+from .covariance import (
+    COVARIANCE_SCHEMA_VERSION,
+    build_train_only_covariance,
+    validate_train_only_covariance,
 )
 from .features import (
     RETURN_MATRIX_SCHEMA_VERSION,
@@ -78,6 +85,7 @@ __all__ = [
     "ContractViolation",
     "BASELINE_MODEL_ID",
     "CASH_CONTROL_ID",
+    "COVARIANCE_SCHEMA_VERSION",
     "EQUAL_WEIGHT_CONTROL_ID",
     "INVERSE_VOLATILITY_CONTROL_ID",
     "INVERSE_VOLATILITY_SCHEMA_VERSION",
@@ -92,6 +100,7 @@ __all__ = [
     "WALK_FORWARD_EVALUATION_SCHEMA_VERSION",
     "WEIGHTED_CONTROL_EVALUATION_SCHEMA_VERSION",
     "build_reference_dataset",
+    "build_train_only_covariance",
     "build_inverse_volatility_control_weights",
     "build_inverse_volatility_walk_forward_report",
     "apply_train_fitted_standardizer",
@@ -104,6 +113,7 @@ __all__ = [
     "decode_return_matrix",
     "decode_synthetic_dataset",
     "decode_train_only_standardizer",
+    "decode_train_only_covariance",
     "decode_synthetic_dataset_parquet",
     "decode_walk_forward_plan",
     "decode_walk_forward_control_report",
@@ -114,6 +124,7 @@ __all__ = [
     "encode_return_matrix",
     "encode_synthetic_dataset",
     "encode_train_only_standardizer",
+    "encode_train_only_covariance",
     "encode_synthetic_dataset_parquet",
     "encode_walk_forward_plan",
     "encode_walk_forward_control_report",
@@ -136,4 +147,5 @@ __all__ = [
     "validate_inverse_volatility_control_weights",
     "validate_inverse_volatility_control_evaluation",
     "validate_train_only_standardizer",
+    "validate_train_only_covariance",
 ]

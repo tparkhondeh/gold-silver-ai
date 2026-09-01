@@ -7,6 +7,7 @@ from typing import Any, Callable
 
 from .comparison_weights import validate_inverse_volatility_control_weights
 from .control_evaluation import validate_inverse_volatility_control_evaluation
+from .covariance import validate_train_only_covariance
 from .contracts import (
     ContractViolation,
     canonical_json,
@@ -272,5 +273,43 @@ def decode_walk_forward_control_report(
             dataset_payload,
             matrix_payload,
             plan_payload,
+        ),
+    )
+
+
+def encode_train_only_covariance(
+    payload: object,
+    dataset_payload: object,
+    matrix_payload: object,
+    plan_payload: object,
+    standardizer_payload: object,
+) -> bytes:
+    return _encode_canonical(
+        payload,
+        lambda value: validate_train_only_covariance(
+            value,
+            dataset_payload,
+            matrix_payload,
+            plan_payload,
+            standardizer_payload,
+        ),
+    )
+
+
+def decode_train_only_covariance(
+    document: object,
+    dataset_payload: object,
+    matrix_payload: object,
+    plan_payload: object,
+    standardizer_payload: object,
+) -> dict[str, Any]:
+    return _decode_canonical(
+        document,
+        lambda value: validate_train_only_covariance(
+            value,
+            dataset_payload,
+            matrix_payload,
+            plan_payload,
+            standardizer_payload,
         ),
     )

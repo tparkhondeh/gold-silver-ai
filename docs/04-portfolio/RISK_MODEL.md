@@ -33,6 +33,12 @@ portfolio level, feeding into `PORTFOLIO_MODEL.md`, `ALLOCATION_ENGINE.md`, and
 REQUIRED: YES` at design time, including the owner's actual risk tolerance
 (`docs/01-product/USER_REQUIREMENTS.md`).
 
+The isolated Phase 2 laboratory now has a train-only population-covariance feature
+for synthetic returns. It uses one validated walk-forward fold, is bound to the exact
+dataset/matrix/plan/standardizer provenance, and permanently emits `no_decision` with
+financial use and execution disabled. This verifies deterministic matrix mechanics;
+it does not select a risk model, threshold, allocation method, or owner risk tolerance.
+
 ## Related Documents
 
 - Portfolio analysis this feeds: `PORTFOLIO_MODEL.md`
