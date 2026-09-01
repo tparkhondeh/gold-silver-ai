@@ -313,6 +313,8 @@ licensed real data, validation, financial methodology and production operations.
   PostgreSQL jobs in run 33489418166; remote `main` remained unchanged.
   Navasan free-plan safety checkpoint `6b64e16` also passed both GitHub jobs in run
   33493075764; remote `main` remained unchanged.
+  Durable restart-guard checkpoint `23a8e82` passed both GitHub jobs in run
+  33496090925; remote `main` remained unchanged.
   In the fresh-session laboratory, a fixed
   five-row CSV sample exercises preview plus a memory-only commit result (three
   accepted, one duplicate, one quarantined) without reaching the server or implying
