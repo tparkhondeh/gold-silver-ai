@@ -84,6 +84,13 @@ state is recorded in `docs/10-project-state/CURRENT_STATE.md`.
   Period returns, wealth path, cumulative change and maximum drawdown are recomputed
   on replay with full provenance. Sixty tests pass; incomplete or resealed false
   results fail closed and the artifact remains no-decision/no-use/no-execution.
+- Frozen-weight evaluation checkpoint `a41e931` passed all three GitHub Actions jobs
+  in run [33513624194](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33513624194).
+- Added a versioned multi-fold inverse-volatility comparison report. It fits, freezes
+  and evaluates every synthetic walk-forward fold separately, proves future test
+  changes cannot refit earlier statistics or weights, and rejects incomplete or
+  omitted/resealed folds. Its no-aggregation policy prevents a combined performance
+  claim. Sixty-five tests pass.
 
 ### Fail-closed Navasan history authorization — ۱۴۰۵/۰۶/۱۰
 

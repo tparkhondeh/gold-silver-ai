@@ -1,0 +1,84 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://goldsilver.wealthos.ir/contracts/asha.synthetic.walk_forward_control_report.v1.schema.json",
+  "title": "Asha synthetic inverse-volatility walk-forward control report v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion", "reportId", "status", "financialUseAllowed",
+    "executionAllowed", "decisionState", "benchmarkId", "datasetReference",
+    "returnMatrixReference", "walkForwardPlanReference", "methodologyReference",
+    "summary", "foldResults", "reasonCodes"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "asha.synthetic.walk_forward_control_report.v1" },
+    "reportId": { "type": "string", "pattern": "^ASHA_WALK_FORWARD_CONTROL_REPORT_[a-f0-9]{64}$" },
+    "status": { "const": "evaluation_only" },
+    "financialUseAllowed": { "const": false },
+    "executionAllowed": { "const": false },
+    "decisionState": { "const": "no_decision" },
+    "benchmarkId": { "const": "ASHA_BENCHMARK_INVERSE_VOLATILITY_CONTROL_V1" },
+    "datasetReference": { "type": "object" },
+    "returnMatrixReference": { "type": "object" },
+    "walkForwardPlanReference": { "type": "object" },
+    "methodologyReference": {
+      "const": { "entityId": "STATUS_TBD", "version": 0, "approvalState": "unapproved" }
+    },
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "foldCount", "evaluatedPeriodCount", "firstTestIndex", "lastTestIndex",
+        "aggregationPolicy"
+      ],
+      "properties": {
+        "foldCount": { "type": "integer", "minimum": 1 },
+        "evaluatedPeriodCount": { "type": "integer", "minimum": 1 },
+        "firstTestIndex": { "type": "integer", "minimum": 1 },
+        "lastTestIndex": { "type": "integer", "minimum": 1 },
+        "aggregationPolicy": { "const": "none_fold_metrics_only" }
+      }
+    },
+    "foldResults": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "foldIndex", "trainingFeatureStartIndex", "trainingFeatureEndIndex",
+          "testStartIndex", "testEndIndex", "standardizerId", "weightSetId",
+          "evaluationId", "metrics"
+        ],
+        "properties": {
+          "foldIndex": { "type": "integer", "minimum": 0 },
+          "trainingFeatureStartIndex": { "type": "integer", "minimum": 1 },
+          "trainingFeatureEndIndex": { "type": "integer", "minimum": 1 },
+          "testStartIndex": { "type": "integer", "minimum": 1 },
+          "testEndIndex": { "type": "integer", "minimum": 1 },
+          "standardizerId": { "type": "string" },
+          "weightSetId": { "type": "string" },
+          "evaluationId": { "type": "string" },
+          "metrics": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["periodCount", "cumulativeChangePercent", "maximumDrawdownPercent"],
+            "properties": {
+              "periodCount": { "type": "integer", "minimum": 1 },
+              "cumulativeChangePercent": { "type": "string" },
+              "maximumDrawdownPercent": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "reasonCodes": {
+      "const": [
+        "COMPARISON_CONTROL_ONLY", "METHODOLOGY_NOT_APPROVED",
+        "NO_AGGREGATED_PERFORMANCE_CLAIM", "NO_FINANCIAL_DECISION",
+        "REAL_FINANCIAL_USE_DISABLED", "SYNTHETIC_DATA_ONLY",
+        "WALK_FORWARD_EVALUATION_ONLY"
+      ]
+    }
+  }
+}

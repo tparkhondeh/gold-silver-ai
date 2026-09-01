@@ -83,6 +83,15 @@ period path, cumulative change and maximum drawdown and rejects incomplete cover
 foreign provenance, or resealed false metrics. Sixty laboratory tests pass locally;
 every evaluation remains `no_decision`, no-use, no-execution and methodology-
 unapproved.
+Frozen-weight test-fold evaluation checkpoint `a41e931` passed all three GitHub jobs
+in run 33513624194.
+The inverse-volatility comparison can now replay every fold of a complete synthetic
+walk-forward plan. Its report preserves separate train/test ranges and exact
+standardizer, weight and evaluation identities for each fold, while an explicit
+`none_fold_metrics_only` policy prevents a combined performance claim. A future-value
+mutation test proves the first fold's fitted statistics and weights do not change.
+Sixty-five laboratory tests pass locally; the report remains no-decision and cannot
+enable financial use or execution.
 
 The owner authorized staged Data Foundation and deterministic-baseline development,
 with each stage dependent on the previous quality gate. Private GitHub authentication

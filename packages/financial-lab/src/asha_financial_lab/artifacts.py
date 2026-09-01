@@ -16,6 +16,7 @@ from .contracts import (
 from .features import validate_point_in_time_return_matrix
 from .normalization import validate_normalized_fold, validate_train_only_standardizer
 from .walk_forward import validate_walk_forward_plan
+from .walk_forward_evaluation import validate_inverse_volatility_walk_forward_report
 
 
 MAX_CONTRACT_BYTES = 16 * 1024 * 1024
@@ -237,5 +238,39 @@ def decode_weighted_control_evaluation(
             plan_payload,
             standardizer_payload,
             weight_set_payload,
+        ),
+    )
+
+
+def encode_walk_forward_control_report(
+    payload: object,
+    dataset_payload: object,
+    matrix_payload: object,
+    plan_payload: object,
+) -> bytes:
+    return _encode_canonical(
+        payload,
+        lambda value: validate_inverse_volatility_walk_forward_report(
+            value,
+            dataset_payload,
+            matrix_payload,
+            plan_payload,
+        ),
+    )
+
+
+def decode_walk_forward_control_report(
+    document: object,
+    dataset_payload: object,
+    matrix_payload: object,
+    plan_payload: object,
+) -> dict[str, Any]:
+    return _decode_canonical(
+        document,
+        lambda value: validate_inverse_volatility_walk_forward_report(
+            value,
+            dataset_payload,
+            matrix_payload,
+            plan_payload,
         ),
     )

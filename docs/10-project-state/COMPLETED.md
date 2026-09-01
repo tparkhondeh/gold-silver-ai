@@ -127,6 +127,12 @@ Phase 1 checkpoint `0f90210`; not merged to `main`.
   artifact reports the period path, cumulative change and maximum drawdown, requires
   complete upstream provenance and exact replay, and rejects incomplete or resealed
   false results. Sixty tests pass; no financial decision or execution is enabled.
+- Frozen-weight evaluation checkpoint `a41e931` passed all three jobs in GitHub run
+  [33513624194](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33513624194).
+- Added a versioned multi-fold comparison report that recomputes every synthetic
+  walk-forward fold, preserves its exact training/test and artifact provenance, and
+  rejects incomplete coverage or omitted/resealed folds. An explicit no-aggregation
+  policy prevents a headline performance claim. Sixty-five tests pass.
 
 ## Phase 1 — Completed Units on the Working Branch
 

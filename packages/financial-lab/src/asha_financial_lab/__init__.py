@@ -8,6 +8,7 @@ from .artifacts import (
     decode_synthetic_dataset,
     decode_train_only_standardizer,
     decode_walk_forward_plan,
+    decode_walk_forward_control_report,
     decode_weighted_control_evaluation,
     encode_evaluation_result,
     encode_inverse_volatility_weights,
@@ -16,6 +17,7 @@ from .artifacts import (
     encode_synthetic_dataset,
     encode_train_only_standardizer,
     encode_walk_forward_plan,
+    encode_walk_forward_control_report,
     encode_weighted_control_evaluation,
 )
 from .baseline import BASELINE_MODEL_ID, evaluate_no_decision
@@ -66,6 +68,11 @@ from .normalization import (
     validate_train_only_standardizer,
 )
 from .walk_forward import WALK_FORWARD_SCHEMA_VERSION, build_walk_forward_plan, validate_walk_forward_plan
+from .walk_forward_evaluation import (
+    WALK_FORWARD_EVALUATION_SCHEMA_VERSION,
+    build_inverse_volatility_walk_forward_report,
+    validate_inverse_volatility_walk_forward_report,
+)
 
 __all__ = [
     "ContractViolation",
@@ -82,9 +89,11 @@ __all__ = [
     "RETURN_MATRIX_SCHEMA_VERSION",
     "STANDARDIZER_SCHEMA_VERSION",
     "WALK_FORWARD_SCHEMA_VERSION",
+    "WALK_FORWARD_EVALUATION_SCHEMA_VERSION",
     "WEIGHTED_CONTROL_EVALUATION_SCHEMA_VERSION",
     "build_reference_dataset",
     "build_inverse_volatility_control_weights",
+    "build_inverse_volatility_walk_forward_report",
     "apply_train_fitted_standardizer",
     "build_walk_forward_plan",
     "build_point_in_time_return_matrix",
@@ -97,6 +106,7 @@ __all__ = [
     "decode_train_only_standardizer",
     "decode_synthetic_dataset_parquet",
     "decode_walk_forward_plan",
+    "decode_walk_forward_control_report",
     "decode_weighted_control_evaluation",
     "encode_evaluation_result",
     "encode_inverse_volatility_weights",
@@ -106,6 +116,7 @@ __all__ = [
     "encode_train_only_standardizer",
     "encode_synthetic_dataset_parquet",
     "encode_walk_forward_plan",
+    "encode_walk_forward_control_report",
     "encode_weighted_control_evaluation",
     "evaluate_comparison_controls",
     "evaluate_inverse_volatility_control_fold",
@@ -119,6 +130,7 @@ __all__ = [
     "validate_evaluation_result",
     "validate_synthetic_dataset",
     "validate_walk_forward_plan",
+    "validate_inverse_volatility_walk_forward_report",
     "validate_point_in_time_return_matrix",
     "validate_normalized_fold",
     "validate_inverse_volatility_control_weights",

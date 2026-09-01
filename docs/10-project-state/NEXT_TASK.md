@@ -170,6 +170,11 @@ financial engine remain separate gates.
     versioned artifact reports the deterministic period path, cumulative change and
     maximum drawdown, replays only with the full upstream provenance, and remains
     permanently `no_decision`, no-use and no-execution.
+34. **MULTI-FOLD COMPARISON REPORT COMPLETE:** every fold in a supplied synthetic
+    walk-forward plan is fitted, frozen and evaluated separately. The report requires
+    complete coverage, records exact artifact identities and per-fold metrics, and
+    intentionally refuses to aggregate them into a performance claim. Future test
+    changes cannot refit earlier statistics or weights.
 
 All implementation available from published provider contracts is complete; real
 provider history execution remains paused at item 6 for Tier-A licensing/cost decisions.

@@ -35,6 +35,11 @@ cumulative change, and maximum drawdown. This is benchmark plumbing under ADR 00
 permanently `no_decision` and non-operational; it does not implement, approve or
 preview the real allocation methodology described above.
 
+The same mechanics can now replay every fold in a supplied synthetic walk-forward
+plan. Each fold keeps its own train range, frozen weights, test range and metrics. The
+report deliberately uses `none_fold_metrics_only`: it does not combine fold returns
+into a headline performance claim.
+
 ## Related Documents
 
 - Underlying analysis: `PORTFOLIO_MODEL.md`

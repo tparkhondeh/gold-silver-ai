@@ -104,6 +104,11 @@ return, cumulative change and drawdown, pin the exact reference identity, requir
 complete associated test interval and exact upstream provenance, verify canonical
 artifact replay, and reject a resealed false metric. Sixty laboratory tests pass; all
 outputs remain synthetic, `no_decision`, no-use and no-execution.
+Five multi-fold report tests verify three separate train/test cycles and exact fold
+metrics, prove a changed future test value cannot refit the first fold's statistics or
+weights, require complete matrix coverage and canonical input-bound replay, pin the
+report identity, and reject an omitted/resealed fold. Sixty-five laboratory tests
+pass. The report intentionally makes no aggregate performance claim.
 
 ## Related Documents
 
