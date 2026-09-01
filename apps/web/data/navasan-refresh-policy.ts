@@ -7,6 +7,7 @@ export type NavasanPlan = "free" | "standard" | "gold";
 
 export const NAVASAN_FREE_PROVIDER_CALL_LIMIT = 120;
 export const NAVASAN_FREE_REFRESH_SECONDS = 24_000;
+export const NAVASAN_MAX_REFRESH_SECONDS = 31_536_000;
 
 type RuntimeEnvironment = Record<string, string | undefined>;
 
@@ -43,6 +44,18 @@ export type NavasanRefreshPolicy = {
   providerPlanLimit: number;
 };
 
+export function calculateNavasanNextEligibleAt(lastReservedAt: string | null, refreshSeconds: number) {
+  if (lastReservedAt === null) return null;
+  const timestamp = Date.parse(lastReservedAt);
+  if (!Number.isFinite(timestamp)
+    || !Number.isInteger(refreshSeconds)
+    || refreshSeconds < 1
+    || refreshSeconds > NAVASAN_MAX_REFRESH_SECONDS) {
+    throw new Error("Navasan next-eligible input is invalid");
+  }
+  return new Date(timestamp + refreshSeconds * 1000).toISOString();
+}
+
 export function resolveNavasanRefreshPolicy(
   environment: RuntimeEnvironment = process.env,
 ): NavasanRefreshPolicy {
@@ -51,13 +64,20 @@ export function resolveNavasanRefreshPolicy(
   const refreshValid = Number.isFinite(configured) && configured > 0;
   const requestedRefreshSeconds = refreshValid ? Math.floor(configured) : null;
   const minimum = planDefaults[plan];
-  // A slower owner-selected cadence is always safe to preserve. Never shorten it,
-  // because that would spend provider allowance faster than requested.
-  const effectiveRefreshSeconds = Math.max(minimum, requestedRefreshSeconds ?? minimum);
+  // Preserve practical slower owner-selected cadences. Cap only values beyond one
+  // year so PostgreSQL intervals and ISO timestamps remain bounded and deterministic.
+  const effectiveRefreshSeconds = Math.min(
+    NAVASAN_MAX_REFRESH_SECONDS,
+    Math.max(minimum, requestedRefreshSeconds ?? minimum),
+  );
+  const cadenceWithinBounds = requestedRefreshSeconds === null
+    || requestedRefreshSeconds <= NAVASAN_MAX_REFRESH_SECONDS;
 
   return {
     plan,
-    configurationValid: planValid && (environment.NAVASAN_REFRESH_SECONDS === undefined || refreshValid),
+    configurationValid: planValid
+      && (environment.NAVASAN_REFRESH_SECONDS === undefined || refreshValid)
+      && cadenceWithinBounds,
     requestedRefreshSeconds,
     effectiveRefreshSeconds,
     adjustedForSafety: requestedRefreshSeconds !== null && requestedRefreshSeconds !== effectiveRefreshSeconds,

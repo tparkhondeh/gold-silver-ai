@@ -236,7 +236,8 @@ licensed real data, validation, financial methodology and production operations.
   immutable reservation; a conservative 115-call rolling 31-day limit preserves five
   calls of safety headroom below the provider's 120-call plan. Missing quota storage
   or exhausted allowance fails closed before network access. The loopback Data Trust
-  card and `/api/health` show aggregate usage and a sanitized latest outcome only.
+  card and `/api/health` show aggregate usage, a sanitized latest outcome and the
+  exact next eligible call time derived from local reservations only.
   An explicitly
   authorized live verification on ۱۴۰۵/۰۶/۱۰ returned all eight approved valid quotes;
   a development reload later exposed one pre-fix extra reservation. After the durable
@@ -307,8 +308,8 @@ licensed real data, validation, financial methodology and production operations.
   Migration 0006 adds immutable source-reconciliation records and requires a bounded
   plain-language reason on every correction. Migrations 0007–0011 add exact transaction
   and evaluation-only valuation lineage, immutable provider-call reservations and a
-  bounded latest provider-runtime status; 124 unit and 16 real PostgreSQL tests pass
-  locally. Source coverage is 93.87% lines, 78.81% branches and 94.58% functions.
+  bounded latest provider-runtime status; 125 unit and 16 real PostgreSQL tests pass
+  locally. Source coverage is 93.72% lines, 79.09% branches and 94.59% functions.
   GoldAPI global-history checkpoint `eab4b16` passed GitHub quality/audit and real
   PostgreSQL jobs in run 33489418166; remote `main` remained unchanged.
   Navasan free-plan safety checkpoint `6b64e16` also passed both GitHub jobs in run

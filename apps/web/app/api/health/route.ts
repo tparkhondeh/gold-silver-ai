@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 
 import { inspectLedgerDatabaseHealth, inspectLocalPortfolioDatabaseHealth, inspectNavasanQuotaDatabaseHealth, inspectObservationDatabaseHealth, inspectProvenanceDatabaseHealth } from "../../../db/postgres-runtime";
-import { resolveNavasanRefreshPolicy } from "../../../data/navasan-refresh-policy.ts";
+import { calculateNavasanNextEligibleAt, resolveNavasanRefreshPolicy } from "../../../data/navasan-refresh-policy.ts";
 import { decisionFramework } from "../../decision-support";
 import { inspectNavasanConfiguration } from "../../navasan-adapter";
 import { scenarioMethodology } from "../../scenario-engine";
@@ -55,6 +55,10 @@ export async function GET() {
           refreshSeconds: navasanRefreshPolicy.effectiveRefreshSeconds,
           maximumScheduledCallsInWindow: navasanRefreshPolicy.maximumScheduledCallsInWindow,
           providerPlanLimit: navasanRefreshPolicy.providerPlanLimit,
+          nextEligibleAt: calculateNavasanNextEligibleAt(
+            navasanQuotaDatabase.lastLatestReservedAt,
+            navasanRefreshPolicy.effectiveRefreshSeconds,
+          ),
           latestOutcome: navasanQuotaDatabase.latestOutcome,
           ...navasanQuotaDatabase.usage,
         } : undefined,

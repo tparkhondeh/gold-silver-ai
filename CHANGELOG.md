@@ -7,6 +7,16 @@ state is recorded in `docs/10-project-state/CURRENT_STATE.md`.
 
 ## [Unreleased]
 
+### Navasan next-eligible visibility — ۱۴۰۵/۰۶/۱۰
+
+- Added a deterministic next-call calculation from the newest durable reservation
+  and the active safe cadence. Health and the Persian Data Trust card now show the
+  first exact time another live call is allowed.
+- The calculation reads only local PostgreSQL state and makes no provider request.
+  Local usage stayed at 4 used / 111 remaining. Local build, lint, 125 unit tests and
+  16 real PostgreSQL tests pass with 93.72% line, 79.09% branch and 94.59% function
+  coverage.
+
 ### Durable Navasan restart guard and latest-status monitoring — ۱۴۰۵/۰۶/۱۰
 
 - Added migration 0011 with one mutable operational-status row that keeps only the

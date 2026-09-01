@@ -25,6 +25,7 @@ test("accepts only the complete free-plan quota health contract", () => {
         durationMs: 125,
         completedAt: "2026-09-01T09:00:00.000Z",
       },
+      nextEligibleAt: "2026-09-01T09:40:00.000Z",
     },
   }] });
   assert.equal(result.state, "ready");
@@ -34,6 +35,7 @@ test("accepts only the complete free-plan quota health contract", () => {
   assert.equal(result.details?.configurationValid, true);
   assert.equal(result.details?.latestOutcome?.outcome, "success");
   assert.equal(result.details?.latestOutcome?.quoteCount, 8);
+  assert.equal(result.details?.nextEligibleAt, "2026-09-01T09:40:00.000Z");
 });
 
 test("fails closed for paid, malformed, or unavailable quota health", () => {
@@ -50,7 +52,7 @@ test("fails closed for paid, malformed, or unavailable quota health", () => {
   const fallback = parseNavasanQuotaHealth({ engines: [{
     id: "navasan-quota",
     state: "quota_ready",
-    details: { plan: "free", configurationValid: false, used: 0, remaining: 115, limit: 115, windowDays: 31, refreshSeconds: 24_000, maximumScheduledCallsInWindow: 112, providerPlanLimit: 120, latestOutcome: null },
+    details: { plan: "free", configurationValid: false, used: 0, remaining: 115, limit: 115, windowDays: 31, refreshSeconds: 24_000, maximumScheduledCallsInWindow: 112, providerPlanLimit: 120, latestOutcome: null, nextEligibleAt: null },
   }] });
   assert.equal(fallback.state, "ready");
   assert.match(fallback.message, /جایگزین/);
@@ -58,7 +60,7 @@ test("fails closed for paid, malformed, or unavailable quota health", () => {
   const malformedOutcome = parseNavasanQuotaHealth({ engines: [{
     id: "navasan-quota",
     state: "quota_ready",
-    details: { plan: "free", configurationValid: true, used: 0, remaining: 115, limit: 115, windowDays: 31, refreshSeconds: 24_000, maximumScheduledCallsInWindow: 112, providerPlanLimit: 120, latestOutcome: { outcome: "success", quoteCount: null, durationMs: 1, completedAt: "invalid" } },
+    details: { plan: "free", configurationValid: true, used: 0, remaining: 115, limit: 115, windowDays: 31, refreshSeconds: 24_000, maximumScheduledCallsInWindow: 112, providerPlanLimit: 120, latestOutcome: { outcome: "success", quoteCount: null, durationMs: 1, completedAt: "invalid" }, nextEligibleAt: "invalid" },
   }] });
   assert.equal(malformedOutcome.state, "blocked");
 });

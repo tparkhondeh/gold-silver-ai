@@ -2,9 +2,17 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import {
+  calculateNavasanNextEligibleAt,
   NAVASAN_FREE_REFRESH_SECONDS,
   resolveNavasanRefreshPolicy,
 } from "../data/navasan-refresh-policy.ts";
+
+test("calculates the next durable live-call boundary without contacting the provider", () => {
+  assert.equal(calculateNavasanNextEligibleAt("2026-09-01T03:00:00.000Z", 24_000), "2026-09-01T09:40:00.000Z");
+  assert.equal(calculateNavasanNextEligibleAt(null, 24_000), null);
+  assert.throws(() => calculateNavasanNextEligibleAt("invalid", 24_000), /invalid/);
+  assert.throws(() => calculateNavasanNextEligibleAt("2026-09-01T03:00:00.000Z", 0), /invalid/);
+});
 
 test("defaults the free plan to a rolling-window-safe refresh cadence", () => {
   const policy = resolveNavasanRefreshPolicy({});
@@ -37,6 +45,11 @@ test("keeps slower free settings and known paid-plan settings deterministic", ()
   const everyTwoDays = resolveNavasanRefreshPolicy({ NAVASAN_PLAN: "free", NAVASAN_REFRESH_SECONDS: "172800" });
   assert.equal(everyTwoDays.effectiveRefreshSeconds, 172_800);
   assert.equal(everyTwoDays.maximumScheduledCallsInWindow, 16);
+
+  const excessive = resolveNavasanRefreshPolicy({ NAVASAN_PLAN: "free", NAVASAN_REFRESH_SECONDS: "999999999999" });
+  assert.equal(excessive.configurationValid, false);
+  assert.equal(excessive.effectiveRefreshSeconds, 31_536_000);
+  assert.equal(excessive.adjustedForSafety, true);
 
   const standard = resolveNavasanRefreshPolicy({ NAVASAN_PLAN: "standard", NAVASAN_REFRESH_SECONDS: "120" });
   assert.equal(standard.effectiveRefreshSeconds, 120);

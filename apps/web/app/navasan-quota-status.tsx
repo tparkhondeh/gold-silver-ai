@@ -35,6 +35,14 @@ function latestOutcomeLabel(outcome: NonNullable<NavasanQuotaView["details"]>["l
     : `آخرین تماس ثبت‌شده در ${completedAt} ناموفق بود؛ دادهٔ قدیمی جایگزین نتیجهٔ تازه نشد.`;
 }
 
+function nextEligibleLabel(nextEligibleAt: string | null) {
+  if (!nextEligibleAt) return "تماس قبلی ثبت نشده است؛ نخستین دریافت طبق سقف پایدار مجاز خواهد بود.";
+  const next = new Date(nextEligibleAt);
+  return next.getTime() <= Date.now()
+    ? "فاصلهٔ امن تمام شده است؛ دریافت بعدی اکنون می‌تواند با ثبت سهمیه انجام شود."
+    : `نخستین تماس مجاز بعدی: ${next.toLocaleString("fa-IR")}`;
+}
+
 export function NavasanQuotaStatus() {
   const [quota, setQuota] = useState<NavasanQuotaView>({ state: "loading", message: "در حال خواندن شمارندهٔ محلی…" });
   const isLoopback = useSyncExternalStore(subscribeToLocation, getLoopbackSnapshot, getServerLoopbackSnapshot);
@@ -73,6 +81,7 @@ export function NavasanQuotaStatus() {
           <article><small>سقف رسمی رایگان</small><strong>{quota.details.providerPlanLimit.toLocaleString("fa-IR")}</strong></article>
         </div>
         <p className="field-help">فاصلهٔ دریافت: حداقل {cadenceLabel(quota.details.refreshSeconds)} · حداکثر برنامه‌ریزی‌شده: {quota.details.maximumScheduledCallsInWindow.toLocaleString("fa-IR")} تماس در {quota.details.windowDays.toLocaleString("fa-IR")} روز · پنج تماس رسمی هم به‌عنوان حاشیهٔ امن مصرف نمی‌شود.</p>
+        <p className="field-help"><strong>{nextEligibleLabel(quota.details.nextEligibleAt)}</strong></p>
         <p className="field-help">{latestOutcomeLabel(quota.details.latestOutcome)}</p>
       </>}
     </section>

@@ -6,6 +6,7 @@ type QuotaDetails = {
   maximumScheduledCallsInWindow?: unknown;
   providerPlanLimit?: unknown;
   latestOutcome?: unknown;
+  nextEligibleAt?: unknown;
   used?: unknown;
   remaining?: unknown;
   limit?: unknown;
@@ -33,6 +34,7 @@ export type NavasanQuotaView = {
     configurationValid: boolean;
     adjustedForSafety: boolean;
     latestOutcome: NavasanLatestOutcome | null;
+    nextEligibleAt: string | null;
   };
 };
 
@@ -74,6 +76,11 @@ export function parseNavasanQuotaHealth(payload: unknown): NavasanQuotaView {
   const maximumScheduledCallsInWindow = finiteInteger(engine.details.maximumScheduledCallsInWindow);
   const providerPlanLimit = finiteInteger(engine.details.providerPlanLimit);
   const latestOutcome = parseLatestOutcome(engine.details.latestOutcome);
+  const nextEligibleAt = engine.details.nextEligibleAt === null
+    ? null
+    : typeof engine.details.nextEligibleAt === "string" && Number.isFinite(Date.parse(engine.details.nextEligibleAt))
+      ? engine.details.nextEligibleAt
+      : undefined;
   if (engine.details.plan !== "free"
     || used === null
     || remaining === null
@@ -82,7 +89,8 @@ export function parseNavasanQuotaHealth(payload: unknown): NavasanQuotaView {
     || refreshSeconds === null
     || maximumScheduledCallsInWindow === null
     || providerPlanLimit === null
-    || latestOutcome === undefined) {
+    || latestOutcome === undefined
+    || nextEligibleAt === undefined) {
     return { state: "blocked", message: "تنظیمات پلن رایگان معتبر نیست؛ دریافت تازه متوقف می‌ماند." };
   }
 
@@ -102,6 +110,7 @@ export function parseNavasanQuotaHealth(payload: unknown): NavasanQuotaView {
       adjustedForSafety: engine.details.adjustedForSafety === true,
       configurationValid: engine.details.configurationValid === true,
       latestOutcome,
+      nextEligibleAt,
     },
   };
 }

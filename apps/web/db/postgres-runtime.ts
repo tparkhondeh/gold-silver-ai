@@ -178,6 +178,7 @@ export async function inspectNavasanQuotaDatabaseHealth(environment: RuntimeEnvi
       quote_count: number | null;
       duration_ms: number | null;
       completed_at: Date | null;
+      latest_reserved_at: Date | null;
     }>(`SELECT
       to_regclass('public.provider_request_reservations') IS NOT NULL
       AND to_regclass('public.provider_runtime_status') IS NOT NULL
@@ -190,15 +191,17 @@ export async function inspectNavasanQuotaDatabaseHealth(environment: RuntimeEnvi
       status.last_outcome,
       status.quote_count,
       status.duration_ms,
-      status.completed_at
+      status.completed_at,
+      latest.reserved_at AS latest_reserved_at
       FROM (VALUES (1)) AS singleton(id)
+      LEFT JOIN LATERAL (
+        SELECT id, reserved_at FROM provider_request_reservations
+        WHERE provider_id='navasan' AND endpoint='latest'
+        ORDER BY reserved_at DESC, id DESC LIMIT 1
+      ) AS latest ON true
       LEFT JOIN provider_runtime_status AS status
         ON status.provider_id='navasan'
-        AND status.last_reservation_id=(
-          SELECT id FROM provider_request_reservations
-          WHERE provider_id='navasan' AND endpoint='latest'
-          ORDER BY reserved_at DESC, id DESC LIMIT 1
-        )`);
+        AND status.last_reservation_id=latest.id`);
     if (result.rows[0]?.ready !== true) {
       return { state: "blocked", reason: "navasan_quota_schema_or_privileges_missing" } as const;
     }
@@ -206,6 +209,7 @@ export async function inspectNavasanQuotaDatabaseHealth(environment: RuntimeEnvi
       state: "quota_ready",
       reason: "navasan_quota_ledger_ready",
       usage: summarizeNavasanQuotaUsage(result.rows[0].used),
+      lastLatestReservedAt: result.rows[0].latest_reserved_at?.toISOString() ?? null,
       latestOutcome: result.rows[0].last_outcome ? {
         outcome: result.rows[0].last_outcome,
         quoteCount: result.rows[0].quote_count,

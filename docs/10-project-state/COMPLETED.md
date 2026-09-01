@@ -63,6 +63,16 @@ requirements. Full details: `PHASE_0_AUDIT.md` § 15.
 `main`. The stabilization commits are now confirmed on the private remote;
 subsequent changes still require their own push and CI verification.
 
+### Navasan next-eligible visibility — ۱۴۰۵/۰۶/۱۰
+
+- Added a deterministic next-call boundary from the newest durable reservation and
+  active safe cadence. `/api/health` and the local Persian Data Trust card show the
+  first exact time a new live request can be reserved.
+- The calculation is local-only and consumed no provider allowance; usage remained
+  4 used / 111 remaining.
+- Local typecheck, lint, build, 125 unit tests and 16 real PostgreSQL tests pass with
+  93.72% line, 79.09% branch and 94.59% function coverage.
+
 ### Durable Navasan restart guard and latest status — ۱۴۰۵/۰۶/۱۰
 
 - Enforced the 6h40m live cooldown inside the serialized PostgreSQL reservation

@@ -26,6 +26,8 @@ At minimum, the system should eventually make observable:
 - Migration 0011 retains only Navasan's latest sanitized operational outcome. Health
   and Data Trust can show whether that call succeeded, when it completed and how many
   normalized quotes it produced, without storing or exposing payloads or prices.
+- The same local health contract derives the exact next eligible call time from the
+  newest immutable reservation and active cadence. Reading it never calls Navasan.
 - The Data Trust tab exposes the same boundaries in owner-facing language.
 - `npm run ops:check-local` converts the health document into a strict local
   readiness result. It contacts only `localhost:4174`, requires persistence,
