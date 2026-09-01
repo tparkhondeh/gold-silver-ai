@@ -116,6 +116,14 @@ financial engine remain separate gates.
     exact v1 JSON contracts, canonical fingerprints, synthetic namespaces,
     point-in-time availability and permanent no-use/no-execution locks. Its first six
     tests and an independent CI job require no third-party runtime dependency.
+23. **REFERENCE FIXTURE COMPLETE:** four formula-defined synthetic index paths cover
+    120 ordinal periods, include explicit delayed availability, use no real symbol,
+    currency, calendar date, provider or randomness, and replay to a pinned SHA-256
+    identity.
+24. **NO-DECISION BASELINE COMPLETE:** `ASHA_DETERMINISTIC_BASELINE_V1` currently
+    reports only point-in-time coverage. It excludes not-yet-available observations
+    and permanently emits `no_decision`, unapproved methodology, disabled financial
+    use and disabled execution. No ranking, allocation or recommendation exists yet.
 
 All implementation available from published provider contracts is complete; real
 provider history execution remains paused at item 6 for Tier-A licensing/cost decisions.

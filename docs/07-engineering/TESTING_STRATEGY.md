@@ -62,8 +62,12 @@ The isolated Phase 2 Python laboratory uses Python 3.12's standard `unittest` ru
 in a separate GitHub Actions job. Its first contract suite verifies canonical replay
 fingerprints, exact schema keys, synthetic namespaces, point-in-time availability,
 permanent no-financial-use/no-execution flags, unapproved methodology state, and
-tamper rejection. These tests establish a laboratory boundary; they are not market
-validation or evidence for a real methodology.
+tamper rejection. The next fixture/baseline tests pin the exact 120-period dataset
+fingerprint, prove absence of market namespaces/units, resolve versioned synthetic
+assumptions, hand-check initial index values, reject premature availability, and verify
+that a cutoff sees only then-known observations. Fifteen laboratory tests pass. These
+tests establish mechanics and a safety boundary; they are not market validation or
+evidence for a real methodology.
 
 ## Related Documents
 

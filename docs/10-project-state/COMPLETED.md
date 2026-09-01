@@ -57,6 +57,23 @@ Recommendation → Approval → Execution boundary; Operational Safety States
 clarification; Environment Separation; and Backup Restore-testing + RPO/RTO
 requirements. Full details: `PHASE_0_AUDIT.md` § 15.
 
+## Phase 2 — Completed Units on the Synthetic Laboratory Branch
+
+**Status:** active on `codex/phase-2-decision-engine`, created from owner-accepted
+Phase 1 checkpoint `0f90210`; not merged to `main`.
+
+### Synthetic contract and no-decision foundation — ۱۴۰۵/۰۶/۱۰
+
+- ADR 0009 records the owner's synthetic-only, non-operational Phase 2 boundary.
+- The isolated Python 3.12 package defines strict versioned JSON contracts, canonical
+  fingerprints, a fixed 120-period/four-path synthetic fixture, versioned synthetic
+  assumptions, point-in-time availability and a no-decision coverage baseline.
+- Real names/units, financial-use or execution flags, unapproved methodology claims,
+  future leakage, tampering and invalid cutoffs fail closed.
+- Fifteen standard-library laboratory tests pass locally. Contract checkpoint
+  `a7ee94d` passed web, real PostgreSQL and Python laboratory jobs in GitHub run
+  [33508480738](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33508480738).
+
 ## Phase 1 — Completed Units on the Working Branch
 
 **Status:** completed units below are on `codex/phase-1-data-ui`, not merged to

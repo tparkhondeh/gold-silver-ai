@@ -20,6 +20,14 @@ state is recorded in `docs/10-project-state/CURRENT_STATE.md`.
   point-in-time availability checks, and permanent no-use/no-execution output state.
 - Added six standard-library contract/tamper tests and a separate GitHub Actions job;
   the initial laboratory has no third-party Python runtime dependency.
+- Added a fixed 120-period, four-path synthetic fixture with pinned replay identity,
+  versioned synthetic assumptions and explicit delayed availability. It contains no
+  market symbols, currencies, dates, provider data or randomness.
+- Added the first `ASHA_DETERMINISTIC_BASELINE_V1` operation: point-in-time coverage
+  only, with permanent `no_decision`/no-use/no-execution output. Fifteen laboratory
+  tests pass locally.
+- Contract checkpoint `a7ee94d` passed all three GitHub Actions jobs in run
+  [33508480738](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33508480738).
 
 ### Fail-closed Navasan history authorization — ۱۴۰۵/۰۶/۱۰
 

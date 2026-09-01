@@ -7,4 +7,3 @@ dependencies = []
 
 [tool.unittest]
 start-directory = "tests"
-

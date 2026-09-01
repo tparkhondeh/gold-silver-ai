@@ -16,3 +16,8 @@ python -m unittest discover -s tests -v
 `schemas/v1` contains the versioned JSON exchange contracts. Parquet transport is a
 separate implementation unit; no optional binary dependency is introduced silently.
 
+`build_reference_dataset()` deterministically creates four explicitly synthetic index
+paths over 120 ordinal periods. `evaluate_no_decision()` admits only rows available at
+the requested cutoff and emits coverage metrics inside a permanently locked,
+fingerprinted `no_decision` result. Neither function knows any market symbol, currency,
+calendar date, provider, portfolio, or execution route.

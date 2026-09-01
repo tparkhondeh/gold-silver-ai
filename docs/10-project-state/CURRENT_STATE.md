@@ -18,6 +18,14 @@ make exact replay/tampering visible; real namespaces, real units, premature
 availability, approved-method claims, financial use and execution fail closed. Six
 standard-library tests pass, and the project workflow now has a separate laboratory
 job without adding a Python runtime dependency.
+Contract checkpoint `a7ee94d` passed all three GitHub jobs (web quality/audit, real
+PostgreSQL integration, and synthetic Python laboratory) in run 33508480738.
+The fixed reference generator now produces four synthetic index paths over 120 ordinal
+periods with no market symbol, currency, calendar date, provider, or randomness. Its
+fingerprint is pinned for exact replay. The first `ASHA_DETERMINISTIC_BASELINE_V1`
+operation counts only observations known by a requested cutoff and always returns a
+fingerprinted `no_decision`, evaluation-only, execution-disabled result. Fifteen
+laboratory tests pass locally; this is mechanics evidence, not a selected methodology.
 
 The owner authorized staged Data Foundation and deterministic-baseline development,
 with each stage dependent on the previous quality gate. Private GitHub authentication
