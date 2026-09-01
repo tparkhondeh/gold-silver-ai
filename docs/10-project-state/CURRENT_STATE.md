@@ -329,6 +329,8 @@ licensed real data, validation, financial methodology and production operations.
   was forced. See `KNOWN_ISSUES.md` item 8.
   A controlled owner-local history request returned HTTP 423 before quota resolution
   or network access; the Navasan counter remained 4 used / 111 remaining.
+  History-lock checkpoint `12728ee` passed both GitHub jobs in run 33500322761;
+  remote `main` remained unchanged.
   In the fresh-session laboratory, a fixed
   five-row CSV sample exercises preview plus a memory-only commit result (three
   accepted, one duplicate, one quarantined) without reaching the server or implying
