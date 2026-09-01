@@ -42,10 +42,12 @@ even experimentally, even if the owner asks for a quick preview — see
 
 ## Status
 
-`STATUS: TBD` for exact backtesting methodology, evaluation metrics, and
-walk-forward window design. These are design decisions for the phase that
-implements the first decision model, and should be presented to the owner per
-`docs/00-governance/PROJECT_RULES.md` § 2.
+`STATUS: PARTIAL FOR SYNTHETIC MECHANICS; TBD FOR METHODOLOGY`. The isolated Phase 2
+laboratory can now generate parameterized rolling or anchored folds with explicit
+purge/embargo ranges and point-in-time training membership. It does not select the
+window sizes or provide market evidence. Exact backtesting methodology, evaluation
+metrics, and real walk-forward window design remain owner-reviewed design decisions
+for the first real decision model per `docs/00-governance/PROJECT_RULES.md` § 2.
 
 ## Related Documents
 

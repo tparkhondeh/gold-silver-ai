@@ -11,6 +11,7 @@ from .contracts import (
     validate_evaluation_result,
     validate_synthetic_dataset,
 )
+from .walk_forward import validate_walk_forward_plan
 
 
 MAX_CONTRACT_BYTES = 16 * 1024 * 1024
@@ -66,3 +67,11 @@ def encode_evaluation_result(payload: object) -> bytes:
 
 def decode_evaluation_result(document: object) -> dict[str, Any]:
     return _decode_canonical(document, validate_evaluation_result)
+
+
+def encode_walk_forward_plan(payload: object, dataset_payload: object) -> bytes:
+    return _encode_canonical(payload, lambda value: validate_walk_forward_plan(value, dataset_payload))
+
+
+def decode_walk_forward_plan(document: object, dataset_payload: object) -> dict[str, Any]:
+    return _decode_canonical(document, lambda value: validate_walk_forward_plan(value, dataset_payload))

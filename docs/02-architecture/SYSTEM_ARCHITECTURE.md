@@ -18,6 +18,10 @@ in the Decision Engines layer. It has no web-runtime or provider dependency and 
 contract permanently rejects real data, real financial use, and execution. Python is
 therefore a laboratory boundary, not a replacement for the accepted Phase 1 web/data
 stack or permission to choose a real financial methodology.
+Its versioned walk-forward plan contract is likewise dataset-bound and evaluation-only;
+it records parameterized rolling/anchored folds, purge/embargo ranges and exact
+then-available training-membership fingerprints without selecting a financial window
+design.
 
 ## Layered Shape (Target)
 

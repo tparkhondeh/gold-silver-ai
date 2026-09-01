@@ -135,6 +135,11 @@ financial engine remain separate gates.
     carried-forward delayed rows, and report deterministic cumulative change and
     maximum drawdown. They remain `no_decision`, methodology-unapproved and exactly
     replayable; all are laboratory rulers, not portfolio advice.
+27. **WALK-FORWARD MECHANICS COMPLETE:** a versioned, dataset-bound plan builds
+    parameterized rolling or anchored folds with explicit purge/embargo ranges and
+    fingerprints only observations available by each training cutoff. It selects no
+    window design or financial methodology; invalid, gapped, mismatched and resealed-
+    tampered plans fail closed.
 
 All implementation available from published provider contracts is complete; real
 provider history execution remains paused at item 6 for Tier-A licensing/cost decisions.

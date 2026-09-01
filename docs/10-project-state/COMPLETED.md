@@ -84,6 +84,12 @@ Phase 1 checkpoint `0f90210`; not merged to `main`.
   controls are permanently no-decision and are not an approved methodology.
 - Cash/1N control checkpoint `a5087d6` passed all three jobs in GitHub run
   [33509893452](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33509893452).
+- No-trade checkpoint `804657b` passed all three jobs in GitHub run
+  [33510192013](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33510192013).
+- A versioned, dataset-bound walk-forward plan generates parameterized rolling or
+  anchored folds with purge/embargo separation and point-in-time training membership.
+  Thirty tests pass, including exact 54-fold identity, delayed-row exclusion,
+  canonical artifact replay, gap/mismatch rejection and resealed-tamper rejection.
 
 ## Phase 1 — Completed Units on the Working Branch
 

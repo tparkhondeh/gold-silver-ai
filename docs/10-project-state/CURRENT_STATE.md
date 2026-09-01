@@ -40,6 +40,12 @@ result is pinned to an exact identity; twenty-five laboratory tests pass locally
 Every output remains `no_decision`, financial-use-disabled, execution-disabled and
 methodology-unapproved.
 Cash/1N control checkpoint `a5087d6` passed all three GitHub jobs in run 33509893452.
+No-trade checkpoint `804657b` passed all three GitHub jobs in run 33510192013.
+A versioned walk-forward plan now supports parameterized rolling/anchored folds,
+explicit purge/embargo ranges and exact training-observation fingerprints. Its pinned
+54-fold reference excludes a delayed observation from the first training cutoff and
+round-trips only with the exact referenced dataset. Thirty laboratory tests pass; no
+window size, financial methodology or real-data use has been approved.
 
 The owner authorized staged Data Foundation and deterministic-baseline development,
 with each stage dependent on the previous quality gate. Private GitHub authentication

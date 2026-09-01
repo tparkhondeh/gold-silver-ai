@@ -40,6 +40,13 @@ state is recorded in `docs/10-project-state/CURRENT_STATE.md`.
   remain no-decision/no-use/no-execution. Twenty-five laboratory tests pass locally.
 - Cash/1N checkpoint `a5087d6` passed all three GitHub Actions jobs in run
   [33509893452](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33509893452).
+- No-trade checkpoint `804657b` passed all three GitHub Actions jobs in run
+  [33510192013](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33510192013).
+- Added a versioned, dataset-bound synthetic walk-forward plan with parameterized
+  rolling/anchored folds, purge/embargo ranges, exact then-available training
+  membership fingerprints, canonical artifact replay and fail-closed gap/mismatch/
+  tamper handling. Thirty laboratory tests pass locally; no window design or financial
+  methodology was selected.
 
 ### Fail-closed Navasan history authorization — ۱۴۰۵/۰۶/۱۰
 

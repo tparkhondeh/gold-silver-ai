@@ -38,3 +38,10 @@ registered synthetic full-liquidity/zero-cost assumptions. It computes maximum
 peak-to-trough drawdown and rounds only final percentages to eight decimal places with
 half-even rounding. These are comparison controls, not an approved allocation
 methodology or recommendation.
+
+`build_walk_forward_plan()` is a parameterized mechanics generator, not a selected
+window design. It creates rolling or anchored training/test folds with explicit purge
+and embargo ranges. Each training fold is cut off at its own final training period;
+observations published later are excluded and the exact admitted observation IDs are
+fingerprinted. The complete plan has a versioned JSON Schema, canonical artifact, and
+dataset-bound replay identity.

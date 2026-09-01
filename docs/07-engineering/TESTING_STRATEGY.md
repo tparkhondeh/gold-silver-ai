@@ -74,6 +74,10 @@ hand-computed cash, rebalanced 1/N and no-trade cumulative change and drawdown,
 delayed-observation carry forward, exact reference identity, invalid ranges, missing
 cash, and rejection of a resealed false control result. Twenty-five laboratory tests
 now pass.
+Five walk-forward contract tests pin a 54-fold reference plan, verify rolling and
+anchored ranges, purge/embargo separation, point-in-time exclusion of a delayed
+training row, canonical artifact round-trip, exact dataset binding, invalid-parameter
+and period-gap rejection, and resealed-tamper rejection. Thirty laboratory tests pass.
 
 ## Related Documents
 
