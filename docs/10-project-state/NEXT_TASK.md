@@ -7,8 +7,10 @@
 The owner accepted the Phase 1 Data Foundation for progression and authorized the
 synthetic-only Phase 2 laboratory on 2026-09-01. ADR 0009 is binding: no real data,
 paid API, real recommendation, production registry write, or execution is permitted.
-The immediate unit is the isolated Python package plus its versioned synthetic
-input/output contract and independent CI gate.
+The isolated Python package, versioned synthetic input/output contract, independent CI
+gate, canonical artifacts and exact no-decision replay are complete. The immediate
+unit is hand-verifiable synthetic benchmark mechanics, beginning with comparison
+controls that can never emit a financial decision or enter the application runtime.
 
 Migrations 0003–0011 now cover the owner snapshot, immutable provenance,
 exact point-in-time dataset/decision lineage, source-reconciliation records and
@@ -124,6 +126,10 @@ financial engine remain separate gates.
     reports only point-in-time coverage. It excludes not-yet-available observations
     and permanently emits `no_decision`, unapproved methodology, disabled financial
     use and disabled execution. No ranking, allocation or recommendation exists yet.
+25. **CANONICAL ARTIFACT REPLAY COMPLETE:** datasets and results use bounded canonical
+    UTF-8 JSON bytes. Duplicate keys, invalid encoding, alternate formatting,
+    oversized files, foreign-model results and resealed false results fail closed;
+    exact replay recomputes and compares the entire no-decision result.
 
 All implementation available from published provider contracts is complete; real
 provider history execution remains paused at item 6 for Tier-A licensing/cost decisions.

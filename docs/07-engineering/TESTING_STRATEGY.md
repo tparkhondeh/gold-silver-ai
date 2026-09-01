@@ -65,9 +65,11 @@ permanent no-financial-use/no-execution flags, unapproved methodology state, and
 tamper rejection. The next fixture/baseline tests pin the exact 120-period dataset
 fingerprint, prove absence of market namespaces/units, resolve versioned synthetic
 assumptions, hand-check initial index values, reject premature availability, and verify
-that a cutoff sees only then-known observations. Fifteen laboratory tests pass. These
-tests establish mechanics and a safety boundary; they are not market validation or
-evidence for a real methodology.
+that a cutoff sees only then-known observations. Artifact/replay tests also reject
+duplicate JSON keys, invalid UTF-8, non-canonical or oversized documents, a resealed
+but false result, and a result belonging to another model. Twenty laboratory tests
+pass. These tests establish mechanics and a safety boundary; they are not market
+validation or evidence for a real methodology.
 
 ## Related Documents
 

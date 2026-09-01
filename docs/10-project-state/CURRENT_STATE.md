@@ -25,7 +25,13 @@ periods with no market symbol, currency, calendar date, provider, or randomness.
 fingerprint is pinned for exact replay. The first `ASHA_DETERMINISTIC_BASELINE_V1`
 operation counts only observations known by a requested cutoff and always returns a
 fingerprinted `no_decision`, evaluation-only, execution-disabled result. Fifteen
-laboratory tests pass locally; this is mechanics evidence, not a selected methodology.
+laboratory tests passed at checkpoint `fcfbb22`; all three GitHub jobs passed in run
+33509106798.
+Canonical artifact encoding and decoding now reject duplicate keys, invalid UTF-8,
+alternate formatting, oversized documents and contract violations. Exact replay
+recomputes the no-decision result and rejects a resealed false result or result from a
+different model. Twenty laboratory tests pass locally; this is mechanics evidence,
+not a selected methodology.
 
 The owner authorized staged Data Foundation and deterministic-baseline development,
 with each stage dependent on the previous quality gate. Private GitHub authentication

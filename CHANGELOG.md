@@ -24,10 +24,14 @@ state is recorded in `docs/10-project-state/CURRENT_STATE.md`.
   versioned synthetic assumptions and explicit delayed availability. It contains no
   market symbols, currencies, dates, provider data or randomness.
 - Added the first `ASHA_DETERMINISTIC_BASELINE_V1` operation: point-in-time coverage
-  only, with permanent `no_decision`/no-use/no-execution output. Fifteen laboratory
-  tests pass locally.
+  only, with permanent `no_decision`/no-use/no-execution output.
+- Added bounded canonical UTF-8 JSON artifact encoding and exact replay. Duplicate
+  keys, malformed/non-canonical/oversized documents, resealed false results and
+  foreign-model results fail closed. Twenty laboratory tests pass locally.
 - Contract checkpoint `a7ee94d` passed all three GitHub Actions jobs in run
   [33508480738](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33508480738).
+- Fixture/baseline checkpoint `fcfbb22` passed all three GitHub Actions jobs in run
+  [33509106798](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33509106798).
 
 ### Fail-closed Navasan history authorization — ۱۴۰۵/۰۶/۱۰
 

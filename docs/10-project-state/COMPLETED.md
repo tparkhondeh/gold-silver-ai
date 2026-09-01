@@ -70,9 +70,12 @@ Phase 1 checkpoint `0f90210`; not merged to `main`.
   assumptions, point-in-time availability and a no-decision coverage baseline.
 - Real names/units, financial-use or execution flags, unapproved methodology claims,
   future leakage, tampering and invalid cutoffs fail closed.
-- Fifteen standard-library laboratory tests pass locally. Contract checkpoint
-  `a7ee94d` passed web, real PostgreSQL and Python laboratory jobs in GitHub run
-  [33508480738](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33508480738).
+- Bounded canonical UTF-8 JSON artifacts reject duplicate keys, invalid encoding,
+  alternate formatting and oversized input. Exact replay rejects a resealed false
+  result or a result from another model.
+- Twenty standard-library laboratory tests pass locally. Fixture/baseline checkpoint
+  `fcfbb22` passed web, real PostgreSQL and Python laboratory jobs in GitHub run
+  [33509106798](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33509106798).
 
 ## Phase 1 — Completed Units on the Working Branch
 

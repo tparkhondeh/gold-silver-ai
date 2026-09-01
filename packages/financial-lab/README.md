@@ -21,3 +21,9 @@ paths over 120 ordinal periods. `evaluate_no_decision()` admits only rows availa
 the requested cutoff and emits coverage metrics inside a permanently locked,
 fingerprinted `no_decision` result. Neither function knows any market symbol, currency,
 calendar date, provider, portfolio, or execution route.
+
+Dataset and result artifacts are encoded as one canonical UTF-8 JSON representation.
+The decoder rejects duplicate keys, invalid Unicode, non-canonical formatting,
+oversized documents and contract violations. `replay_no_decision_artifacts()` then
+recomputes the stored result and accepts it only when every byte-level input identity
+and every output field agree exactly.
