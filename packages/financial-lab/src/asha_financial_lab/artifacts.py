@@ -9,6 +9,7 @@ from .comparison_weights import validate_inverse_volatility_control_weights
 from .control_evaluation import validate_inverse_volatility_control_evaluation
 from .correlation import validate_train_only_correlation
 from .correlation_distance import validate_train_only_correlation_distance
+from .hierarchical_clustering import validate_train_only_single_linkage_clustering
 from .covariance import validate_train_only_covariance
 from .contracts import (
     ContractViolation,
@@ -401,5 +402,55 @@ def decode_train_only_correlation_distance(
             standardizer_payload,
             covariance_payload,
             correlation_payload,
+        ),
+    )
+
+
+def encode_single_linkage_clustering(
+    payload: object,
+    dataset_payload: object,
+    matrix_payload: object,
+    plan_payload: object,
+    standardizer_payload: object,
+    covariance_payload: object,
+    correlation_payload: object,
+    distance_payload: object,
+) -> bytes:
+    return _encode_canonical(
+        payload,
+        lambda value: validate_train_only_single_linkage_clustering(
+            value,
+            dataset_payload,
+            matrix_payload,
+            plan_payload,
+            standardizer_payload,
+            covariance_payload,
+            correlation_payload,
+            distance_payload,
+        ),
+    )
+
+
+def decode_single_linkage_clustering(
+    document: object,
+    dataset_payload: object,
+    matrix_payload: object,
+    plan_payload: object,
+    standardizer_payload: object,
+    covariance_payload: object,
+    correlation_payload: object,
+    distance_payload: object,
+) -> dict[str, Any]:
+    return _decode_canonical(
+        document,
+        lambda value: validate_train_only_single_linkage_clustering(
+            value,
+            dataset_payload,
+            matrix_payload,
+            plan_payload,
+            standardizer_payload,
+            covariance_payload,
+            correlation_payload,
+            distance_payload,
         ),
     )

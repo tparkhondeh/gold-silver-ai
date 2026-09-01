@@ -45,6 +45,9 @@ The correlation feature can also be converted into the bounded distance
 `sqrt((1-correlation)/2)`: identical paths have distance zero and perfectly opposite
 paths have distance one. This is a deterministic clustering input only and does not
 implement or approve HRP allocation.
+The distance artifact now supports deterministic agglomerative single-linkage
+clustering. Every merge and tie-break is recorded; equal distances use lexicographic
+member IDs. Leaf ordering and HRP weights are deliberately not computed yet.
 
 ## Related Documents
 

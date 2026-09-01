@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://goldsilver.wealthos.ir/contracts/asha.synthetic.single_linkage_clustering.v1.schema.json",
+  "title": "Asha synthetic train-only single-linkage clustering v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion", "clusteringId", "status", "financialUseAllowed",
+    "executionAllowed", "decisionState", "datasetReference", "returnMatrixReference",
+    "walkForwardPlanReference", "standardizerReference", "covarianceReference",
+    "correlationReference", "distanceReference", "methodologyReference", "foldIndex",
+    "trainingFeatureStartIndex", "trainingFeatureEndIndex", "parameters",
+    "activeInstrumentIds", "excludedZeroVarianceInstrumentIds", "linkageSteps",
+    "rootMemberIds", "reasonCodes"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "asha.synthetic.single_linkage_clustering.v1" },
+    "clusteringId": { "type": "string", "pattern": "^ASHA_SINGLE_LINKAGE_CLUSTERING_[a-f0-9]{64}$" },
+    "status": { "const": "evaluation_only" },
+    "financialUseAllowed": { "const": false },
+    "executionAllowed": { "const": false },
+    "decisionState": { "const": "no_decision" },
+    "datasetReference": { "type": "object" },
+    "returnMatrixReference": { "type": "object" },
+    "walkForwardPlanReference": { "type": "object" },
+    "standardizerReference": { "type": "object" },
+    "covarianceReference": { "type": "object" },
+    "correlationReference": { "type": "object" },
+    "distanceReference": { "type": "object" },
+    "methodologyReference": {
+      "const": { "entityId": "STATUS_TBD", "version": 0, "approvalState": "unapproved" }
+    },
+    "foldIndex": { "type": "integer", "minimum": 0 },
+    "trainingFeatureStartIndex": { "type": "integer", "minimum": 1 },
+    "trainingFeatureEndIndex": { "type": "integer", "minimum": 1 },
+    "parameters": {
+      "const": {
+        "linkage": "single_linkage_v1",
+        "tieBreak": "distance_then_lexicographic_member_ids",
+        "leafOrderPolicy": "not_computed"
+      }
+    },
+    "activeInstrumentIds": {
+      "type": "array", "minItems": 2, "items": { "type": "string" }
+    },
+    "excludedZeroVarianceInstrumentIds": {
+      "type": "array", "items": { "type": "string" }
+    },
+    "linkageSteps": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["stepIndex", "leftMemberIds", "rightMemberIds", "mergedMemberIds", "distance"],
+        "properties": {
+          "stepIndex": { "type": "integer", "minimum": 0 },
+          "leftMemberIds": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+          "rightMemberIds": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+          "mergedMemberIds": { "type": "array", "minItems": 2, "items": { "type": "string" } },
+          "distance": { "type": "string" }
+        }
+      }
+    },
+    "rootMemberIds": {
+      "type": "array", "minItems": 2, "items": { "type": "string" }
+    },
+    "reasonCodes": {
+      "const": [
+        "CLUSTERING_FEATURE_ONLY", "HRP_WEIGHTS_NOT_COMPUTED", "METHODOLOGY_NOT_APPROVED",
+        "NO_FINANCIAL_DECISION", "REAL_FINANCIAL_USE_DISABLED", "SYNTHETIC_DATA_ONLY",
+        "TRAIN_ONLY_FIT"
+      ]
+    }
+  }
+}

@@ -123,6 +123,11 @@ Five correlation-distance tests hand-check zero distance for identical paths and
 distance for perfectly opposite paths, prove future test changes cannot alter fitted
 distances, pin the canonical artifact replay, and reject a resealed false value. Eighty
 laboratory tests pass; the distance matrix produces no cluster, weight or decision.
+Five clustering tests hand-check nearest-pair and opposite-path merge order, require
+lexicographic tie-breaking for equal distances, prove future test changes cannot alter
+train-only merges, pin canonical artifact replay, and reject a resealed false linkage
+distance. Eighty-five laboratory tests pass; leaf ordering and HRP weights remain
+absent.
 
 ## Related Documents
 

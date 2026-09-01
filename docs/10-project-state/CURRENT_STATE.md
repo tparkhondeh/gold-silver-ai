@@ -112,6 +112,12 @@ correlation-distance matrix: identical synthetic paths have distance zero and pe
 opposites have distance one. Exact upstream provenance and replay are mandatory;
 future test changes cannot alter fitted distances. Eighty tests pass locally and no
 cluster, portfolio weight, recommendation or execution is produced.
+Correlation-distance checkpoint `77b279e` passed all three GitHub jobs in run
+33515393483. Deterministic train-only single-linkage clustering now records each
+nearest-path merge with a fixed lexicographic tie-break. Exact upstream provenance and
+replay are required and future test changes cannot alter fitted merges. Eighty-five
+tests pass locally. Leaf ordering and HRP weights are deliberately absent, so this
+artifact cannot allocate a portfolio or emit a decision.
 
 The owner authorized staged Data Foundation and deterministic-baseline development,
 with each stage dependent on the previous quality gate. Private GitHub authentication

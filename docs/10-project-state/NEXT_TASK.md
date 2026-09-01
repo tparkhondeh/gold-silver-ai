@@ -187,6 +187,10 @@ financial engine remain separate gates.
     becomes a bounded `sqrt((1-correlation)/2)` distance matrix. Identical paths map
     to zero and perfectly opposite paths to one; exact provenance/replay is required
     and no clustering, weighting or methodology approval occurs.
+38. **SINGLE-LINKAGE CLUSTERING COMPLETE:** deterministic agglomerative clustering
+    joins the nearest active synthetic paths and records every merge. Equal-distance
+    ties use lexicographic member IDs and exact replay; future test changes cannot
+    alter training merges. Leaf ordering and HRP weights are explicitly not computed.
 
 All implementation available from published provider contracts is complete; real
 provider history execution remains paused at item 6 for Tier-A licensing/cost decisions.

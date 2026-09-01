@@ -109,6 +109,12 @@ state is recorded in `docs/10-project-state/CURRENT_STATE.md`.
   `sqrt((1-correlation)/2)`. Identical and perfectly opposite synthetic paths are hand-
   checked, future test changes cannot alter fitted distances, and resealed false
   values fail closed. Eighty tests pass with no cluster, weight or decision output.
+- Correlation-distance checkpoint `77b279e` passed all three GitHub Actions jobs in
+  run [33515393483](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33515393483).
+- Added deterministic train-only single-linkage clustering. Nearest-path merges and
+  lexicographic equal-distance tie-breaks replay exactly; future test changes cannot
+  alter training merges and resealed false steps fail closed. Eighty-five tests pass;
+  leaf ordering and HRP weights remain absent.
 
 ### Fail-closed Navasan history authorization — ۱۴۰۵/۰۶/۱۰
 

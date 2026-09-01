@@ -94,6 +94,9 @@ and disclosed, not silently replaced by invented values.
 The reviewed correlation matrix now has a canonical zero-to-one correlation-distance
 transform for later clustering comparisons. It remains a provenance-bound feature and
 cannot emit weights, recommendations or execution instructions.
+Deterministic single-linkage clustering can now join the nearest synthetic paths and
+record every merge. Tie handling is code-defined and replayable; leaf ordering and HRP
+weight generation remain explicitly absent.
 
 ## Decision History Requirement
 

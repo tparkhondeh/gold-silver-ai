@@ -151,6 +151,12 @@ Phase 1 checkpoint `0f90210`; not merged to `main`.
   Hand tests cover identical and perfectly opposite paths, future test changes cannot
   alter fitted distances, and false resealed values fail closed. Eighty tests pass;
   no clustering, weighting or decision occurs.
+- Correlation-distance checkpoint `77b279e` passed all three jobs in GitHub run
+  [33515393483](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33515393483).
+- Added deterministic train-only single-linkage clustering with recorded merge steps,
+  lexicographic equal-distance tie-breaking, complete provenance/replay, future-tail
+  isolation and resealed-tamper rejection. Eighty-five tests pass; leaf ordering and
+  HRP weights are not computed.
 
 ## Phase 1 — Completed Units on the Working Branch
 
