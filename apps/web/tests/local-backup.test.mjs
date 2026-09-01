@@ -9,7 +9,7 @@ test("local backup paths stay inside the protected backup directory", () => {
   assert.equal(plan.manifestFile, "asha-local-20260831T123456Z-a1b2c3d4.json");
   assert.match(plan.backupPath.replaceAll("\\", "/"), /\/postgres-local\/backups\/asha-local-/);
   assert.equal(plan.verificationDatabase, "asha_backup_verify_a1b2c3d4");
-  assert.equal(localBackupTables.length, 24);
+  assert.equal(localBackupTables.length, 25);
 });
 
 test("local backup plan rejects invalid timestamps and path-like nonces", () => {

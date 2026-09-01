@@ -75,14 +75,17 @@ async function verifyActivation(client) {
       WHEN c.relname IN ('user_portfolios','portfolio_holdings','portfolio_preferences')
         THEN has_table_privilege(current_user,c.oid,'INSERT,UPDATE,DELETE')
           AND NOT has_table_privilege(current_user,c.oid,'TRUNCATE,TRIGGER')
+      WHEN c.relname='provider_runtime_status'
+        THEN has_table_privilege(current_user,c.oid,'INSERT,UPDATE')
+          AND NOT has_table_privilege(current_user,c.oid,'DELETE,TRUNCATE,TRIGGER')
       ELSE has_table_privilege(current_user,c.oid,'INSERT')
         AND NOT has_table_privilege(current_user,c.oid,'UPDATE,DELETE,TRUNCATE,TRIGGER')
       END
     ) AS safe, count(*)::integer AS tables
     FROM pg_class c JOIN pg_namespace n ON n.oid=c.relnamespace
     WHERE n.nspname='public' AND c.relkind='r' AND c.relname IN
-      ('instruments','sources','asha_schema_migrations','ingestion_batches','observations','quarantine_records','validation_results','quarantine_resolutions','user_portfolios','portfolio_holdings','portfolio_preferences','source_contract_versions','artifact_versions','dataset_observations','decision_records','decision_assumptions','decision_features','source_reconciliations','source_reconciliation_candidates','portfolio_transaction_events','portfolio_valuation_snapshots','portfolio_valuation_positions','portfolio_valuation_transactions','provider_request_reservations')`);
-  if (grants.rows[0]?.safe !== true || grants.rows[0]?.tables !== 24) throw new Error("Runtime table privileges do not match the least-privilege contract");
+      ('instruments','sources','asha_schema_migrations','ingestion_batches','observations','quarantine_records','validation_results','quarantine_resolutions','user_portfolios','portfolio_holdings','portfolio_preferences','source_contract_versions','artifact_versions','dataset_observations','decision_records','decision_assumptions','decision_features','source_reconciliations','source_reconciliation_candidates','portfolio_transaction_events','portfolio_valuation_snapshots','portfolio_valuation_positions','portfolio_valuation_transactions','provider_request_reservations','provider_runtime_status')`);
+  if (grants.rows[0]?.safe !== true || grants.rows[0]?.tables !== 25) throw new Error("Runtime table privileges do not match the least-privilege contract");
   const portfolioPolicies = await client.query(`SELECT count(*)::integer AS tables, bool_and(c.relrowsecurity AND c.relforcerowsecurity) AS forced
     FROM pg_class c JOIN pg_namespace n ON n.oid=c.relnamespace
     WHERE n.nspname='public' AND c.relname IN ('user_portfolios','portfolio_holdings','portfolio_preferences','portfolio_transaction_events','portfolio_valuation_snapshots','portfolio_valuation_positions','portfolio_valuation_transactions')`);
@@ -162,6 +165,7 @@ async function initialize(secret) {
     await owner.query("GRANT SELECT ON ALL TABLES IN SCHEMA public TO asha_runtime");
     await owner.query("GRANT INSERT ON ingestion_batches, observations, quarantine_records, validation_results, quarantine_resolutions TO asha_runtime");
     await owner.query("GRANT INSERT ON provider_request_reservations TO asha_runtime");
+    await owner.query("GRANT INSERT, UPDATE ON provider_runtime_status TO asha_runtime");
     await owner.query("GRANT INSERT, UPDATE, DELETE ON user_portfolios, portfolio_holdings, portfolio_preferences TO asha_runtime");
     await owner.query("COMMIT");
     console.log(JSON.stringify({ localDatabase: "asha_local", testDatabase: "asha_integration", migrationsApplied: applied, syntheticMarketRowsSeeded: 0 }));

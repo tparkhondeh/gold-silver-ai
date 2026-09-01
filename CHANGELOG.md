@@ -7,6 +7,19 @@ state is recorded in `docs/10-project-state/CURRENT_STATE.md`.
 
 ## [Unreleased]
 
+### Durable Navasan restart guard and latest-status monitoring — ۱۴۰۵/۰۶/۱۰
+
+- Added migration 0011 with one mutable operational-status row that keeps only the
+  latest Navasan success/failure, duration and quote count. It stores no provider
+  payload, credential, price, or long-term market history.
+- Moved the free-plan refresh interval into the PostgreSQL reservation transaction.
+  Browser refreshes, hot reloads and process restarts now fail closed during the
+  6h40m cooldown instead of spending another call. A controlled local replay kept
+  usage unchanged at 4 used and 111 remaining.
+- A third owner-only backup restored and compared all 25 governed tables. Local
+  build, lint, 124 unit tests and 16 real PostgreSQL tests pass with 93.87% line,
+  78.81% branch and 94.58% function coverage.
+
 ### Navasan free-plan cadence and quota visibility — ۱۴۰۵/۰۶/۱۰
 
 - Raised the free-plan refresh floor from six hours to 6h40m, limiting a continuously

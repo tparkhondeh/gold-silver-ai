@@ -29,7 +29,7 @@ test("summarizes safe rolling usage without provider credentials", () => {
   assert.throws(() => summarizeNavasanQuotaUsage("unknown"), /invalid usage/);
   assert.throws(() => summarizeNavasanQuotaUsage(""), /invalid usage/);
 });
-function fakeRunner(used) {
+function fakeRunner(used, retryAfterSeconds = 0) {
   const queries = [];
   return {
     queries,
@@ -37,7 +37,7 @@ function fakeRunner(used) {
       return work({
         async query(sql, parameters = []) {
           queries.push({ sql, parameters });
-          if (sql.includes("count(*)::integer AS used")) return { rowCount: 1, rows: [{ used }] };
+          if (sql.includes("AS used")) return { rowCount: 1, rows: [{ used, retry_after_seconds: retryAfterSeconds }] };
           return { rowCount: 1, rows: [] };
         },
       });
@@ -52,6 +52,7 @@ test("reserves before the provider call and leaves five calls of safety headroom
   assert.equal(result.allowed, true);
   assert.equal(result.used, 1);
   assert.equal(result.remaining, NAVASAN_DURABLE_CALL_LIMIT - 1);
+  assert.equal(result.retryAfterSeconds, null);
   assert.equal(runner.queries.some((query) => query.sql.includes("pg_advisory_xact_lock")), true);
   assert.equal(runner.queries.some((query) => query.sql.includes("INSERT INTO provider_request_reservations")), true);
 });
@@ -60,6 +61,32 @@ test("fails closed without inserting when the rolling limit is full", async () =
   const runner = fakeRunner(NAVASAN_DURABLE_CALL_LIMIT);
   const ledger = new PostgresNavasanQuotaLedger(runner);
   const result = await ledger.reserve("dailyCurrency", fingerprintNavasanRequest("dailyCurrency", { item: "usd_sell", date: "1405-06-09" }));
-  assert.deepEqual(result, { allowed: false, used: NAVASAN_DURABLE_CALL_LIMIT, remaining: 0, reservationId: null });
+  assert.deepEqual(result, { allowed: false, used: NAVASAN_DURABLE_CALL_LIMIT, remaining: 0, reservationId: null, retryAfterSeconds: null });
   assert.equal(runner.queries.some((query) => query.sql.includes("INSERT INTO provider_request_reservations")), false);
+});
+
+test("enforces the live refresh interval durably across restarts without spending quota", async () => {
+  const runner = fakeRunner(4, 23_500);
+  const ledger = new PostgresNavasanQuotaLedger(runner);
+  const result = await ledger.reserve("latest", fingerprintNavasanRequest("latest", { item: "approved-phase-1-set" }), 24_000);
+  assert.deepEqual(result, { allowed: false, used: 4, remaining: 111, reservationId: null, retryAfterSeconds: 23_500 });
+  assert.equal(runner.queries.some((query) => query.sql.includes("INSERT INTO provider_request_reservations")), false);
+  assert.deepEqual(runner.queries.find((query) => query.sql.includes("retry_after_seconds"))?.parameters, [24_000]);
+  await assert.rejects(ledger.reserve("latest", "a".repeat(64), -1), /interval/);
+});
+
+test("keeps only a validated latest provider outcome without payload or prices", async () => {
+  const runner = fakeRunner(0);
+  const ledger = new PostgresNavasanQuotaLedger(runner);
+  const reservationId = "navasan_request_00000000-0000-4000-8000-000000000001";
+  await ledger.recordLatestOutcome({ reservationId, outcome: "success", quoteCount: 8, durationMs: 125 });
+  const statement = runner.queries.find((query) => query.sql.includes("INSERT INTO provider_runtime_status"));
+  assert.deepEqual(statement?.parameters, [reservationId, "success", 8, 125]);
+  assert.doesNotMatch(statement?.sql ?? "", /payload|api_key|price/);
+
+  await assert.rejects(ledger.recordLatestOutcome({ reservationId: "invalid", outcome: "failure", quoteCount: null, durationMs: 1 }), /identity/);
+  await assert.rejects(ledger.recordLatestOutcome({ reservationId, outcome: "success", quoteCount: null, durationMs: 1 }), /summary/);
+  await assert.rejects(ledger.recordLatestOutcome({ reservationId, outcome: "failure", quoteCount: 8, durationMs: 1 }), /summary/);
+  await assert.rejects(ledger.recordLatestOutcome({ reservationId, outcome: "failure", quoteCount: null, durationMs: 120_001 }), /duration/);
+  await assert.rejects(ledger.recordLatestOutcome({ reservationId, outcome: "unexpected", quoteCount: null, durationMs: 1 }), /state/);
 });

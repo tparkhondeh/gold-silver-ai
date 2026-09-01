@@ -27,6 +27,14 @@ function cadenceLabel(seconds: number) {
     : `${hours.toLocaleString("fa-IR")} ساعت`;
 }
 
+function latestOutcomeLabel(outcome: NonNullable<NavasanQuotaView["details"]>["latestOutcome"]) {
+  if (!outcome) return "هنوز نتیجه‌ای با نسخهٔ جدید ثبت نشده است؛ تماس اضافه‌ای برای پر کردن این بخش ارسال نمی‌شود.";
+  const completedAt = new Date(outcome.completedAt).toLocaleString("fa-IR");
+  return outcome.outcome === "success"
+    ? `آخرین تماس ثبت‌شده در ${completedAt} موفق بود و ${outcome.quoteCount?.toLocaleString("fa-IR")} قیمت معتبر داشت.`
+    : `آخرین تماس ثبت‌شده در ${completedAt} ناموفق بود؛ دادهٔ قدیمی جایگزین نتیجهٔ تازه نشد.`;
+}
+
 export function NavasanQuotaStatus() {
   const [quota, setQuota] = useState<NavasanQuotaView>({ state: "loading", message: "در حال خواندن شمارندهٔ محلی…" });
   const isLoopback = useSyncExternalStore(subscribeToLocation, getLoopbackSnapshot, getServerLoopbackSnapshot);
@@ -65,6 +73,7 @@ export function NavasanQuotaStatus() {
           <article><small>سقف رسمی رایگان</small><strong>{quota.details.providerPlanLimit.toLocaleString("fa-IR")}</strong></article>
         </div>
         <p className="field-help">فاصلهٔ دریافت: حداقل {cadenceLabel(quota.details.refreshSeconds)} · حداکثر برنامه‌ریزی‌شده: {quota.details.maximumScheduledCallsInWindow.toLocaleString("fa-IR")} تماس در {quota.details.windowDays.toLocaleString("fa-IR")} روز · پنج تماس رسمی هم به‌عنوان حاشیهٔ امن مصرف نمی‌شود.</p>
+        <p className="field-help">{latestOutcomeLabel(quota.details.latestOutcome)}</p>
       </>}
     </section>
   );

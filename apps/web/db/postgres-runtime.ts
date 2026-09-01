@@ -171,12 +171,34 @@ export async function inspectNavasanQuotaDatabaseHealth(environment: RuntimeEnvi
   const configuration = inspectOperatorDatabaseEnvironment(environment);
   if (!configuration.available) return { state: "blocked", reason: configuration.reason } as const;
   try {
-    const result = await getRuntimePool(configuration.connectionString).query<{ ready: boolean; used: number }>(`SELECT
+    const result = await getRuntimePool(configuration.connectionString).query<{
+      ready: boolean;
+      used: number;
+      last_outcome: "success" | "failure" | null;
+      quote_count: number | null;
+      duration_ms: number | null;
+      completed_at: Date | null;
+    }>(`SELECT
       to_regclass('public.provider_request_reservations') IS NOT NULL
+      AND to_regclass('public.provider_runtime_status') IS NOT NULL
       AND has_table_privilege(current_user,'public.provider_request_reservations','SELECT,INSERT')
-      AND NOT has_table_privilege(current_user,'public.provider_request_reservations','UPDATE,DELETE,TRUNCATE,TRIGGER') AS ready,
+      AND NOT has_table_privilege(current_user,'public.provider_request_reservations','UPDATE,DELETE,TRUNCATE,TRIGGER')
+      AND has_table_privilege(current_user,'public.provider_runtime_status','SELECT,INSERT,UPDATE')
+      AND NOT has_table_privilege(current_user,'public.provider_runtime_status','DELETE,TRUNCATE,TRIGGER') AS ready,
       (SELECT count(*)::integer FROM provider_request_reservations
-        WHERE provider_id='navasan' AND reserved_at >= clock_timestamp() - interval '31 days') AS used`);
+        WHERE provider_id='navasan' AND reserved_at >= clock_timestamp() - interval '31 days') AS used,
+      status.last_outcome,
+      status.quote_count,
+      status.duration_ms,
+      status.completed_at
+      FROM (VALUES (1)) AS singleton(id)
+      LEFT JOIN provider_runtime_status AS status
+        ON status.provider_id='navasan'
+        AND status.last_reservation_id=(
+          SELECT id FROM provider_request_reservations
+          WHERE provider_id='navasan' AND endpoint='latest'
+          ORDER BY reserved_at DESC, id DESC LIMIT 1
+        )`);
     if (result.rows[0]?.ready !== true) {
       return { state: "blocked", reason: "navasan_quota_schema_or_privileges_missing" } as const;
     }
@@ -184,6 +206,12 @@ export async function inspectNavasanQuotaDatabaseHealth(environment: RuntimeEnvi
       state: "quota_ready",
       reason: "navasan_quota_ledger_ready",
       usage: summarizeNavasanQuotaUsage(result.rows[0].used),
+      latestOutcome: result.rows[0].last_outcome ? {
+        outcome: result.rows[0].last_outcome,
+        quoteCount: result.rows[0].quote_count,
+        durationMs: result.rows[0].duration_ms,
+        completedAt: result.rows[0].completed_at?.toISOString() ?? null,
+      } : null,
     } as const;
   } catch {
     return { state: "blocked", reason: "database_unreachable_or_probe_failed" } as const;

@@ -12,7 +12,7 @@ The command never overwrites the main database. Before it reports success, it:
 
 1. writes to a unique temporary backup file;
 2. restores that file into a uniquely named temporary local database;
-3. compares the migration journal and row counts for all 24 governed tables;
+3. compares the migration journal and row counts for all 25 governed tables;
 4. removes the temporary verification database;
 5. atomically publishes the backup plus a JSON manifest containing its SHA-256 hash.
 

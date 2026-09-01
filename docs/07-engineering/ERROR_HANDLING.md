@@ -25,7 +25,9 @@
 `STATUS: PARTIAL`. Market adapters expose unavailable/stale source states instead of
 reusing guesses. Manual ingestion rejects structurally invalid CSV files, quarantines
 row-level validation failures, records deterministic issue codes, and reports
-duplicates separately. Logging format, operator alerting, and incident integration
+duplicates separately. Navasan now retains one sanitized latest-result status across
+process restarts and reports cooldown/failure visibly without retaining a long-term
+event log. General logging format, operator alert delivery, and incident integration
 remain `STATUS: TBD`.
 
 ## Related Documents

@@ -55,6 +55,10 @@ Both paths feed the same validation step (`DATA_QUALITY.md`) — there is no
   response. It records unobserved provider dates without interpreting holidays,
   marks date/timestamp/range/instrument inconsistencies as quarantine-required, and
   creates no interpolated prices. It does not contact or persist provider data.
+- Navasan's live refresh cooldown is enforced in the same PostgreSQL transaction as
+  quota reservation, so process restarts cannot spend calls early. A one-row runtime
+  status reports only the latest success/failure, duration and normalized quote count;
+  no raw response, price, credential or long-term market history is retained there.
 
 `STATUS: PARTIAL` for scheduling and alerting. The live local database and migration
 verification pass, but future scheduling must use Tehran time and the Iranian market

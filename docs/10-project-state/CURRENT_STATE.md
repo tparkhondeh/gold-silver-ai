@@ -52,6 +52,10 @@ Checkpoint `d0ea16f` passed both GitHub jobs in run 33396556534.
 Migration 0010 adds the immutable Navasan request-reservation ledger. The replacement
 credential, durable quota health, eight-quote live normalization, historical endpoint
 contracts and backup/restore path pass locally; no historical backfill was requested.
+Migration 0011 adds a single mutable latest-runtime-status row and moves the live
+refresh cooldown into the serialized PostgreSQL reservation transaction. Restarts,
+hot reloads and browser refreshes cannot spend another call before the cooldown ends;
+the status row stores no credential, payload, price or long-term market history.
 The local Persian readiness planner validates proposed Jalali ranges, approved
 symbols and exact request counts without network or storage, while execution remains
 locked. That readiness checkpoint covered 90 unit and 14 real PostgreSQL tests.
@@ -82,8 +86,8 @@ Coverage checkpoint `01095cb` passed both GitHub jobs in run 33477121188; remote
 `main` remained at `5c03fabb1c8090497c0b03c9059a6e51fdb91d03`.
 The project-owned database now also has a manual verified-backup command. It creates
 a unique custom-format file in the restricted Git-ignored cache, restores it into a
-temporary database, compares all 24 governed table counts and the migration journal,
-then removes the temporary database. Two real local backups passed this flow. It is
+temporary database, compares all 25 governed table counts and the migration journal,
+then removes the temporary database. Three real local backups passed this flow. It is
 not encrypted or offsite, so production backup policy remains open. Backup checkpoint
 `5fd67d0` passed both GitHub jobs in run 33478298802; remote `main` remained unchanged.
 The local operations command now checks only `localhost:4174/api/health`, requires all
@@ -225,16 +229,19 @@ licensed real data, validation, financial methodology and production operations.
   disabled without consuming quota or storing data.
   A later provider connection timeout was reported explicitly; stale Rahavard values
   remain visible only as provenance and are never presented or used as a current rate.
-  The free-plan cache now enforces at least 24,000 seconds (6h40m), which schedules
-  at most 112 calls in any continuously running 31-day window. Before
+  The free-plan policy enforces at least 24,000 seconds (6h40m), which schedules
+  at most 112 calls in a 31-day window. The interval is checked inside PostgreSQL,
+  so process restarts and page reloads cannot bypass it. Before
   every uncached Navasan call, PostgreSQL now serializes workers and appends an
   immutable reservation; a conservative 115-call rolling 31-day limit preserves five
   calls of safety headroom below the provider's 120-call plan. Missing quota storage
   or exhausted allowance fails closed before network access. The loopback Data Trust
-  card and `/api/health` show only aggregate usage and remaining calls. An explicitly
+  card and `/api/health` show aggregate usage and a sanitized latest outcome only.
+  An explicitly
   authorized live verification on ۱۴۰۵/۰۶/۱۰ returned all eight approved valid quotes;
-  the durable counter then showed 3 used and 112 remaining, with no historical request
-  or write. GoldAPI.io now uses its
+  a development reload later exposed one pre-fix extra reservation. After the durable
+  fix, a controlled replay left the counter unchanged at 4 used and 111 remaining.
+  No historical request or write occurred. GoldAPI.io now uses its
   current official `/api/price/{metal}/{currency}` route and rejects a response unless
   the metal, USD currency, Unix time and plausible range match the request. Its
   documented ordered daily-history range is normalized separately, split into
@@ -298,10 +305,10 @@ licensed real data, validation, financial methodology and production operations.
   cannot be updated, deleted, or truncated. Runtime access is read-only, and no real
   financial decision has been created or enabled.
   Migration 0006 adds immutable source-reconciliation records and requires a bounded
-  plain-language reason on every correction. Migrations 0007–0010 add exact transaction and
-  evaluation-only valuation lineage plus immutable provider-call reservations;
-  122 unit and 14 real PostgreSQL tests pass locally; source coverage is 94.25%
-  lines, 78.49% branches and 94.53% functions.
+  plain-language reason on every correction. Migrations 0007–0011 add exact transaction
+  and evaluation-only valuation lineage, immutable provider-call reservations and a
+  bounded latest provider-runtime status; 124 unit and 16 real PostgreSQL tests pass
+  locally. Source coverage is 93.87% lines, 78.81% branches and 94.58% functions.
   GoldAPI global-history checkpoint `eab4b16` passed GitHub quality/audit and real
   PostgreSQL jobs in run 33489418166; remote `main` remained unchanged.
   Navasan free-plan safety checkpoint `6b64e16` also passed both GitHub jobs in run

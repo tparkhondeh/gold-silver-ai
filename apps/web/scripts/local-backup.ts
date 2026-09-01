@@ -25,6 +25,7 @@ export const localBackupTables = [
   "portfolio_valuation_positions",
   "portfolio_valuation_transactions",
   "provider_request_reservations",
+  "provider_runtime_status",
 ] as const;
 
 function assertInside(parent: string, child: string) {

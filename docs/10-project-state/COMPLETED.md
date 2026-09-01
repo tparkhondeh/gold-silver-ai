@@ -63,6 +63,20 @@ requirements. Full details: `PHASE_0_AUDIT.md` § 15.
 `main`. The stabilization commits are now confirmed on the private remote;
 subsequent changes still require their own push and CI verification.
 
+### Durable Navasan restart guard and latest status — ۱۴۰۵/۰۶/۱۰
+
+- Enforced the 6h40m live cooldown inside the serialized PostgreSQL reservation
+  transaction. Process restarts, hot reloads and browser refreshes can no longer
+  bypass the in-memory cache and spend another call early.
+- Added migration 0011 with exactly one latest operational-status row. It stores only
+  success/failure, duration and normalized quote count—never credentials, payloads,
+  prices or long-term market history. The local Persian card explains the result.
+- A controlled local replay kept usage unchanged at 4 used / 111 remaining. The extra
+  fourth reservation exposed the pre-fix restart gap and is retained honestly.
+- Local typecheck, lint, production build, 124 unit tests and 16 real PostgreSQL tests
+  pass with 93.87% line, 78.81% branch and 94.58% function coverage. A third verified
+  local backup restored and compared all 25 governed tables.
+
 ### Navasan free-plan cadence and quota visibility — ۱۴۰۵/۰۶/۱۰
 
 - Replaced the former six-hour free cadence with a deterministic 6h40m minimum. A

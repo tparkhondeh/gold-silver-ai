@@ -4,10 +4,11 @@
 
 ## Immediate Next Step
 
-Migrations 0003–0010 now cover the owner snapshot, immutable provenance,
+Migrations 0003–0011 now cover the owner snapshot, immutable provenance,
 exact point-in-time dataset/decision lineage, source-reconciliation records and
 mandatory correction reasons, plus the read-only transaction/evaluation-valuation
-ledger and provider-quota foundation. Local build, 122 unit tests, 14 real PostgreSQL tests,
+ledger, provider quota and latest operational status. Local build, 124 unit tests,
+16 real PostgreSQL tests,
 restore, activation, and health checks pass. Production account authentication,
 empirical divergence thresholds, historical backfill, and the real
 financial engine remain separate gates.
@@ -52,8 +53,8 @@ financial engine remain separate gates.
    stale-version rejection before replacement.
 9. **VERIFIED LOCAL BACKUP COMPLETE:** the owner-only backup command creates a unique
    Git-ignored PostgreSQL backup, restores it into a temporary database, compares the
-   migration journal and all 24 governed table counts, then removes the temporary
-   database. Two real backups passed. Encryption, offsite storage, scheduling,
+   migration journal and all 25 governed table counts, then removes the temporary
+   database. Three real backups passed. Encryption, offsite storage, scheduling,
    retention, and production RPO/RTO remain deferred to the production storage gate.
 10. **LOCAL READINESS CHECK COMPLETE:** the no-provider command checks only the exact
     loopback health endpoint, requires every database-backed Phase 1 surface, and
@@ -77,6 +78,11 @@ financial engine remain separate gates.
     calls below both the 115 application ceiling and 120 provider allowance. The
     local Persian card and health response expose only aggregate usage; one controlled
     live check returned eight valid quotes. No history was requested or stored.
+15. **DURABLE RESTART GUARD COMPLETE:** the live refresh interval is enforced inside
+    PostgreSQL, so browser reloads, hot reloads and process restarts cannot spend a
+    second call during the cooldown. Migration 0011 keeps only the latest sanitized
+    outcome—not payloads, prices or history—and the Persian card explains it. A
+    controlled replay kept the durable counter unchanged at 4 used / 111 remaining.
 
 All implementation available from published provider contracts is complete; real
 provider history execution remains paused at item 6 for Tier-A licensing/cost decisions.

@@ -55,6 +55,7 @@ export async function GET() {
           refreshSeconds: navasanRefreshPolicy.effectiveRefreshSeconds,
           maximumScheduledCallsInWindow: navasanRefreshPolicy.maximumScheduledCallsInWindow,
           providerPlanLimit: navasanRefreshPolicy.providerPlanLimit,
+          latestOutcome: navasanQuotaDatabase.latestOutcome,
           ...navasanQuotaDatabase.usage,
         } : undefined,
       },

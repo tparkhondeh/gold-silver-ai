@@ -23,6 +23,9 @@ At minimum, the system should eventually make observable:
 - Navasan's non-secret health detail reports the active free plan, effective refresh
   cadence, rolling 31-day usage, safe remainder and hard limit. The loopback-only
   Data Trust card translates those counters into Persian without calling the provider.
+- Migration 0011 retains only Navasan's latest sanitized operational outcome. Health
+  and Data Trust can show whether that call succeeded, when it completed and how many
+  normalized quotes it produced, without storing or exposing payloads or prices.
 - The Data Trust tab exposes the same boundaries in owner-facing language.
 - `npm run ops:check-local` converts the health document into a strict local
   readiness result. It contacts only `localhost:4174`, requires persistence,

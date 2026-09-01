@@ -70,6 +70,7 @@ test("real PostgreSQL migration, isolation, persistence and restore", async (t) 
   await admin.query(`GRANT INSERT ON source_reconciliations, source_reconciliation_candidates TO "${role}"`);
   await admin.query(`GRANT INSERT ON portfolio_transaction_events, portfolio_valuation_snapshots, portfolio_valuation_positions, portfolio_valuation_transactions TO "${role}"`);
   await admin.query(`GRANT INSERT ON provider_request_reservations TO "${role}"`);
+  await admin.query(`GRANT INSERT, UPDATE ON provider_runtime_status TO "${role}"`);
   const runtimePool = { async connect() {
     const client = await pool.connect();
     await client.query(`SET ROLE "${role}"`);
@@ -97,13 +98,13 @@ test("real PostgreSQL migration, isolation, persistence and restore", async (t) 
   await t.test("runtime cannot mutate/truncate audit data, registries or schema", async () => {
     const client = await runtimePool.connect();
     try {
-      for (const sql of ["UPDATE observations SET value=2", "DELETE FROM observations", "TRUNCATE observations CASCADE", "ALTER TABLE observations DISABLE TRIGGER ALL", "UPDATE instruments SET display_name='changed'", "UPDATE ingestion_batches SET accepted_count=99", "UPDATE source_contract_versions SET active=false", "TRUNCATE decision_records CASCADE", "UPDATE source_reconciliations SET reason_code='stable_identity'", "UPDATE portfolio_transaction_events SET fee_amount=1", "UPDATE provider_request_reservations SET limit_snapshot=1", "TRUNCATE provider_request_reservations", "CREATE TABLE forbidden(id integer)"]) {
+      for (const sql of ["UPDATE observations SET value=2", "DELETE FROM observations", "TRUNCATE observations CASCADE", "ALTER TABLE observations DISABLE TRIGGER ALL", "UPDATE instruments SET display_name='changed'", "UPDATE ingestion_batches SET accepted_count=99", "UPDATE source_contract_versions SET active=false", "TRUNCATE decision_records CASCADE", "UPDATE source_reconciliations SET reason_code='stable_identity'", "UPDATE portfolio_transaction_events SET fee_amount=1", "UPDATE provider_request_reservations SET limit_snapshot=1", "TRUNCATE provider_request_reservations", "DELETE FROM provider_runtime_status", "TRUNCATE provider_runtime_status", "CREATE TABLE forbidden(id integer)"]) {
         await assert.rejects(client.query(sql), /permission denied|must be owner/);
       }
     } finally { client.release(); }
   });
   await t.test("owner is also blocked by immutable audit triggers", async () => {
-    for (const sql of ["UPDATE observations SET value=2", "DELETE FROM observations", "TRUNCATE observations CASCADE", "UPDATE ingestion_batches SET accepted_count=99", "TRUNCATE ingestion_batches CASCADE", "TRUNCATE quarantine_records CASCADE", "TRUNCATE validation_results CASCADE", "TRUNCATE quarantine_resolutions CASCADE", "UPDATE source_contract_versions SET active=false", "TRUNCATE decision_records CASCADE", "TRUNCATE source_reconciliations CASCADE", "TRUNCATE portfolio_transaction_events CASCADE", "TRUNCATE portfolio_valuation_snapshots CASCADE", "TRUNCATE provider_request_reservations"]) {
+    for (const sql of ["UPDATE observations SET value=2", "DELETE FROM observations", "TRUNCATE observations CASCADE", "UPDATE ingestion_batches SET accepted_count=99", "TRUNCATE ingestion_batches CASCADE", "TRUNCATE quarantine_records CASCADE", "TRUNCATE validation_results CASCADE", "TRUNCATE quarantine_resolutions CASCADE", "UPDATE source_contract_versions SET active=false", "TRUNCATE decision_records CASCADE", "TRUNCATE source_reconciliations CASCADE", "TRUNCATE portfolio_transaction_events CASCADE", "TRUNCATE portfolio_valuation_snapshots CASCADE", "TRUNCATE provider_request_reservations CASCADE"]) {
       await admin.query("BEGIN");
       try { await assert.rejects(admin.query(sql), /immutable data records/); }
       finally { await admin.query("ROLLBACK"); }
@@ -281,18 +282,40 @@ test("real PostgreSQL migration, isolation, persistence and restore", async (t) 
     assert.equal((await portfolioRepository.save(subjectId, 1, currentPortfolio.holdings, currentPortfolio.preferences)).version, 2);
     assert.equal((await ledgerRepository.recordValuation(valuationInput)).alreadyRecorded, true);
   });
+  await t.test("durable Navasan cadence survives process restarts without a second provider reservation", async () => {
+    const hash = fingerprintNavasanRequest("latest", { item: "approved-phase-1-set" });
+    const first = await quotaLedger.reserve("latest", hash, 0);
+    assert.equal(first.allowed, true);
+    const blocked = await quotaLedger.reserve("latest", hash, 24_000);
+    assert.equal(blocked.allowed, false);
+    assert.equal(blocked.retryAfterSeconds > 0, true);
+    assert.equal(blocked.used, 1);
+    assert.equal(Number((await admin.query("SELECT count(*) FROM provider_request_reservations")).rows[0].count), 1);
+  });
   await t.test("durable Navasan quota serializes concurrent workers and fails closed at the safety limit", async () => {
     await admin.query(`INSERT INTO provider_request_reservations
       (id,provider_id,endpoint,request_hash,window_days,limit_snapshot)
       SELECT 'navasan_request_' || lpad(to_hex(g),8,'0') || '-0000-4000-8000-' || lpad(to_hex(g),12,'0'),
         'navasan','latest',repeat('a',64),31,115
-      FROM generate_series(1,114) AS g`);
+      FROM generate_series(1,113) AS g`);
     const hash = fingerprintNavasanRequest("latest", { item: "approved-phase-1-set" });
     const outcomes = await Promise.all([quotaLedger.reserve("latest", hash), quotaLedger.reserve("latest", hash)]);
     assert.equal(outcomes.filter((outcome) => outcome.allowed).length, 1);
     assert.equal(outcomes.filter((outcome) => !outcome.allowed).length, 1);
     assert.equal(Number((await admin.query("SELECT count(*) FROM provider_request_reservations")).rows[0].count), NAVASAN_DURABLE_CALL_LIMIT);
     await assert.rejects(admin.query("UPDATE provider_request_reservations SET limit_snapshot=1"), /immutable data records/);
+  });
+  await t.test("latest Navasan runtime status is bounded, mutable and never stores market payloads", async () => {
+    const reservations = (await admin.query("SELECT id FROM provider_request_reservations ORDER BY reserved_at DESC, id DESC LIMIT 2")).rows;
+    assert.equal(reservations.length, 2);
+    await quotaLedger.recordLatestOutcome({ reservationId: reservations[0].id, outcome: "success", quoteCount: 8, durationMs: 125 });
+    await quotaLedger.recordLatestOutcome({ reservationId: reservations[1].id, outcome: "failure", quoteCount: null, durationMs: 8000 });
+    let stored = (await admin.query("SELECT provider_id,last_reservation_id,last_outcome,quote_count,duration_ms FROM provider_runtime_status")).rows;
+    assert.deepEqual(stored, [{ provider_id: "navasan", last_reservation_id: reservations[0].id, last_outcome: "success", quote_count: 8, duration_ms: 125 }]);
+    await quotaLedger.recordLatestOutcome({ reservationId: reservations[0].id, outcome: "failure", quoteCount: null, durationMs: 8000 });
+    stored = (await admin.query("SELECT last_outcome,quote_count,duration_ms FROM provider_runtime_status")).rows;
+    assert.deepEqual(stored, [{ last_outcome: "failure", quote_count: null, duration_ms: 8000 }]);
+    assert.equal(Number((await admin.query("SELECT count(*) FROM provider_runtime_status")).rows[0].count), 1);
   });
   await t.test("backup restores into an independently created test schema", async () => {
     const url = new URL(connectionString);
@@ -311,7 +334,7 @@ test("real PostgreSQL migration, isolation, persistence and restore", async (t) 
     // pg_dump plain output includes psql meta commands; use psql's parser.
     clientCommand("psql", [...args, "--set", "ON_ERROR_STOP=1", "--single-transaction"], dump);
     restoredCreated = true;
-    for (const table of ["asha_schema_migrations", "instruments", "sources", "source_contract_versions", "ingestion_batches", "observations", "quarantine_records", "quarantine_resolutions", "validation_results", "user_portfolios", "portfolio_holdings", "portfolio_preferences", "artifact_versions", "dataset_observations", "decision_records", "decision_assumptions", "decision_features", "source_reconciliations", "source_reconciliation_candidates", "portfolio_transaction_events", "portfolio_valuation_snapshots", "portfolio_valuation_positions", "portfolio_valuation_transactions", "provider_request_reservations"]) {
+    for (const table of ["asha_schema_migrations", "instruments", "sources", "source_contract_versions", "ingestion_batches", "observations", "quarantine_records", "quarantine_resolutions", "validation_results", "user_portfolios", "portfolio_holdings", "portfolio_preferences", "artifact_versions", "dataset_observations", "decision_records", "decision_assumptions", "decision_features", "source_reconciliations", "source_reconciliation_candidates", "portfolio_transaction_events", "portfolio_valuation_snapshots", "portfolio_valuation_positions", "portfolio_valuation_transactions", "provider_request_reservations", "provider_runtime_status"]) {
       const allRows = async (schemaName) => (await admin.query(`SELECT to_jsonb(t) AS row FROM "${schemaName}"."${table}" t ORDER BY to_jsonb(t)::text`)).rows;
       assert.deepEqual(await allRows(restoredSchema), await allRows(schema));
     }
@@ -325,6 +348,7 @@ test("real PostgreSQL migration, isolation, persistence and restore", async (t) 
       await admin.query(`GRANT INSERT ON source_reconciliations, source_reconciliation_candidates TO "${role}"`);
       await admin.query(`GRANT INSERT ON portfolio_transaction_events, portfolio_valuation_snapshots, portfolio_valuation_positions, portfolio_valuation_transactions TO "${role}"`);
       await admin.query(`GRANT INSERT ON provider_request_reservations TO "${role}"`);
+      await admin.query(`GRANT INSERT, UPDATE ON provider_runtime_status TO "${role}"`);
       const restoredPool = { async connect() {
         const client = await pool.connect();
         await client.query(`SET ROLE "${role}"`);

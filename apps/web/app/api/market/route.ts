@@ -58,9 +58,9 @@ let cached: { expiresAt: number; payload: FeedResult } | null = null;
 let cachedIran: { expiresAt: number; quotes: Quote[] } | null = null;
 
 class NavasanQuotaError extends Error {
-  readonly code: "ledger_unavailable" | "quota_exhausted";
+  readonly code: "ledger_unavailable" | "quota_exhausted" | "refresh_cooldown";
 
-  constructor(code: "ledger_unavailable" | "quota_exhausted") {
+  constructor(code: "ledger_unavailable" | "quota_exhausted" | "refresh_cooldown") {
     super(code);
     this.name = "NavasanQuotaError";
     this.code = code;
@@ -88,6 +88,8 @@ function navasanFailureMessage(error: unknown) {
   if (error instanceof NavasanQuotaError) {
     return error.code === "quota_exhausted"
       ? "سقف امن سهمیهٔ نوسان در پنجرهٔ ۳۱روزه پر شده است؛ هیچ درخواست تازه‌ای ارسال نشد"
+      : error.code === "refresh_cooldown"
+        ? "فاصلهٔ امن دریافت هنوز تمام نشده است؛ راه‌اندازی مجدد یا تازه‌کردن صفحه سهمیهٔ تازه مصرف نمی‌کند"
       : "دفتر پایدار سهمیهٔ نوسان آماده نیست؛ برای جلوگیری از مصرف کنترل‌نشده هیچ درخواستی ارسال نشد";
   }
   const name = error instanceof Error ? error.name : "";
@@ -228,11 +230,41 @@ async function fetchIranQuotes(apiKey: string, declaredUnit: "IRR" | "TOMAN", co
   const quota = await resolveNavasanQuotaLedger();
   if (!quota.available) throw new NavasanQuotaError("ledger_unavailable");
   const requestHash = fingerprintNavasanRequest("latest", { item: "approved-phase-1-set" });
-  const reservation = await quota.ledger.reserve("latest", requestHash);
-  if (!reservation.allowed) throw new NavasanQuotaError("quota_exhausted");
+  const reservation = await quota.ledger.reserve("latest", requestHash, navasanRefreshSeconds());
+  if (!reservation.allowed) {
+    throw new NavasanQuotaError(reservation.retryAfterSeconds ? "refresh_cooldown" : "quota_exhausted");
+  }
+  if (!reservation.reservationId) throw new NavasanQuotaError("ledger_unavailable");
 
-  const payload = await fetchJson(`https://api.navasan.tech/latest/?api_key=${encodeURIComponent(apiKey)}`) as NavasanPayload;
-  const quotes = normalizeNavasanPayload(payload, declaredUnit, collectedAt);
+  const startedAt = performance.now();
+  const durationMs = () => Math.max(0, Math.min(120_000, Math.round(performance.now() - startedAt)));
+  let quotes: Quote[];
+  try {
+    const payload = await fetchJson(`https://api.navasan.tech/latest/?api_key=${encodeURIComponent(apiKey)}`) as NavasanPayload;
+    quotes = normalizeNavasanPayload(payload, declaredUnit, collectedAt);
+  } catch (error) {
+    try {
+      await quota.ledger.recordLatestOutcome({
+        reservationId: reservation.reservationId,
+        outcome: "failure",
+        quoteCount: null,
+        durationMs: durationMs(),
+      });
+    } catch {
+      throw new NavasanQuotaError("ledger_unavailable");
+    }
+    throw error;
+  }
+  try {
+    await quota.ledger.recordLatestOutcome({
+      reservationId: reservation.reservationId,
+      outcome: "success",
+      quoteCount: quotes.length,
+      durationMs: durationMs(),
+    });
+  } catch {
+    throw new NavasanQuotaError("ledger_unavailable");
+  }
   cachedIran = { expiresAt: Date.now() + navasanRefreshSeconds() * 1000, quotes };
   return quotes;
 }
