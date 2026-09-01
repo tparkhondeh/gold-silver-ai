@@ -74,8 +74,10 @@ subsequent changes still require their own push and CI verification.
   the counter then showed 3 used and 112 safe calls remaining. No historical request
   or storage occurred.
 - Local typecheck, lint, production build, 122 unit tests and 14 real PostgreSQL tests
-  pass with 94.25% line, 78.49% branch and 94.53% function coverage. Remote CI belongs
-  to the published checkpoint that follows.
+  pass with 94.25% line, 78.49% branch and 94.53% function coverage. Working-branch
+  checkpoint `6b64e16` passed both GitHub Actions jobs in run
+  [33493075764](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33493075764);
+  remote `main` remained unchanged.
 
 ### GoldAPI global-history foundation — ۱۴۰۵/۰۶/۱۰
 
