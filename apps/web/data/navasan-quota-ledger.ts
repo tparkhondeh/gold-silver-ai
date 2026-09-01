@@ -16,6 +16,27 @@ export type NavasanQuotaReservation = {
   reservationId: string | null;
 };
 
+export type NavasanQuotaUsage = {
+  used: number;
+  remaining: number;
+  limit: typeof NAVASAN_DURABLE_CALL_LIMIT;
+  windowDays: typeof NAVASAN_ROLLING_WINDOW_DAYS;
+  exhausted: boolean;
+};
+
+export function summarizeNavasanQuotaUsage(value: unknown): NavasanQuotaUsage {
+  if (typeof value !== "number") throw new Error("Navasan quota ledger returned invalid usage");
+  const used = value;
+  if (!Number.isInteger(used) || used < 0) throw new Error("Navasan quota ledger returned invalid usage");
+  return {
+    used,
+    remaining: Math.max(0, NAVASAN_DURABLE_CALL_LIMIT - used),
+    limit: NAVASAN_DURABLE_CALL_LIMIT,
+    windowDays: NAVASAN_ROLLING_WINDOW_DAYS,
+    exhausted: used >= NAVASAN_DURABLE_CALL_LIMIT,
+  };
+}
+
 function stableJson(value: unknown): string {
   if (Array.isArray(value)) return `[${value.map(stableJson).join(",")}]`;
   if (value && typeof value === "object") {
@@ -51,10 +72,9 @@ export class PostgresNavasanQuotaLedger {
         WHERE provider_id='navasan'
           AND reserved_at >= clock_timestamp() - interval '31 days'
       `);
-      const used = Number(usage.rows?.[0]?.used ?? 0);
-      if (!Number.isInteger(used) || used < 0) throw new Error("Navasan quota ledger returned invalid usage");
-      if (used >= NAVASAN_DURABLE_CALL_LIMIT) {
-        return { allowed: false, used, remaining: 0, reservationId: null };
+      const quota = summarizeNavasanQuotaUsage(usage.rows?.[0]?.used ?? 0);
+      if (quota.exhausted) {
+        return { allowed: false, used: quota.used, remaining: 0, reservationId: null };
       }
       await executor.query(`
         INSERT INTO provider_request_reservations (
@@ -63,8 +83,8 @@ export class PostgresNavasanQuotaLedger {
       `, [reservationId, endpoint, requestHash, NAVASAN_ROLLING_WINDOW_DAYS, NAVASAN_DURABLE_CALL_LIMIT]);
       return {
         allowed: true,
-        used: used + 1,
-        remaining: NAVASAN_DURABLE_CALL_LIMIT - used - 1,
+        used: quota.used + 1,
+        remaining: quota.remaining - 1,
         reservationId,
       };
     });

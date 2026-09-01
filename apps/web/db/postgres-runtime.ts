@@ -7,7 +7,7 @@ import {
   type TransactionRunner,
 } from "../data/postgres-observation-repository.ts";
 import { PostgresPortfolioRepository } from "../data/postgres-portfolio-repository.ts";
-import { PostgresNavasanQuotaLedger } from "../data/navasan-quota-ledger.ts";
+import { PostgresNavasanQuotaLedger, summarizeNavasanQuotaUsage } from "../data/navasan-quota-ledger.ts";
 
 type RuntimeEnvironment = Record<string, string | undefined>;
 
@@ -171,13 +171,20 @@ export async function inspectNavasanQuotaDatabaseHealth(environment: RuntimeEnvi
   const configuration = inspectOperatorDatabaseEnvironment(environment);
   if (!configuration.available) return { state: "blocked", reason: configuration.reason } as const;
   try {
-    const result = await getRuntimePool(configuration.connectionString).query<{ ready: boolean }>(`SELECT
+    const result = await getRuntimePool(configuration.connectionString).query<{ ready: boolean; used: number }>(`SELECT
       to_regclass('public.provider_request_reservations') IS NOT NULL
       AND has_table_privilege(current_user,'public.provider_request_reservations','SELECT,INSERT')
-      AND NOT has_table_privilege(current_user,'public.provider_request_reservations','UPDATE,DELETE,TRUNCATE,TRIGGER') AS ready`);
-    return result.rows[0]?.ready === true
-      ? { state: "quota_ready", reason: "navasan_quota_ledger_ready" } as const
-      : { state: "blocked", reason: "navasan_quota_schema_or_privileges_missing" } as const;
+      AND NOT has_table_privilege(current_user,'public.provider_request_reservations','UPDATE,DELETE,TRUNCATE,TRIGGER') AS ready,
+      (SELECT count(*)::integer FROM provider_request_reservations
+        WHERE provider_id='navasan' AND reserved_at >= clock_timestamp() - interval '31 days') AS used`);
+    if (result.rows[0]?.ready !== true) {
+      return { state: "blocked", reason: "navasan_quota_schema_or_privileges_missing" } as const;
+    }
+    return {
+      state: "quota_ready",
+      reason: "navasan_quota_ledger_ready",
+      usage: summarizeNavasanQuotaUsage(result.rows[0].used),
+    } as const;
   } catch {
     return { state: "blocked", reason: "database_unreachable_or_probe_failed" } as const;
   }

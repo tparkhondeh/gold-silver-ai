@@ -5,6 +5,7 @@ import {
   fingerprintNavasanRequest,
   NAVASAN_DURABLE_CALL_LIMIT,
   PostgresNavasanQuotaLedger,
+  summarizeNavasanQuotaUsage,
 } from "../data/navasan-quota-ledger.ts";
 
 test("fingerprints requests without credentials and independent of parameter order", () => {
@@ -12,6 +13,21 @@ test("fingerprints requests without credentials and independent of parameter ord
   const second = fingerprintNavasanRequest("ohlcSearch", { end: "1405-02-01", start: "1405-01-01", item: "usd_sell" });
   assert.equal(first, second);
   assert.match(first, /^[a-f0-9]{64}$/);
+});
+
+test("summarizes safe rolling usage without provider credentials", () => {
+  assert.deepEqual(summarizeNavasanQuotaUsage(7), {
+    used: 7,
+    remaining: 108,
+    limit: 115,
+    windowDays: 31,
+    exhausted: false,
+  });
+  assert.equal(summarizeNavasanQuotaUsage(116).exhausted, true);
+  assert.equal(summarizeNavasanQuotaUsage(116).remaining, 0);
+  assert.throws(() => summarizeNavasanQuotaUsage(-1), /invalid usage/);
+  assert.throws(() => summarizeNavasanQuotaUsage("unknown"), /invalid usage/);
+  assert.throws(() => summarizeNavasanQuotaUsage(""), /invalid usage/);
 });
 function fakeRunner(used) {
   const queries = [];

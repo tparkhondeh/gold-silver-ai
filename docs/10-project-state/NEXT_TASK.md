@@ -7,7 +7,7 @@
 Migrations 0003–0010 now cover the owner snapshot, immutable provenance,
 exact point-in-time dataset/decision lineage, source-reconciliation records and
 mandatory correction reasons, plus the read-only transaction/evaluation-valuation
-ledger and provider-quota foundation. Local build, 115 unit tests, 14 real PostgreSQL tests,
+ledger and provider-quota foundation. Local build, 122 unit tests, 14 real PostgreSQL tests,
 restore, activation, and health checks pass. Production account authentication,
 empirical divergence thresholds, historical backfill, and the real
 financial engine remain separate gates.
@@ -71,6 +71,12 @@ financial engine remain separate gates.
     local Persian planner calculates future request count while purchase, network
     execution and storage remain locked. `docs/05-data/API_PURCHASE_READINESS_FA.md`
     records the current no-purchase recommendation and the exact final-stage inputs.
+14. **FREE NAVASAN CADENCE AND VISIBILITY COMPLETE:** the owner authorized continued
+    use of the active free plan. Its former six-hour setting is raised to a 6h40m
+    minimum, limiting a continuously running 31-day window to at most 112 scheduled
+    calls below both the 115 application ceiling and 120 provider allowance. The
+    local Persian card and health response expose only aggregate usage; one controlled
+    live check returned eight valid quotes. No history was requested or stored.
 
 All implementation available from published provider contracts is complete; real
 provider history execution remains paused at item 6 for Tier-A licensing/cost decisions.

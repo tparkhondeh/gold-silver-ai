@@ -20,6 +20,9 @@ At minimum, the system should eventually make observable:
 - Web availability, global feed configuration, Iranian feed configuration,
   operator persistence, scenario methodology, and financial-decision readiness are
   reported separately.
+- Navasan's non-secret health detail reports the active free plan, effective refresh
+  cadence, rolling 31-day usage, safe remainder and hard limit. The loopback-only
+  Data Trust card translates those counters into Persian without calling the provider.
 - The Data Trust tab exposes the same boundaries in owner-facing language.
 - `npm run ops:check-local` converts the health document into a strict local
   readiness result. It contacts only `localhost:4174`, requires persistence,

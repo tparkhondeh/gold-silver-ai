@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { fingerprintNavasanRequest } from "../../../data/navasan-quota-ledger.ts";
+import { resolveNavasanRefreshPolicy } from "../../../data/navasan-refresh-policy.ts";
 import { resolveNavasanQuotaLedger } from "../../../db/postgres-runtime.ts";
 import { inspectNavasanConfiguration, normalizeNavasanPayload, type NavasanPayload } from "../../navasan-adapter";
 import { goldApiLiveRequestUrl, normalizeGoldApiLivePayload } from "../../goldapi-adapter";
@@ -53,7 +54,6 @@ type XausPayload = {
 
 const CACHE_MS = 60_000;
 const TIMEOUT_MS = 8_000;
-const DEFAULT_NAVASAN_REFRESH_SECONDS = 21_600;
 let cached: { expiresAt: number; payload: FeedResult } | null = null;
 let cachedIran: { expiresAt: number; quotes: Quote[] } | null = null;
 
@@ -68,10 +68,7 @@ class NavasanQuotaError extends Error {
 }
 
 function navasanRefreshSeconds() {
-  const configuredSeconds = Number(process.env.NAVASAN_REFRESH_SECONDS ?? DEFAULT_NAVASAN_REFRESH_SECONDS);
-  return Number.isFinite(configuredSeconds)
-    ? Math.min(86_400, Math.max(30, Math.floor(configuredSeconds)))
-    : DEFAULT_NAVASAN_REFRESH_SECONDS;
+  return resolveNavasanRefreshPolicy(process.env).effectiveRefreshSeconds;
 }
 
 function asFiniteNumber(value: unknown, label: string) {

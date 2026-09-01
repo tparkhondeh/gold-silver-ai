@@ -225,11 +225,16 @@ licensed real data, validation, financial methodology and production operations.
   disabled without consuming quota or storing data.
   A later provider connection timeout was reported explicitly; stale Rahavard values
   remain visible only as provenance and are never presented or used as a current rate.
-  The six-hour process-local cache remains a performance optimization only. Before
+  The free-plan cache now enforces at least 24,000 seconds (6h40m), which schedules
+  at most 112 calls in any continuously running 31-day window. Before
   every uncached Navasan call, PostgreSQL now serializes workers and appends an
   immutable reservation; a conservative 115-call rolling 31-day limit preserves five
   calls of safety headroom below the provider's 120-call plan. Missing quota storage
-  or exhausted allowance fails closed before network access. GoldAPI.io now uses its
+  or exhausted allowance fails closed before network access. The loopback Data Trust
+  card and `/api/health` show only aggregate usage and remaining calls. An explicitly
+  authorized live verification on ۱۴۰۵/۰۶/۱۰ returned all eight approved valid quotes;
+  the durable counter then showed 3 used and 112 remaining, with no historical request
+  or write. GoldAPI.io now uses its
   current official `/api/price/{metal}/{currency}` route and rejects a response unless
   the metal, USD currency, Unix time and plausible range match the request. Its
   documented ordered daily-history range is normalized separately, split into
@@ -295,8 +300,8 @@ licensed real data, validation, financial methodology and production operations.
   Migration 0006 adds immutable source-reconciliation records and requires a bounded
   plain-language reason on every correction. Migrations 0007–0010 add exact transaction and
   evaluation-only valuation lineage plus immutable provider-call reservations;
-  115 unit and 14 real PostgreSQL tests pass locally; source coverage is 94.19%
-  lines, 77.80% branches and 94.41% functions.
+  122 unit and 14 real PostgreSQL tests pass locally; source coverage is 94.25%
+  lines, 78.49% branches and 94.53% functions.
   GoldAPI global-history checkpoint `eab4b16` passed GitHub quality/audit and real
   PostgreSQL jobs in run 33489418166; remote `main` remained unchanged.
   In the fresh-session laboratory, a fixed

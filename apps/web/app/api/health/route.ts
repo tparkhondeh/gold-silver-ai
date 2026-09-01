@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 
 import { inspectLedgerDatabaseHealth, inspectLocalPortfolioDatabaseHealth, inspectNavasanQuotaDatabaseHealth, inspectObservationDatabaseHealth, inspectProvenanceDatabaseHealth } from "../../../db/postgres-runtime";
+import { resolveNavasanRefreshPolicy } from "../../../data/navasan-refresh-policy.ts";
 import { decisionFramework } from "../../decision-support";
 import { inspectNavasanConfiguration } from "../../navasan-adapter";
 import { scenarioMethodology } from "../../scenario-engine";
@@ -15,6 +16,7 @@ export async function GET() {
   const provenanceDatabase = await inspectProvenanceDatabaseHealth();
   const ledgerDatabase = await inspectLedgerDatabaseHealth();
   const navasanQuotaDatabase = await inspectNavasanQuotaDatabaseHealth();
+  const navasanRefreshPolicy = resolveNavasanRefreshPolicy(process.env);
   const databaseReason = ({
     "operator database commit is not explicitly enabled": "Commit پایگاه داده صریحاً فعال نشده است",
     "DATABASE_URL is not configured": "آدرس PostgreSQL تنظیم نشده است",
@@ -40,7 +42,22 @@ export async function GET() {
       { id: "web", state: "ready", reason: "رابط وب در دسترس است" },
       { id: "global-market", state: process.env.GOLD_API_TOKEN?.trim() ? "configured" : "fallback", reason: process.env.GOLD_API_TOKEN?.trim() ? "خوراک کلیددار پیکربندی شده" : "خوراک‌های عمومی فقط برای نمایش اطلاع‌رسانی" },
       { id: "iran-market", state: iranFeedConfigured ? "configured" : "blocked", reason: navasanConfiguration.ready ? `واحد قرارداد ${navasanConfiguration.unit}` : navasanConfiguration.reason === "key_rotation_required" ? "کلید قبلی باید لغو و با کلید جدید جایگزین شود" : "کلید و واحد قراردادی منبع ایرانی کامل نیست" },
-      { id: "navasan-quota", state: navasanQuotaDatabase.state, reason: navasanQuotaDatabase.state === "quota_ready" ? "دفتر پایدار ۳۱روزهٔ سهمیه آماده است" : "دفتر پایدار سهمیه آماده نیست؛ درخواست نوسان متوقف می‌ماند" },
+      {
+        id: "navasan-quota",
+        state: navasanQuotaDatabase.state,
+        reason: navasanQuotaDatabase.state === "quota_ready"
+          ? `پلن رایگان: ${navasanQuotaDatabase.usage.used} درخواست از سقف امن ${navasanQuotaDatabase.usage.limit} مصرف شده است`
+          : "دفتر پایدار سهمیه آماده نیست؛ درخواست نوسان متوقف می‌ماند",
+        details: navasanQuotaDatabase.state === "quota_ready" ? {
+          plan: navasanRefreshPolicy.plan,
+          configurationValid: navasanRefreshPolicy.configurationValid,
+          adjustedForSafety: navasanRefreshPolicy.adjustedForSafety,
+          refreshSeconds: navasanRefreshPolicy.effectiveRefreshSeconds,
+          maximumScheduledCallsInWindow: navasanRefreshPolicy.maximumScheduledCallsInWindow,
+          providerPlanLimit: navasanRefreshPolicy.providerPlanLimit,
+          ...navasanQuotaDatabase.usage,
+        } : undefined,
+      },
       { id: "observation-persistence", state: database.state, reason: databaseReason },
       { id: "portfolio-persistence", state: portfolioDatabase.state, reason: portfolioDatabase.state === "local_ready" ? "ذخیرهٔ محلیِ نسخه‌دار و تفکیک‌شده آماده است؛ ورود حساب تولیدی هنوز دروازهٔ جداگانه دارد" : "ذخیرهٔ محلی سبد یا سیاست امنیتی آن آماده نیست" },
       { id: "provenance-registry", state: provenanceDatabase.state, reason: provenanceDatabase.state === "registry_ready" ? "رجیستری نسخه‌دار و فقط‌خواندنی برای زنجیرهٔ منشأ آماده است؛ تصمیم مالی واقعی هنوز ثبت نمی‌شود" : "ساختار یا دسترسی رجیستری منشأ کامل نیست" },

@@ -7,6 +7,17 @@ state is recorded in `docs/10-project-state/CURRENT_STATE.md`.
 
 ## [Unreleased]
 
+### Navasan free-plan cadence and quota visibility — ۱۴۰۵/۰۶/۱۰
+
+- Raised the free-plan refresh floor from six hours to 6h40m, limiting a continuously
+  running 31-day window to at most 112 scheduled calls below the existing 115-call
+  hard ceiling and provider's 120-call allowance.
+- Added aggregate used/remaining quota health and a loopback-only Persian status card;
+  no credential or raw provider response is exposed.
+- One authorized live check returned eight approved valid Iranian quotes. No history
+  was requested or stored. Local build, lint, 122 unit tests and 14 real PostgreSQL
+  tests pass with 94.25% line, 78.49% branch and 94.53% function coverage.
+
 ### GoldAPI global-history foundation — ۱۴۰۵/۰۶/۱۰
 
 - Updated the keyed live adapter to GoldAPI's current official price endpoint and

@@ -1,0 +1,49 @@
+import assert from "node:assert/strict";
+import test from "node:test";
+
+import { parseNavasanQuotaHealth } from "../app/navasan-quota-view.ts";
+
+test("accepts only the complete free-plan quota health contract", () => {
+  const result = parseNavasanQuotaHealth({ engines: [{
+    id: "navasan-quota",
+    state: "quota_ready",
+    reason: "ready",
+    details: {
+      plan: "free",
+      configurationValid: true,
+      adjustedForSafety: true,
+      refreshSeconds: 24_000,
+      maximumScheduledCallsInWindow: 112,
+      providerPlanLimit: 120,
+      used: 7,
+      remaining: 108,
+      limit: 115,
+      windowDays: 31,
+    },
+  }] });
+  assert.equal(result.state, "ready");
+  assert.equal(result.details?.used, 7);
+  assert.equal(result.details?.remaining, 108);
+  assert.equal(result.details?.refreshSeconds, 24_000);
+  assert.equal(result.details?.configurationValid, true);
+});
+
+test("fails closed for paid, malformed, or unavailable quota health", () => {
+  const paid = parseNavasanQuotaHealth({ engines: [{
+    id: "navasan-quota",
+    state: "quota_ready",
+    details: { plan: "standard", configurationValid: true, used: 0, remaining: 115, limit: 115, windowDays: 31, refreshSeconds: 120, maximumScheduledCallsInWindow: 22_321, providerPlanLimit: 30_000 },
+  }] });
+  assert.equal(paid.state, "blocked");
+  assert.match(paid.message, /رایگان/);
+  assert.equal(parseNavasanQuotaHealth({ engines: [] }).state, "blocked");
+  assert.equal(parseNavasanQuotaHealth({ engines: [{ id: "navasan-quota", state: "blocked", reason: "دفتر آماده نیست" }] }).message, "دفتر آماده نیست");
+
+  const fallback = parseNavasanQuotaHealth({ engines: [{
+    id: "navasan-quota",
+    state: "quota_ready",
+    details: { plan: "free", configurationValid: false, used: 0, remaining: 115, limit: 115, windowDays: 31, refreshSeconds: 24_000, maximumScheduledCallsInWindow: 112, providerPlanLimit: 120 },
+  }] });
+  assert.equal(fallback.state, "ready");
+  assert.match(fallback.message, /جایگزین/);
+});

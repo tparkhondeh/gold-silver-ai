@@ -85,12 +85,13 @@ if ($navasanKey.Length -gt 0) {
     default { throw "طرح نوسان باید رایگان، استاندارد یا طلایی باشد." }
   }
   $refreshSeconds = switch ($navasanPlan) {
-    "free" { "21600" }
+    "free" { "24000" }
     "standard" { "120" }
     "gold" { "30" }
   }
   Set-DotEnvValue -Name "NAVASAN_API_KEY" -Value $navasanKey
   Set-DotEnvValue -Name "NAVASAN_VALUE_UNIT" -Value $navasanUnit
+  Set-DotEnvValue -Name "NAVASAN_PLAN" -Value $navasanPlan
   Set-DotEnvValue -Name "NAVASAN_REFRESH_SECONDS" -Value $refreshSeconds
   Set-DotEnvValue -Name "NAVASAN_KEY_ROTATION_CONFIRMED" -Value "true"
 }
