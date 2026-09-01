@@ -164,6 +164,17 @@ separate fold metrics. The aggregation policy is permanently
 One hundred and fifteen laboratory tests pass locally; omitted folds, incomplete
 matrices, invalid tail sizes and resealed reports fail closed. The report remains
 `no_decision`, no-use and no-execution.
+Minimum-CVaR multi-fold checkpoint `548a2fa` passed all three GitHub jobs in run
+33521541570. Exercising the same multi-fold mechanics against HRP then exposed a real
+transport-rounding defect: fold 2 could derive a correlation just over one from
+12-decimal covariance values. Correlation contract v2 now recomputes exact train-only
+moments from the provenance-bound return matrix and uses rounded covariance only as a
+validated upstream identity. The previously failing fold now completes without a
+loose numerical clamp. The complete HRP standardizer/covariance/correlation/distance/
+clustering/order/weight/evaluation chain can now replay independently across all three
+synthetic folds. Its report records every artifact identity and keeps fold metrics
+separate with no aggregate claim. One hundred and twenty tests pass locally; every
+output remains `no_decision`, no-use and no-execution.
 
 The owner authorized staged Data Foundation and deterministic-baseline development,
 with each stage dependent on the previous quality gate. Private GitHub authentication

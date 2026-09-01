@@ -119,6 +119,10 @@ explicit zero-variance exclusion and fail closed with fewer than two active path
 prove future test changes cannot alter fitted correlations, pin canonical artifact
 replay, and reject a resealed false entry. Seventy-five laboratory tests pass without
 selecting a portfolio methodology.
+Correlation v2 additionally exists because a later rolling fold exposed correlation
+slightly above one when 12-decimal covariance transport values were divided. The same
+tests now pin exact-moment output and downstream identities; the multi-fold HRP test
+proves the formerly failing fold completes without widening a financial tolerance.
 Five correlation-distance tests hand-check zero distance for identical paths and unit
 distance for perfectly opposite paths, prove future test changes cannot alter fitted
 distances, pin the canonical artifact replay, and reject a resealed false value. Eighty
@@ -159,6 +163,10 @@ report identity and no-aggregation policy, prove first-fold future isolation, re
 complete canonical transport, enforce fold parameters, and reject omitted/resealed
 folds or incomplete matrices. One hundred and fifteen laboratory tests pass; no
 headline performance claim is produced.
+Five HRP walk-forward tests hand-check all three fold ranges and metrics, pin the full
+report identity, require every intermediate artifact ID, prove first-fold future
+isolation, require canonical transport, and reject incomplete or resealed reports.
+One hundred and twenty laboratory tests pass with no aggregate claim or decision.
 
 ## Related Documents
 

@@ -41,6 +41,11 @@ it does not select a risk model, threshold, allocation method, or owner risk tol
 That artifact can now be converted into a train-only Pearson-correlation feature.
 Zero-variance paths are excluded and disclosed because their correlation is undefined;
 fewer than two remaining paths fails closed. This is still feature plumbing only.
+Correlation v2 computes Pearson values from exact train-only return moments rather
+than the covariance artifact's rounded transport strings. The exact covariance
+artifact remains mandatory provenance, but no longer introduces a later-fold value
+slightly above one. A tiny arithmetic-only bound remains for decimal square-root
+precision; it is not a tolerance for rounded financial inputs.
 The correlation feature can also be converted into the bounded distance
 `sqrt((1-correlation)/2)`: identical paths have distance zero and perfectly opposite
 paths have distance one. This is a deterministic clustering input only and does not
@@ -70,6 +75,9 @@ tail definition, grid mechanics and all output permanently non-operational.
 The multi-fold form repeats that isolation across the complete synthetic plan and
 records scenario/candidate counts per fold. It preserves evidence of stability or
 instability without converting separate folds into a claimed overall result.
+The complete HRP feature and weighting chain can now repeat across every fold as well.
+Every intermediate identity is recorded, weights are frozen before each test, and
+fold metrics cannot be aggregated into a claimed overall performance result.
 
 ## Related Documents
 

@@ -16,6 +16,7 @@ from .correlation_distance import validate_train_only_correlation_distance
 from .hierarchical_clustering import validate_train_only_single_linkage_clustering
 from .cluster_order import validate_train_only_cluster_leaf_order
 from .hrp_control import validate_hrp_comparison_control_weights
+from .hrp_walk_forward import validate_hrp_walk_forward_report
 from .covariance import validate_train_only_covariance
 from .contracts import (
     ContractViolation,
@@ -733,6 +734,34 @@ def decode_minimum_cvar_walk_forward_report(
     return _decode_canonical(
         document,
         lambda value: validate_minimum_cvar_walk_forward_report(
+            value, dataset_payload, matrix_payload, plan_payload
+        ),
+    )
+
+
+def encode_hrp_walk_forward_report(
+    payload: object,
+    dataset_payload: object,
+    matrix_payload: object,
+    plan_payload: object,
+) -> bytes:
+    return _encode_canonical(
+        payload,
+        lambda value: validate_hrp_walk_forward_report(
+            value, dataset_payload, matrix_payload, plan_payload
+        ),
+    )
+
+
+def decode_hrp_walk_forward_report(
+    document: object,
+    dataset_payload: object,
+    matrix_payload: object,
+    plan_payload: object,
+) -> dict[str, Any]:
+    return _decode_canonical(
+        document,
+        lambda value: validate_hrp_walk_forward_report(
             value, dataset_payload, matrix_payload, plan_payload
         ),
     )

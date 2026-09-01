@@ -106,3 +106,9 @@ the training grid or cross the permanent no-decision/no-execution boundary.
 for every fold in a validated synthetic plan. It records each fold's training range,
 scenario/candidate count and artifact identities. Metrics are never stitched into a
 headline result: `aggregationPolicy` is permanently `none_fold_metrics_only`.
+
+Correlation contract v2 derives Pearson values from exact train-only return moments,
+while retaining the validated 12-decimal covariance artifact as upstream provenance.
+This avoids using rounded transport values as calculation inputs. The complete HRP
+chain can therefore replay across every fold with `build_hrp_walk_forward_report()`;
+all intermediate artifact IDs and fold metrics remain separate and no-decision.

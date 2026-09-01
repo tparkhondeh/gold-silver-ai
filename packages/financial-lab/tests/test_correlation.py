@@ -58,7 +58,7 @@ class TrainOnlyCorrelationTests(unittest.TestCase):
         self.assertFalse(correlation["executionAllowed"])
         self.assertEqual(
             correlation["correlationId"],
-            "ASHA_TRAIN_ONLY_CORRELATION_92c37927daf5cc1eac323ac7cef03682fe0ff4f668b77fbae8c261628ce6015e",
+            "ASHA_TRAIN_ONLY_CORRELATION_14a0e11db68635e59adcc9939d32cf0f7f7cdfc8e3d43b0d2253b3eb575047e8",
         )
 
     def test_zero_variance_is_disclosed_and_insufficient_active_set_fails_closed(self) -> None:
@@ -104,7 +104,7 @@ class TrainOnlyCorrelationTests(unittest.TestCase):
 
     def test_machine_readable_schema_matches_runtime_version(self) -> None:
         schema = json.loads(
-            (PACKAGE_ROOT / "schemas/v1/train-only-correlation.schema.json").read_text(encoding="utf-8")
+            (PACKAGE_ROOT / "schemas/v1/train-only-correlation-v2.schema.json").read_text(encoding="utf-8")
         )
         self.assertEqual(schema["properties"]["schemaVersion"]["const"], CORRELATION_SCHEMA_VERSION)
         self.assertFalse(schema["additionalProperties"])

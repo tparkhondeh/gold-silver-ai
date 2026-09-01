@@ -54,7 +54,7 @@ class HrpComparisonControlTests(unittest.TestCase):
         self.assertFalse(weights["executionAllowed"])
         self.assertEqual(
             weights["weightSetId"],
-            "ASHA_HRP_CONTROL_WEIGHTS_49d3b3fd2443f828a781a05fd4c7414a534e438733b8a892adbaed2fc6bf98c8",
+            "ASHA_HRP_CONTROL_WEIGHTS_72647f0dcf8d3ba0712aff3e868875fe8e0e8ce313ba50fabd3452fd74c04323",
         )
 
     def test_future_test_change_cannot_change_train_only_weights(self) -> None:

@@ -41,7 +41,7 @@ class ClusterLeafOrderTests(unittest.TestCase):
         self.assertEqual(order["parameters"]["weightingPolicy"], "not_computed")
         self.assertEqual(
             order["orderId"],
-            "ASHA_CLUSTER_LEAF_ORDER_49132123e6b58917063f68f2c7a0a9aeab97bdf27a5bf99adb5cfcbaa42c1822",
+            "ASHA_CLUSTER_LEAF_ORDER_fd465f7b2bcc07e5674e410a72a84a73979fc0bbbc460c09d81d16caece9d156",
         )
 
     def test_equal_distance_tree_has_deterministic_order(self) -> None:

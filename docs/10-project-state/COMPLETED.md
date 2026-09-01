@@ -198,6 +198,16 @@ Phase 1 checkpoint `0f90210`; not merged to `main`.
   records exact artifact identities and keeps metrics separate with no aggregate
   performance claim. One hundred and fifteen tests pass; omitted folds, invalid
   parameters and resealed reports fail closed.
+- Minimum-CVaR multi-fold checkpoint `548a2fa` passed all three jobs in GitHub run
+  [33521541570](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33521541570).
+- Replaced correlation v1's calculation from rounded covariance transport values with
+  versioned v2 exact train-only moments. A later-fold correlation overflow above one
+  now resolves by correct arithmetic rather than a wider clamp; exact provenance,
+  zero-variance policy and downstream deterministic IDs remain enforced.
+- Added a versioned HRP multi-fold report that rebuilds and identifies the complete
+  train-only feature/clustering/weight chain per fold, freezes it for that test range,
+  and keeps metrics separate with no aggregate claim. One hundred and twenty tests
+  pass; incomplete or resealed reports fail closed.
 
 ## Phase 1 — Completed Units on the Working Branch
 

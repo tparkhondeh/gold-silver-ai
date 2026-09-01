@@ -60,7 +60,7 @@ class CorrelationDistanceTests(unittest.TestCase):
         self.assertFalse(distance["executionAllowed"])
         self.assertEqual(
             distance["distanceId"],
-            "ASHA_CORRELATION_DISTANCE_bd5c997e5718b9fa669cea2fae39445eb328d7c33b2c9883bdd03c9b2b7a4232",
+            "ASHA_CORRELATION_DISTANCE_9cc1d8dbacabebc1031540ca94e941aff925046c2fdbb92b45b10cda3a915223",
         )
 
     def test_identical_paths_have_zero_distance(self) -> None:

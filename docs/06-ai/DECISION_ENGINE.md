@@ -112,6 +112,9 @@ LLM may explain that artifact but cannot alter its weights, metrics or safety st
 The multi-fold report likewise permits explanation of separate deterministic results
 only; the fixed no-aggregation flag prevents the LLM from presenting a synthetic
 headline performance claim.
+HRP multi-fold output records every deterministic intermediate artifact and separately
+evaluated fold. The LLM can explain those records but cannot combine them into a new
+performance number or remove the permanent safety state.
 
 ## Decision History Requirement
 

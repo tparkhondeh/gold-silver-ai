@@ -14,10 +14,10 @@ from .normalization import validate_train_only_standardizer
 from .walk_forward import validate_walk_forward_plan
 
 
-CORRELATION_SCHEMA_VERSION = "asha.synthetic.train_only_correlation.v1"
+CORRELATION_SCHEMA_VERSION = "asha.synthetic.train_only_correlation.v2"
 _CORRELATION_ID = re.compile(r"ASHA_TRAIN_ONLY_CORRELATION_[a-f0-9]{64}\Z")
 _QUANTUM = Decimal("0.000000000001")
-_ROUNDING_TOLERANCE = Decimal("0.000000001000")
+_ARITHMETIC_TOLERANCE = Decimal("0.000000000000000000000000000000000000000100")
 _CORRELATION_KEYS = {
     "schemaVersion", "correlationId", "status", "financialUseAllowed",
     "executionAllowed", "decisionState", "datasetReference",
@@ -40,17 +40,20 @@ def _decimal_string(value: Decimal) -> str:
 
 def _bounded_correlation(value: Decimal) -> Decimal:
     if value > 1:
-        if value - Decimal("1") > _ROUNDING_TOLERANCE:
-            raise ContractViolation("rounded covariance implies correlation above one")
+        if value - Decimal("1") > _ARITHMETIC_TOLERANCE:
+            raise ContractViolation("exact training moments imply correlation above one")
         return Decimal("1")
     if value < -1:
-        if Decimal("-1") - value > _ROUNDING_TOLERANCE:
-            raise ContractViolation("rounded covariance implies correlation below minus one")
+        if Decimal("-1") - value > _ARITHMETIC_TOLERANCE:
+            raise ContractViolation("exact training moments imply correlation below minus one")
         return Decimal("-1")
     return value
 
 
-def _build_unsigned(covariance: dict[str, Any]) -> dict[str, Any]:
+def _build_unsigned(
+    matrix: dict[str, Any],
+    covariance: dict[str, Any],
+) -> dict[str, Any]:
     excluded = list(covariance["zeroVarianceInstrumentIds"])
     active = [
         instrument_id for instrument_id in covariance["instrumentIds"]
@@ -58,25 +61,61 @@ def _build_unsigned(covariance: dict[str, Any]) -> dict[str, Any]:
     ]
     if len(active) < 2:
         raise ContractViolation("correlation needs at least two non-zero-variance synthetic instruments")
-    covariance_values = {
-        (row["instrumentId"], value["instrumentId"]): Decimal(value["value"])
-        for row in covariance["rows"]
-        for value in row["values"]
-    }
-    expected_pairs = {(left, right) for left in covariance["instrumentIds"] for right in covariance["instrumentIds"]}
-    if set(covariance_values) != expected_pairs:
-        raise ContractViolation("covariance does not contain an exact square instrument matrix")
+    training_start = covariance["trainingFeatureStartIndex"]
+    training_end = covariance["trainingFeatureEndIndex"]
+    training_rows = [
+        row for row in matrix["rows"]
+        if training_start <= row["periodIndex"] <= training_end
+    ]
+    if [row["periodIndex"] for row in training_rows] != list(
+        range(training_start, training_end + 1)
+    ):
+        raise ContractViolation("correlation needs the complete training-feature interval")
+    columns = {instrument_id: [] for instrument_id in covariance["instrumentIds"]}
+    for row in training_rows:
+        returns = {item["instrumentId"]: Decimal(item["value"]) for item in row["returns"]}
+        if set(returns) != set(columns):
+            raise ContractViolation("correlation row has a different instrument set")
+        for instrument_id in columns:
+            columns[instrument_id].append(returns[instrument_id])
 
     with localcontext() as context:
         context.prec = 50
         context.rounding = ROUND_HALF_EVEN
-        variances = {instrument_id: covariance_values[(instrument_id, instrument_id)] for instrument_id in active}
+        count = Decimal(len(training_rows))
+        means = {
+            instrument_id: sum(columns[instrument_id]) / count
+            for instrument_id in columns
+        }
+        exact_covariance = {
+            (left, right): sum(
+                (left_value - means[left]) * (right_value - means[right])
+                for left_value, right_value in zip(
+                    columns[left], columns[right], strict=True
+                )
+            ) / count
+            for left in columns
+            for right in columns
+        }
+        exact_zero_variance_ids = {
+            instrument_id for instrument_id in columns
+            if exact_covariance[(instrument_id, instrument_id)] == 0
+        }
+        if exact_zero_variance_ids != set(excluded):
+            raise ContractViolation(
+                "correlation exact zero-variance set differs from covariance provenance"
+            )
+        variances = {
+            instrument_id: exact_covariance[(instrument_id, instrument_id)]
+            for instrument_id in active
+        }
         if any(value <= 0 for value in variances.values()):
-            raise ContractViolation("active correlation instruments need positive rounded variance")
+            raise ContractViolation("active correlation instruments need positive exact variance")
         correlation_values = {
             (left, right): (
                 Decimal("1") if left == right else _bounded_correlation(
-                    covariance_values[(left, right)] / (variances[left] * variances[right]).sqrt()
+                    exact_covariance[(left, right)]
+                    / (variances[left] * variances[right]).sqrt()
                 )
             )
             for left in active
@@ -106,10 +145,10 @@ def _build_unsigned(covariance: dict[str, Any]) -> dict[str, Any]:
         "trainingFeatureStartIndex": covariance["trainingFeatureStartIndex"],
         "trainingFeatureEndIndex": covariance["trainingFeatureEndIndex"],
         "parameters": {
-            "kind": "pearson_from_population_covariance_v1",
+            "kind": "pearson_from_exact_training_moments_v2",
             "zeroVariancePolicy": "exclude_and_disclose",
             "rounding": "half_even_12_decimals",
-            "roundingClampTolerance": "0.000000001000",
+            "roundingClampTolerance": "0.000000000000000000000000000000000000000100",
         },
         "activeInstrumentIds": active,
         "excludedZeroVarianceInstrumentIds": excluded,
@@ -154,7 +193,7 @@ def build_train_only_correlation(
     covariance = validate_train_only_covariance(
         covariance_payload, dataset, matrix, plan, standardizer
     )
-    unsigned = _build_unsigned(covariance)
+    unsigned = _build_unsigned(matrix, covariance)
     correlation = {
         **unsigned,
         "correlationId": f"ASHA_TRAIN_ONLY_CORRELATION_{fingerprint(unsigned)}",
@@ -198,10 +237,10 @@ def validate_train_only_correlation(
     }:
         raise ContractViolation("train-only correlation cannot approve a methodology")
     if correlation["parameters"] != {
-        "kind": "pearson_from_population_covariance_v1",
+        "kind": "pearson_from_exact_training_moments_v2",
         "zeroVariancePolicy": "exclude_and_disclose",
         "rounding": "half_even_12_decimals",
-        "roundingClampTolerance": "0.000000001000",
+        "roundingClampTolerance": "0.000000000000000000000000000000000000000100",
     }:
         raise ContractViolation("correlation parameters are not the reviewed exact mechanics")
     if correlation["reasonCodes"] != [
@@ -234,6 +273,6 @@ def validate_train_only_correlation(
         raise ContractViolation("train-only correlation ID is invalid")
     if correlation_id != f"ASHA_TRAIN_ONLY_CORRELATION_{fingerprint(unsigned)}":
         raise ContractViolation("train-only correlation fingerprint mismatch")
-    if unsigned != _build_unsigned(covariance):
+    if unsigned != _build_unsigned(matrix, covariance):
         raise ContractViolation("train-only correlation does not match exact replay")
     return correlation

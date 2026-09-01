@@ -154,6 +154,15 @@ state is recorded in `docs/10-project-state/CURRENT_STATE.md`.
   grid and freezes weights for its test interval; fold metrics remain separate under
   a no-aggregation policy. Missing folds, incomplete inputs and resealed output fail
   closed. One hundred and fifteen tests pass and no financial claim is enabled.
+- Minimum-CVaR multi-fold checkpoint `548a2fa` passed all three GitHub Actions jobs in
+  run [33521541570](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33521541570).
+- Versioned train-only correlation as v2 and now compute Pearson values from exact
+  training moments instead of rounded covariance transport fields. This fixes a real
+  later-fold value just above one without widening a tolerance; downstream identities
+  were deterministically rebuilt.
+- Added an HRP multi-fold report with every standardizer, covariance, correlation,
+  distance, cluster, order, weight and evaluation identity per fold. Separate metrics
+  cannot become an aggregate performance claim. One hundred and twenty tests pass.
 
 ### Fail-closed Navasan history authorization — ۱۴۰۵/۰۶/۱۰
 

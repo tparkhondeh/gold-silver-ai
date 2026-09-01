@@ -60,6 +60,9 @@ grid, tail size or step into an approved allocation rule.
 The same mechanics can now replay every walk-forward fold, refitting only on each
 training interval before freezing for its test interval. Fold metrics stay separate;
 the report explicitly forbids an aggregate performance claim.
+HRP now has the same multi-fold isolation: its full train-only covariance, exact-
+moment correlation, clustering, ordering and weighting chain is rebuilt per fold and
+frozen for that fold's test interval. This remains a comparison report, not approval.
 
 ## Related Documents
 

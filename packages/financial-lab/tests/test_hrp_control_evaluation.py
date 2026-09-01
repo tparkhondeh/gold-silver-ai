@@ -54,7 +54,7 @@ class HrpControlEvaluationTests(unittest.TestCase):
         })
         self.assertEqual(
             evaluation["evaluationId"],
-            "ASHA_WEIGHTED_CONTROL_EVAL_90883186872eeb90847d767cb39f5af789578d93146f4cc97e5e8887b43e003e",
+            "ASHA_WEIGHTED_CONTROL_EVAL_4f6fe7e99b37ac342eec0f07451cea32ee30c15b6fb067badcd2b4e8adc31f0f",
         )
         self.assertEqual(evaluation["decisionState"], "no_decision")
         self.assertFalse(evaluation["financialUseAllowed"])

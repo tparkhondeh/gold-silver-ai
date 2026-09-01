@@ -114,7 +114,7 @@ class SingleLinkageClusteringTests(unittest.TestCase):
         self.assertFalse(clustering["executionAllowed"])
         self.assertEqual(
             clustering["clusteringId"],
-            "ASHA_SINGLE_LINKAGE_CLUSTERING_5ed47086450d23c77a8fb2397c33212ce883de1d0bbb8807287647faaa5cc43c",
+            "ASHA_SINGLE_LINKAGE_CLUSTERING_a3ec54622a2df05de1d5296523f81c818acb3c6114f78eaac9a5fe3b493b9750",
         )
 
     def test_equal_distance_ties_use_lexicographic_members(self) -> None:

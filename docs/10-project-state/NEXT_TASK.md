@@ -222,6 +222,15 @@ financial engine remain separate gates.
     fold's test interval. The versioned report keeps fold metrics separate under
     `none_fold_metrics_only`, requires every fold and exact replay, and emits no
     aggregate performance claim, methodology approval or decision.
+45. **EXACT-MOMENT CORRELATION V2 COMPLETE:** correlation is recomputed from the exact
+    train-only return moments rather than the 12-decimal covariance transport values.
+    This removes a rounding overflow found in a later fold while preserving exact
+    covariance provenance, versioning, zero-variance disclosure and no-decision locks.
+46. **HRP MULTI-FOLD REPORT COMPLETE:** every fold rebuilds the complete standardizer-
+    to-covariance-to-correlation-to-clustering-to-order-to-weight chain and freezes it
+    for only that test interval. All artifact identities and separate fold metrics are
+    replayable under `none_fold_metrics_only`; no aggregate claim or methodology
+    approval is emitted.
 
 All implementation available from published provider contracts is complete; real
 provider history execution remains paused at item 6 for Tier-A licensing/cost decisions.
