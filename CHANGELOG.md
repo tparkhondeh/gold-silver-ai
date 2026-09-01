@@ -7,6 +7,18 @@ state is recorded in `docs/10-project-state/CURRENT_STATE.md`.
 
 ## [Unreleased]
 
+### Test-coverage and portfolio-persistence hardening — ۱۴۰۵/۰۶/۰۹
+
+- Added an enforced source-only coverage gate using Node's built-in runner: minimum
+  85% lines, 65% branches, and 80% functions. Generated build output cannot inflate
+  the result.
+- Added direct repository tests for empty restore, exact holding/preference restore,
+  atomic versioned save, and fail-before-replace behavior on stale versions.
+- The local suite now passes 94 tests with 93.44% lines, 74.54% branches, and 93.77%
+  functions on the current host; the separate real PostgreSQL suite still passes
+  14 tests including independent restore.
+- Replaced stale starter/runtime documentation with the actual Asha local boundaries.
+
 ### Navasan quota and history foundation — ۱۴۰۵/۰۶/۰۹
 
 - Replaced the exposed Navasan credential through the official bot and transferred
@@ -26,7 +38,7 @@ state is recorded in `docs/10-project-state/CURRENT_STATE.md`.
   dates and marks duplicates, range/instrument violations and Tehran
   timestamp/date mismatches. Synthetic fixtures only; zero interpolation, provider
   calls and historical writes; flagged rows are reported as quarantine-required.
-- Local typecheck, lint, production build, 90 unit tests, and 14 real PostgreSQL
+- Local typecheck, lint, production build, 94 unit tests, and 14 real PostgreSQL
   migration/concurrency/restore tests pass.
 - Code checkpoint `b0bb80a` passed both GitHub quality and real PostgreSQL jobs in
   run 33417744818.
@@ -39,9 +51,9 @@ state is recorded in `docs/10-project-state/CURRENT_STATE.md`.
 - With explicit owner authorization, sent the proposal's no-secret storage/licensing
   inquiry through Navasan's official contact bot. Telegram marked the outgoing message
   read; a written vendor response is still pending and no permission is inferred.
-- Added an hourly read-only thread heartbeat to detect a written vendor response
-  without requiring repeated owner prompts. It cannot send messages, accept terms or
-  cost, consume provider quota, or run the historical backfill.
+- Vendor follow-up and subscription purchase were later deferred by the owner until
+  the final integration stage. No active monitor, purchase, or historical request is
+  part of the current development slice.
 
 ### Identity proposal and evaluation ledger foundation — ۱۴۰۵/۰۶/۰۹
 

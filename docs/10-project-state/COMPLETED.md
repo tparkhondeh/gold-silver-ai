@@ -63,6 +63,15 @@ requirements. Full details: `PHASE_0_AUDIT.md` § 15.
 `main`. The stabilization commits are now confirmed on the private remote;
 subsequent changes still require their own push and CI verification.
 
+### Test coverage and portfolio repository hardening — ۱۴۰۵/۰۶/۰۹
+
+- Added source-only regression floors of 85% lines, 65% branches and 80% functions
+  to the default quality command; generated build output is not counted.
+- Added direct unit coverage for empty/exact portfolio restore, atomic versioned save,
+  and stale-version failure before replacing holdings.
+- Passed 94 unit/contract/API tests and 14 real PostgreSQL tests locally. Remote CI
+  verification remains attached to the checkpoint that publishes this unit.
+
 ### Navasan quota and history foundation — ۱۴۰۵/۰۶/۰۹
 
 - Replaced the exposed key through the official bot and stored it only in local,
@@ -77,7 +86,7 @@ subsequent changes still require their own push and CI verification.
 - Added a deterministic offline OHLC continuity audit for unobserved provider dates,
   duplicates, range/instrument violations and Tehran timestamp/date mismatches. It
   uses synthetic fixtures, inserts no values and cannot authorize storage.
-- Passed typecheck, lint, production build, 90 unit tests and 14 real PostgreSQL
+- Passed typecheck, lint, production build, 94 unit tests and 14 real PostgreSQL
   migration/isolation/concurrency/backup-restore tests.
 - Checkpoint `8a21a97` passed both GitHub quality jobs in run 33421273488.
 - Prepared the researched licensed-backfill proposal, explicit no-interpolation gap

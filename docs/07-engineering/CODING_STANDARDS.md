@@ -29,8 +29,10 @@
 - External input is parsed once, validated fail-closed, and kept out of analysis when
   invalid.
 
-`STATUS: ACTIVE FOR PHASE 1`. A repository-wide formatter and numeric coverage target
-remain `STATUS: TBD`.
+`STATUS: ACTIVE FOR PHASE 1`. Source coverage has enforced regression floors of 85%
+lines, 65% branches, and 80% functions; critical paths still require direct tests.
+A repository-wide formatter remains `STATUS: TBD` because ESLint already supplies
+the current style/static-analysis gate and a formatter is not required by this slice.
 
 ## Related Documents
 

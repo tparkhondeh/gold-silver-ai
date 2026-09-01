@@ -65,7 +65,7 @@ is discovered. None of these block owner approval of Phase 0 or of Phase 1's sco
 | B11 | Monitoring tooling | `docs/09-operations/MONITORING.md` | Standard observability practice | No | Before first deployment | Open |
 | B12 | Backup mechanism | `docs/09-operations/BACKUP.md` | Standard practice once A4 is set (append-only, offsite copy) | No | Once real data exists | Open |
 | B13 | Incident-response tooling | `docs/09-operations/INCIDENT_RESPONSE.md` | Standard practice | No | Before first deployment | Open |
-| B14 | Coding standards specifics | `docs/07-engineering/CODING_STANDARDS.md` | TypeScript strict mode, ESLint, typecheck, and Node tests active; formatter/coverage target pending | No | Before CI | Partially resolved |
+| B14 | Coding standards specifics | `docs/07-engineering/CODING_STANDARDS.md` | TypeScript strict mode, ESLint, typecheck, Node tests, and source-only coverage floors are active; a formatter is optional future tool | No | Phase 1 CI | Resolved for Phase 1 |
 
 ## Why This Split Matters
 

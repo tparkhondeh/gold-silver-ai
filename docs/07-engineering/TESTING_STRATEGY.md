@@ -22,13 +22,20 @@
 
 ## Status
 
-`STATUS: PARTIAL`. Phase 1 uses Node's built-in test runner for deterministic unit,
-contract, repository, rendered-output, and API tests; ESLint and the Vinext build are
-separate gates. The GitHub Actions workflow runs these gates on the development
-branch; its first run identified a runtime-command mismatch. A numeric coverage
-target remains `STATUS: TBD`.
+`STATUS: ACTIVE FOR PHASE 1`. Phase 1 uses Node's built-in test runner for
+deterministic unit, contract, repository, rendered-output, and API tests; ESLint and
+the Vinext build are separate gates. The GitHub Actions workflow runs these gates on
+the development branch; its first run identified a runtime-command mismatch.
 
-`npm test` builds first, then delegates to `npm run test:unit`. The latter must use
+The default test command now measures only imported project source under `app/`,
+`data/`, `db/`, and `worker/`; generated build output is excluded by construction.
+It fails when line coverage is below 85%, branch coverage is below 65%, or function
+coverage is below 80%. These are regression floors, not a reason to omit risk-based
+tests: critical financial, persistence, security, and fail-closed paths still require
+direct tests even when the aggregate percentages pass.
+
+`npm test` builds first, then delegates to `npm run test:coverage`. Both the coverage
+command and the faster `npm run test:unit` command use
 `node --experimental-strip-types --test tests/*.test.mjs` so direct `.ts` imports
 also work on the declared Node 22.13 minimum. Native type stripping became enabled
 by default only in 22.18; see the [official Node history](https://nodejs.org/docs/latest-v22.x/api/typescript.html#modules-typescript).

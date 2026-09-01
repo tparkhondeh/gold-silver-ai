@@ -7,9 +7,9 @@ used only for interpretation and explanation, never as the source of numbers.
 
 **Status:** Phase 0 is owner-approved; Phase 1 is an evaluation application on
 `codex/phase-1-data-ui`. The Persian UI, explicitly synthetic laboratory, market
-adapters, and initial database contracts exist. PostgreSQL is not operational,
-portfolios remain browser-session-local, and the real financial engine is not
-implemented. This is not a production financial-advice system.
+adapters, local PostgreSQL foundation, and explicit owner-only portfolio save/restore
+exist. Licensed Iranian history, production identity, and the real validated
+financial engine remain blocked. This is not a production financial-advice system.
 
 The active canonical checkout is the current repository working tree; historical
 absolute paths from the previous Windows host are not authoritative.
@@ -43,14 +43,15 @@ npm run dev -- --port 4174
 Open [the local application](http://localhost:4174/). A fresh browser session opens
 the labelled synthetic laboratory. Personal data is not shared between browsers.
 Run `npm run typecheck`, `npm run lint`, and `npm test` for the local gates;
-`npm test` builds before testing the rendered application and API contracts.
+`npm test` builds before testing the rendered application and API contracts, and
+enforces minimum source-code coverage of 85% lines, 65% branches, and 80% functions.
 The shared unit-test command explicitly enables Node's TypeScript type stripping,
 which is not enabled by default in the minimum supported Node 22.13 release.
 
-Secrets belong only in Git-ignored server-side configuration. The previously
-pasted Navasan credential is considered compromised: ingestion remains paused
-until the owner revokes it, provisions a replacement, and confirms rotation via
-the hidden-input setup script. Never paste a replacement credential into chat.
+Secrets belong only in Git-ignored server-side configuration. The replacement
+Navasan credential is stored locally and must never be pasted into chat or committed.
+Historical ingestion remains disabled until written source terms and independent
+Iranian cross-checking are approved.
 
 ## Start here
 

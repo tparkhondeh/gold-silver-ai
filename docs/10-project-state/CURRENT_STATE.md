@@ -54,7 +54,7 @@ credential, durable quota health, eight-quote live normalization, historical end
 contracts and backup/restore path pass locally; no historical backfill was requested.
 The local Persian readiness planner validates proposed Jalali ranges, approved
 symbols and exact request counts without network or storage, while execution remains
-locked. Local verification now covers 90 unit and 14 real PostgreSQL tests.
+locked. Local verification now covers 94 unit and 14 real PostgreSQL tests.
 Code checkpoint `b0bb80a` passed both GitHub quality and real PostgreSQL jobs in
 run 33417744818.
 Backfill-readiness checkpoint `8a21a97` passed both GitHub quality and real
@@ -70,8 +70,14 @@ licensed-backfill proposal plus ready-to-send Persian inquiries are recorded in
 and sent the no-secret Navasan permission inquiry through the official contact bot;
 Telegram displayed it as read, but no written vendor answer has been received or
 treated as permission. No purchase was authorized and no historical request was made.
-An hourly read-only thread heartbeat now monitors that official conversation for a
-written answer; it cannot send a follow-up, accept terms/cost, or run a backfill.
+The owner later deferred further vendor contact and subscription purchase until the
+final API-integration stage. No active monitor, purchase, provider call, or historical
+request is part of the current autonomous work.
+
+The safe non-API hardening lane now enforces source-only test coverage floors of 85%
+lines, 65% branches, and 80% functions. Four direct repository tests cover empty
+restore, exact holding/preference restore, atomic versioned save, and stale-version
+failure before holdings are replaced. Generated build output cannot inflate coverage.
 
 ## Snapshot
 
@@ -261,7 +267,7 @@ written answer; it cannot send a follow-up, accept terms/cost, or run a backfill
   Migration 0006 adds immutable source-reconciliation records and requires a bounded
   plain-language reason on every correction. Migrations 0007–0010 add exact transaction and
   evaluation-only valuation lineage plus immutable provider-call reservations;
-  90 unit and 14 real PostgreSQL tests pass locally.
+  94 unit and 14 real PostgreSQL tests pass locally.
   In the fresh-session laboratory, a fixed
   five-row CSV sample exercises preview plus a memory-only commit result (three
   accepted, one duplicate, one quarantined) without reaching the server or implying
@@ -275,6 +281,7 @@ written answer; it cannot send a follow-up, accept terms/cost, or run a backfill
   The response remains `evaluation_only`. A read-only GitHub Actions workflow now
   encodes install, lint, typecheck, build, test, and production-audit gates; the first
   remote run exposed the now-resolved Node 22 TypeScript test-command issue. The
+  default quality command also enforces source-only coverage regression floors. The
   database job uses a real PostgreSQL service and matching in-container
   backup/restore clients; it passed for the code checkpoint described above.
   Health exposes `provenance-registry: registry_ready` separately from the still
