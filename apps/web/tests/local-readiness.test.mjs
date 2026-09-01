@@ -13,6 +13,7 @@ function healthyPayload() {
       { id: "global-market", state: "fallback" },
       { id: "iran-market", state: "blocked" },
       { id: "navasan-quota", state: "quota_ready" },
+      { id: "navasan-history", state: "locked" },
       { id: "observation-persistence", state: "connected" },
       { id: "portfolio-persistence", state: "local_ready" },
       { id: "provenance-registry", state: "registry_ready" },
@@ -31,15 +32,17 @@ test("accepts the complete fail-closed local evaluation contract", () => {
   assert.deepEqual(result.violations, []);
 });
 
-test("fails when persistence is unavailable or financial use is unlocked", () => {
+test("fails when persistence or history locks are unavailable or financial use is unlocked", () => {
   const payload = healthyPayload();
   payload.release.stableForFinancialUse = true;
   payload.engines.find(({ id }) => id === "observation-persistence").state = "blocked";
+  payload.engines.find(({ id }) => id === "navasan-history").state = "authorized";
   payload.engines.find(({ id }) => id === "financial-decision").state = "ready";
   const result = evaluateLocalHealth(payload);
   assert.equal(result.readyForLocalEvaluation, false);
   assert.equal(result.financialUseBlocked, false);
   assert.equal(result.violations.some((value) => value.startsWith("engine.observation-persistence")), true);
+  assert.equal(result.violations.some((value) => value.startsWith("engine.navasan-history")), true);
   assert.equal(result.violations.some((value) => value.startsWith("engine.financial-decision")), true);
 });
 

@@ -30,6 +30,9 @@ At minimum, the system should eventually make observable:
   newest immutable reservation and active cadence. Reading it never calls Navasan.
 - The Persian card updates only its time-remaining text every 30 seconds in the
   browser; that timer does not refetch health or contact a provider.
+- Navasan history authorization is a separate health engine. Phase 1 local readiness
+  requires it to remain `locked`; accidental authorization fails the preflight even
+  if every database and live-price check is otherwise healthy.
 - The Data Trust tab exposes the same boundaries in owner-facing language.
 - `npm run ops:check-local` converts the health document into a strict local
   readiness result. It contacts only `localhost:4174`, requires persistence,

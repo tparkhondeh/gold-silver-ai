@@ -95,6 +95,9 @@ financial engine remain separate gates.
     history by itself. `dailyCurrency` and `ohlcSearch` require both an explicit
     execution switch and an approved written-license reference. The gate runs before
     quota or network access; a local replay returned HTTP 423 with usage unchanged.
+19. **HISTORY LOCK MONITORING COMPLETE:** `/api/health` reports Navasan history as a
+    separate engine, and the strict no-provider local-readiness command requires the
+    exact `locked` state throughout Phase 1. Accidental authorization fails closed.
 
 All implementation available from published provider contracts is complete; real
 provider history execution remains paused at item 6 for Tier-A licensing/cost decisions.

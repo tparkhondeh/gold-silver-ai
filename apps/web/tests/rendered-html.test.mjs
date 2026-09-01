@@ -51,6 +51,7 @@ test("exposes an honest machine-readable readiness endpoint", async () => {
   assert.equal(health.service, "asha-web");
   assert.equal(health.status, "evaluation_only");
   assert.equal(health.release.stableForFinancialUse, false);
+  assert.equal(health.engines.some((engine) => engine.id === "navasan-history" && engine.state === "locked"), true);
   assert.equal(health.engines.some((engine) => engine.id === "financial-decision" && engine.state === "blocked"), true);
 });
 

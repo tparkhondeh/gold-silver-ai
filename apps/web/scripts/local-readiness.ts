@@ -31,6 +31,7 @@ export type LocalReadinessResult = {
 const exactEngineStates = new Map([
   ["web", "ready"],
   ["navasan-quota", "quota_ready"],
+  ["navasan-history", "locked"],
   ["observation-persistence", "connected"],
   ["portfolio-persistence", "local_ready"],
   ["provenance-registry", "registry_ready"],

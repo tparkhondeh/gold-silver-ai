@@ -4,12 +4,14 @@ import { inspectLedgerDatabaseHealth, inspectLocalPortfolioDatabaseHealth, inspe
 import { calculateNavasanNextEligibleAt, resolveNavasanRefreshPolicy } from "../../../data/navasan-refresh-policy.ts";
 import { decisionFramework } from "../../decision-support";
 import { inspectNavasanConfiguration } from "../../navasan-adapter";
+import { inspectNavasanHistoryAuthorization } from "../../navasan-history";
 import { scenarioMethodology } from "../../scenario-engine";
 
 export const dynamic = "force-dynamic";
 
 export async function GET() {
   const navasanConfiguration = inspectNavasanConfiguration(process.env);
+  const navasanHistoryAuthorization = inspectNavasanHistoryAuthorization(process.env);
   const iranFeedConfigured = navasanConfiguration.ready;
   const database = await inspectObservationDatabaseHealth();
   const portfolioDatabase = await inspectLocalPortfolioDatabaseHealth();
@@ -62,6 +64,15 @@ export async function GET() {
           latestOutcome: navasanQuotaDatabase.latestOutcome,
           ...navasanQuotaDatabase.usage,
         } : undefined,
+      },
+      {
+        id: "navasan-history",
+        state: navasanHistoryAuthorization.ready ? "authorized" : "locked",
+        reason: navasanHistoryAuthorization.ready
+          ? "اجرای تاریخچه دارای پرچم فعال و شناسهٔ مجوز است؛ این وضعیت برای Phase 1 محلی مجاز نیست"
+          : navasanHistoryAuthorization.reason === "license_reference_missing"
+            ? "اجرای تاریخچه فعال نشده است چون شناسهٔ مجوز کتبی معتبر نیست"
+            : "اجرای تاریخچه عمداً قفل است و پیش از سهمیه یا شبکه متوقف می‌شود",
       },
       { id: "observation-persistence", state: database.state, reason: databaseReason },
       { id: "portfolio-persistence", state: portfolioDatabase.state, reason: portfolioDatabase.state === "local_ready" ? "ذخیرهٔ محلیِ نسخه‌دار و تفکیک‌شده آماده است؛ ورود حساب تولیدی هنوز دروازهٔ جداگانه دارد" : "ذخیرهٔ محلی سبد یا سیاست امنیتی آن آماده نیست" },

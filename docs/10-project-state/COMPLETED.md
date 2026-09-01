@@ -70,6 +70,9 @@ subsequent changes still require their own push and CI verification.
   reference to an approved written-license record.
 - A controlled request to the running local app returned HTTP 423 before quota or
   network access; usage remained 4 used / 111 remaining.
+- `/api/health` exposes the history boundary separately, and the no-provider local
+  readiness command now requires its exact `locked` state. An accidental enablement
+  therefore blocks Phase 1 readiness instead of remaining silent.
 - Local typecheck, lint, build, 127 unit tests and 16 real PostgreSQL tests pass with
   93.79% line, 79.30% branch and 94.64% function coverage.
 - Working-branch checkpoint `12728ee` passed both GitHub Actions jobs in run

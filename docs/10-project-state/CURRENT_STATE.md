@@ -328,7 +328,9 @@ licensed real data, validation, financial methodology and production operations.
   stable generator still carries that deprecated loader; no beta/breaking upgrade
   was forced. See `KNOWN_ISSUES.md` item 8.
   A controlled owner-local history request returned HTTP 423 before quota resolution
-  or network access; the Navasan counter remained 4 used / 111 remaining.
+  or network access; the Navasan counter remained 4 used / 111 remaining. Health now
+  exposes this as a separate `navasan-history: locked` engine, and strict local
+  readiness fails if the lock is missing or authorized during Phase 1.
   History-lock checkpoint `12728ee` passed both GitHub jobs in run 33500322761;
   remote `main` remained unchanged.
   In the fresh-session laboratory, a fixed

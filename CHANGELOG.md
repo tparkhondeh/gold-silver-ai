@@ -15,6 +15,9 @@ state is recorded in `docs/10-project-state/CURRENT_STATE.md`.
 - The lock is evaluated before quota resolution or network access. A controlled
   request against the running local app returned HTTP 423 and left free-plan usage
   unchanged at 4 used / 111 remaining.
+- Health now reports Navasan history separately as `locked`. The strict local
+  readiness check fails if that state is missing or becomes authorized during the
+  Phase 1 local-only stage.
 - Local build, lint, typecheck, 127 unit tests and 16 real PostgreSQL tests pass with
   93.79% line, 79.30% branch and 94.64% function coverage.
 - Working-branch checkpoint `12728ee` passed both GitHub Actions jobs in run
