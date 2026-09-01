@@ -157,6 +157,12 @@ Phase 1 checkpoint `0f90210`; not merged to `main`.
   lexicographic equal-distance tie-breaking, complete provenance/replay, future-tail
   isolation and resealed-tamper rejection. Eighty-five tests pass; leaf ordering and
   HRP weights are not computed.
+- Single-linkage clustering checkpoint `4fac0eb` passed all three jobs in GitHub run
+  [33515814787](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33515814787).
+- Added deterministic left-to-right linkage-tree traversal with every active path
+  exactly once, zero-variance exclusions preserved, future-tail isolation, canonical
+  replay and reversed-order rejection. Ninety tests pass and weighting remains
+  explicitly uncomputed.
 
 ## Phase 1 — Completed Units on the Working Branch
 

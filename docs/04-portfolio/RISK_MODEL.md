@@ -48,6 +48,9 @@ implement or approve HRP allocation.
 The distance artifact now supports deterministic agglomerative single-linkage
 clustering. Every merge and tie-break is recorded; equal distances use lexicographic
 member IDs. Leaf ordering and HRP weights are deliberately not computed yet.
+The linkage tree can now be traversed left-to-right into one deterministic leaf order.
+Every active path appears exactly once and excluded zero-variance paths remain
+disclosed. The order artifact still has `weightingPolicy: not_computed`.
 
 ## Related Documents
 

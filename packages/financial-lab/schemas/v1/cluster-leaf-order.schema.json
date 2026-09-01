@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://goldsilver.wealthos.ir/contracts/asha.synthetic.cluster_leaf_order.v1.schema.json",
+  "title": "Asha synthetic train-only cluster leaf order v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion", "orderId", "status", "financialUseAllowed", "executionAllowed",
+    "decisionState", "datasetReference", "returnMatrixReference", "walkForwardPlanReference",
+    "standardizerReference", "covarianceReference", "correlationReference", "distanceReference",
+    "clusteringReference", "methodologyReference", "foldIndex", "trainingFeatureStartIndex",
+    "trainingFeatureEndIndex", "parameters", "orderedInstrumentIds",
+    "excludedZeroVarianceInstrumentIds", "reasonCodes"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "asha.synthetic.cluster_leaf_order.v1" },
+    "orderId": { "type": "string", "pattern": "^ASHA_CLUSTER_LEAF_ORDER_[a-f0-9]{64}$" },
+    "status": { "const": "evaluation_only" },
+    "financialUseAllowed": { "const": false },
+    "executionAllowed": { "const": false },
+    "decisionState": { "const": "no_decision" },
+    "datasetReference": { "type": "object" },
+    "returnMatrixReference": { "type": "object" },
+    "walkForwardPlanReference": { "type": "object" },
+    "standardizerReference": { "type": "object" },
+    "covarianceReference": { "type": "object" },
+    "correlationReference": { "type": "object" },
+    "distanceReference": { "type": "object" },
+    "clusteringReference": { "type": "object" },
+    "methodologyReference": {
+      "const": { "entityId": "STATUS_TBD", "version": 0, "approvalState": "unapproved" }
+    },
+    "foldIndex": { "type": "integer", "minimum": 0 },
+    "trainingFeatureStartIndex": { "type": "integer", "minimum": 1 },
+    "trainingFeatureEndIndex": { "type": "integer", "minimum": 1 },
+    "parameters": {
+      "const": {
+        "traversal": "left_then_right_linkage_tree_v1",
+        "weightingPolicy": "not_computed"
+      }
+    },
+    "orderedInstrumentIds": {
+      "type": "array", "minItems": 2, "items": { "type": "string" }
+    },
+    "excludedZeroVarianceInstrumentIds": {
+      "type": "array", "items": { "type": "string" }
+    },
+    "reasonCodes": {
+      "const": [
+        "CLUSTER_ORDER_FEATURE_ONLY", "HRP_WEIGHTS_NOT_COMPUTED", "METHODOLOGY_NOT_APPROVED",
+        "NO_FINANCIAL_DECISION", "REAL_FINANCIAL_USE_DISABLED", "SYNTHETIC_DATA_ONLY",
+        "TRAIN_ONLY_FIT"
+      ]
+    }
+  }
+}

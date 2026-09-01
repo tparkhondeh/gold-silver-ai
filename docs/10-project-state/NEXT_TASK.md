@@ -191,6 +191,10 @@ financial engine remain separate gates.
     joins the nearest active synthetic paths and records every merge. Equal-distance
     ties use lexicographic member IDs and exact replay; future test changes cannot
     alter training merges. Leaf ordering and HRP weights are explicitly not computed.
+39. **CLUSTER LEAF ORDER COMPLETE:** the reviewed linkage tree is traversed left-to-
+    right into a deterministic order containing each active synthetic path exactly
+    once. Excluded zero-variance paths remain disclosed, exact replay is required,
+    and `weightingPolicy: not_computed` keeps HRP weights absent.
 
 All implementation available from published provider contracts is complete; real
 provider history execution remains paused at item 6 for Tier-A licensing/cost decisions.

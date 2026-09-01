@@ -118,6 +118,12 @@ nearest-path merge with a fixed lexicographic tie-break. Exact upstream provenan
 replay are required and future test changes cannot alter fitted merges. Eighty-five
 tests pass locally. Leaf ordering and HRP weights are deliberately absent, so this
 artifact cannot allocate a portfolio or emit a decision.
+Single-linkage clustering checkpoint `4fac0eb` passed all three GitHub jobs in run
+33515814787. Its exact tree can now be traversed into a versioned left-to-right leaf
+order containing every active path exactly once. Excluded zero-variance paths remain
+disclosed; future test changes cannot alter the train-only order and reversed/resealed
+orders fail closed. Ninety tests pass locally. The contract explicitly keeps HRP
+weighting uncomputed and cannot allocate or recommend.
 
 The owner authorized staged Data Foundation and deterministic-baseline development,
 with each stage dependent on the previous quality gate. Private GitHub authentication

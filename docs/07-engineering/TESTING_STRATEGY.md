@@ -128,6 +128,10 @@ lexicographic tie-breaking for equal distances, prove future test changes cannot
 train-only merges, pin canonical artifact replay, and reject a resealed false linkage
 distance. Eighty-five laboratory tests pass; leaf ordering and HRP weights remain
 absent.
+Five cluster-order tests require every active path exactly once, hand-check ordinary
+and equal-distance tree traversal, prove future test changes cannot alter the
+train-only order, pin canonical artifact replay, and reject a resealed reversed order.
+Ninety laboratory tests pass; the order contract explicitly contains no weights.
 
 ## Related Documents
 

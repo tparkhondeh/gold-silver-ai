@@ -97,6 +97,8 @@ cannot emit weights, recommendations or execution instructions.
 Deterministic single-linkage clustering can now join the nearest synthetic paths and
 record every merge. Tie handling is code-defined and replayable; leaf ordering and HRP
 weight generation remain explicitly absent.
+The exact linkage tree can now produce a deterministic left-to-right leaf order. The
+artifact is feature-only and explicitly keeps HRP weighting uncomputed.
 
 ## Decision History Requirement
 

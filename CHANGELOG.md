@@ -115,6 +115,12 @@ state is recorded in `docs/10-project-state/CURRENT_STATE.md`.
   lexicographic equal-distance tie-breaks replay exactly; future test changes cannot
   alter training merges and resealed false steps fail closed. Eighty-five tests pass;
   leaf ordering and HRP weights remain absent.
+- Single-linkage clustering checkpoint `4fac0eb` passed all three GitHub Actions jobs
+  in run [33515814787](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33515814787).
+- Added deterministic left-to-right cluster leaf ordering with every active synthetic
+  path exactly once. Zero-variance exclusions remain visible, future test changes
+  cannot alter train-only ordering, and reversed/resealed order fails closed. Ninety
+  tests pass with weighting explicitly uncomputed.
 
 ### Fail-closed Navasan history authorization — ۱۴۰۵/۰۶/۱۰
 
