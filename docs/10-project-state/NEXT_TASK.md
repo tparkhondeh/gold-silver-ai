@@ -4,6 +4,12 @@
 
 ## Immediate Next Step
 
+The owner accepted the Phase 1 Data Foundation for progression and authorized the
+synthetic-only Phase 2 laboratory on 2026-09-01. ADR 0009 is binding: no real data,
+paid API, real recommendation, production registry write, or execution is permitted.
+The immediate unit is the isolated Python package plus its versioned synthetic
+input/output contract and independent CI gate.
+
 Migrations 0003–0011 now cover the owner snapshot, immutable provenance,
 exact point-in-time dataset/decision lineage, source-reconciliation records and
 mandatory correction reasons, plus the read-only transaction/evaluation-valuation
@@ -102,24 +108,29 @@ financial engine remain separate gates.
     monitored health contract and labels only the exact `locked` state as safe.
     Missing, malformed or accidentally authorized states show a stop warning; real
     execution remains disabled and the check makes no provider request.
+21. **PHASE 2 AUTHORIZATION RECORDED:** the owner accepted Data Foundation for
+    progression and approved an isolated synthetic-only laboratory. This does not
+    approve a financial methodology, real data, paid API, recommendation, execution,
+    `main` merge, or production use; see ADR 0009.
 
 All implementation available from published provider contracts is complete; real
 provider history execution remains paused at item 6 for Tier-A licensing/cost decisions.
 The owner explicitly authorized continued independent local
 hardening, so testing, backup, documentation and other non-provider work may proceed;
-Phase 2 and real financial logic remain blocked until the Data Foundation gate is
-accepted.
+Phase 2 synthetic laboratory mechanics may now proceed. Real financial methodology
+and operational logic remain blocked behind their separate owner/data gates.
 
 Vendor contact, subscription purchase and response monitoring are deferred until the
 owner's final API-integration stage. The prior Telegram delivery/read state is not
 permission. Do not accept terms, commit a cost, or request history before a written
 answer is reviewed with the owner.
 
-## Next Gate: Independent Financial Laboratory
+## Current Gate: Independent Financial Laboratory
 
 Only after Data Foundation, persistence, provenance, and integration tests pass:
 
-- Create `codex/phase-2-decision-engine` from the verified Phase 1 HEAD, not `main`.
+- `codex/phase-2-decision-engine` has been created from verified Phase 1 HEAD
+  `0f90210`, not `main`.
 - Build an isolated Python package with audited, pinned permitted dependencies and
   versioned JSON/Parquet contracts; no notebook or automatic execution in runtime.
 - Implement `ASHA_DETERMINISTIC_BASELINE_V1`, separate from synthetic engines, with

@@ -7,6 +7,15 @@ state is recorded in `docs/10-project-state/CURRENT_STATE.md`.
 
 ## [Unreleased]
 
+### Phase 2 synthetic laboratory authorization — ۱۴۰۵/۰۶/۱۰
+
+- Recorded the owner's acceptance of Phase 1 Data Foundation for progression and the
+  exact synthetic-only Phase 2 boundary in ADR 0009.
+- Created `codex/phase-2-decision-engine` from verified Phase 1 HEAD `0f90210`; no
+  merge or change to `main` was made.
+- Real data, paid APIs, financial recommendations, methodology promotion, production
+  registry writes, and execution remain explicitly prohibited.
+
 ### Fail-closed Navasan history authorization — ۱۴۰۵/۰۶/۱۰
 
 - Added a second, explicit authorization boundary for `dailyCurrency` and

@@ -52,6 +52,26 @@ The sandbox must never be promoted into the real decision path, used as historic
 evidence, represented as current market data, or connected to execution. The real
 `DECISION_FRAMEWORK_UI_V1` gates continue to fail closed independently.
 
+## Phase 2 independent laboratory boundary
+
+ADR 0009 authorizes a separate Python laboratory for deterministic evaluation with
+machine-verifiably synthetic fixtures only. It belongs to the Decision Engines layer
+and does not import from, or run inside, the web interface or provider-ingestion path.
+
+The first versioned contract must require:
+
+- an explicit synthetic dataset identity and synthetic instrument namespace;
+- ordered point-in-time availability fields that make look-ahead detectable;
+- canonical fingerprints for exact replay;
+- structured results with model, methodology, dataset, assumptions, and risk-state
+  references; and
+- permanent `evaluation_only`, financial-use-disabled, and execution-disabled flags.
+
+Benchmark implementations inside the laboratory are comparison controls, not selected
+financial methodology. They cannot produce a real recommendation, register a real
+decision, call a provider, or unlock the Phase 1 financial-decision engine. Real-data
+admission and any methodology promotion require a later owner-approved contract/ADR.
+
 ## Decision History Requirement
 
 Every analysis or recommendation the system produces must be recorded: what was

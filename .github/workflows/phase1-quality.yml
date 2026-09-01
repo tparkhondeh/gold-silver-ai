@@ -1,9 +1,10 @@
-name: Phase 1 Quality Gates
+name: Project Quality Gates
 
 on:
   push:
     branches:
       - codex/phase-1-data-ui
+      - codex/phase-2-decision-engine
       - phase-0-foundation
   pull_request:
 
@@ -11,7 +12,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: phase1-quality-${{ github.workflow }}-${{ github.ref }}
+  group: project-quality-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 defaults:

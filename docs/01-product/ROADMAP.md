@@ -17,14 +17,15 @@ ones being validated, not just built.
 | Phase | Focus | Status |
 |---|---|---|
 | Phase 0 | Foundation, governance, documentation architecture | **Owner-approved**; branch remains separate from `main` |
-| Phase 1 | Data foundation plus a visible Persian local interface, scoped by ADR 0001 | **Active** on `codex/phase-1-data-ui` |
-| Phase 2+ | `STATUS: TBD` | Not started |
+| Phase 1 | Data foundation plus a visible Persian local interface, scoped by ADR 0001 | **Owner-accepted for progression** on `codex/phase-1-data-ui`; not merged to `main` |
+| Phase 2 | Isolated synthetic-only deterministic financial laboratory, scoped by ADR 0009 | **Active** on `codex/phase-2-decision-engine` |
+| Phase 3+ | `STATUS: TBD` | Not started |
 
-Everything past Phase 1 is intentionally unscoped here. Per the project mission,
-the logical dependency order is roughly: data foundation → historical/bubble
-analysis → backtesting & calibration → portfolio & risk modeling → agent layer —
-but this ordering is a *starting hypothesis for discussion*, not a committed plan.
-`DECISION REQUIRED: YES` from the owner before a later dependent phase is scoped.
+ADR 0009 scopes Phase 2 only as a synthetic, non-operational laboratory. The later
+logical dependency order remains licensed data → historical/bubble analysis →
+backtesting and Iran-specific calibration → portfolio/risk methodology → agent
+layer. `DECISION REQUIRED: YES` from the owner before any real methodology is selected
+or a later dependent phase is scoped.
 
 ## What Phase 0 Deliberately Does Not Do
 

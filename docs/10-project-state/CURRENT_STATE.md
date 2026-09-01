@@ -2,9 +2,16 @@
 
 **Source of truth for:** where the project stands right now.
 
-_Last updated in the product calendar: ۱۴۰۵/۰۶/۱۰ (Phase 1 active)_
+_Last updated in the product calendar: ۱۴۰۵/۰۶/۱۰ (Phase 2 synthetic laboratory active)_
 
 ## Current Execution Gate
+
+On 2026-09-01 the owner accepted the Phase 1 Data Foundation for progression while
+keeping financial use locked, and authorized Phase 2 only as a completely synthetic,
+non-operational financial laboratory. ADR 0009 records the exact boundary. Branch
+`codex/phase-2-decision-engine` was created from verified Phase 1 HEAD `0f90210`;
+neither acceptance nor branching authorizes a merge to `main`, real data, a paid API,
+financial recommendations, or execution.
 
 The owner authorized staged Data Foundation and deterministic-baseline development,
 with each stage dependent on the previous quality gate. Private GitHub authentication
@@ -107,9 +114,11 @@ licensed real data, validation, financial methodology and production operations.
 
 ## Snapshot
 
-- **Phase:** Phase 0 is owner-approved. Phase 1 — Data Foundation — is active.
-- **Branch:** Phase 1 work is isolated on `codex/phase-1-data-ui`; `main` remains
-  untouched pending a separate owner-approved merge.
+- **Phase:** Phase 1 Data Foundation is owner-accepted for progression. Phase 2 —
+  synthetic-only independent financial laboratory — is active under ADR 0009.
+- **Branch:** Phase 2 work is isolated on `codex/phase-2-decision-engine`, created
+  from verified Phase 1 HEAD `0f90210`; `main` remains untouched pending separate
+  owner-approved merges.
 - **Application:** a Persian RTL personal-wealth dashboard exists in `apps/web` with
   category-first portfolio session entry, filtered asset types, asset-specific units,
   and an optional no-typing Persian calendar purchase-date picker, market watch,
