@@ -115,6 +115,12 @@ Phase 1 checkpoint `0f90210`; not merged to `main`.
   complete test-interval enforcement, pinned reference identity, full upstream
   provenance, artifact replay and foreign/tampered-standardizer rejection. Fifty tests
   pass; no prediction, score, allocation or decision is produced.
+- Train-fitted transform checkpoint `8ec4b1b` passed all three jobs in GitHub run
+  [33512453084](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33512453084).
+- Added train-only inverse-volatility comparison weights with exact-sum rounding,
+  zero-variance exclusion, all-zero fail-closed behavior, pinned reference identity,
+  complete provenance/artifact replay and tamper rejection. Fifty-five tests pass;
+  the output remains no-decision and is not an approved allocation.
 
 ## Phase 1 — Completed Units on the Working Branch
 

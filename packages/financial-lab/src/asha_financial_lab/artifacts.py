@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 from typing import Any, Callable
 
+from .comparison_weights import validate_inverse_volatility_control_weights
 from .contracts import (
     ContractViolation,
     canonical_json,
@@ -150,6 +151,44 @@ def decode_normalized_fold(
     return _decode_canonical(
         document,
         lambda value: validate_normalized_fold(
+            value,
+            dataset_payload,
+            matrix_payload,
+            plan_payload,
+            standardizer_payload,
+        ),
+    )
+
+
+def encode_inverse_volatility_weights(
+    payload: object,
+    dataset_payload: object,
+    matrix_payload: object,
+    plan_payload: object,
+    standardizer_payload: object,
+) -> bytes:
+    return _encode_canonical(
+        payload,
+        lambda value: validate_inverse_volatility_control_weights(
+            value,
+            dataset_payload,
+            matrix_payload,
+            plan_payload,
+            standardizer_payload,
+        ),
+    )
+
+
+def decode_inverse_volatility_weights(
+    document: object,
+    dataset_payload: object,
+    matrix_payload: object,
+    plan_payload: object,
+    standardizer_payload: object,
+) -> dict[str, Any]:
+    return _decode_canonical(
+        document,
+        lambda value: validate_inverse_volatility_control_weights(
             value,
             dataset_payload,
             matrix_payload,

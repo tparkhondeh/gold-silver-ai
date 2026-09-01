@@ -5,10 +5,10 @@ from asha_financial_lab.features import build_point_in_time_return_matrix
 from asha_financial_lab.walk_forward import build_walk_forward_plan
 
 
-def hand_dataset(test_tail: str = "250") -> dict:
+def hand_dataset(test_tail: str = "250", *, alpha_mid: str = "200", beta_level: str = "100") -> dict:
     paths = {
-        "SYNTH_ALPHA": ("100", "200", "200", test_tail, "260", "270"),
-        "SYNTH_BETA": ("100", "100", "100", "100", "100", "100"),
+        "SYNTH_ALPHA": ("100", alpha_mid, alpha_mid, test_tail, "260", "270"),
+        "SYNTH_BETA": ("100", beta_level, beta_level, beta_level, beta_level, beta_level),
     }
     observations = []
     for period_index in range(6):

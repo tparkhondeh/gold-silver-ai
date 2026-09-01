@@ -72,3 +72,10 @@ fold's complete test interval. It never recomputes statistics. Zero standard dev
 maps to an explicit zero; other values use `(value - training mean) / training standard
 deviation`. The normalized-fold artifact is bound to all upstream identities and still
 contains no prediction, score, allocation or decision.
+
+`build_inverse_volatility_control_weights()` is a train-only benchmark ruler. It uses
+the frozen population standard deviations, gives zero weight to zero-variance paths,
+normalizes inverse deviations to an exact 12-decimal sum of one, and fails closed when
+all variances are zero. Residual rounding is assigned deterministically to the largest
+raw weight. The artifact is permanently `no_decision`, financial-use-disabled and
+execution-disabled; these weights are not an approved portfolio allocation.

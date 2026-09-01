@@ -27,6 +27,12 @@ how conviction/confidence is represented). `DECISION REQUIRED: YES` at design
 time — this is a financial-methodology decision requiring owner review per
 `docs/00-governance/PROJECT_RULES.md` § 2-3.
 
+The isolated Phase 2 laboratory now includes inverse-volatility **comparison-control**
+weights computed from train-only synthetic population deviations. Zero variance gets
+zero weight and all-zero variance fails closed. This is benchmark plumbing under ADR
+0009, permanently `no_decision` and non-operational; it does not implement, approve or
+preview the real allocation methodology described above.
+
 ## Related Documents
 
 - Underlying analysis: `PORTFOLIO_MODEL.md`

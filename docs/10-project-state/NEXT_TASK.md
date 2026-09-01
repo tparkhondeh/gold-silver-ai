@@ -160,6 +160,11 @@ financial engine remain separate gates.
     explicit zero; exact dataset/matrix/plan/standardizer provenance and artifact
     replay are required. The output is a feature artifact, never a prediction, score,
     allocation or decision.
+32. **INVERSE-VOLATILITY CONTROL COMPLETE:** train-only frozen deviations produce
+    exact 12-decimal comparison weights summing to one. Zero variance receives zero
+    weight and all-zero variance fails closed. Exact provenance/replay and permanent
+    `no_decision`/no-use/no-execution locks keep this a benchmark ruler, not an approved
+    allocation.
 
 All implementation available from published provider contracts is complete; real
 provider history execution remains paused at item 6 for Tier-A licensing/cost decisions.

@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://goldsilver.wealthos.ir/contracts/asha.synthetic.inverse_volatility_weights.v1.schema.json",
+  "title": "Asha synthetic inverse-volatility comparison weights v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "weightSetId",
+    "status",
+    "financialUseAllowed",
+    "executionAllowed",
+    "decisionState",
+    "benchmarkId",
+    "datasetReference",
+    "returnMatrixReference",
+    "walkForwardPlanReference",
+    "standardizerReference",
+    "methodologyReference",
+    "foldIndex",
+    "parameters",
+    "weights",
+    "zeroVarianceInstrumentIds",
+    "reasonCodes"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "asha.synthetic.inverse_volatility_weights.v1" },
+    "weightSetId": { "type": "string", "pattern": "^ASHA_COMPARISON_WEIGHTS_[a-f0-9]{64}$" },
+    "status": { "const": "evaluation_only" },
+    "financialUseAllowed": { "const": false },
+    "executionAllowed": { "const": false },
+    "decisionState": { "const": "no_decision" },
+    "benchmarkId": { "const": "ASHA_BENCHMARK_INVERSE_VOLATILITY_CONTROL_V1" },
+    "datasetReference": { "type": "object" },
+    "returnMatrixReference": { "type": "object" },
+    "walkForwardPlanReference": { "type": "object" },
+    "standardizerReference": { "type": "object" },
+    "methodologyReference": {
+      "const": { "entityId": "STATUS_TBD", "version": 0, "approvalState": "unapproved" }
+    },
+    "foldIndex": { "type": "integer", "minimum": 0 },
+    "parameters": { "type": "object" },
+    "weights": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["instrumentId", "weight"],
+        "properties": {
+          "instrumentId": { "type": "string", "pattern": "^SYNTH_[A-Z0-9_]{2,64}$" },
+          "weight": { "type": "string", "pattern": "^(0|1)\\.[0-9]{12}$" }
+        }
+      }
+    },
+    "zeroVarianceInstrumentIds": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "type": "string", "pattern": "^SYNTH_[A-Z0-9_]{2,64}$" }
+    },
+    "reasonCodes": {
+      "const": [
+        "COMPARISON_CONTROL_ONLY",
+        "METHODOLOGY_NOT_APPROVED",
+        "NO_FINANCIAL_DECISION",
+        "REAL_FINANCIAL_USE_DISABLED",
+        "SYNTHETIC_DATA_ONLY"
+      ]
+    }
+  }
+}

@@ -70,6 +70,12 @@ without refitting; zero variance maps explicitly to zero. The reference transfor
 a pinned identity and all upstream provenance is required for replay. Fifty laboratory
 tests pass locally; the output remains feature-only with no prediction, score,
 allocation or decision.
+Train-fitted transform checkpoint `8ec4b1b` passed all three GitHub jobs in run
+33512453084. A train-only inverse-volatility comparison-control artifact now produces
+12-decimal weights with an exact sum of one, explicit zero-variance exclusion and
+all-zero fail-closed behavior. Reference identity and full provenance are pinned;
+fifty-five laboratory tests pass. It remains `no_decision`, no-use, no-execution and
+is not an approved allocation methodology.
 
 The owner authorized staged Data Foundation and deterministic-baseline development,
 with each stage dependent on the previous quality gate. Private GitHub authentication

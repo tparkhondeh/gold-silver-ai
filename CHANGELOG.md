@@ -72,6 +72,12 @@ state is recorded in `docs/10-project-state/CURRENT_STATE.md`.
   complete test coverage, full upstream provenance, canonical artifact replay and a
   pinned reference identity. Fifty laboratory tests pass; the artifact contains no
   prediction, score, allocation or decision.
+- Train-fitted transform checkpoint `8ec4b1b` passed all three GitHub Actions jobs in
+  run [33512453084](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33512453084).
+- Added train-only inverse-volatility comparison weights with exact 12-decimal sum,
+  deterministic residual rounding, zero-variance exclusion, all-zero fail-closed
+  behavior and provenance-bound replay. Fifty-five tests pass; the artifact remains
+  no-decision/no-use/no-execution and is not an approved allocation.
 
 ### Fail-closed Navasan history authorization — ۱۴۰۵/۰۶/۱۰
 

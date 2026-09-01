@@ -95,6 +95,10 @@ Five transform tests hand-check application of frozen training statistics, requi
 zero output for zero variance, pin the exact reference transform, enforce complete
 test coverage and exact standardizer provenance, verify canonical artifact replay,
 and reject a foreign standardizer or resealed tampering. Fifty laboratory tests pass.
+Five inverse-volatility control tests hand-check exact 1/3 and 2/3 weights, require an
+exact sum of one, verify zero-variance exclusion and all-zero failure, pin reference
+identity/no-decision locks, require provenance-bound artifact replay, and reject
+resealed tampering. Fifty-five laboratory tests pass.
 
 ## Related Documents
 
