@@ -18,7 +18,12 @@
     "financialUseAllowed": { "const": false },
     "executionAllowed": { "const": false },
     "decisionState": { "const": "no_decision" },
-    "benchmarkId": { "const": "ASHA_BENCHMARK_INVERSE_VOLATILITY_CONTROL_V1" },
+    "benchmarkId": {
+      "enum": [
+        "ASHA_BENCHMARK_INVERSE_VOLATILITY_CONTROL_V1",
+        "ASHA_BENCHMARK_HRP_CONTROL_V1"
+      ]
+    },
     "datasetReference": { "type": "object" },
     "returnMatrixReference": { "type": "object" },
     "walkForwardPlanReference": { "type": "object" },

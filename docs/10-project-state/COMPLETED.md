@@ -169,6 +169,13 @@ Phase 1 checkpoint `0f90210`; not merged to `main`.
   recursive splits, cluster variances, exact-sum 12-decimal weights, zero weight for
   excluded zero-variance paths, future-tail isolation and tamper rejection. Ninety-
   five tests pass; the benchmark is no-decision and does not approve real HRP use.
+- HRP comparison-control checkpoint `9e0b3e1` passed all three jobs in GitHub run
+  [33517070244](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33517070244).
+- Added exact test-fold evaluation of frozen HRP comparison weights. The shared
+  versioned artifact requires the complete train-only covariance, correlation,
+  distance, clustering and order provenance chain; future test changes cannot refit
+  weights and resealed false metrics fail closed. One hundred laboratory tests pass;
+  the evaluation remains no-decision, no-use and no-execution.
 
 ## Phase 1 — Completed Units on the Working Branch
 

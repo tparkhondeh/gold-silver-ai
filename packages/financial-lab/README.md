@@ -79,3 +79,11 @@ normalizes inverse deviations to an exact 12-decimal sum of one, and fails close
 all variances are zero. Residual rounding is assigned deterministically to the largest
 raw weight. The artifact is permanently `no_decision`, financial-use-disabled and
 execution-disabled; these weights are not an approved portfolio allocation.
+
+The reviewed train-only covariance, correlation distance, deterministic single-
+linkage tree and leaf order can feed `build_hrp_comparison_control_weights()`. Its
+ordered-half recursive bisection is an HRP-style comparison ruler only. Both inverse-
+volatility and HRP comparison weights may be frozen and evaluated on their exact
+synthetic test fold with the shared weighted-control evaluation contract. Replay
+recomputes the full return/wealth path and metrics from exact upstream identities;
+neither path can emit a financial decision or execution instruction.

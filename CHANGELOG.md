@@ -127,6 +127,13 @@ state is recorded in `docs/10-project-state/CURRENT_STATE.md`.
   recursive bisection. Every cluster variance/split replays, weights sum exactly to
   one, zero-variance exclusions receive zero, and future-tail or resealed tampering
   fails closed. Ninety-five tests pass; HRP remains unapproved and non-operational.
+- HRP comparison-control checkpoint `9e0b3e1` passed all three GitHub Actions jobs in
+  run [33517070244](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33517070244).
+- Added exact synthetic test-fold evaluation of frozen HRP comparison weights using
+  the shared versioned evaluation contract. The complete covariance-to-order chain is
+  required for replay, future test changes do not refit weights, and resealed false
+  metrics fail closed. One hundred tests pass; no decision, use or execution is
+  enabled.
 
 ### Fail-closed Navasan history authorization — ۱۴۰۵/۰۶/۱۰
 

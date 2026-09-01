@@ -10,6 +10,7 @@ from typing import Any
 from .comparison_weights import validate_inverse_volatility_control_weights
 from .contracts import ContractViolation, fingerprint, validate_synthetic_dataset
 from .features import validate_point_in_time_return_matrix
+from .hrp_control import validate_hrp_comparison_control_weights
 from .normalization import validate_train_only_standardizer
 from .walk_forward import validate_walk_forward_plan
 
@@ -152,6 +153,87 @@ def validate_inverse_volatility_control_evaluation(
     weight_set = validate_inverse_volatility_control_weights(
         weight_set_payload, dataset, matrix, plan, standardizer
     )
+    return _validate_evaluation(evaluation_payload, matrix, plan, weight_set)
+
+
+def evaluate_hrp_comparison_control_fold(
+    dataset_payload: object,
+    matrix_payload: object,
+    plan_payload: object,
+    standardizer_payload: object,
+    covariance_payload: object,
+    correlation_payload: object,
+    distance_payload: object,
+    clustering_payload: object,
+    order_payload: object,
+    weight_set_payload: object,
+) -> dict[str, Any]:
+    """Evaluate frozen train-only HRP comparison weights on their synthetic test fold."""
+
+    dataset = validate_synthetic_dataset(dataset_payload)
+    matrix = validate_point_in_time_return_matrix(matrix_payload, dataset)
+    plan = validate_walk_forward_plan(plan_payload, dataset)
+    standardizer = validate_train_only_standardizer(standardizer_payload, dataset, matrix, plan)
+    weight_set = validate_hrp_comparison_control_weights(
+        weight_set_payload,
+        dataset,
+        matrix,
+        plan,
+        standardizer,
+        covariance_payload,
+        correlation_payload,
+        distance_payload,
+        clustering_payload,
+        order_payload,
+    )
+    unsigned = _build_unsigned(matrix, plan, weight_set)
+    evaluation = {
+        **unsigned,
+        "evaluationId": f"ASHA_WEIGHTED_CONTROL_EVAL_{fingerprint(unsigned)}",
+    }
+    return _validate_evaluation(evaluation, matrix, plan, weight_set)
+
+
+def validate_hrp_comparison_control_evaluation(
+    evaluation_payload: object,
+    dataset_payload: object,
+    matrix_payload: object,
+    plan_payload: object,
+    standardizer_payload: object,
+    covariance_payload: object,
+    correlation_payload: object,
+    distance_payload: object,
+    clustering_payload: object,
+    order_payload: object,
+    weight_set_payload: object,
+) -> dict[str, Any]:
+    """Recompute an HRP comparison test path and reject provenance drift or tampering."""
+
+    dataset = validate_synthetic_dataset(dataset_payload)
+    matrix = validate_point_in_time_return_matrix(matrix_payload, dataset)
+    plan = validate_walk_forward_plan(plan_payload, dataset)
+    standardizer = validate_train_only_standardizer(standardizer_payload, dataset, matrix, plan)
+    weight_set = validate_hrp_comparison_control_weights(
+        weight_set_payload,
+        dataset,
+        matrix,
+        plan,
+        standardizer,
+        covariance_payload,
+        correlation_payload,
+        distance_payload,
+        clustering_payload,
+        order_payload,
+    )
+    return _validate_evaluation(evaluation_payload, matrix, plan, weight_set)
+
+
+def _validate_evaluation(
+    evaluation_payload: object,
+    matrix: dict[str, Any],
+    plan: dict[str, Any],
+    weight_set: dict[str, Any],
+) -> dict[str, Any]:
     if not isinstance(evaluation_payload, dict) or set(evaluation_payload) != _EVALUATION_KEYS:
         raise ContractViolation("weighted-control evaluation has unexpected fields")
     evaluation = deepcopy(evaluation_payload)

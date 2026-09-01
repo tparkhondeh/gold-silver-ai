@@ -131,6 +131,13 @@ records every cluster variance/allocation and emits 12-decimal weights summing e
 to one; excluded zero-variance paths receive zero. Ninety-five tests pass locally.
 The output stays `no_decision`, no-use, no-execution and does not approve HRP as the
 project's real allocation methodology.
+HRP comparison-control checkpoint `9e0b3e1` passed all three GitHub jobs in run
+33517070244. Those frozen train-only HRP weights can now be evaluated on only their
+associated synthetic test fold. The shared versioned evaluation contract preserves
+the full upstream covariance-to-order provenance, deterministic return/wealth path,
+cumulative change and maximum drawdown. One hundred laboratory tests pass locally;
+future test changes do not refit the weights and resealed false metrics fail closed.
+The evaluation remains `no_decision`, no-use and no-execution.
 
 The owner authorized staged Data Foundation and deterministic-baseline development,
 with each stage dependent on the previous quality gate. Private GitHub authentication

@@ -137,6 +137,12 @@ exact 12-decimal weights summing to one, require zero weight for a disclosed zer
 variance path, prove future test changes cannot alter train-only splits/weights, pin
 canonical replay, and reject resealed false weights. Ninety-five laboratory tests
 pass; the benchmark remains no-decision and non-operational.
+Five HRP evaluation tests require the frozen weights to use only the exact associated
+test fold, prove future test changes affect evaluation without refitting the train-only
+weights, require the complete covariance-to-order provenance chain and canonical
+artifact round-trip, and reject resealed false metrics. One hundred laboratory tests
+pass; the shared contract explicitly permits only the two reviewed comparison-control
+IDs and keeps both no-decision, no-use and no-execution.
 
 ## Related Documents
 

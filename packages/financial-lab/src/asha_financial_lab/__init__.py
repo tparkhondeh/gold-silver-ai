@@ -13,6 +13,7 @@ from .artifacts import (
     decode_single_linkage_clustering,
     decode_cluster_leaf_order,
     decode_hrp_control_weights,
+    decode_hrp_control_evaluation,
     decode_walk_forward_plan,
     decode_walk_forward_control_report,
     decode_weighted_control_evaluation,
@@ -28,6 +29,7 @@ from .artifacts import (
     encode_single_linkage_clustering,
     encode_cluster_leaf_order,
     encode_hrp_control_weights,
+    encode_hrp_control_evaluation,
     encode_walk_forward_plan,
     encode_walk_forward_control_report,
     encode_weighted_control_evaluation,
@@ -56,7 +58,9 @@ from .comparison_weights import (
 )
 from .control_evaluation import (
     WEIGHTED_CONTROL_EVALUATION_SCHEMA_VERSION,
+    evaluate_hrp_comparison_control_fold,
     evaluate_inverse_volatility_control_fold,
+    validate_hrp_comparison_control_evaluation,
     validate_inverse_volatility_control_evaluation,
 )
 from .covariance import (
@@ -166,6 +170,7 @@ __all__ = [
     "decode_single_linkage_clustering",
     "decode_cluster_leaf_order",
     "decode_hrp_control_weights",
+    "decode_hrp_control_evaluation",
     "decode_synthetic_dataset_parquet",
     "decode_walk_forward_plan",
     "decode_walk_forward_control_report",
@@ -182,11 +187,13 @@ __all__ = [
     "encode_single_linkage_clustering",
     "encode_cluster_leaf_order",
     "encode_hrp_control_weights",
+    "encode_hrp_control_evaluation",
     "encode_synthetic_dataset_parquet",
     "encode_walk_forward_plan",
     "encode_walk_forward_control_report",
     "encode_weighted_control_evaluation",
     "evaluate_comparison_controls",
+    "evaluate_hrp_comparison_control_fold",
     "evaluate_inverse_volatility_control_fold",
     "fingerprint",
     "fit_train_only_standardizer",
@@ -210,4 +217,5 @@ __all__ = [
     "validate_train_only_single_linkage_clustering",
     "validate_train_only_cluster_leaf_order",
     "validate_hrp_comparison_control_weights",
+    "validate_hrp_comparison_control_evaluation",
 ]

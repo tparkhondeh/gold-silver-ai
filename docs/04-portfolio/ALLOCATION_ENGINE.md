@@ -45,6 +45,9 @@ the reviewed train-only covariance, correlation distance, single-linkage tree an
 order. Recursive ordered-half bisection records each cluster variance and allocation;
 zero-variance paths receive zero. This benchmark is permanently `no_decision`, does
 not approve HRP for the real project, and cannot produce an operational allocation.
+Its frozen weights can be applied to only their associated synthetic test fold under
+the same versioned weighted-evaluation contract; this records comparison metrics but
+does not turn them into a recommendation.
 
 ## Related Documents
 

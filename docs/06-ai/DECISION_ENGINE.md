@@ -95,13 +95,15 @@ The reviewed correlation matrix now has a canonical zero-to-one correlation-dist
 transform for later clustering comparisons. It remains a provenance-bound feature and
 cannot emit weights, recommendations or execution instructions.
 Deterministic single-linkage clustering can now join the nearest synthetic paths and
-record every merge. Tie handling is code-defined and replayable; leaf ordering and HRP
-weight generation remain explicitly absent.
+record every merge. Tie handling is code-defined and replayable; that artifact alone
+still produces no order, weights or decision.
 The exact linkage tree can now produce a deterministic left-to-right leaf order. The
 artifact is feature-only and explicitly keeps HRP weighting uncomputed.
 A separate HRP-style comparison-control artifact may consume that reviewed order and
 covariance. Its recursive splits and weights are deterministic code outputs, always
-`no_decision`, and cannot promote HRP into the real financial method.
+`no_decision`, and cannot promote HRP into the real financial method. Its frozen
+weights can now be evaluated on the exact synthetic test fold, but the resulting path
+and metrics remain comparison evidence rather than a recommendation.
 
 ## Decision History Requirement
 

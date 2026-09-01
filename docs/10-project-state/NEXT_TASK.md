@@ -200,6 +200,12 @@ financial engine remain separate gates.
     cluster variance and exact-sum weight is replayable; excluded zero-variance paths
     receive zero. This remains an unapproved `no_decision` benchmark, not a real
     allocation method.
+41. **HRP TEST-FOLD EVALUATION COMPLETE:** the frozen train-only HRP comparison weights
+    are applied only to their exact synthetic test fold. The shared versioned artifact
+    records the deterministic return/wealth path, cumulative change and maximum
+    drawdown, requires the complete covariance-to-order provenance chain, and rejects
+    resealed false results. It remains permanently `no_decision`, no-use and no-
+    execution.
 
 All implementation available from published provider contracts is complete; real
 provider history execution remains paused at item 6 for Tier-A licensing/cost decisions.
