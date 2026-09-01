@@ -53,6 +53,11 @@ Navasan credential is stored locally and must never be pasted into chat or commi
 Historical ingestion remains disabled until written source terms and independent
 Iranian cross-checking are approved.
 
+The project-owned local database can be backed up with `npm run db:backup` from
+`apps/web`. The command restores the new backup into a temporary database and checks
+all governed tables before reporting success. Backups are Git-ignored and owner-only,
+but are not yet encrypted or offsite.
+
 ## Start here
 
 - **New to the project?** Read `docs/01-product/PRODUCT_VISION.md`.

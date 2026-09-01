@@ -28,7 +28,8 @@ the Vinext build are separate gates. The GitHub Actions workflow runs these gate
 the development branch; its first run identified a runtime-command mismatch.
 
 The default test command now measures only imported project source under `app/`,
-`data/`, `db/`, and `worker/`; generated build output is excluded by construction.
+`data/`, `db/`, `scripts/`, and `worker/`; generated build output is excluded by
+construction.
 It fails when line coverage is below 85%, branch coverage is below 65%, or function
 coverage is below 80%. These are regression floors, not a reason to omit risk-based
 tests: critical financial, persistence, security, and fail-closed paths still require

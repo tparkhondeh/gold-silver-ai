@@ -7,7 +7,7 @@
 Migrations 0003–0009 now cover the owner snapshot, immutable provenance,
 exact point-in-time dataset/decision lineage, source-reconciliation records and
 mandatory correction reasons, plus the read-only transaction/evaluation-valuation
-ledger foundation. Local build, 94 unit tests, 14 real PostgreSQL tests,
+ledger foundation. Local build, 96 unit tests, 14 real PostgreSQL tests,
 restore, activation, and health checks pass. Production account authentication,
 empirical divergence thresholds, historical backfill, and the real
 financial engine remain separate gates.
@@ -46,11 +46,15 @@ financial engine remain separate gates.
    continuity audit now reports unobserved dates, duplicates, range/instrument
    violations and Tehran timestamp mismatches using synthetic fixtures. It never
    interpolates values, calls the provider, writes history or unlocks execution.
-8. **SAFE NON-API HARDENING ACTIVE:** the default quality command now measures only
+8. **SAFE NON-API HARDENING COMPLETE:** the default quality command now measures only
    project source and fails below 85% line, 65% branch, or 80% function coverage.
    Direct portfolio-repository tests prove exact restore, atomic versioned save, and
-   stale-version rejection before replacement. Continue local operations/backup
-   hardening without contacting a vendor or enabling historical execution.
+   stale-version rejection before replacement.
+9. **VERIFIED LOCAL BACKUP COMPLETE:** the owner-only backup command creates a unique
+   Git-ignored PostgreSQL backup, restores it into a temporary database, compares the
+   migration journal and all 24 governed table counts, then removes the temporary
+   database. Two real backups passed. Encryption, offsite storage, scheduling,
+   retention, and production RPO/RTO remain deferred to the production storage gate.
 
 The API-dependent implementation slice is complete and remains paused at item 6 for
 a Tier-A owner decision. The owner explicitly authorized continued independent local

@@ -1,9 +1,28 @@
 # Backup
 
-**Source of truth for:** how data and code are protected against loss. No data or
-deployed code exists yet.
+**Source of truth for:** how data and code are protected against loss.
 
-## Requirement (once data exists)
+## Local Phase 1 mechanism
+
+`npm run db:backup` creates a PostgreSQL 17.11 custom-format backup of `asha_local`
+inside the project-owned `.cache/postgres-local/backups` directory. This directory
+inherits the Windows owner's restricted access rules and is ignored by Git.
+
+The command never overwrites the main database. Before it reports success, it:
+
+1. writes to a unique temporary backup file;
+2. restores that file into a uniquely named temporary local database;
+3. compares the migration journal and row counts for all 24 governed tables;
+4. removes the temporary verification database;
+5. atomically publishes the backup plus a JSON manifest containing its SHA-256 hash.
+
+No old backup is deleted automatically. The output can contain sensitive portfolio
+data. It is protected by the local Windows account boundary but is **not encrypted**
+and is **not an offsite copy**; it must not be emailed, uploaded, committed, or moved
+to shared storage. A complete restore is verified on creation, while the separate CI
+suite also exercises an independent fixture restore.
+
+## Long-term requirement
 
 The historical dataset (`docs/05-data/HISTORICAL_DATA.md`) is expected to become
 one of the project's most valuable and hardest-to-reconstruct assets — it must be
@@ -33,10 +52,10 @@ is, is fixed now so it isn't forgotten later.
 
 ## Status
 
-`STATUS: TBD` for backup mechanism, frequency, retention, and the RPO/RTO values
-above — depends on where data ends up being stored
-(`docs/02-architecture/DATA_ARCHITECTURE.md`), which is not yet decided. Tier B
-(`docs/10-project-state/OPEN_DECISIONS.md` item B12) once a mechanism is chosen.
+`STATUS: PARTIAL`. A verified, owner-only local backup command exists. Encryption,
+offsite destination, automatic schedule, retention, and RPO/RTO values remain
+`STATUS: TBD` until the production storage boundary is selected. Those later choices
+must be completed before the backup can be treated as disaster-recovery protection.
 
 ## Related Documents
 

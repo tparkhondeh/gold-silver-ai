@@ -63,7 +63,7 @@ is discovered. None of these block owner approval of Phase 0 or of Phase 1's sco
 | B9 | Tagging/versioning scheme | `docs/00-governance/STABILITY_POLICY.md` | Standard practice (e.g. semantic versioning); easily changed later | No | First tag-worthy milestone | Open |
 | B10 | Deployment target/approach | `docs/09-operations/DEPLOYMENT.md` | Standard practice once A3/A4 are set; escalate if it implies a recurring cost commitment | No | Public Sites review target selected; stable/persistent deployment still pending | Partially resolved |
 | B11 | Monitoring tooling | `docs/09-operations/MONITORING.md` | Standard observability practice | No | Before first deployment | Open |
-| B12 | Backup mechanism | `docs/09-operations/BACKUP.md` | Standard practice once A4 is set (append-only, offsite copy) | No | Once real data exists | Open |
+| B12 | Backup mechanism | `docs/09-operations/BACKUP.md` | Standard practice once A4 is set (append-only, offsite copy) | No | Before hosted real data | Partially resolved: verified owner-only local backup exists; encryption, offsite copy, schedule, retention and RPO/RTO remain open |
 | B13 | Incident-response tooling | `docs/09-operations/INCIDENT_RESPONSE.md` | Standard practice | No | Before first deployment | Open |
 | B14 | Coding standards specifics | `docs/07-engineering/CODING_STANDARDS.md` | TypeScript strict mode, ESLint, typecheck, Node tests, and source-only coverage floors are active; a formatter is optional future tool | No | Phase 1 CI | Resolved for Phase 1 |
 

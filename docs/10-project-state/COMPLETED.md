@@ -63,14 +63,24 @@ requirements. Full details: `PHASE_0_AUDIT.md` § 15.
 `main`. The stabilization commits are now confirmed on the private remote;
 subsequent changes still require their own push and CI verification.
 
+### Verified owner-only local backup — ۱۴۰۵/۰۶/۰۹
+
+- Added a manual command that writes a unique custom-format backup only under the
+  protected Git-ignored project cache and publishes a SHA-256 manifest.
+- The command performs a full restore into a temporary database, matches the migration
+  journal and row counts for all 24 governed tables, and removes the temporary database
+  before reporting success. It never replaces or resets `asha_local`.
+- Two real local backups passed; 96 unit/contract/API tests and 14 real PostgreSQL tests
+  pass. Encryption/offsite/scheduling/retention remain production-gated.
+
 ### Test coverage and portfolio repository hardening — ۱۴۰۵/۰۶/۰۹
 
 - Added source-only regression floors of 85% lines, 65% branches and 80% functions
   to the default quality command; generated build output is not counted.
 - Added direct unit coverage for empty/exact portfolio restore, atomic versioned save,
   and stale-version failure before replacing holdings.
-- Passed 94 unit/contract/API tests and 14 real PostgreSQL tests locally. Remote CI
-  verification remains attached to the checkpoint that publishes this unit.
+- Passed 94 unit/contract/API tests and 14 real PostgreSQL tests locally. Checkpoint
+  `01095cb` passed both GitHub jobs in run 33477121188; `main` stayed unchanged.
 
 ### Navasan quota and history foundation — ۱۴۰۵/۰۶/۰۹
 
@@ -86,7 +96,7 @@ subsequent changes still require their own push and CI verification.
 - Added a deterministic offline OHLC continuity audit for unobserved provider dates,
   duplicates, range/instrument violations and Tehran timestamp/date mismatches. It
   uses synthetic fixtures, inserts no values and cannot authorize storage.
-- Passed typecheck, lint, production build, 94 unit tests and 14 real PostgreSQL
+- Passed typecheck, lint, production build, 90 unit tests and 14 real PostgreSQL
   migration/isolation/concurrency/backup-restore tests.
 - Checkpoint `8a21a97` passed both GitHub quality jobs in run 33421273488.
 - Prepared the researched licensed-backfill proposal, explicit no-interpolation gap

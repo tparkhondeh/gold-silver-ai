@@ -54,7 +54,7 @@ credential, durable quota health, eight-quote live normalization, historical end
 contracts and backup/restore path pass locally; no historical backfill was requested.
 The local Persian readiness planner validates proposed Jalali ranges, approved
 symbols and exact request counts without network or storage, while execution remains
-locked. Local verification now covers 94 unit and 14 real PostgreSQL tests.
+locked. Local verification now covers 96 unit and 14 real PostgreSQL tests.
 Code checkpoint `b0bb80a` passed both GitHub quality and real PostgreSQL jobs in
 run 33417744818.
 Backfill-readiness checkpoint `8a21a97` passed both GitHub quality and real
@@ -78,6 +78,13 @@ The safe non-API hardening lane now enforces source-only test coverage floors of
 lines, 65% branches, and 80% functions. Four direct repository tests cover empty
 restore, exact holding/preference restore, atomic versioned save, and stale-version
 failure before holdings are replaced. Generated build output cannot inflate coverage.
+Coverage checkpoint `01095cb` passed both GitHub jobs in run 33477121188; remote
+`main` remained at `5c03fabb1c8090497c0b03c9059a6e51fdb91d03`.
+The project-owned database now also has a manual verified-backup command. It creates
+a unique custom-format file in the restricted Git-ignored cache, restores it into a
+temporary database, compares all 24 governed table counts and the migration journal,
+then removes the temporary database. Two real local backups passed this flow. It is
+not encrypted or offsite, so production backup policy remains open.
 
 ## Snapshot
 
@@ -267,7 +274,7 @@ failure before holdings are replaced. Generated build output cannot inflate cove
   Migration 0006 adds immutable source-reconciliation records and requires a bounded
   plain-language reason on every correction. Migrations 0007–0010 add exact transaction and
   evaluation-only valuation lineage plus immutable provider-call reservations;
-  94 unit and 14 real PostgreSQL tests pass locally.
+  96 unit and 14 real PostgreSQL tests pass locally.
   In the fresh-session laboratory, a fixed
   five-row CSV sample exercises preview plus a memory-only commit result (three
   accepted, one duplicate, one quarantined) without reaching the server or implying

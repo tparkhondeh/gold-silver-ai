@@ -2,7 +2,8 @@
 // firewall, resets a database, or prints credentials. Runtime files are ignored.
 import { createHash, randomBytes } from "node:crypto";
 import { execFileSync } from "node:child_process";
-import { access, mkdir, readFile, writeFile, unlink, readdir } from "node:fs/promises";
+import { createReadStream } from "node:fs";
+import { access, mkdir, readFile, writeFile, unlink, readdir, rename, stat } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import { parseEnv } from "node:util";
 import { join, resolve } from "node:path";
@@ -10,6 +11,7 @@ import { Client } from "pg";
 import { applyMigrations, readMigrations } from "../db/migrations.ts";
 import { probeObservationDatabase } from "../db/postgres-runtime.ts";
 import { phase1Instruments, phase1Sources } from "../data/phase1-registry.ts";
+import { createLocalBackupPlan, localBackupTables, quoteVerificationDatabase } from "./local-backup.ts";
 
 const root = fileURLToPath(new URL("../../../", import.meta.url));
 const webRoot = fileURLToPath(new URL("../", import.meta.url));
@@ -23,6 +25,7 @@ const command = process.argv[2] ?? "status";
 const exists = async (path) => { try { await access(path); return true; } catch (error) { if (error.code === "ENOENT") return false; throw error; } };
 const binary = (name) => join(runtime, `${name}.exe`);
 const run = (name, args) => execFileSync(binary(name), args, { windowsHide: true, stdio: "pipe", timeout: 60_000 }).toString();
+const runWithPassword = (name, args, password, timeout = 120_000) => execFileSync(binary(name), args, { windowsHide: true, stdio: "pipe", timeout, env: { ...process.env, PGPASSWORD: password } }).toString();
 const connect = async (connectionString) => {
   const client = new Client({ connectionString, connectionTimeoutMillis: 3000 });
   await client.connect();
@@ -50,6 +53,12 @@ async function sourceFingerprint() {
   }
   const hash = createHash("sha256");
   for (const file of files.sort()) hash.update(await readFile(resolve(webRoot, file), "utf8"));
+  return hash.digest("hex");
+}
+
+async function fileFingerprint(path) {
+  const hash = createHash("sha256");
+  for await (const chunk of createReadStream(path)) hash.update(chunk);
   return hash.digest("hex");
 }
 
@@ -183,9 +192,101 @@ async function configure(secret) {
   console.log("Protected runtime.env prepared; load it explicitly when starting the local server. Existing .env.local is unchanged. Portfolio authentication remains a separate gate.");
 }
 
+async function verifiedBackup(secret) {
+  await start(secret);
+  await privateDirectory();
+  const createdAt = new Date();
+  const plan = createLocalBackupPlan(privateRoot, createdAt, randomBytes(4).toString("hex"));
+  const verificationDatabase = quoteVerificationDatabase(plan.verificationDatabase);
+  await mkdir(plan.backupRoot, { recursive: true });
+  for (const path of [plan.backupPath, plan.manifestPath, plan.temporaryBackupPath, plan.temporaryManifestPath]) {
+    if (await exists(path)) throw new Error("Backup target already exists");
+  }
+  let verificationCreated = false;
+  let completedBackup = null;
+  try {
+    const runtimeClient = await connect(url("asha_runtime", secret.runtime, "asha_local"));
+    try { await verifyActivation(runtimeClient); }
+    finally { await runtimeClient.end(); }
+
+    runWithPassword("pg_dump", [
+      "--host", "127.0.0.1", "--port", port.toString(), "--username", "postgres",
+      "--dbname", "asha_local", "--no-password", "--format", "custom",
+      "--compress", "6", "--no-owner", "--no-privileges", "--file", plan.temporaryBackupPath,
+    ], secret.admin);
+
+    const controller = await connect(url("postgres", secret.admin, "postgres"));
+    try {
+      if ((await controller.query("SELECT 1 FROM pg_database WHERE datname=$1", [plan.verificationDatabase])).rowCount) {
+        throw new Error("Verification database already exists");
+      }
+      await controller.query(`CREATE DATABASE ${verificationDatabase}`);
+      verificationCreated = true;
+      await controller.query(`REVOKE CONNECT ON DATABASE ${verificationDatabase} FROM PUBLIC`);
+    } finally { await controller.end(); }
+
+    runWithPassword("pg_restore", [
+      "--host", "127.0.0.1", "--port", port.toString(), "--username", "postgres",
+      "--dbname", plan.verificationDatabase, "--no-password", "--exit-on-error",
+      "--single-transaction", "--no-owner", "--no-privileges", plan.temporaryBackupPath,
+    ], secret.admin);
+
+    let source;
+    let restored;
+    try {
+      source = await connect(url("postgres", secret.admin, "asha_local"));
+      restored = await connect(url("postgres", secret.admin, plan.verificationDatabase));
+      const expectedMigrations = (await source.query("SELECT id,checksum FROM asha_schema_migrations ORDER BY id")).rows;
+      const restoredMigrations = (await restored.query("SELECT id,checksum FROM asha_schema_migrations ORDER BY id")).rows;
+      if (JSON.stringify(restoredMigrations) !== JSON.stringify(expectedMigrations)) throw new Error("Restored migration journal differs");
+      for (const table of localBackupTables) {
+        const sourceCount = (await source.query(`SELECT count(*)::text AS count FROM public."${table}"`)).rows[0]?.count;
+        const restoredCount = (await restored.query(`SELECT count(*)::text AS count FROM public."${table}"`)).rows[0]?.count;
+        if (sourceCount !== restoredCount) throw new Error("Restored table count differs");
+      }
+    } finally {
+      if (source) await source.end();
+      if (restored) await restored.end();
+    }
+
+    const backupStat = await stat(plan.temporaryBackupPath);
+    const sha256 = await fileFingerprint(plan.temporaryBackupPath);
+    const manifest = {
+      version: 1,
+      database: "asha_local",
+      createdAt: createdAt.toISOString(),
+      backupFile: plan.backupFile,
+      bytes: backupStat.size,
+      sha256,
+      sourceFingerprint: await sourceFingerprint(),
+      postgresVersion: "17.11",
+      tablesVerified: localBackupTables.length,
+      restoreVerification: "temporary_database_full_restore_and_row_count_match",
+      containsSensitiveData: true,
+      encryption: "none_owner_only_windows_acl",
+      retention: "manual_no_automatic_deletion",
+    };
+    await writeFile(plan.temporaryManifestPath, `${JSON.stringify(manifest, null, 2)}\n`, { flag: "wx", mode: 0o600 });
+    await rename(plan.temporaryBackupPath, plan.backupPath);
+    await rename(plan.temporaryManifestPath, plan.manifestPath);
+    completedBackup = { backupCreated: plan.backupFile, manifestCreated: plan.manifestFile, bytes: backupStat.size, sha256, fullRestoreVerified: true, tablesVerified: localBackupTables.length };
+  } finally {
+    try {
+      if (verificationCreated) {
+        const controller = await connect(url("postgres", secret.admin, "postgres"));
+        try { await controller.query(`DROP DATABASE ${verificationDatabase} WITH (FORCE)`); }
+        finally { await controller.end(); }
+      }
+    } finally {
+      for (const path of [plan.temporaryBackupPath, plan.temporaryManifestPath]) if (await exists(path)) await unlink(path);
+    }
+  }
+  console.log(JSON.stringify(completedBackup));
+}
+
 try {
   if (process.platform !== "win32") throw new Error("This local bootstrap is Windows-specific");
-  if (!["init", "start", "status", "stop", "test", "configure"].includes(command)) throw new Error("Unknown local database command");
+  if (!["init", "start", "status", "stop", "test", "configure", "backup"].includes(command)) throw new Error("Unknown local database command");
   // A sandbox identity and the interactive Windows owner are different users.
   // Do not create private storage under a temporary account or repair its ACLs.
   if (/codexsandbox/i.test(windowsIdentity().identity)) throw new Error("Run local PostgreSQL setup as the Windows owner, not a temporary sandbox account");
@@ -195,6 +296,7 @@ try {
   else if (command === "start") { await start(secret); console.log("Project PostgreSQL started on 127.0.0.1:55432."); }
   else if (command === "stop") { run("pg_ctl", ["stop", "-D", data, "-m", "fast", "-w", "-t", "30"]); console.log("Project PostgreSQL stopped cleanly; data preserved."); }
   else if (command === "configure") await configure(secret);
+  else if (command === "backup") await verifiedBackup(secret);
   else if (command === "test") {
     await start(secret);
     if (await exists(evidenceFile)) await unlink(evidenceFile);

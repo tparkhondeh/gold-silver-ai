@@ -7,6 +7,20 @@ state is recorded in `docs/10-project-state/CURRENT_STATE.md`.
 
 ## [Unreleased]
 
+### Verified local backup — ۱۴۰۵/۰۶/۰۹
+
+- Added `npm run db:backup` for unique PostgreSQL custom-format backups in the
+  protected, Git-ignored local project directory.
+- Every backup is restored into a temporary database and checked against the source
+  migration journal and row counts for all 24 governed tables before success is
+  reported; the temporary database is then removed.
+- Added a SHA-256 manifest, atomic temporary-file publication, path/name validation,
+  and two deterministic safety tests. The local suite now passes 96 tests with
+  93.49% line, 74.73% branch, and 93.84% function coverage.
+- Created and fully restored two real local backups without replacing or modifying the
+  primary database. It is owner-only and Git-ignored, but deliberately documented as
+  unencrypted and not offsite.
+
 ### Test-coverage and portfolio-persistence hardening — ۱۴۰۵/۰۶/۰۹
 
 - Added an enforced source-only coverage gate using Node's built-in runner: minimum
@@ -18,6 +32,8 @@ state is recorded in `docs/10-project-state/CURRENT_STATE.md`.
   functions on the current host; the separate real PostgreSQL suite still passes
   14 tests including independent restore.
 - Replaced stale starter/runtime documentation with the actual Asha local boundaries.
+- Checkpoint `01095cb` passed the GitHub quality and real PostgreSQL jobs in run
+  33477121188; remote `main` remained unchanged.
 
 ### Navasan quota and history foundation — ۱۴۰۵/۰۶/۰۹
 
@@ -38,7 +54,7 @@ state is recorded in `docs/10-project-state/CURRENT_STATE.md`.
   dates and marks duplicates, range/instrument violations and Tehran
   timestamp/date mismatches. Synthetic fixtures only; zero interpolation, provider
   calls and historical writes; flagged rows are reported as quarantine-required.
-- Local typecheck, lint, production build, 94 unit tests, and 14 real PostgreSQL
+- Local typecheck, lint, production build, 90 unit tests, and 14 real PostgreSQL
   migration/concurrency/restore tests pass.
 - Code checkpoint `b0bb80a` passed both GitHub quality and real PostgreSQL jobs in
   run 33417744818.

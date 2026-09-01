@@ -23,12 +23,15 @@ npm run typecheck
 npm run lint
 npm test
 npm run test:db
+npm run db:backup
 ```
 
 `npm test` builds the application, runs the unit/contract/API suites, and enforces
 source-only coverage floors. `npm run test:db` requires the explicitly disposable
 `asha_integration` PostgreSQL database; it never uses `DATABASE_URL` or personal
-portfolio data.
+portfolio data. `npm run db:backup` creates an owner-only local backup and proves it
+by restoring it into a temporary database before reporting success; it never replaces
+the main database.
 
 ## Safety boundaries
 
@@ -38,6 +41,8 @@ portfolio data.
   financial decisions.
 - Historical provider calls and storage stay disabled until licensing and source
   redundancy are approved.
+- Local database backups may contain sensitive holdings. They remain Git-ignored,
+  unencrypted and local-only until an encrypted offsite policy is approved.
 - Production identity and hosted personal data remain separate future gates.
 
 Repository rules and current work are defined by the root `CLAUDE.md`,
