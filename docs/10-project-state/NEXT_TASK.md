@@ -140,6 +140,11 @@ financial engine remain separate gates.
     fingerprints only observations available by each training cutoff. It selects no
     window design or financial methodology; invalid, gapped, mismatched and resealed-
     tampered plans fail closed.
+28. **PARQUET TRANSPORT COMPLETE:** hash-locked Apache-2.0 `pyarrow==25.0.1` is used
+    only for bounded, uncompressed five-column serialization. Exact schema/metadata/
+    size limits and reconstruction of the canonical JSON dataset fingerprint prevent
+    Parquet from becoming a second source of truth. No financial calculation depends
+    on PyArrow.
 
 All implementation available from published provider contracts is complete; real
 provider history execution remains paused at item 6 for Tier-A licensing/cost decisions.

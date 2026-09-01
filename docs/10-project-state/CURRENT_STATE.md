@@ -46,6 +46,12 @@ explicit purge/embargo ranges and exact training-observation fingerprints. Its p
 54-fold reference excludes a delayed observation from the first training cutoff and
 round-trips only with the exact referenced dataset. Thirty laboratory tests pass; no
 window size, financial methodology or real-data use has been approved.
+Walk-forward checkpoint `dda4cfa` passed all three GitHub jobs in run 33510661448.
+Parquet transport is implemented with hash-locked Apache-2.0 `pyarrow==25.0.1`, after
+official compatibility/license/wheel review and a zero-result OSV query for the exact
+version. It is limited to serialization; files are bounded and must reconstruct the
+canonical JSON dataset fingerprint. Thirty-four laboratory tests and `pip check` pass
+locally.
 
 The owner authorized staged Data Foundation and deterministic-baseline development,
 with each stage dependent on the previous quality gate. Private GitHub authentication

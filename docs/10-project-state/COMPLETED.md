@@ -90,6 +90,12 @@ Phase 1 checkpoint `0f90210`; not merged to `main`.
   anchored folds with purge/embargo separation and point-in-time training membership.
   Thirty tests pass, including exact 54-fold identity, delayed-row exclusion,
   canonical artifact replay, gap/mismatch rejection and resealed-tamper rejection.
+- Walk-forward checkpoint `dda4cfa` passed all three jobs in GitHub run
+  [33510661448](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33510661448).
+- Added bounded Parquet transport with hash-locked Apache-2.0 `pyarrow==25.0.1` after
+  official compatibility/license/wheel and OSV review. PyArrow performs serialization
+  only; exact schema/metadata/size limits and canonical JSON fingerprint reconstruction
+  fail closed. Thirty-four laboratory tests and `pip check` pass locally.
 
 ## Phase 1 — Completed Units on the Working Branch
 

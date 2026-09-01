@@ -47,6 +47,12 @@ state is recorded in `docs/10-project-state/CURRENT_STATE.md`.
   membership fingerprints, canonical artifact replay and fail-closed gap/mismatch/
   tamper handling. Thirty laboratory tests pass locally; no window design or financial
   methodology was selected.
+- Walk-forward checkpoint `dda4cfa` passed all three GitHub Actions jobs in run
+  [33510661448](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33510661448).
+- Added bounded synthetic Parquet transport with hash-locked Apache-2.0
+  `pyarrow==25.0.1`. Exact five-column schema/metadata/size checks and canonical JSON
+  fingerprint reconstruction keep Parquet from becoming a second source of truth.
+  Thirty-four laboratory tests and `pip check` pass locally.
 
 ### Fail-closed Navasan history authorization — ۱۴۰۵/۰۶/۱۰
 

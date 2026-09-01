@@ -26,6 +26,11 @@ from .controls import (
 )
 from .synthetic import REFERENCE_DATASET_ID, REFERENCE_PERIODS, build_reference_dataset
 from .replay import replay_comparison_control_artifacts, replay_no_decision_artifacts
+from .parquet_transport import (
+    PARQUET_SCHEMA_VERSION,
+    decode_synthetic_dataset_parquet,
+    encode_synthetic_dataset_parquet,
+)
 from .walk_forward import WALK_FORWARD_SCHEMA_VERSION, build_walk_forward_plan, validate_walk_forward_plan
 
 __all__ = [
@@ -34,6 +39,7 @@ __all__ = [
     "CASH_CONTROL_ID",
     "EQUAL_WEIGHT_CONTROL_ID",
     "NO_TRADE_CONTROL_ID",
+    "PARQUET_SCHEMA_VERSION",
     "REFERENCE_DATASET_ID",
     "REFERENCE_PERIODS",
     "WALK_FORWARD_SCHEMA_VERSION",
@@ -42,9 +48,11 @@ __all__ = [
     "canonical_json",
     "decode_evaluation_result",
     "decode_synthetic_dataset",
+    "decode_synthetic_dataset_parquet",
     "decode_walk_forward_plan",
     "encode_evaluation_result",
     "encode_synthetic_dataset",
+    "encode_synthetic_dataset_parquet",
     "encode_walk_forward_plan",
     "evaluate_comparison_controls",
     "fingerprint",

@@ -3,7 +3,7 @@ name = "asha-financial-lab"
 version = "0.1.0"
 description = "Synthetic-only deterministic evaluation laboratory for Gold/Silver AI"
 requires-python = ">=3.12,<3.13"
-dependencies = []
+dependencies = ["pyarrow==25.0.1"]
 
 [tool.unittest]
 start-directory = "tests"

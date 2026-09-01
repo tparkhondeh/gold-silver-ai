@@ -45,3 +45,10 @@ and embargo ranges. Each training fold is cut off at its own final training peri
 observations published later are excluded and the exact admitted observation IDs are
 fingerprinted. The complete plan has a versioned JSON Schema, canonical artifact, and
 dataset-bound replay identity.
+
+The Parquet transport uses hash-locked `pyarrow==25.0.1` only for table serialization,
+never for a financial calculation. It writes the five reviewed observation columns
+without compression and embeds the canonical dataset manifest. Reads are bounded to
+64 MiB, 100,000 rows, five exact columns and 1,024 row groups. Semantic round-trip
+must reconstruct and validate the original JSON dataset fingerprint; Parquet file
+bytes themselves are not treated as the canonical dataset identity.

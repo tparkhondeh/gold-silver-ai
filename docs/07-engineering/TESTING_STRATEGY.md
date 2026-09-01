@@ -78,6 +78,10 @@ Five walk-forward contract tests pin a 54-fold reference plan, verify rolling an
 anchored ranges, purge/embargo separation, point-in-time exclusion of a delayed
 training row, canonical artifact round-trip, exact dataset binding, invalid-parameter
 and period-gap rejection, and resealed-tamper rejection. Thirty laboratory tests pass.
+Four Parquet tests verify the exact reviewed package version/license, deterministic
+same-runtime encoding, semantic reconstruction of the original dataset fingerprint,
+explicit schema version, and rejection of corrupt, oversized or wrong-metadata files.
+Dependency health also passes `pip check`; thirty-four laboratory tests pass locally.
 
 ## Related Documents
 

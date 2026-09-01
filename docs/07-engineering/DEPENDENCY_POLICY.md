@@ -44,11 +44,18 @@ The open-source product review and adopt/defer/reject decisions are recorded in
 GitHub actions and receives read-only repository contents permission. No source code
 from the reviewed AGPL financial products is included.
 
-The initial Phase 2 laboratory declares no Python runtime dependency and is tested
-with the Python 3.12 standard library. GitHub CI uses the official MIT-licensed
-`actions/setup-python@v7`, reviewed on 2026-09-01. A future Parquet implementation
-must pass a separate dependency/license/security review before its package is pinned;
-the JSON contract does not silently pull in an optional binary stack.
+The Phase 2 laboratory uses the Python 3.12 standard library for contracts and every
+financial calculation. GitHub CI uses the official MIT-licensed
+`actions/setup-python@v7`, reviewed on 2026-09-01. Parquet transport now uses exactly
+`pyarrow==25.0.1` from Apache Arrow, only for serialization. The official package is
+Apache-2.0, supports Python 3.12, declares no mandatory Python dependency, supplies
+official Windows/Linux/macOS CPython 3.12 wheels, and had zero OSV records for this
+exact version when reviewed on 2026-09-01. `requirements.lock` pins SHA-256 hashes for
+all official CPython 3.12 wheels and CI installs with `--require-hashes`. The project
+license/IP decision remains open, so this permissive dependency review is technical,
+not a substitute for that owner/legal decision. See the
+[official PyPI record](https://pypi.org/project/pyarrow/25.0.1/) and
+[Apache installation documentation](https://arrow.apache.org/docs/python/install.html).
 
 ## Related Documents
 
