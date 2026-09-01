@@ -15,8 +15,9 @@ state is recorded in `docs/10-project-state/CURRENT_STATE.md`.
   explicit missing-date auditing and a local Persian preview planner. No API request,
   token, purchase or historical write is part of this change.
 - Added a dated Persian purchase-readiness checklist. The local build, lint and 115
-  unit tests pass with 94.19% line, 77.80% branch and 94.41% function coverage;
-  remote CI verification follows the code checkpoint.
+  unit tests pass with 94.19% line, 77.80% branch and 94.41% function coverage.
+- Checkpoint `eab4b16` passed GitHub quality/audit and real PostgreSQL jobs in run
+  33489418166; remote `main` remained unchanged.
 
 ### Pre-API readiness audit — ۱۴۰۵/۰۶/۱۰
 

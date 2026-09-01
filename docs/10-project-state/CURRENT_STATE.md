@@ -297,6 +297,8 @@ licensed real data, validation, financial methodology and production operations.
   evaluation-only valuation lineage plus immutable provider-call reservations;
   115 unit and 14 real PostgreSQL tests pass locally; source coverage is 94.19%
   lines, 77.80% branches and 94.41% functions.
+  GoldAPI global-history checkpoint `eab4b16` passed GitHub quality/audit and real
+  PostgreSQL jobs in run 33489418166; remote `main` remained unchanged.
   In the fresh-session laboratory, a fixed
   five-row CSV sample exercises preview plus a memory-only commit result (three
   accepted, one duplicate, one quarantined) without reaching the server or implying

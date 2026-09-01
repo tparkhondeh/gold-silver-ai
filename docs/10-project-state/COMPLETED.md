@@ -71,8 +71,9 @@ subsequent changes still require their own push and CI verification.
   missing-date audit and a Persian local-only request-count planner. Duplicate,
   unordered, out-of-range, wrong-pair or undocumented responses fail closed.
 - No provider request, token, purchase or historical write occurred. The local suite
-  passes 115 unit tests with 94.19% line, 77.80% branch and 94.41% function coverage;
-  remote CI verification belongs to the subsequent published checkpoint.
+  passes 115 unit tests with 94.19% line, 77.80% branch and 94.41% function coverage.
+- Checkpoint `eab4b16` passed GitHub quality/audit and real PostgreSQL jobs in run
+  33489418166; remote `main` remained unchanged.
 - Added a Persian final-stage API purchase checklist using dated official public
   terms. It recommends no purchase now and leaves payment/vendor acceptance to the
   owner gate.
