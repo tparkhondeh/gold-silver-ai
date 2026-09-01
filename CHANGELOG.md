@@ -97,6 +97,12 @@ state is recorded in `docs/10-project-state/CURRENT_STATE.md`.
   versioned artifact records a symmetric matrix and zero-variance paths, binds the
   exact dataset/matrix/plan/standardizer chain, and rejects future leakage or resealed
   values. Seventy tests pass without selecting a risk or allocation methodology.
+- Train-only covariance checkpoint `39e29dd` passed all three GitHub Actions jobs in
+  run [33514636287](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33514636287).
+- Added train-only Pearson correlation derived from the provenance-bound covariance
+  artifact. It excludes and discloses undefined zero-variance paths, fails closed with
+  fewer than two active paths, and rejects future leakage or resealed values. Seventy-
+  five tests pass with no portfolio methodology selected.
 
 ### Fail-closed Navasan history authorization — ۱۴۰۵/۰۶/۱۰
 

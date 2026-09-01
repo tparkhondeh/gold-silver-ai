@@ -38,6 +38,9 @@ for synthetic returns. It uses one validated walk-forward fold, is bound to the 
 dataset/matrix/plan/standardizer provenance, and permanently emits `no_decision` with
 financial use and execution disabled. This verifies deterministic matrix mechanics;
 it does not select a risk model, threshold, allocation method, or owner risk tolerance.
+That artifact can now be converted into a train-only Pearson-correlation feature.
+Zero-variance paths are excluded and disclosed because their correlation is undefined;
+fewer than two remaining paths fails closed. This is still feature plumbing only.
 
 ## Related Documents
 

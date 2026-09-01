@@ -100,6 +100,12 @@ plan and standardizer, records zero-variance paths, and rejects future-influence
 resealed false values. Seventy laboratory tests pass locally. This is deterministic
 risk-feature plumbing only; no risk model, allocation method, recommendation or
 execution has been selected.
+Train-only covariance checkpoint `39e29dd` passed all three GitHub jobs in run
+33514636287. The covariance artifact can now produce a versioned Pearson-correlation
+matrix for its non-zero-variance synthetic paths. Zero-variance paths are explicitly
+excluded and disclosed; an insufficient active set fails closed. Future test changes
+cannot alter fitted values, exact provenance/replay is required, and seventy-five
+laboratory tests pass locally. No portfolio methodology or decision is produced.
 
 The owner authorized staged Data Foundation and deterministic-baseline development,
 with each stage dependent on the previous quality gate. Private GitHub authentication

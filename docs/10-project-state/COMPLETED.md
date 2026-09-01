@@ -139,6 +139,12 @@ Phase 1 checkpoint `0f90210`; not merged to `main`.
   matrix, zero-variance disclosure, full upstream provenance and canonical replay.
   Future test changes cannot alter fitted values and resealed false entries fail
   closed. Seventy tests pass; it makes no risk or allocation decision.
+- Train-only covariance checkpoint `39e29dd` passed all three jobs in GitHub run
+  [33514636287](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33514636287).
+- Added versioned train-only Pearson correlation derived from the reviewed covariance
+  artifact. Zero-variance paths are excluded/disclosed, an insufficient active set
+  fails closed, future test changes cannot alter fitted values, and exact replay is
+  required. Seventy-five tests pass without selecting a portfolio methodology.
 
 ## Phase 1 — Completed Units on the Working Branch
 

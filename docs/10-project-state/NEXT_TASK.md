@@ -179,6 +179,10 @@ financial engine remain separate gates.
     computed solely from one fold's complete synthetic training-return interval. It
     is symmetric, records exact zero-variance paths, binds every upstream identity,
     rejects future leakage/tampering, and produces no risk or allocation decision.
+36. **TRAIN-ONLY CORRELATION COMPLETE:** the reviewed covariance artifact becomes an
+    exact Pearson-correlation matrix for non-zero-variance synthetic paths. Undefined
+    zero-variance paths are excluded and disclosed, fewer than two active paths fails
+    closed, and the artifact remains feature-only with no methodology decision.
 
 All implementation available from published provider contracts is complete; real
 provider history execution remains paused at item 6 for Tier-A licensing/cost decisions.

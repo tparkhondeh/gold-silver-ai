@@ -114,6 +114,11 @@ zero variance, prove future test changes cannot alter fitted training values, pi
 exact artifact identity, require canonical replay with the exact standardizer, and
 reject a resealed false entry. Seventy laboratory tests pass; covariance remains a
 synthetic feature rather than a risk or allocation decision.
+Five correlation tests hand-check an exact perfectly negative two-path matrix, require
+explicit zero-variance exclusion and fail closed with fewer than two active paths,
+prove future test changes cannot alter fitted correlations, pin canonical artifact
+replay, and reject a resealed false entry. Seventy-five laboratory tests pass without
+selecting a portfolio methodology.
 
 ## Related Documents
 

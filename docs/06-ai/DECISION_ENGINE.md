@@ -88,6 +88,9 @@ matrix for synthetic returns. It records zero-variance paths and exact provenanc
 does not choose a portfolio model. Inverse-volatility comparison weights and their
 single- or multi-fold evaluations remain permanently no-decision; the multi-fold
 report deliberately makes no aggregate performance claim.
+The covariance output can also produce a train-only Pearson-correlation matrix for
+non-zero-variance synthetic paths. Undefined zero-variance correlations are excluded
+and disclosed, not silently replaced by invented values.
 
 ## Decision History Requirement
 
