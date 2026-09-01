@@ -87,6 +87,10 @@ financial engine remain separate gates.
     calculate the first exact time a new Navasan live call may be reserved from local
     PostgreSQL state. A browser-only countdown updates every 30 seconds; neither the
     calculation nor the timer makes a provider request, and usage stays unchanged.
+17. **DEPENDENCY RE-AUDIT COMPLETE:** the live production tree is clean. One moderate
+    development-only esbuild advisory remains behind drizzle-kit; no stable
+    compatibility-proven upstream replacement is available, so the trusted-input
+    generator stays isolated from production and the beta upgrade remains deferred.
 
 All implementation available from published provider contracts is complete; real
 provider history execution remains paused at item 6 for Tier-A licensing/cost decisions.

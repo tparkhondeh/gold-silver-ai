@@ -35,8 +35,9 @@ manifest without having gone through § Before Adding a Dependency above.
 files are the dependency registry. CSV parsing, hashing, and validation use platform
 APIs. The guarded local database runtime adds pinned `pg` (MIT), and the Persian UI
 bundles pinned Vazirmatn through Fontsource (OFL-1.1). Production-dependency audit is
-clean as of ۱۴۰۵/۰۶/۰۵. Project license/IP posture remains owner-critical decision
-A18.
+clean as of ۱۴۰۵/۰۶/۱۰. The exact full development tree has one moderate advisory in
+the drizzle-kit-only esbuild loader chain; see `docs/10-project-state/KNOWN_ISSUES.md`
+item 8. Project license/IP posture remains owner-critical decision A18.
 
 The open-source product review and adopt/defer/reject decisions are recorded in
 `OPEN_SOURCE_ADOPTION.md`. The GitHub Actions workflow uses only official MIT-licensed

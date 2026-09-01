@@ -63,6 +63,15 @@ requirements. Full details: `PHASE_0_AUDIT.md` § 15.
 `main`. The stabilization commits are now confirmed on the private remote;
 subsequent changes still require their own push and CI verification.
 
+### Dependency security re-audit — ۱۴۰۵/۰۶/۱۰
+
+- The live-registry production audit is clean. The exact full development tree now
+  reports one moderate advisory, narrowed from the older four-finding record, only
+  through drizzle-kit's deprecated esbuild loader.
+- No unsafe stable upgrade is available. The generator remains local/trusted-input
+  only and is not part of production installs; the upstream beta replacement is
+  tracked in `KNOWN_ISSUES.md` item 8.
+
 ### Navasan next-eligible visibility — ۱۴۰۵/۰۶/۱۰
 
 - Added a deterministic next-call boundary from the newest durable reservation and

@@ -34,12 +34,14 @@
    holdings stay in that browser session and cannot be reviewed by the owner. Because
    the link is public and unauthenticated, testers must not enter real sensitive
    financial information.
-8. **Four moderate development-only audit findings remain under `drizzle-kit`.**
-   The previous audit reported a clean runtime tree; it was not rerun against the
-   live registry during this stabilization. The registry's automated remedy would downgrade
-   `drizzle-kit` across a breaking boundary, so it was not forced; the local migration
-   generator must not process untrusted input and should be upgraded when its upstream
-   chain removes the legacy esbuild loader.
+8. **One moderate development-only audit finding remains under `drizzle-kit`.**
+   A live-registry re-audit on ۱۴۰۵/۰۶/۱۰ found the production tree clean. The exact
+   full lock resolves `drizzle-kit@0.31.10` through the deprecated esbuild loader to
+   vulnerable `esbuild@0.18.20` ([GHSA-67mh-4wv8-2f99](https://github.com/evanw/esbuild/security/advisories/GHSA-67mh-4wv8-2f99)).
+   Upstream marks replacement work as beta-only
+   ([issue 4852](https://github.com/drizzle-team/drizzle-orm/issues/4852)); no stable,
+   compatibility-proven upgrade exists yet. The generator remains a development-only
+   tool for trusted local schema input and is absent from production installs.
 9. **Navasan backfill is not authorized.** Durable append-only accounting now
    serializes workers and caps application calls at 115 per rolling 31 days;
    `dailyCurrency` and `ohlcSearch` are normalized behind a local-only route. No

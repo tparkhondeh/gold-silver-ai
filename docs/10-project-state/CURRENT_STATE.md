@@ -322,6 +322,10 @@ licensed real data, validation, financial methodology and production operations.
   33497221903; remote `main` remained unchanged.
   Local countdown checkpoint `6ce6d9b` passed both GitHub jobs in run 33497834262;
   remote `main` remained unchanged.
+  A ۱۴۰۵/۰۶/۱۰ live-registry dependency re-audit found the production tree clean
+  and one moderate development-only esbuild advisory under drizzle-kit. The latest
+  stable generator still carries that deprecated loader; no beta/breaking upgrade
+  was forced. See `KNOWN_ISSUES.md` item 8.
   In the fresh-session laboratory, a fixed
   five-row CSV sample exercises preview plus a memory-only commit result (three
   accepted, one duplicate, one quarantined) without reaching the server or implying

@@ -7,6 +7,16 @@ state is recorded in `docs/10-project-state/CURRENT_STATE.md`.
 
 ## [Unreleased]
 
+### Dependency security re-audit — ۱۴۰۵/۰۶/۱۰
+
+- Re-audited the exact locked dependency tree against the live registry. The
+  production tree has no known vulnerability. The full development tree has one
+  moderate esbuild advisory reachable only through the pinned drizzle-kit generator.
+- The latest stable drizzle-kit remains 0.31.10 and still carries the deprecated
+  loader path. A beta replacement is not promoted into this long-lived branch
+  without compatibility evidence; the generator remains limited to trusted local
+  schemas and is absent from production installs.
+
 ### Navasan next-eligible visibility — ۱۴۰۵/۰۶/۱۰
 
 - Added a deterministic next-call calculation from the newest durable reservation
