@@ -22,7 +22,9 @@ def _metric(value: Decimal) -> str:
     return f"{normalized:.8f}"
 
 
-def _known_levels(dataset: dict, period_index: int) -> tuple[dict[str, Decimal], int]:
+def known_levels(dataset: dict, period_index: int) -> tuple[dict[str, Decimal], tuple[str, ...]]:
+    """Return latest point-in-time-known levels and visibly carried-forward IDs."""
+
     latest: dict[str, tuple[int, Decimal]] = {}
     for row in dataset["observations"]:
         if row["periodIndex"] > period_index:
@@ -35,9 +37,13 @@ def _known_levels(dataset: dict, period_index: int) -> tuple[dict[str, Decimal],
 
     instrument_ids = [item["instrumentId"] for item in dataset["instruments"]]
     if set(latest) != set(instrument_ids):
-        raise ContractViolation("every comparison-control instrument must be known at each evaluated period")
-    stale_count = sum(known_period < period_index for known_period, _ in latest.values())
-    return {instrument_id: latest[instrument_id][1] for instrument_id in instrument_ids}, stale_count
+        raise ContractViolation("every synthetic instrument must be known at each evaluated period")
+    carried_forward = tuple(
+        instrument_id
+        for instrument_id in instrument_ids
+        if latest[instrument_id][0] < period_index
+    )
+    return {instrument_id: latest[instrument_id][1] for instrument_id in instrument_ids}, carried_forward
 
 
 def _path_metrics(levels_by_period: list[dict[str, Decimal]], instrument_ids: list[str]) -> tuple[Decimal, Decimal]:
@@ -92,9 +98,9 @@ def evaluate_comparison_controls(dataset_payload: object, start_index: int, end_
     levels_by_period: list[dict[str, Decimal]] = []
     carried_forward_count = 0
     for period_index in range(start_index, end_index + 1):
-        levels, stale_count = _known_levels(dataset, period_index)
+        levels, carried_forward = known_levels(dataset, period_index)
         levels_by_period.append(levels)
-        carried_forward_count += stale_count
+        carried_forward_count += len(carried_forward)
 
     instrument_ids = [item["instrumentId"] for item in dataset["instruments"]]
     if "SYNTH_CASH" not in instrument_ids:

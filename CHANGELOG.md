@@ -53,6 +53,13 @@ state is recorded in `docs/10-project-state/CURRENT_STATE.md`.
   `pyarrow==25.0.1`. Exact five-column schema/metadata/size checks and canonical JSON
   fingerprint reconstruction keep Parquet from becoming a second source of truth.
   Thirty-four laboratory tests and `pip check` pass locally.
+- Parquet checkpoint `cd9d8d3` passed all three GitHub Actions jobs, including the
+  hash-locked Linux installation, in run
+  [33511252725](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33511252725).
+- Added a versioned, dataset-bound point-in-time synthetic return matrix with
+  12-decimal changes, explicit delayed carry-forward, canonical artifact replay and a
+  pinned 109-row/11-delay reference identity. Thirty-nine laboratory tests pass; it
+  performs no fitting, forecast, ranking or decision.
 
 ### Fail-closed Navasan history authorization — ۱۴۰۵/۰۶/۱۰
 

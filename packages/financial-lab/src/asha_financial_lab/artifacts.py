@@ -11,6 +11,7 @@ from .contracts import (
     validate_evaluation_result,
     validate_synthetic_dataset,
 )
+from .features import validate_point_in_time_return_matrix
 from .walk_forward import validate_walk_forward_plan
 
 
@@ -75,3 +76,11 @@ def encode_walk_forward_plan(payload: object, dataset_payload: object) -> bytes:
 
 def decode_walk_forward_plan(document: object, dataset_payload: object) -> dict[str, Any]:
     return _decode_canonical(document, lambda value: validate_walk_forward_plan(value, dataset_payload))
+
+
+def encode_return_matrix(payload: object, dataset_payload: object) -> bytes:
+    return _encode_canonical(payload, lambda value: validate_point_in_time_return_matrix(value, dataset_payload))
+
+
+def decode_return_matrix(document: object, dataset_payload: object) -> dict[str, Any]:
+    return _decode_canonical(document, lambda value: validate_point_in_time_return_matrix(value, dataset_payload))

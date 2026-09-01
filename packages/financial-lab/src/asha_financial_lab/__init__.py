@@ -2,9 +2,11 @@
 
 from .artifacts import (
     decode_evaluation_result,
+    decode_return_matrix,
     decode_synthetic_dataset,
     decode_walk_forward_plan,
     encode_evaluation_result,
+    encode_return_matrix,
     encode_synthetic_dataset,
     encode_walk_forward_plan,
 )
@@ -24,6 +26,11 @@ from .controls import (
     NO_TRADE_CONTROL_ID,
     evaluate_comparison_controls,
 )
+from .features import (
+    RETURN_MATRIX_SCHEMA_VERSION,
+    build_point_in_time_return_matrix,
+    validate_point_in_time_return_matrix,
+)
 from .synthetic import REFERENCE_DATASET_ID, REFERENCE_PERIODS, build_reference_dataset
 from .replay import replay_comparison_control_artifacts, replay_no_decision_artifacts
 from .parquet_transport import (
@@ -42,15 +49,19 @@ __all__ = [
     "PARQUET_SCHEMA_VERSION",
     "REFERENCE_DATASET_ID",
     "REFERENCE_PERIODS",
+    "RETURN_MATRIX_SCHEMA_VERSION",
     "WALK_FORWARD_SCHEMA_VERSION",
     "build_reference_dataset",
     "build_walk_forward_plan",
+    "build_point_in_time_return_matrix",
     "canonical_json",
     "decode_evaluation_result",
+    "decode_return_matrix",
     "decode_synthetic_dataset",
     "decode_synthetic_dataset_parquet",
     "decode_walk_forward_plan",
     "encode_evaluation_result",
+    "encode_return_matrix",
     "encode_synthetic_dataset",
     "encode_synthetic_dataset_parquet",
     "encode_walk_forward_plan",
@@ -64,4 +75,5 @@ __all__ = [
     "validate_evaluation_result",
     "validate_synthetic_dataset",
     "validate_walk_forward_plan",
+    "validate_point_in_time_return_matrix",
 ]

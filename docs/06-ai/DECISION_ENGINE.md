@@ -75,6 +75,10 @@ The first controls are a constant synthetic-cash path, period-rebalanced synthet
 1/N path, and an initially equal synthetic no-trade path. Their calculation rules are
 documented with the isolated package; all permanently emit `no_decision` and exist
 only to test point-in-time mechanics.
+The laboratory also has a dataset-bound point-in-time synthetic return matrix. It
+records carried-forward delayed observations explicitly and performs no fitting,
+forecast, ranking or recommendation; any later normalization must be fitted only on
+the training membership of a validated walk-forward fold.
 
 ## Decision History Requirement
 

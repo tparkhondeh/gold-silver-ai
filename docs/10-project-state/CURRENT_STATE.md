@@ -52,6 +52,12 @@ official compatibility/license/wheel review and a zero-result OSV query for the 
 version. It is limited to serialization; files are bounded and must reconstruct the
 canonical JSON dataset fingerprint. Thirty-four laboratory tests and `pip check` pass
 locally.
+Parquet checkpoint `cd9d8d3` passed all three GitHub jobs—including the hash-locked
+Linux install—in run 33511252725. A versioned point-in-time synthetic return matrix now
+records 12-decimal latest-known changes and explicit carried-forward instrument IDs.
+Its pinned reference has 109 rows and 11 visible delays; exact artifact replay is
+dataset-bound. Thirty-nine laboratory tests pass, with no fitting, forecast, ranking
+or decision output.
 
 The owner authorized staged Data Foundation and deterministic-baseline development,
 with each stage dependent on the previous quality gate. Private GitHub authentication

@@ -96,6 +96,13 @@ Phase 1 checkpoint `0f90210`; not merged to `main`.
   official compatibility/license/wheel and OSV review. PyArrow performs serialization
   only; exact schema/metadata/size limits and canonical JSON fingerprint reconstruction
   fail closed. Thirty-four laboratory tests and `pip check` pass locally.
+- Parquet checkpoint `cd9d8d3` passed all three jobs, including hash-locked Linux
+  installation, in GitHub run
+  [33511252725](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33511252725).
+- Added the versioned, dataset-bound point-in-time synthetic return matrix. Its pinned
+  109-row reference exposes 11 delayed carry-forwards, exact artifact replay, invalid-
+  range and resealed-tamper rejection. Thirty-nine laboratory tests pass; no model or
+  decision is produced.
 
 ## Phase 1 — Completed Units on the Working Branch
 

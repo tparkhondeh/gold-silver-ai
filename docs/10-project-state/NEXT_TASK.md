@@ -145,6 +145,11 @@ financial engine remain separate gates.
     size limits and reconstruction of the canonical JSON dataset fingerprint prevent
     Parquet from becoming a second source of truth. No financial calculation depends
     on PyArrow.
+29. **POINT-IN-TIME RETURN MATRIX COMPLETE:** latest-known synthetic levels become
+    deterministic 12-decimal return rows; delayed levels are visibly carried forward
+    and catch up only when published. The versioned matrix is bound to the exact
+    dataset and recomputed on replay. It performs no fitting, forecast, ranking or
+    decision.
 
 All implementation available from published provider contracts is complete; real
 provider history execution remains paused at item 6 for Tier-A licensing/cost decisions.

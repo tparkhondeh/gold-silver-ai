@@ -82,6 +82,10 @@ Four Parquet tests verify the exact reviewed package version/license, determinis
 same-runtime encoding, semantic reconstruction of the original dataset fingerprint,
 explicit schema version, and rejection of corrupt, oversized or wrong-metadata files.
 Dependency health also passes `pip check`; thirty-four laboratory tests pass locally.
+Five feature-contract tests verify a delayed level is carried forward without
+look-ahead and catches up only when available, pin the 109-row/11-delay reference
+matrix identity, require exact dataset-bound artifact replay, and reject invalid ranges
+or resealed tampering. Thirty-nine laboratory tests pass locally.
 
 ## Related Documents
 

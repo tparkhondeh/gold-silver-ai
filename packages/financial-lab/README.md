@@ -52,3 +52,10 @@ without compression and embeds the canonical dataset manifest. Reads are bounded
 64 MiB, 100,000 rows, five exact columns and 1,024 row groups. Semantic round-trip
 must reconstruct and validate the original JSON dataset fingerprint; Parquet file
 bytes themselves are not treated as the canonical dataset identity.
+
+`build_point_in_time_return_matrix()` converts latest-known synthetic levels into
+12-decimal return rows. A delayed level produces a visible carried-forward zero for
+that period and catches up only when published. The matrix is bound to the dataset,
+has its own versioned JSON Schema and canonical artifact, and is fully recomputed on
+validation. It is feature plumbing only: no fitting, forecast, ranking or decision is
+performed.
