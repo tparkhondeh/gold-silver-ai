@@ -2,6 +2,11 @@
 
 **Audit date:** ۱۴۰۵/۰۶/۰۴
 
+**Historical checkpoint:** this audit records the first vertical slice. Its open
+items were subsequently implemented and the current truth is in `CURRENT_STATE.md`,
+`NEXT_TASK.md`, and `POSTGRES_FOUNDATION_CHECKPOINT.md`; do not use the remaining-risk
+list below as the current project state.
+
 **Branch:** `codex/phase-1-data-ui`
 
 **Scope:** data contracts, validation/quarantine, manual CSV, PostgreSQL migration

@@ -71,6 +71,8 @@ subsequent changes still require their own push and CI verification.
   requiring scenario/demo and financial-decision locks to remain in place.
 - The running application passed the command. Typecheck, lint, production build,
   100 unit/contract/API tests and 14 real PostgreSQL tests pass locally.
+- Checkpoint `d3da848` passed both GitHub jobs in run 33479256145; remote `main`
+  remained unchanged.
 
 ### Verified owner-only local backup — ۱۴۰۵/۰۶/۰۹
 

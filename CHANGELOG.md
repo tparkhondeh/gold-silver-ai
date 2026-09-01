@@ -16,6 +16,8 @@ state is recorded in `docs/10-project-state/CURRENT_STATE.md`.
 - The running local application passed. Typecheck, lint, production build, 100 unit
   tests and 14 real PostgreSQL tests pass locally; total source coverage is 93.68%
   lines, 75.64% branches and 93.92% functions.
+- Checkpoint `d3da848` passed both GitHub quality jobs in run 33479256145; remote
+  `main` remained unchanged.
 
 ### Verified local backup — ۱۴۰۵/۰۶/۰۹
 

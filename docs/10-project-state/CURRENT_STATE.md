@@ -88,7 +88,9 @@ not encrypted or offsite, so production backup policy remains open. Backup check
 `5fd67d0` passed both GitHub jobs in run 33478298802; remote `main` remained unchanged.
 The local operations command now checks only `localhost:4174/api/health`, requires all
 database-backed Phase 1 surfaces, and fails unless real financial use remains locked.
-The real running application passed this check without a provider request.
+The real running application passed this check without a provider request. Readiness
+checkpoint `d3da848` passed both GitHub jobs in run 33479256145; remote `main`
+remained unchanged.
 
 ## Snapshot
 
