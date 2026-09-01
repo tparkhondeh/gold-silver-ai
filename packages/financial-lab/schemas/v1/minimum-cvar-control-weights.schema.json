@@ -1,0 +1,92 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://goldsilver.wealthos.ir/contracts/asha.synthetic.minimum_cvar_control_weights.v1.schema.json",
+  "title": "Asha synthetic discrete minimum-CVaR comparison weights v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion", "weightSetId", "status", "financialUseAllowed",
+    "executionAllowed", "decisionState", "benchmarkId", "datasetReference",
+    "returnMatrixReference", "walkForwardPlanReference", "methodologyReference",
+    "foldIndex", "trainStartIndex", "trainEndIndex", "parameters",
+    "scenarioCount", "candidateCount", "selectedTailLosses", "cvarLoss",
+    "meanReturn", "weights", "reasonCodes"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "asha.synthetic.minimum_cvar_control_weights.v1" },
+    "weightSetId": {
+      "type": "string",
+      "pattern": "^ASHA_MIN_CVAR_CONTROL_WEIGHTS_[a-f0-9]{64}$"
+    },
+    "status": { "const": "evaluation_only" },
+    "financialUseAllowed": { "const": false },
+    "executionAllowed": { "const": false },
+    "decisionState": { "const": "no_decision" },
+    "benchmarkId": { "const": "ASHA_BENCHMARK_MINIMUM_CVAR_CONTROL_V1" },
+    "datasetReference": { "type": "object" },
+    "returnMatrixReference": { "type": "object" },
+    "walkForwardPlanReference": { "type": "object" },
+    "methodologyReference": {
+      "const": { "entityId": "STATUS_TBD", "version": 0, "approvalState": "unapproved" }
+    },
+    "foldIndex": { "type": "integer", "minimum": 0 },
+    "trainStartIndex": { "type": "integer", "minimum": 1 },
+    "trainEndIndex": { "type": "integer", "minimum": 1 },
+    "parameters": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind", "tailCount", "weightStep", "confidenceRepresentation",
+        "candidatePolicy", "lossDefinition", "objective", "tieBreak", "rounding"
+      ],
+      "properties": {
+        "kind": { "const": "discrete_long_only_minimum_empirical_cvar_control_v1" },
+        "tailCount": { "type": "integer", "minimum": 1 },
+        "weightStep": { "type": "string", "pattern": "^(?:0|1)\\.[0-9]{12}$" },
+        "confidenceRepresentation": { "const": "explicit_worst_training_scenario_count" },
+        "candidatePolicy": { "const": "all_long_only_full_investment_grid_compositions" },
+        "lossDefinition": { "const": "negative_weighted_arithmetic_return" },
+        "objective": { "const": "minimum_mean_selected_worst_losses" },
+        "tieBreak": { "const": "lexicographic_weight_vector_by_instrument_id" },
+        "rounding": { "const": "half_even_12_decimals" }
+      }
+    },
+    "scenarioCount": { "type": "integer", "minimum": 1 },
+    "candidateCount": { "type": "integer", "minimum": 1, "maximum": 25000 },
+    "selectedTailLosses": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["periodIndex", "loss"],
+        "properties": {
+          "periodIndex": { "type": "integer", "minimum": 1 },
+          "loss": { "type": "string" }
+        }
+      }
+    },
+    "cvarLoss": { "type": "string" },
+    "meanReturn": { "type": "string" },
+    "weights": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["instrumentId", "weight"],
+        "properties": {
+          "instrumentId": { "type": "string", "pattern": "^SYNTH_[A-Z0-9_]+$" },
+          "weight": { "type": "string", "pattern": "^(?:0|1)\\.[0-9]{12}$" }
+        }
+      }
+    },
+    "reasonCodes": {
+      "const": [
+        "COMPARISON_CONTROL_ONLY", "DISCRETE_GRID_EXPERIMENT_ONLY",
+        "METHODOLOGY_NOT_APPROVED", "NO_FINANCIAL_DECISION",
+        "REAL_FINANCIAL_USE_DISABLED", "SYNTHETIC_DATA_ONLY", "TRAIN_ONLY_FIT"
+      ]
+    }
+  }
+}

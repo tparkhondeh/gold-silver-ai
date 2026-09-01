@@ -104,6 +104,9 @@ covariance. Its recursive splits and weights are deterministic code outputs, alw
 `no_decision`, and cannot promote HRP into the real financial method. Its frozen
 weights can now be evaluated on the exact synthetic test fold, but the resulting path
 and metrics remain comparison evidence rather than a recommendation.
+A discrete minimum-CVaR comparison artifact may similarly search only a bounded,
+explicit train-only grid. Its code-computed tail losses and weights are evidence for
+later comparison, never an LLM-generated number, approved method or financial action.
 
 ## Decision History Requirement
 

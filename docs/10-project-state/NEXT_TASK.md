@@ -206,6 +206,12 @@ financial engine remain separate gates.
     drawdown, requires the complete covariance-to-order provenance chain, and rejects
     resealed false results. It remains permanently `no_decision`, no-use and no-
     execution.
+42. **DISCRETE MINIMUM-CVAR COMPARISON CONTROL COMPLETE:** a bounded exhaustive grid
+    evaluates only the selected fold's synthetic training scenarios. Tail size and
+    weight step are explicit experiment inputs, all long-only full-investment
+    candidates are replayed, and deterministic tie-breaking selects one comparison
+    weight set. This is an unapproved `no_decision` ruler, not a real optimization
+    policy or recommendation.
 
 All implementation available from published provider contracts is complete; real
 provider history execution remains paused at item 6 for Tier-A licensing/cost decisions.

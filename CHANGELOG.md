@@ -134,6 +134,13 @@ state is recorded in `docs/10-project-state/CURRENT_STATE.md`.
   required for replay, future test changes do not refit weights, and resealed false
   metrics fail closed. One hundred tests pass; no decision, use or execution is
   enabled.
+- HRP test-fold evaluation checkpoint `c44d255` passed all three GitHub Actions jobs
+  in run [33518097199](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33518097199).
+- Added a bounded discrete minimum-CVaR synthetic comparison control. It exhausts all
+  long-only full-investment candidates for explicit tail-count and weight-step inputs,
+  records the selected tail losses and exact objective, uses deterministic tie-
+  breaking, and rejects unsafe grid size, future leakage or resealed tampering. One
+  hundred and five tests pass; the output is unapproved and non-operational.
 
 ### Fail-closed Navasan history authorization — ۱۴۰۵/۰۶/۱۰
 

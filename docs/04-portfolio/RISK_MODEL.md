@@ -58,6 +58,13 @@ unapproved synthetic benchmark rather than the project's selected risk/allocatio
 method. Those weights can now be held fixed over the associated synthetic test fold;
 full provenance and exact metric replay are required.
 
+A separate bounded minimum-CVaR comparison grid uses empirical train-only synthetic
+losses, defined as the negative weighted arithmetic return. Instead of silently
+choosing a confidence level, it requires an explicit count of worst scenarios and an
+explicit weight step. This implements testable mechanics inspired by the
+[Rockafellar–Uryasev CVaR formulation](https://sites.math.washington.edu/~rtr/papers/rtr179-CVaR1.pdf),
+not a selected risk policy for real assets.
+
 ## Related Documents
 
 - Portfolio analysis this feeds: `PORTFOLIO_MODEL.md`

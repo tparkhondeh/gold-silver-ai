@@ -176,6 +176,14 @@ Phase 1 checkpoint `0f90210`; not merged to `main`.
   distance, clustering and order provenance chain; future test changes cannot refit
   weights and resealed false metrics fail closed. One hundred laboratory tests pass;
   the evaluation remains no-decision, no-use and no-execution.
+- HRP test-fold evaluation checkpoint `c44d255` passed all three jobs in GitHub run
+  [33518097199](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33518097199).
+- Added a bounded, exhaustive and dependency-free minimum-CVaR comparison grid. Tail
+  count and weight step are explicit synthetic experiment inputs; all long-only fully
+  invested candidates, selected worst losses, objective and deterministic tie-break
+  replay exactly. Grid explosion, invalid tail sizes, future leakage and resealed
+  tampering fail closed. One hundred and five tests pass; no methodology, decision,
+  financial use or execution is approved.
 
 ## Phase 1 — Completed Units on the Working Branch
 

@@ -138,6 +138,15 @@ the full upstream covariance-to-order provenance, deterministic return/wealth pa
 cumulative change and maximum drawdown. One hundred laboratory tests pass locally;
 future test changes do not refit the weights and resealed false metrics fail closed.
 The evaluation remains `no_decision`, no-use and no-execution.
+HRP test-fold evaluation checkpoint `c44d255` passed all three GitHub jobs in run
+33518097199. A separate discrete minimum-CVaR synthetic comparison control now
+exhausts every long-only, fully invested candidate on a bounded weight grid using only
+the selected fold's training scenarios. The experiment caller must state the tail
+scenario count and weight step; no hidden confidence level, target return or real
+methodology is selected. Exact candidate count, selected tail losses, CVaR loss, mean
+return and weights are replayable. One hundred and five laboratory tests pass locally;
+future test changes cannot alter fitted results and grid-size limits fail closed. The
+artifact is permanently `no_decision`, no-use and no-execution.
 
 The owner authorized staged Data Foundation and deterministic-baseline development,
 with each stage dependent on the previous quality gate. Private GitHub authentication

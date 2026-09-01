@@ -49,6 +49,12 @@ Its frozen weights can be applied to only their associated synthetic test fold u
 the same versioned weighted-evaluation contract; this records comparison metrics but
 does not turn them into a recommendation.
 
+The synthetic laboratory also has a discrete minimum-CVaR **comparison control**. It
+exhausts a bounded long-only full-investment grid on train-only scenarios. Tail count
+and grid step must be supplied explicitly, and exact replay records every relevant
+input and selected objective. No target return or real portfolio policy is inferred;
+the artifact remains `no_decision` and non-operational.
+
 ## Related Documents
 
 - Underlying analysis: `PORTFOLIO_MODEL.md`

@@ -87,3 +87,11 @@ volatility and HRP comparison weights may be frozen and evaluated on their exact
 synthetic test fold with the shared weighted-control evaluation contract. Replay
 recomputes the full return/wealth path and metrics from exact upstream identities;
 neither path can emit a financial decision or execution instruction.
+
+`build_minimum_cvar_comparison_control_weights()` performs an exhaustive bounded grid
+experiment over one fold's synthetic training returns. The caller must explicitly
+provide a worst-scenario count and a weight step; there is no hidden confidence level,
+return target or production default. Every long-only, fully invested candidate is
+replayed with `loss = -weighted_return`, and equal objectives use the lexicographically
+first weight vector. Candidate limits prevent accidental resource explosion. This is
+a dependency-free mechanics control, not an approved optimization policy.

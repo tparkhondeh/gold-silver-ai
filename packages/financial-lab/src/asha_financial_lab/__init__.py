@@ -14,6 +14,7 @@ from .artifacts import (
     decode_cluster_leaf_order,
     decode_hrp_control_weights,
     decode_hrp_control_evaluation,
+    decode_minimum_cvar_control_weights,
     decode_walk_forward_plan,
     decode_walk_forward_control_report,
     decode_weighted_control_evaluation,
@@ -30,6 +31,7 @@ from .artifacts import (
     encode_cluster_leaf_order,
     encode_hrp_control_weights,
     encode_hrp_control_evaluation,
+    encode_minimum_cvar_control_weights,
     encode_walk_forward_plan,
     encode_walk_forward_control_report,
     encode_weighted_control_evaluation,
@@ -114,6 +116,12 @@ from .normalization import (
     validate_normalized_fold,
     validate_train_only_standardizer,
 )
+from .minimum_cvar_control import (
+    MINIMUM_CVAR_CONTROL_ID,
+    MINIMUM_CVAR_SCHEMA_VERSION,
+    build_minimum_cvar_comparison_control_weights,
+    validate_minimum_cvar_comparison_control_weights,
+)
 from .walk_forward import WALK_FORWARD_SCHEMA_VERSION, build_walk_forward_plan, validate_walk_forward_plan
 from .walk_forward_evaluation import (
     WALK_FORWARD_EVALUATION_SCHEMA_VERSION,
@@ -132,6 +140,8 @@ __all__ = [
     "CLUSTER_ORDER_SCHEMA_VERSION",
     "HRP_CONTROL_ID",
     "HRP_CONTROL_SCHEMA_VERSION",
+    "MINIMUM_CVAR_CONTROL_ID",
+    "MINIMUM_CVAR_SCHEMA_VERSION",
     "EQUAL_WEIGHT_CONTROL_ID",
     "INVERSE_VOLATILITY_CONTROL_ID",
     "INVERSE_VOLATILITY_SCHEMA_VERSION",
@@ -153,6 +163,7 @@ __all__ = [
     "build_train_only_cluster_leaf_order",
     "build_hrp_comparison_control_weights",
     "build_inverse_volatility_control_weights",
+    "build_minimum_cvar_comparison_control_weights",
     "build_inverse_volatility_walk_forward_report",
     "apply_train_fitted_standardizer",
     "build_walk_forward_plan",
@@ -171,6 +182,7 @@ __all__ = [
     "decode_cluster_leaf_order",
     "decode_hrp_control_weights",
     "decode_hrp_control_evaluation",
+    "decode_minimum_cvar_control_weights",
     "decode_synthetic_dataset_parquet",
     "decode_walk_forward_plan",
     "decode_walk_forward_control_report",
@@ -188,6 +200,7 @@ __all__ = [
     "encode_cluster_leaf_order",
     "encode_hrp_control_weights",
     "encode_hrp_control_evaluation",
+    "encode_minimum_cvar_control_weights",
     "encode_synthetic_dataset_parquet",
     "encode_walk_forward_plan",
     "encode_walk_forward_control_report",
@@ -218,4 +231,5 @@ __all__ = [
     "validate_train_only_cluster_leaf_order",
     "validate_hrp_comparison_control_weights",
     "validate_hrp_comparison_control_evaluation",
+    "validate_minimum_cvar_comparison_control_weights",
 ]

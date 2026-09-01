@@ -143,6 +143,12 @@ weights, require the complete covariance-to-order provenance chain and canonical
 artifact round-trip, and reject resealed false metrics. One hundred laboratory tests
 pass; the shared contract explicitly permits only the two reviewed comparison-control
 IDs and keeps both no-decision, no-use and no-execution.
+Five minimum-CVaR control tests hand-check a three-candidate grid and balanced optimum,
+pin exact objective and weights, prove future test changes cannot alter training
+results, enforce tail/grid resource bounds, require canonical replay, verify the
+versioned schema, and reject resealed false weights. One hundred and five laboratory
+tests pass; this remains an explicit synthetic experiment rather than an approved
+financial optimizer.
 
 ## Related Documents
 

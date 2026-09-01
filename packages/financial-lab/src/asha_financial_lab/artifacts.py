@@ -24,6 +24,7 @@ from .contracts import (
 )
 from .features import validate_point_in_time_return_matrix
 from .normalization import validate_normalized_fold, validate_train_only_standardizer
+from .minimum_cvar_control import validate_minimum_cvar_comparison_control_weights
 from .walk_forward import validate_walk_forward_plan
 from .walk_forward_evaluation import validate_inverse_volatility_walk_forward_report
 
@@ -631,5 +632,39 @@ def decode_hrp_control_evaluation(
             clustering_payload,
             order_payload,
             weight_set_payload,
+        ),
+    )
+
+
+def encode_minimum_cvar_control_weights(
+    payload: object,
+    dataset_payload: object,
+    matrix_payload: object,
+    plan_payload: object,
+) -> bytes:
+    return _encode_canonical(
+        payload,
+        lambda value: validate_minimum_cvar_comparison_control_weights(
+            value,
+            dataset_payload,
+            matrix_payload,
+            plan_payload,
+        ),
+    )
+
+
+def decode_minimum_cvar_control_weights(
+    document: object,
+    dataset_payload: object,
+    matrix_payload: object,
+    plan_payload: object,
+) -> dict[str, Any]:
+    return _decode_canonical(
+        document,
+        lambda value: validate_minimum_cvar_comparison_control_weights(
+            value,
+            dataset_payload,
+            matrix_payload,
+            plan_payload,
         ),
     )
