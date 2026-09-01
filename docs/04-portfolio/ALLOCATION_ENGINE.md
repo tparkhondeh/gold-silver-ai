@@ -57,6 +57,9 @@ the artifact remains `no_decision` and non-operational.
 The selected experimental grid weights can be held fixed across their exact synthetic
 test fold. This creates replayable comparison metrics only and does not promote the
 grid, tail size or step into an approved allocation rule.
+The same mechanics can now replay every walk-forward fold, refitting only on each
+training interval before freezing for its test interval. Fold metrics stay separate;
+the report explicitly forbids an aggregate performance claim.
 
 ## Related Documents
 

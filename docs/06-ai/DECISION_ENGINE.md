@@ -109,6 +109,9 @@ explicit train-only grid. Its code-computed tail losses and weights are evidence
 later comparison, never an LLM-generated number, approved method or financial action.
 Its test-fold path is also computed and replayed entirely by deterministic code; the
 LLM may explain that artifact but cannot alter its weights, metrics or safety state.
+The multi-fold report likewise permits explanation of separate deterministic results
+only; the fixed no-aggregation flag prevents the LLM from presenting a synthetic
+headline performance claim.
 
 ## Decision History Requirement
 

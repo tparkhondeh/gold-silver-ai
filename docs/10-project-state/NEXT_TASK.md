@@ -217,6 +217,11 @@ financial engine remain separate gates.
     weighted-evaluation artifact recomputes the return/wealth path, cumulative change
     and maximum drawdown from exact provenance and rejects incomplete coverage or
     resealed metrics. No financial decision, use or execution is enabled.
+44. **MINIMUM-CVAR MULTI-FOLD REPORT COMPLETE:** each synthetic walk-forward fold
+    independently refits the bounded train-only grid and freezes its weights for that
+    fold's test interval. The versioned report keeps fold metrics separate under
+    `none_fold_metrics_only`, requires every fold and exact replay, and emits no
+    aggregate performance claim, methodology approval or decision.
 
 All implementation available from published provider contracts is complete; real
 provider history execution remains paused at item 6 for Tier-A licensing/cost decisions.

@@ -101,3 +101,8 @@ test fold with `evaluate_minimum_cvar_comparison_control_fold()`. It uses the sa
 versioned weighted-evaluation contract as the other reviewed controls and recomputes
 the entire test return/wealth path and metrics during replay. Evaluation cannot refit
 the training grid or cross the permanent no-decision/no-execution boundary.
+
+`build_minimum_cvar_walk_forward_report()` repeats that exact refit-then-freeze process
+for every fold in a validated synthetic plan. It records each fold's training range,
+scenario/candidate count and artifact identities. Metrics are never stitched into a
+headline result: `aggregationPolicy` is permanently `none_fold_metrics_only`.

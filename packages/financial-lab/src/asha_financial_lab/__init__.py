@@ -16,6 +16,7 @@ from .artifacts import (
     decode_hrp_control_evaluation,
     decode_minimum_cvar_control_weights,
     decode_minimum_cvar_control_evaluation,
+    decode_minimum_cvar_walk_forward_report,
     decode_walk_forward_plan,
     decode_walk_forward_control_report,
     decode_weighted_control_evaluation,
@@ -34,6 +35,7 @@ from .artifacts import (
     encode_hrp_control_evaluation,
     encode_minimum_cvar_control_weights,
     encode_minimum_cvar_control_evaluation,
+    encode_minimum_cvar_walk_forward_report,
     encode_walk_forward_plan,
     encode_walk_forward_control_report,
     encode_weighted_control_evaluation,
@@ -126,6 +128,11 @@ from .minimum_cvar_control import (
     build_minimum_cvar_comparison_control_weights,
     validate_minimum_cvar_comparison_control_weights,
 )
+from .minimum_cvar_walk_forward import (
+    MINIMUM_CVAR_WALK_FORWARD_SCHEMA_VERSION,
+    build_minimum_cvar_walk_forward_report,
+    validate_minimum_cvar_walk_forward_report,
+)
 from .walk_forward import WALK_FORWARD_SCHEMA_VERSION, build_walk_forward_plan, validate_walk_forward_plan
 from .walk_forward_evaluation import (
     WALK_FORWARD_EVALUATION_SCHEMA_VERSION,
@@ -146,6 +153,7 @@ __all__ = [
     "HRP_CONTROL_SCHEMA_VERSION",
     "MINIMUM_CVAR_CONTROL_ID",
     "MINIMUM_CVAR_SCHEMA_VERSION",
+    "MINIMUM_CVAR_WALK_FORWARD_SCHEMA_VERSION",
     "EQUAL_WEIGHT_CONTROL_ID",
     "INVERSE_VOLATILITY_CONTROL_ID",
     "INVERSE_VOLATILITY_SCHEMA_VERSION",
@@ -168,6 +176,7 @@ __all__ = [
     "build_hrp_comparison_control_weights",
     "build_inverse_volatility_control_weights",
     "build_minimum_cvar_comparison_control_weights",
+    "build_minimum_cvar_walk_forward_report",
     "build_inverse_volatility_walk_forward_report",
     "apply_train_fitted_standardizer",
     "build_walk_forward_plan",
@@ -188,6 +197,7 @@ __all__ = [
     "decode_hrp_control_evaluation",
     "decode_minimum_cvar_control_weights",
     "decode_minimum_cvar_control_evaluation",
+    "decode_minimum_cvar_walk_forward_report",
     "decode_synthetic_dataset_parquet",
     "decode_walk_forward_plan",
     "decode_walk_forward_control_report",
@@ -207,6 +217,7 @@ __all__ = [
     "encode_hrp_control_evaluation",
     "encode_minimum_cvar_control_weights",
     "encode_minimum_cvar_control_evaluation",
+    "encode_minimum_cvar_walk_forward_report",
     "encode_synthetic_dataset_parquet",
     "encode_walk_forward_plan",
     "encode_walk_forward_control_report",
@@ -240,4 +251,5 @@ __all__ = [
     "validate_hrp_comparison_control_evaluation",
     "validate_minimum_cvar_comparison_control_weights",
     "validate_minimum_cvar_comparison_control_evaluation",
+    "validate_minimum_cvar_walk_forward_report",
 ]

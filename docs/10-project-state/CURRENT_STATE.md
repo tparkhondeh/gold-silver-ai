@@ -155,6 +155,15 @@ requires exact dataset/matrix/plan/weight provenance and rejects incomplete inte
 or resealed false metrics. One hundred and ten laboratory tests pass locally. Future
 test changes alter the evaluation but cannot refit the weights; every output remains
 `no_decision`, no-use and no-execution.
+Minimum-CVaR test-fold checkpoint `897da2b` passed all three GitHub jobs in run
+33521035243. A dedicated multi-fold report now refits the explicit bounded grid on
+each fold's training interval and freezes those weights for only that fold's test
+interval. It records scenario/candidate counts, exact weight/evaluation identities and
+separate fold metrics. The aggregation policy is permanently
+`none_fold_metrics_only`, so no stitched or headline performance number is claimed.
+One hundred and fifteen laboratory tests pass locally; omitted folds, incomplete
+matrices, invalid tail sizes and resealed reports fail closed. The report remains
+`no_decision`, no-use and no-execution.
 
 The owner authorized staged Data Foundation and deterministic-baseline development,
 with each stage dependent on the previous quality gate. Private GitHub authentication

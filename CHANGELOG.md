@@ -148,6 +148,12 @@ state is recorded in `docs/10-project-state/CURRENT_STATE.md`.
   mandatory, future test changes cannot refit weights, and resealed false metrics fail
   closed. One hundred and ten tests pass; the output remains no-decision/no-use/no-
   execution.
+- Minimum-CVaR test-fold checkpoint `897da2b` passed all three GitHub Actions jobs in
+  run [33521035243](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33521035243).
+- Added an exact minimum-CVaR multi-fold report. Each fold refits only its training
+  grid and freezes weights for its test interval; fold metrics remain separate under
+  a no-aggregation policy. Missing folds, incomplete inputs and resealed output fail
+  closed. One hundred and fifteen tests pass and no financial claim is enabled.
 
 ### Fail-closed Navasan history authorization — ۱۴۰۵/۰۶/۱۰
 

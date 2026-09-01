@@ -191,6 +191,13 @@ Phase 1 checkpoint `0f90210`; not merged to `main`.
   exact upstream provenance, proves future test changes do not refit training weights,
   and rejects incomplete or resealed false results. One hundred and ten tests pass;
   no decision or execution is enabled.
+- Minimum-CVaR test-fold checkpoint `897da2b` passed all three jobs in GitHub run
+  [33521035243](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33521035243).
+- Added a versioned minimum-CVaR multi-fold report. Every fold independently refits
+  the explicit bounded training grid, freezes its weights for its own test interval,
+  records exact artifact identities and keeps metrics separate with no aggregate
+  performance claim. One hundred and fifteen tests pass; omitted folds, invalid
+  parameters and resealed reports fail closed.
 
 ## Phase 1 — Completed Units on the Working Branch
 

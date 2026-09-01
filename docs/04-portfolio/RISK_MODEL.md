@@ -67,6 +67,9 @@ not a selected risk policy for real assets.
 The resulting grid weights can now be evaluated on the exact synthetic test fold
 without refitting. This separation tests out-of-training behavior while keeping the
 tail definition, grid mechanics and all output permanently non-operational.
+The multi-fold form repeats that isolation across the complete synthetic plan and
+records scenario/candidate counts per fold. It preserves evidence of stability or
+instability without converting separate folds into a claimed overall result.
 
 ## Related Documents
 

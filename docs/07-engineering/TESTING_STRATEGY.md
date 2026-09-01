@@ -154,6 +154,11 @@ identity, prove a future test change changes evaluation without refitting the gr
 require the full exact provenance and interval, verify canonical transport and the
 three allowed shared-control IDs, and reject incomplete or resealed false metrics. One
 hundred and ten laboratory tests pass; all evaluation states remain locked.
+Five minimum-CVaR walk-forward tests hand-check all fold ranges and metrics, pin the
+report identity and no-aggregation policy, prove first-fold future isolation, require
+complete canonical transport, enforce fold parameters, and reject omitted/resealed
+folds or incomplete matrices. One hundred and fifteen laboratory tests pass; no
+headline performance claim is produced.
 
 ## Related Documents
 
