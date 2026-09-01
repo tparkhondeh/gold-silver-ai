@@ -72,6 +72,8 @@ subsequent changes still require their own push and CI verification.
   before reporting success. It never replaces or resets `asha_local`.
 - Two real local backups passed; 96 unit/contract/API tests and 14 real PostgreSQL tests
   pass. Encryption/offsite/scheduling/retention remain production-gated.
+- Checkpoint `5fd67d0` passed both GitHub jobs in run 33478298802; remote `main`
+  remained unchanged.
 
 ### Test coverage and portfolio repository hardening — ۱۴۰۵/۰۶/۰۹
 

@@ -84,7 +84,8 @@ The project-owned database now also has a manual verified-backup command. It cre
 a unique custom-format file in the restricted Git-ignored cache, restores it into a
 temporary database, compares all 24 governed table counts and the migration journal,
 then removes the temporary database. Two real local backups passed this flow. It is
-not encrypted or offsite, so production backup policy remains open.
+not encrypted or offsite, so production backup policy remains open. Backup checkpoint
+`5fd67d0` passed both GitHub jobs in run 33478298802; remote `main` remained unchanged.
 
 ## Snapshot
 

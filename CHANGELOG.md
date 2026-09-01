@@ -20,6 +20,8 @@ state is recorded in `docs/10-project-state/CURRENT_STATE.md`.
 - Created and fully restored two real local backups without replacing or modifying the
   primary database. It is owner-only and Git-ignored, but deliberately documented as
   unencrypted and not offsite.
+- Backup checkpoint `5fd67d0` passed both GitHub quality jobs in run 33478298802;
+  remote `main` remained unchanged.
 
 ### Test-coverage and portfolio-persistence hardening — ۱۴۰۵/۰۶/۰۹
 
