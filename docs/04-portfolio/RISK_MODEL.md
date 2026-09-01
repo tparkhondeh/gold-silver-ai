@@ -41,6 +41,10 @@ it does not select a risk model, threshold, allocation method, or owner risk tol
 That artifact can now be converted into a train-only Pearson-correlation feature.
 Zero-variance paths are excluded and disclosed because their correlation is undefined;
 fewer than two remaining paths fails closed. This is still feature plumbing only.
+The correlation feature can also be converted into the bounded distance
+`sqrt((1-correlation)/2)`: identical paths have distance zero and perfectly opposite
+paths have distance one. This is a deterministic clustering input only and does not
+implement or approve HRP allocation.
 
 ## Related Documents
 

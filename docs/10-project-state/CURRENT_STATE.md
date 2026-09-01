@@ -106,6 +106,12 @@ matrix for its non-zero-variance synthetic paths. Zero-variance paths are explic
 excluded and disclosed; an insufficient active set fails closed. Future test changes
 cannot alter fitted values, exact provenance/replay is required, and seventy-five
 laboratory tests pass locally. No portfolio methodology or decision is produced.
+Train-only correlation checkpoint `5a213e1` passed all three GitHub jobs in run
+33515041657. The reviewed correlation artifact can now produce a versioned zero-to-one
+correlation-distance matrix: identical synthetic paths have distance zero and perfect
+opposites have distance one. Exact upstream provenance and replay are mandatory;
+future test changes cannot alter fitted distances. Eighty tests pass locally and no
+cluster, portfolio weight, recommendation or execution is produced.
 
 The owner authorized staged Data Foundation and deterministic-baseline development,
 with each stage dependent on the previous quality gate. Private GitHub authentication

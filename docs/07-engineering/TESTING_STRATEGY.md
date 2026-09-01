@@ -119,6 +119,10 @@ explicit zero-variance exclusion and fail closed with fewer than two active path
 prove future test changes cannot alter fitted correlations, pin canonical artifact
 replay, and reject a resealed false entry. Seventy-five laboratory tests pass without
 selecting a portfolio methodology.
+Five correlation-distance tests hand-check zero distance for identical paths and unit
+distance for perfectly opposite paths, prove future test changes cannot alter fitted
+distances, pin the canonical artifact replay, and reject a resealed false value. Eighty
+laboratory tests pass; the distance matrix produces no cluster, weight or decision.
 
 ## Related Documents
 

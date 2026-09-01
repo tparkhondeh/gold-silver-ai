@@ -183,6 +183,10 @@ financial engine remain separate gates.
     exact Pearson-correlation matrix for non-zero-variance synthetic paths. Undefined
     zero-variance paths are excluded and disclosed, fewer than two active paths fails
     closed, and the artifact remains feature-only with no methodology decision.
+37. **CORRELATION DISTANCE COMPLETE:** the active-path train-only correlation matrix
+    becomes a bounded `sqrt((1-correlation)/2)` distance matrix. Identical paths map
+    to zero and perfectly opposite paths to one; exact provenance/replay is required
+    and no clustering, weighting or methodology approval occurs.
 
 All implementation available from published provider contracts is complete; real
 provider history execution remains paused at item 6 for Tier-A licensing/cost decisions.

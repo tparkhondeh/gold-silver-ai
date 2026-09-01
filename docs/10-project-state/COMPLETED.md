@@ -145,6 +145,12 @@ Phase 1 checkpoint `0f90210`; not merged to `main`.
   artifact. Zero-variance paths are excluded/disclosed, an insufficient active set
   fails closed, future test changes cannot alter fitted values, and exact replay is
   required. Seventy-five tests pass without selecting a portfolio methodology.
+- Train-only correlation checkpoint `5a213e1` passed all three jobs in GitHub run
+  [33515041657](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33515041657).
+- Added the provenance-bound `sqrt((1-correlation)/2)` synthetic distance matrix.
+  Hand tests cover identical and perfectly opposite paths, future test changes cannot
+  alter fitted distances, and false resealed values fail closed. Eighty tests pass;
+  no clustering, weighting or decision occurs.
 
 ## Phase 1 — Completed Units on the Working Branch
 

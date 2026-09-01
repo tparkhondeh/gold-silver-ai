@@ -91,6 +91,9 @@ report deliberately makes no aggregate performance claim.
 The covariance output can also produce a train-only Pearson-correlation matrix for
 non-zero-variance synthetic paths. Undefined zero-variance correlations are excluded
 and disclosed, not silently replaced by invented values.
+The reviewed correlation matrix now has a canonical zero-to-one correlation-distance
+transform for later clustering comparisons. It remains a provenance-bound feature and
+cannot emit weights, recommendations or execution instructions.
 
 ## Decision History Requirement
 

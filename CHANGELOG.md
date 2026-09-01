@@ -103,6 +103,12 @@ state is recorded in `docs/10-project-state/CURRENT_STATE.md`.
   artifact. It excludes and discloses undefined zero-variance paths, fails closed with
   fewer than two active paths, and rejects future leakage or resealed values. Seventy-
   five tests pass with no portfolio methodology selected.
+- Train-only correlation checkpoint `5a213e1` passed all three GitHub Actions jobs in
+  run [33515041657](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33515041657).
+- Added canonical train-only correlation distance using
+  `sqrt((1-correlation)/2)`. Identical and perfectly opposite synthetic paths are hand-
+  checked, future test changes cannot alter fitted distances, and resealed false
+  values fail closed. Eighty tests pass with no cluster, weight or decision output.
 
 ### Fail-closed Navasan history authorization — ۱۴۰۵/۰۶/۱۰
 

@@ -9,6 +9,7 @@ from .artifacts import (
     decode_train_only_standardizer,
     decode_train_only_covariance,
     decode_train_only_correlation,
+    decode_train_only_correlation_distance,
     decode_walk_forward_plan,
     decode_walk_forward_control_report,
     decode_weighted_control_evaluation,
@@ -20,6 +21,7 @@ from .artifacts import (
     encode_train_only_standardizer,
     encode_train_only_covariance,
     encode_train_only_correlation,
+    encode_train_only_correlation_distance,
     encode_walk_forward_plan,
     encode_walk_forward_control_report,
     encode_weighted_control_evaluation,
@@ -61,6 +63,11 @@ from .correlation import (
     build_train_only_correlation,
     validate_train_only_correlation,
 )
+from .correlation_distance import (
+    CORRELATION_DISTANCE_SCHEMA_VERSION,
+    build_train_only_correlation_distance,
+    validate_train_only_correlation_distance,
+)
 from .features import (
     RETURN_MATRIX_SCHEMA_VERSION,
     build_point_in_time_return_matrix,
@@ -94,6 +101,7 @@ __all__ = [
     "CASH_CONTROL_ID",
     "COVARIANCE_SCHEMA_VERSION",
     "CORRELATION_SCHEMA_VERSION",
+    "CORRELATION_DISTANCE_SCHEMA_VERSION",
     "EQUAL_WEIGHT_CONTROL_ID",
     "INVERSE_VOLATILITY_CONTROL_ID",
     "INVERSE_VOLATILITY_SCHEMA_VERSION",
@@ -110,6 +118,7 @@ __all__ = [
     "build_reference_dataset",
     "build_train_only_covariance",
     "build_train_only_correlation",
+    "build_train_only_correlation_distance",
     "build_inverse_volatility_control_weights",
     "build_inverse_volatility_walk_forward_report",
     "apply_train_fitted_standardizer",
@@ -124,6 +133,7 @@ __all__ = [
     "decode_train_only_standardizer",
     "decode_train_only_covariance",
     "decode_train_only_correlation",
+    "decode_train_only_correlation_distance",
     "decode_synthetic_dataset_parquet",
     "decode_walk_forward_plan",
     "decode_walk_forward_control_report",
@@ -136,6 +146,7 @@ __all__ = [
     "encode_train_only_standardizer",
     "encode_train_only_covariance",
     "encode_train_only_correlation",
+    "encode_train_only_correlation_distance",
     "encode_synthetic_dataset_parquet",
     "encode_walk_forward_plan",
     "encode_walk_forward_control_report",
@@ -160,4 +171,5 @@ __all__ = [
     "validate_train_only_standardizer",
     "validate_train_only_covariance",
     "validate_train_only_correlation",
+    "validate_train_only_correlation_distance",
 ]
