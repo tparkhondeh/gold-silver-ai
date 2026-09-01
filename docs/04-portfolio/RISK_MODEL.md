@@ -64,6 +64,9 @@ choosing a confidence level, it requires an explicit count of worst scenarios an
 explicit weight step. This implements testable mechanics inspired by the
 [Rockafellar–Uryasev CVaR formulation](https://sites.math.washington.edu/~rtr/papers/rtr179-CVaR1.pdf),
 not a selected risk policy for real assets.
+The resulting grid weights can now be evaluated on the exact synthetic test fold
+without refitting. This separation tests out-of-training behavior while keeping the
+tail definition, grid mechanics and all output permanently non-operational.
 
 ## Related Documents
 

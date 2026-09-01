@@ -147,6 +147,14 @@ methodology is selected. Exact candidate count, selected tail losses, CVaR loss,
 return and weights are replayable. One hundred and five laboratory tests pass locally;
 future test changes cannot alter fitted results and grid-size limits fail closed. The
 artifact is permanently `no_decision`, no-use and no-execution.
+Minimum-CVaR comparison-control checkpoint `4f4e7be` passed all three GitHub jobs in
+run 33520594615. Its selected train-only grid weights can now be frozen and evaluated
+only on the exact associated synthetic test interval. The shared versioned artifact
+records the deterministic return/wealth path, cumulative change and maximum drawdown,
+requires exact dataset/matrix/plan/weight provenance and rejects incomplete intervals
+or resealed false metrics. One hundred and ten laboratory tests pass locally. Future
+test changes alter the evaluation but cannot refit the weights; every output remains
+`no_decision`, no-use and no-execution.
 
 The owner authorized staged Data Foundation and deterministic-baseline development,
 with each stage dependent on the previous quality gate. Private GitHub authentication

@@ -54,6 +54,9 @@ exhausts a bounded long-only full-investment grid on train-only scenarios. Tail 
 and grid step must be supplied explicitly, and exact replay records every relevant
 input and selected objective. No target return or real portfolio policy is inferred;
 the artifact remains `no_decision` and non-operational.
+The selected experimental grid weights can be held fixed across their exact synthetic
+test fold. This creates replayable comparison metrics only and does not promote the
+grid, tail size or step into an approved allocation rule.
 
 ## Related Documents
 

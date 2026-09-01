@@ -107,6 +107,8 @@ and metrics remain comparison evidence rather than a recommendation.
 A discrete minimum-CVaR comparison artifact may similarly search only a bounded,
 explicit train-only grid. Its code-computed tail losses and weights are evidence for
 later comparison, never an LLM-generated number, approved method or financial action.
+Its test-fold path is also computed and replayed entirely by deterministic code; the
+LLM may explain that artifact but cannot alter its weights, metrics or safety state.
 
 ## Decision History Requirement
 

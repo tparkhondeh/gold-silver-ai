@@ -111,6 +111,7 @@ class HrpControlEvaluationTests(unittest.TestCase):
             [
                 "ASHA_BENCHMARK_INVERSE_VOLATILITY_CONTROL_V1",
                 HRP_CONTROL_ID,
+                "ASHA_BENCHMARK_MINIMUM_CVAR_CONTROL_V1",
             ],
         )
         self.assertFalse(schema["additionalProperties"])

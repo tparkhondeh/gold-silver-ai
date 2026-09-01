@@ -9,6 +9,7 @@ from .comparison_weights import validate_inverse_volatility_control_weights
 from .control_evaluation import (
     validate_hrp_comparison_control_evaluation,
     validate_inverse_volatility_control_evaluation,
+    validate_minimum_cvar_comparison_control_evaluation,
 )
 from .correlation import validate_train_only_correlation
 from .correlation_distance import validate_train_only_correlation_distance
@@ -666,5 +667,43 @@ def decode_minimum_cvar_control_weights(
             dataset_payload,
             matrix_payload,
             plan_payload,
+        ),
+    )
+
+
+def encode_minimum_cvar_control_evaluation(
+    payload: object,
+    dataset_payload: object,
+    matrix_payload: object,
+    plan_payload: object,
+    weight_set_payload: object,
+) -> bytes:
+    return _encode_canonical(
+        payload,
+        lambda value: validate_minimum_cvar_comparison_control_evaluation(
+            value,
+            dataset_payload,
+            matrix_payload,
+            plan_payload,
+            weight_set_payload,
+        ),
+    )
+
+
+def decode_minimum_cvar_control_evaluation(
+    document: object,
+    dataset_payload: object,
+    matrix_payload: object,
+    plan_payload: object,
+    weight_set_payload: object,
+) -> dict[str, Any]:
+    return _decode_canonical(
+        document,
+        lambda value: validate_minimum_cvar_comparison_control_evaluation(
+            value,
+            dataset_payload,
+            matrix_payload,
+            plan_payload,
+            weight_set_payload,
         ),
     )

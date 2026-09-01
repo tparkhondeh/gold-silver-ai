@@ -149,6 +149,11 @@ results, enforce tail/grid resource bounds, require canonical replay, verify the
 versioned schema, and reject resealed false weights. One hundred and five laboratory
 tests pass; this remains an explicit synthetic experiment rather than an approved
 financial optimizer.
+Five minimum-CVaR evaluation tests pin a hand-computable test return and artifact
+identity, prove a future test change changes evaluation without refitting the grid,
+require the full exact provenance and interval, verify canonical transport and the
+three allowed shared-control IDs, and reject incomplete or resealed false metrics. One
+hundred and ten laboratory tests pass; all evaluation states remain locked.
 
 ## Related Documents
 

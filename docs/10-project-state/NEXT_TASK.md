@@ -212,6 +212,11 @@ financial engine remain separate gates.
     candidates are replayed, and deterministic tie-breaking selects one comparison
     weight set. This is an unapproved `no_decision` ruler, not a real optimization
     policy or recommendation.
+43. **MINIMUM-CVAR TEST-FOLD EVALUATION COMPLETE:** the selected train-only grid
+    weights are frozen before their exact synthetic test interval. The shared
+    weighted-evaluation artifact recomputes the return/wealth path, cumulative change
+    and maximum drawdown from exact provenance and rejects incomplete coverage or
+    resealed metrics. No financial decision, use or execution is enabled.
 
 All implementation available from published provider contracts is complete; real
 provider history execution remains paused at item 6 for Tier-A licensing/cost decisions.

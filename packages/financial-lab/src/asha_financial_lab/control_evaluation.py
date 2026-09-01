@@ -11,6 +11,7 @@ from .comparison_weights import validate_inverse_volatility_control_weights
 from .contracts import ContractViolation, fingerprint, validate_synthetic_dataset
 from .features import validate_point_in_time_return_matrix
 from .hrp_control import validate_hrp_comparison_control_weights
+from .minimum_cvar_control import validate_minimum_cvar_comparison_control_weights
 from .normalization import validate_train_only_standardizer
 from .walk_forward import validate_walk_forward_plan
 
@@ -224,6 +225,46 @@ def validate_hrp_comparison_control_evaluation(
         distance_payload,
         clustering_payload,
         order_payload,
+    )
+    return _validate_evaluation(evaluation_payload, matrix, plan, weight_set)
+
+
+def evaluate_minimum_cvar_comparison_control_fold(
+    dataset_payload: object,
+    matrix_payload: object,
+    plan_payload: object,
+    weight_set_payload: object,
+) -> dict[str, Any]:
+    """Evaluate frozen train-only minimum-CVaR comparison weights on the test fold."""
+
+    dataset = validate_synthetic_dataset(dataset_payload)
+    matrix = validate_point_in_time_return_matrix(matrix_payload, dataset)
+    plan = validate_walk_forward_plan(plan_payload, dataset)
+    weight_set = validate_minimum_cvar_comparison_control_weights(
+        weight_set_payload, dataset, matrix, plan
+    )
+    unsigned = _build_unsigned(matrix, plan, weight_set)
+    evaluation = {
+        **unsigned,
+        "evaluationId": f"ASHA_WEIGHTED_CONTROL_EVAL_{fingerprint(unsigned)}",
+    }
+    return _validate_evaluation(evaluation, matrix, plan, weight_set)
+
+
+def validate_minimum_cvar_comparison_control_evaluation(
+    evaluation_payload: object,
+    dataset_payload: object,
+    matrix_payload: object,
+    plan_payload: object,
+    weight_set_payload: object,
+) -> dict[str, Any]:
+    """Recompute a minimum-CVaR comparison test path and reject tampering."""
+
+    dataset = validate_synthetic_dataset(dataset_payload)
+    matrix = validate_point_in_time_return_matrix(matrix_payload, dataset)
+    plan = validate_walk_forward_plan(plan_payload, dataset)
+    weight_set = validate_minimum_cvar_comparison_control_weights(
+        weight_set_payload, dataset, matrix, plan
     )
     return _validate_evaluation(evaluation_payload, matrix, plan, weight_set)
 

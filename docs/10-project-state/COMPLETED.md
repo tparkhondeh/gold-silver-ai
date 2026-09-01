@@ -184,6 +184,13 @@ Phase 1 checkpoint `0f90210`; not merged to `main`.
   replay exactly. Grid explosion, invalid tail sizes, future leakage and resealed
   tampering fail closed. One hundred and five tests pass; no methodology, decision,
   financial use or execution is approved.
+- Minimum-CVaR comparison checkpoint `4f4e7be` passed all three jobs in GitHub run
+  [33520594615](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33520594615).
+- Added exact test-fold evaluation of the frozen minimum-CVaR grid weights. The shared
+  weighted-evaluation contract records the full synthetic path and metrics, requires
+  exact upstream provenance, proves future test changes do not refit training weights,
+  and rejects incomplete or resealed false results. One hundred and ten tests pass;
+  no decision or execution is enabled.
 
 ## Phase 1 — Completed Units on the Working Branch
 

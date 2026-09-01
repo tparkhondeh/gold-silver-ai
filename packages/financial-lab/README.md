@@ -95,3 +95,9 @@ return target or production default. Every long-only, fully invested candidate i
 replayed with `loss = -weighted_return`, and equal objectives use the lexicographically
 first weight vector. Candidate limits prevent accidental resource explosion. This is
 a dependency-free mechanics control, not an approved optimization policy.
+
+Those minimum-CVaR grid weights may then be frozen across the associated synthetic
+test fold with `evaluate_minimum_cvar_comparison_control_fold()`. It uses the same
+versioned weighted-evaluation contract as the other reviewed controls and recomputes
+the entire test return/wealth path and metrics during replay. Evaluation cannot refit
+the training grid or cross the permanent no-decision/no-execution boundary.

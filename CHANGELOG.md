@@ -141,6 +141,13 @@ state is recorded in `docs/10-project-state/CURRENT_STATE.md`.
   records the selected tail losses and exact objective, uses deterministic tie-
   breaking, and rejects unsafe grid size, future leakage or resealed tampering. One
   hundred and five tests pass; the output is unapproved and non-operational.
+- Minimum-CVaR comparison checkpoint `4f4e7be` passed all three GitHub Actions jobs in
+  run [33520594615](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33520594615).
+- Added exact test-fold evaluation of frozen minimum-CVaR grid weights through the
+  shared weighted-control contract. Full provenance and interval coverage are
+  mandatory, future test changes cannot refit weights, and resealed false metrics fail
+  closed. One hundred and ten tests pass; the output remains no-decision/no-use/no-
+  execution.
 
 ### Fail-closed Navasan history authorization — ۱۴۰۵/۰۶/۱۰
 
