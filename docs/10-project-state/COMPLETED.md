@@ -121,6 +121,12 @@ Phase 1 checkpoint `0f90210`; not merged to `main`.
   zero-variance exclusion, all-zero fail-closed behavior, pinned reference identity,
   complete provenance/artifact replay and tamper rejection. Fifty-five tests pass;
   the output remains no-decision and is not an approved allocation.
+- Inverse-volatility weight checkpoint `5cca28b` passed all three jobs in GitHub run
+  [33512985341](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33512985341).
+- Added exact test-fold evaluation of the frozen train-only weights. The versioned
+  artifact reports the period path, cumulative change and maximum drawdown, requires
+  complete upstream provenance and exact replay, and rejects incomplete or resealed
+  false results. Sixty tests pass; no financial decision or execution is enabled.
 
 ## Phase 1 — Completed Units on the Working Branch
 

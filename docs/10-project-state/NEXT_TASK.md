@@ -165,6 +165,11 @@ financial engine remain separate gates.
     weight and all-zero variance fails closed. Exact provenance/replay and permanent
     `no_decision`/no-use/no-execution locks keep this a benchmark ruler, not an approved
     allocation.
+33. **FROZEN-WEIGHT TEST-FOLD EVALUATION COMPLETE:** the train-only inverse-volatility
+    comparison weights are held fixed across their exact synthetic test fold. The
+    versioned artifact reports the deterministic period path, cumulative change and
+    maximum drawdown, replays only with the full upstream provenance, and remains
+    permanently `no_decision`, no-use and no-execution.
 
 All implementation available from published provider contracts is complete; real
 provider history execution remains paused at item 6 for Tier-A licensing/cost decisions.

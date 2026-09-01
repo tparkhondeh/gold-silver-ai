@@ -8,6 +8,7 @@ from .artifacts import (
     decode_synthetic_dataset,
     decode_train_only_standardizer,
     decode_walk_forward_plan,
+    decode_weighted_control_evaluation,
     encode_evaluation_result,
     encode_inverse_volatility_weights,
     encode_normalized_fold,
@@ -15,6 +16,7 @@ from .artifacts import (
     encode_synthetic_dataset,
     encode_train_only_standardizer,
     encode_walk_forward_plan,
+    encode_weighted_control_evaluation,
 )
 from .baseline import BASELINE_MODEL_ID, evaluate_no_decision
 from .contracts import (
@@ -37,6 +39,11 @@ from .comparison_weights import (
     INVERSE_VOLATILITY_SCHEMA_VERSION,
     build_inverse_volatility_control_weights,
     validate_inverse_volatility_control_weights,
+)
+from .control_evaluation import (
+    WEIGHTED_CONTROL_EVALUATION_SCHEMA_VERSION,
+    evaluate_inverse_volatility_control_fold,
+    validate_inverse_volatility_control_evaluation,
 )
 from .features import (
     RETURN_MATRIX_SCHEMA_VERSION,
@@ -75,6 +82,7 @@ __all__ = [
     "RETURN_MATRIX_SCHEMA_VERSION",
     "STANDARDIZER_SCHEMA_VERSION",
     "WALK_FORWARD_SCHEMA_VERSION",
+    "WEIGHTED_CONTROL_EVALUATION_SCHEMA_VERSION",
     "build_reference_dataset",
     "build_inverse_volatility_control_weights",
     "apply_train_fitted_standardizer",
@@ -89,6 +97,7 @@ __all__ = [
     "decode_train_only_standardizer",
     "decode_synthetic_dataset_parquet",
     "decode_walk_forward_plan",
+    "decode_weighted_control_evaluation",
     "encode_evaluation_result",
     "encode_inverse_volatility_weights",
     "encode_normalized_fold",
@@ -97,7 +106,9 @@ __all__ = [
     "encode_train_only_standardizer",
     "encode_synthetic_dataset_parquet",
     "encode_walk_forward_plan",
+    "encode_weighted_control_evaluation",
     "evaluate_comparison_controls",
+    "evaluate_inverse_volatility_control_fold",
     "fingerprint",
     "fit_train_only_standardizer",
     "evaluate_no_decision",
@@ -111,5 +122,6 @@ __all__ = [
     "validate_point_in_time_return_matrix",
     "validate_normalized_fold",
     "validate_inverse_volatility_control_weights",
+    "validate_inverse_volatility_control_evaluation",
     "validate_train_only_standardizer",
 ]

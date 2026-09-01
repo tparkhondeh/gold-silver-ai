@@ -78,6 +78,12 @@ state is recorded in `docs/10-project-state/CURRENT_STATE.md`.
   deterministic residual rounding, zero-variance exclusion, all-zero fail-closed
   behavior and provenance-bound replay. Fifty-five tests pass; the artifact remains
   no-decision/no-use/no-execution and is not an approved allocation.
+- Inverse-volatility weight checkpoint `5cca28b` passed all three GitHub Actions jobs
+  in run [33512985341](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33512985341).
+- Added versioned, exact test-fold evaluation of frozen train-only comparison weights.
+  Period returns, wealth path, cumulative change and maximum drawdown are recomputed
+  on replay with full provenance. Sixty tests pass; incomplete or resealed false
+  results fail closed and the artifact remains no-decision/no-use/no-execution.
 
 ### Fail-closed Navasan history authorization — ۱۴۰۵/۰۶/۱۰
 

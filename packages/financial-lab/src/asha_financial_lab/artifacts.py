@@ -6,6 +6,7 @@ import json
 from typing import Any, Callable
 
 from .comparison_weights import validate_inverse_volatility_control_weights
+from .control_evaluation import validate_inverse_volatility_control_evaluation
 from .contracts import (
     ContractViolation,
     canonical_json,
@@ -194,5 +195,47 @@ def decode_inverse_volatility_weights(
             matrix_payload,
             plan_payload,
             standardizer_payload,
+        ),
+    )
+
+
+def encode_weighted_control_evaluation(
+    payload: object,
+    dataset_payload: object,
+    matrix_payload: object,
+    plan_payload: object,
+    standardizer_payload: object,
+    weight_set_payload: object,
+) -> bytes:
+    return _encode_canonical(
+        payload,
+        lambda value: validate_inverse_volatility_control_evaluation(
+            value,
+            dataset_payload,
+            matrix_payload,
+            plan_payload,
+            standardizer_payload,
+            weight_set_payload,
+        ),
+    )
+
+
+def decode_weighted_control_evaluation(
+    document: object,
+    dataset_payload: object,
+    matrix_payload: object,
+    plan_payload: object,
+    standardizer_payload: object,
+    weight_set_payload: object,
+) -> dict[str, Any]:
+    return _decode_canonical(
+        document,
+        lambda value: validate_inverse_volatility_control_evaluation(
+            value,
+            dataset_payload,
+            matrix_payload,
+            plan_payload,
+            standardizer_payload,
+            weight_set_payload,
         ),
     )

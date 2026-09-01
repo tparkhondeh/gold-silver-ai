@@ -99,6 +99,11 @@ Five inverse-volatility control tests hand-check exact 1/3 and 2/3 weights, requ
 exact sum of one, verify zero-variance exclusion and all-zero failure, pin reference
 identity/no-decision locks, require provenance-bound artifact replay, and reject
 resealed tampering. Fifty-five laboratory tests pass.
+Five weighted-control evaluation tests hand-check a frozen 1/3 and 2/3 test-fold
+return, cumulative change and drawdown, pin the exact reference identity, require the
+complete associated test interval and exact upstream provenance, verify canonical
+artifact replay, and reject a resealed false metric. Sixty laboratory tests pass; all
+outputs remain synthetic, `no_decision`, no-use and no-execution.
 
 ## Related Documents
 

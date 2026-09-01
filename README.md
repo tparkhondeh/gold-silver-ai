@@ -5,11 +5,13 @@ instruments — built to eventually help understand valuation, market conditions
 portfolio decisions, with deterministic financial calculations at its core and AI
 used only for interpretation and explanation, never as the source of numbers.
 
-**Status:** Phase 0 is owner-approved; Phase 1 is an evaluation application on
-`codex/phase-1-data-ui`. The Persian UI, explicitly synthetic laboratory, market
-adapters, local PostgreSQL foundation, and explicit owner-only portfolio save/restore
-exist. Licensed Iranian history, production identity, and the real validated
-financial engine remain blocked. This is not a production financial-advice system.
+**Status:** Phase 1 Data Foundation is accepted for progression while financial use
+stays locked. Phase 2 is active only as an isolated synthetic laboratory on
+`codex/phase-2-decision-engine`. The Persian UI, market adapters, local PostgreSQL
+foundation, explicit owner-only portfolio save/restore, and deterministic synthetic
+comparison mechanics exist. Licensed Iranian history, production identity, a selected
+financial methodology, and the real validated financial engine remain blocked. This
+is not a production financial-advice system.
 
 The active canonical checkout is the current repository working tree; historical
 absolute paths from the previous Windows host are not authoritative.

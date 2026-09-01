@@ -76,6 +76,13 @@ Train-fitted transform checkpoint `8ec4b1b` passed all three GitHub jobs in run
 all-zero fail-closed behavior. Reference identity and full provenance are pinned;
 fifty-five laboratory tests pass. It remains `no_decision`, no-use, no-execution and
 is not an approved allocation methodology.
+Inverse-volatility weight checkpoint `5cca28b` passed all three GitHub jobs in run
+33512985341. The frozen train-only weights can now be evaluated over their exact
+synthetic test fold without refitting. A versioned artifact records the deterministic
+period path, cumulative change and maximum drawdown and rejects incomplete coverage,
+foreign provenance, or resealed false metrics. Sixty laboratory tests pass locally;
+every evaluation remains `no_decision`, no-use, no-execution and methodology-
+unapproved.
 
 The owner authorized staged Data Foundation and deterministic-baseline development,
 with each stage dependent on the previous quality gate. Private GitHub authentication
