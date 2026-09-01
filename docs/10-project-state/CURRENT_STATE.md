@@ -2,7 +2,7 @@
 
 **Source of truth for:** where the project stands right now.
 
-_Last updated in the product calendar: ۱۴۰۵/۰۶/۰۹ (Phase 1 active)_
+_Last updated in the product calendar: ۱۴۰۵/۰۶/۱۰ (Phase 1 active)_
 
 ## Current Execution Gate
 
@@ -54,7 +54,7 @@ credential, durable quota health, eight-quote live normalization, historical end
 contracts and backup/restore path pass locally; no historical backfill was requested.
 The local Persian readiness planner validates proposed Jalali ranges, approved
 symbols and exact request counts without network or storage, while execution remains
-locked. Local verification now covers 103 unit and 14 real PostgreSQL tests.
+locked. That readiness checkpoint covered 90 unit and 14 real PostgreSQL tests.
 Code checkpoint `b0bb80a` passed both GitHub quality and real PostgreSQL jobs in
 run 33417744818.
 Backfill-readiness checkpoint `8a21a97` passed both GitHub quality and real
@@ -229,8 +229,14 @@ licensed real data, validation, financial methodology and production operations.
   every uncached Navasan call, PostgreSQL now serializes workers and appends an
   immutable reservation; a conservative 115-call rolling 31-day limit preserves five
   calls of safety headroom below the provider's 120-call plan. Missing quota storage
-  or exhausted allowance fails closed before network access. GoldAPI.io remains a
-  keyed global adapter. XAUS and Gold-API.com are now fetched independently on each
+  or exhausted allowance fails closed before network access. GoldAPI.io now uses its
+  current official `/api/price/{metal}/{currency}` route and rejects a response unless
+  the metal, USD currency, Unix time and plausible range match the request. Its
+  documented ordered daily-history range is normalized separately, split into
+  inclusive chunks of at most 90 days, and audited for gaps without interpolation.
+  A local Persian plan-only surface calculates the exact future request count for
+  XAU and XAG while purchase, network access and storage stay locked. XAUS and
+  Gold-API.com are now fetched independently on each
   uncached refresh: XAUS supplies the displayed informational XAU/XAG feed when valid,
   while Gold-API.com is an independent public cross-check and becomes the display
   fallback only if XAUS fails. Their status remains informational and cannot unlock a
@@ -289,7 +295,8 @@ licensed real data, validation, financial methodology and production operations.
   Migration 0006 adds immutable source-reconciliation records and requires a bounded
   plain-language reason on every correction. Migrations 0007–0010 add exact transaction and
   evaluation-only valuation lineage plus immutable provider-call reservations;
-  103 unit and 14 real PostgreSQL tests pass locally.
+  115 unit and 14 real PostgreSQL tests pass locally; source coverage is 94.19%
+  lines, 77.80% branches and 94.41% functions.
   In the fresh-session laboratory, a fixed
   five-row CSV sample exercises preview plus a memory-only commit result (three
   accepted, one duplicate, one quarantined) without reaching the server or implying

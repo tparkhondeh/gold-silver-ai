@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { fingerprintNavasanRequest } from "../../../data/navasan-quota-ledger.ts";
 import { resolveNavasanQuotaLedger } from "../../../db/postgres-runtime.ts";
 import { inspectNavasanConfiguration, normalizeNavasanPayload, type NavasanPayload } from "../../navasan-adapter";
+import { goldApiLiveRequestUrl, normalizeGoldApiLivePayload } from "../../goldapi-adapter";
 import { selectPreferredQuotes } from "../../quote-priority";
 import { rahavardManualSnapshot } from "./rahavard-snapshot";
 
@@ -39,13 +40,6 @@ type GoldApiComPayload = {
   price?: unknown;
   symbol?: unknown;
   updatedAt?: unknown;
-};
-
-type GoldApiIoPayload = {
-  price?: unknown;
-  timestamp?: unknown;
-  metal?: unknown;
-  currency?: unknown;
 };
 
 type XausPayload = {
@@ -185,14 +179,17 @@ function validateMetalPrice(symbol: "XAU" | "XAG", value: number) {
 }
 
 async function fetchGoldApiIo(symbol: "XAU" | "XAG", token: string, collectedAt: string): Promise<Quote> {
-  const payload = await fetchJson(`https://www.goldapi.io/api/${symbol}/USD`, { "x-access-token": token }) as GoldApiIoPayload;
-  const value = asFiniteNumber(payload.price, `${symbol} price`);
-  validateMetalPrice(symbol, value);
-  const publishedAt = asPublishedAt(payload.timestamp);
+  const payload = await fetchJson(
+    goldApiLiveRequestUrl(symbol),
+    { "x-access-token": token },
+  );
+  const normalized = normalizeGoldApiLivePayload(payload, symbol, collectedAt);
   return {
-    instrumentCode: `${symbol}_USD`, value, currency: "USD", unit: "troy_ounce",
-    publishedAt, collectedAt, sourceId: "goldapi-io", sourceName: "GoldAPI.io",
-    sourceUrl: "https://www.goldapi.io/", quality: "primary", status: quoteStatus(publishedAt),
+    ...normalized,
+    sourceName: "GoldAPI.io",
+    sourceUrl: "https://www.goldapi.io/",
+    quality: "primary",
+    status: quoteStatus(normalized.publishedAt),
   };
 }
 

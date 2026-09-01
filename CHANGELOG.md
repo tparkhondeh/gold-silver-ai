@@ -7,6 +7,17 @@ state is recorded in `docs/10-project-state/CURRENT_STATE.md`.
 
 ## [Unreleased]
 
+### GoldAPI global-history foundation — ۱۴۰۵/۰۶/۱۰
+
+- Updated the keyed live adapter to GoldAPI's current official price endpoint and
+  added exact pair, timestamp and range checks.
+- Added strict daily-history normalization, deterministic 90-day request chunking,
+  explicit missing-date auditing and a local Persian preview planner. No API request,
+  token, purchase or historical write is part of this change.
+- Added a dated Persian purchase-readiness checklist. The local build, lint and 115
+  unit tests pass with 94.19% line, 77.80% branch and 94.41% function coverage;
+  remote CI verification follows the code checkpoint.
+
 ### Pre-API readiness audit — ۱۴۰۵/۰۶/۱۰
 
 - Added a concise Persian quality-gate audit and progress map for the owner.

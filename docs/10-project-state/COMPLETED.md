@@ -63,6 +63,20 @@ requirements. Full details: `PHASE_0_AUDIT.md` § 15.
 `main`. The stabilization commits are now confirmed on the private remote;
 subsequent changes still require their own push and CI verification.
 
+### GoldAPI global-history foundation — ۱۴۰۵/۰۶/۱۰
+
+- Corrected the keyed live adapter to GoldAPI's current official price route and
+  required exact XAU/XAG, USD, Unix-time and plausible-range agreement.
+- Added the documented ordered daily-history contract, inclusive 90-day chunking,
+  missing-date audit and a Persian local-only request-count planner. Duplicate,
+  unordered, out-of-range, wrong-pair or undocumented responses fail closed.
+- No provider request, token, purchase or historical write occurred. The local suite
+  passes 115 unit tests with 94.19% line, 77.80% branch and 94.41% function coverage;
+  remote CI verification belongs to the subsequent published checkpoint.
+- Added a Persian final-stage API purchase checklist using dated official public
+  terms. It recommends no purchase now and leaves payment/vendor acceptance to the
+  owner gate.
+
 ### One-step owner-local launcher — ۱۴۰۵/۰۶/۱۰
 
 - Added a Windows-local command that starts project PostgreSQL, validates the exact

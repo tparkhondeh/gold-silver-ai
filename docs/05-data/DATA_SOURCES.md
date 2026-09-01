@@ -8,7 +8,7 @@ and permitted product use. Source-selection rationale is recorded in ADR 0003.
 | ID | Provider | Coverage | Access and cadence | Timestamp / unit contract | Product use | Status |
 |---|---|---|---|---|---|---|
 | `navasan` | [Navasan](https://www.navasan.tech/api/) | Iranian 18k gold, mesghal, Emami, Azadi, half, quarter and gram coins, and USD sell | Keyed HTTPS `latest`, `dailyCurrency`, and `ohlcSearch` APIs. Free plan: 120 requests/month and three-month validity. PostgreSQL reserves every application call before network access, with a conservative 115-call rolling 31-day ceiling and five-call safety reserve. | Unix `timestamp`; decimal strings. The tested mapping uses direct toman values for 18k/USD and a thousand-toman scale for mesghal/coins; current, intraday, and OHLC paths share strict unit/range checks. | Intended primary Iranian display feed; history is local-operator-only and remains excluded from financial decisions until licensed backfill and validation pass. | ACTIVE LOCALLY on ۱۴۰۵/۰۶/۰۹: a replacement key was issued through the official bot, installed without chat/Git exposure, and returned eight normalized approved quotes. Historical adapters and the quota-guarded local route are implemented; no historical backfill has been requested. |
-| `goldapi-io` | [GoldAPI.io](https://www.goldapi.io/) | XAU/USD and XAG/USD | Keyed HTTPS JSON. Sandbox quota is provider-plan dependent. | Provider Unix timestamp; USD per troy ounce. | Preferred primary global-metals feed. | Adapter implemented; inactive until `GOLD_API_TOKEN` is configured. |
+| `goldapi-io` | [GoldAPI.io](https://www.goldapi.io/) | XAU/USD and XAG/USD | Keyed HTTPS JSON. Official live path plus ordered daily history in inclusive chunks of at most 90 days. Sandbox currently advertises 100 calls/month. | Exact requested metal/currency, provider Unix seconds for live values, Gregorian date for daily history; USD per troy ounce. | Preferred primary global-metals feed. | Official live contract corrected and strict live/history adapters, 90-day plan-only chunking, gap audit and local Persian planner implemented. No token, paid call or historical request has been used. See `API_PURCHASE_READINESS_FA.md`. |
 | `xaus` | [XAUS](https://xaus.com/api/) | XAU/USD and XAG/USD | Public keyless JSON, approximately 30-second edge cache. | ISO-8601 UTC plus explicit `fresh` / `stale` / `unavailable` state. USD per troy ounce. | Informational local UI only. Never sufficient by itself for a recommendation, backtest, settlement, or execution. | Active keyless display feed when reachable. |
 | `gold-api-com` | [Gold-API.com](https://gold-api.com/docs) | XAU/USD and XAG/USD | Public keyless JSON. | ISO-8601 `updatedAt`; USD per troy ounce. | Independent informational cross-check and display fallback only; provider terms disclaim accuracy and availability guarantees. | Active keyless cross-check on every refresh; becomes the displayed fallback only if XAUS fails. |
 | `rahavard-manual` | [Rahavard 365](https://rahavard365.com/) | Iranian gold, coins, silver, free-market USD, XAU/USD, and XAG/USD | One owner-approved, read-only capture from the owner's signed-in browser tab. No cookie, credential, or automated scraper enters the application. | Raw Iranian values are retained as IRR and deterministically divided by 10 for display in toman. Page timestamps are stored when visible; otherwise `publishedAt=null` and freshness uses `collectedAt`. | Local personal preview and fresh portfolio valuation only. Never a recommendation, backtest, execution input, background feed, or redistribution source. | Snapshot captured 2026-08-25 and implemented under ADR 0004. It becomes stale after 60 minutes and does not refresh automatically. |
@@ -45,6 +45,11 @@ and permitted product use. Source-selection rationale is recorded in ADR 0003.
   history remain required before operational analysis.
 - A quote is displayed only after positive-number, plausible-range, timestamp, future-
   time, and freshness checks.
+- GoldAPI live responses must match the requested XAU/XAG and USD pair. Historical
+  responses additionally must match the exact requested range, contain no undocumented
+  fields, stay ordered and unique, and remain inside each 90-day chunk. Omitted dates
+  are recorded as gaps with zero interpolation; daily rows deliberately retain
+  `publishedAt=null` because a calendar date is not a point-in-time timestamp.
 - `publishedAt` and `collectedAt` are separately recorded in UTC.
 - A stale or unavailable provider produces an explicit state, never a fabricated or
   silently reused number.
@@ -69,6 +74,7 @@ and define deterministic divergence/quarantine thresholds.
 - Field-level schema: `DATA_DICTIONARY.md`
 - Ingestion mechanics: `DATA_PIPELINE.md`
 - Validation rules: `DATA_QUALITY.md`
+- Future API purchase checklist: `API_PURCHASE_READINESS_FA.md`
 - Architectural data flow: `docs/02-architecture/DATA_ARCHITECTURE.md`
 - Decision record: `docs/08-decisions/ADR/0003-live-market-source-boundary.md`
 - Manual snapshot decision: `docs/08-decisions/ADR/0004-rahavard-manual-snapshot.md`

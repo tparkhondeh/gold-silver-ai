@@ -4,10 +4,10 @@
 
 ## Immediate Next Step
 
-Migrations 0003–0009 now cover the owner snapshot, immutable provenance,
+Migrations 0003–0010 now cover the owner snapshot, immutable provenance,
 exact point-in-time dataset/decision lineage, source-reconciliation records and
 mandatory correction reasons, plus the read-only transaction/evaluation-valuation
-ledger foundation. Local build, 103 unit tests, 14 real PostgreSQL tests,
+ledger and provider-quota foundation. Local build, 115 unit tests, 14 real PostgreSQL tests,
 restore, activation, and health checks pass. Production account authentication,
 empirical divergence thresholds, historical backfill, and the real
 financial engine remain separate gates.
@@ -65,9 +65,16 @@ financial engine remain separate gates.
 12. **PRE-API AUDIT COMPLETE:** `PRE_API_READINESS_AUDIT_FA.md` records the completed
     local/no-paid-API scope, evidence, provisional whole-release coordinate and exact
     external/owner gates. No prompt from the owner is needed to repeat completed work.
+13. **GLOBAL HISTORY CONTRACT COMPLETE WITHOUT API USE:** GoldAPI's current official
+    live route and XAU/XAG+USD response checks are implemented. Its daily history is
+    normalized in exact 90-day chunks, omitted dates remain explicit gaps, and the
+    local Persian planner calculates future request count while purchase, network
+    execution and storage remain locked. `docs/05-data/API_PURCHASE_READINESS_FA.md`
+    records the current no-purchase recommendation and the exact final-stage inputs.
 
-The API-dependent implementation slice is complete and remains paused at item 6 for
-a Tier-A owner decision. The owner explicitly authorized continued independent local
+All implementation available from published provider contracts is complete; real
+provider history execution remains paused at item 6 for Tier-A licensing/cost decisions.
+The owner explicitly authorized continued independent local
 hardening, so testing, backup, documentation and other non-provider work may proceed;
 Phase 2 and real financial logic remain blocked until the Data Foundation gate is
 accepted.
