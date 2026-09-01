@@ -163,6 +163,12 @@ Phase 1 checkpoint `0f90210`; not merged to `main`.
   exactly once, zero-variance exclusions preserved, future-tail isolation, canonical
   replay and reversed-order rejection. Ninety tests pass and weighting remains
   explicitly uncomputed.
+- Cluster leaf-order checkpoint `a80ac2e` passed all three jobs in GitHub run
+  [33516266233](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33516266233).
+- Added an HRP-style train-only comparison control with replayable ordered-half
+  recursive splits, cluster variances, exact-sum 12-decimal weights, zero weight for
+  excluded zero-variance paths, future-tail isolation and tamper rejection. Ninety-
+  five tests pass; the benchmark is no-decision and does not approve real HRP use.
 
 ## Phase 1 — Completed Units on the Working Branch
 

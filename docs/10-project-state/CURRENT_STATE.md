@@ -124,6 +124,13 @@ order containing every active path exactly once. Excluded zero-variance paths re
 disclosed; future test changes cannot alter the train-only order and reversed/resealed
 orders fail closed. Ninety tests pass locally. The contract explicitly keeps HRP
 weighting uncomputed and cannot allocate or recommend.
+Cluster leaf-order checkpoint `a80ac2e` passed all three GitHub jobs in run
+33516266233. A separate HRP-style synthetic comparison control now consumes the exact
+train-only covariance and reviewed cluster order. Ordered-half recursive bisection
+records every cluster variance/allocation and emits 12-decimal weights summing exactly
+to one; excluded zero-variance paths receive zero. Ninety-five tests pass locally.
+The output stays `no_decision`, no-use, no-execution and does not approve HRP as the
+project's real allocation methodology.
 
 The owner authorized staged Data Foundation and deterministic-baseline development,
 with each stage dependent on the previous quality gate. Private GitHub authentication

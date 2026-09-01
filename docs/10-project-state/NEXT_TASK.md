@@ -195,6 +195,11 @@ financial engine remain separate gates.
     right into a deterministic order containing each active synthetic path exactly
     once. Excluded zero-variance paths remain disclosed, exact replay is required,
     and `weightingPolicy: not_computed` keeps HRP weights absent.
+40. **HRP-STYLE COMPARISON CONTROL COMPLETE:** the reviewed train-only covariance and
+    cluster order feed deterministic ordered-half recursive bisection. Every split,
+    cluster variance and exact-sum weight is replayable; excluded zero-variance paths
+    receive zero. This remains an unapproved `no_decision` benchmark, not a real
+    allocation method.
 
 All implementation available from published provider contracts is complete; real
 provider history execution remains paused at item 6 for Tier-A licensing/cost decisions.

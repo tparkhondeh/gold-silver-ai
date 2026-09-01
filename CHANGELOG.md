@@ -121,6 +121,12 @@ state is recorded in `docs/10-project-state/CURRENT_STATE.md`.
   path exactly once. Zero-variance exclusions remain visible, future test changes
   cannot alter train-only ordering, and reversed/resealed order fails closed. Ninety
   tests pass with weighting explicitly uncomputed.
+- Cluster leaf-order checkpoint `a80ac2e` passed all three GitHub Actions jobs in run
+  [33516266233](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33516266233).
+- Added an HRP-style synthetic comparison control with deterministic ordered-half
+  recursive bisection. Every cluster variance/split replays, weights sum exactly to
+  one, zero-variance exclusions receive zero, and future-tail or resealed tampering
+  fails closed. Ninety-five tests pass; HRP remains unapproved and non-operational.
 
 ### Fail-closed Navasan history authorization — ۱۴۰۵/۰۶/۱۰
 

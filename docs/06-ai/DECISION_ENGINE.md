@@ -99,6 +99,9 @@ record every merge. Tie handling is code-defined and replayable; leaf ordering a
 weight generation remain explicitly absent.
 The exact linkage tree can now produce a deterministic left-to-right leaf order. The
 artifact is feature-only and explicitly keeps HRP weighting uncomputed.
+A separate HRP-style comparison-control artifact may consume that reviewed order and
+covariance. Its recursive splits and weights are deterministic code outputs, always
+`no_decision`, and cannot promote HRP into the real financial method.
 
 ## Decision History Requirement
 

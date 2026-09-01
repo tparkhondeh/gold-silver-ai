@@ -132,6 +132,11 @@ Five cluster-order tests require every active path exactly once, hand-check ordi
 and equal-distance tree traversal, prove future test changes cannot alter the
 train-only order, pin canonical artifact replay, and reject a resealed reversed order.
 Ninety laboratory tests pass; the order contract explicitly contains no weights.
+Five HRP-style comparison-control tests hand-check recursive cluster variances and
+exact 12-decimal weights summing to one, require zero weight for a disclosed zero-
+variance path, prove future test changes cannot alter train-only splits/weights, pin
+canonical replay, and reject resealed false weights. Ninety-five laboratory tests
+pass; the benchmark remains no-decision and non-operational.
 
 ## Related Documents
 

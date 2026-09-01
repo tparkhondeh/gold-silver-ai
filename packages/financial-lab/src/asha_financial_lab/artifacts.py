@@ -11,6 +11,7 @@ from .correlation import validate_train_only_correlation
 from .correlation_distance import validate_train_only_correlation_distance
 from .hierarchical_clustering import validate_train_only_single_linkage_clustering
 from .cluster_order import validate_train_only_cluster_leaf_order
+from .hrp_control import validate_hrp_comparison_control_weights
 from .covariance import validate_train_only_covariance
 from .contracts import (
     ContractViolation,
@@ -507,5 +508,63 @@ def decode_cluster_leaf_order(
             correlation_payload,
             distance_payload,
             clustering_payload,
+        ),
+    )
+
+
+def encode_hrp_control_weights(
+    payload: object,
+    dataset_payload: object,
+    matrix_payload: object,
+    plan_payload: object,
+    standardizer_payload: object,
+    covariance_payload: object,
+    correlation_payload: object,
+    distance_payload: object,
+    clustering_payload: object,
+    order_payload: object,
+) -> bytes:
+    return _encode_canonical(
+        payload,
+        lambda value: validate_hrp_comparison_control_weights(
+            value,
+            dataset_payload,
+            matrix_payload,
+            plan_payload,
+            standardizer_payload,
+            covariance_payload,
+            correlation_payload,
+            distance_payload,
+            clustering_payload,
+            order_payload,
+        ),
+    )
+
+
+def decode_hrp_control_weights(
+    document: object,
+    dataset_payload: object,
+    matrix_payload: object,
+    plan_payload: object,
+    standardizer_payload: object,
+    covariance_payload: object,
+    correlation_payload: object,
+    distance_payload: object,
+    clustering_payload: object,
+    order_payload: object,
+) -> dict[str, Any]:
+    return _decode_canonical(
+        document,
+        lambda value: validate_hrp_comparison_control_weights(
+            value,
+            dataset_payload,
+            matrix_payload,
+            plan_payload,
+            standardizer_payload,
+            covariance_payload,
+            correlation_payload,
+            distance_payload,
+            clustering_payload,
+            order_payload,
         ),
     )

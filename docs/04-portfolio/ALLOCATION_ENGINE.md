@@ -40,6 +40,12 @@ plan. Each fold keeps its own train range, frozen weights, test range and metric
 report deliberately uses `none_fold_metrics_only`: it does not combine fold returns
 into a headline performance claim.
 
+The laboratory now also contains an HRP-style **comparison control** built only from
+the reviewed train-only covariance, correlation distance, single-linkage tree and leaf
+order. Recursive ordered-half bisection records each cluster variance and allocation;
+zero-variance paths receive zero. This benchmark is permanently `no_decision`, does
+not approve HRP for the real project, and cannot produce an operational allocation.
+
 ## Related Documents
 
 - Underlying analysis: `PORTFOLIO_MODEL.md`

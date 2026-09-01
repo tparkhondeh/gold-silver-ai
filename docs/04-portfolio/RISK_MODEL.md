@@ -51,6 +51,10 @@ member IDs. Leaf ordering and HRP weights are deliberately not computed yet.
 The linkage tree can now be traversed left-to-right into one deterministic leaf order.
 Every active path appears exactly once and excluded zero-variance paths remain
 disclosed. The order artifact still has `weightingPolicy: not_computed`.
+Separately, that reviewed chain can feed an HRP-style recursive-bisection comparison
+control. Its train-only weights and every split are replayable, but it remains an
+unapproved synthetic benchmark rather than the project's selected risk/allocation
+method.
 
 ## Related Documents
 
