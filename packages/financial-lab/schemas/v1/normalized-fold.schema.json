@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://goldsilver.wealthos.ir/contracts/asha.synthetic.normalized_fold.v1.schema.json",
+  "title": "Asha train-fitted synthetic normalized fold v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "normalizedFoldId",
+    "status",
+    "financialUseAllowed",
+    "datasetReference",
+    "returnMatrixReference",
+    "walkForwardPlanReference",
+    "standardizerReference",
+    "methodologyReference",
+    "foldIndex",
+    "testStartIndex",
+    "testEndIndex",
+    "rows",
+    "reasonCodes"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "asha.synthetic.normalized_fold.v1" },
+    "normalizedFoldId": { "type": "string", "pattern": "^ASHA_NORMALIZED_FOLD_[a-f0-9]{64}$" },
+    "status": { "const": "evaluation_only" },
+    "financialUseAllowed": { "const": false },
+    "datasetReference": { "type": "object" },
+    "returnMatrixReference": { "type": "object" },
+    "walkForwardPlanReference": { "type": "object" },
+    "standardizerReference": { "type": "object" },
+    "methodologyReference": {
+      "const": { "entityId": "STATUS_TBD", "version": 0, "approvalState": "unapproved" }
+    },
+    "foldIndex": { "type": "integer", "minimum": 0 },
+    "testStartIndex": { "type": "integer", "minimum": 1 },
+    "testEndIndex": { "type": "integer", "minimum": 1 },
+    "rows": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["periodIndex", "values"],
+        "properties": {
+          "periodIndex": { "type": "integer", "minimum": 1 },
+          "values": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["instrumentId", "value"],
+              "properties": {
+                "instrumentId": { "type": "string", "pattern": "^SYNTH_[A-Z0-9_]{2,64}$" },
+                "value": { "type": "string", "pattern": "^-?(0|[1-9][0-9]{0,11})\\.[0-9]{12}$" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "reasonCodes": {
+      "const": [
+        "METHODOLOGY_NOT_APPROVED",
+        "REAL_FINANCIAL_USE_DISABLED",
+        "SYNTHETIC_DATA_ONLY",
+        "TRAIN_FITTED_TRANSFORM_ONLY"
+      ]
+    }
+  }
+}

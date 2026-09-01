@@ -12,7 +12,7 @@ from .contracts import (
     validate_synthetic_dataset,
 )
 from .features import validate_point_in_time_return_matrix
-from .normalization import validate_train_only_standardizer
+from .normalization import validate_normalized_fold, validate_train_only_standardizer
 from .walk_forward import validate_walk_forward_plan
 
 
@@ -117,5 +117,43 @@ def decode_train_only_standardizer(
             dataset_payload,
             matrix_payload,
             plan_payload,
+        ),
+    )
+
+
+def encode_normalized_fold(
+    payload: object,
+    dataset_payload: object,
+    matrix_payload: object,
+    plan_payload: object,
+    standardizer_payload: object,
+) -> bytes:
+    return _encode_canonical(
+        payload,
+        lambda value: validate_normalized_fold(
+            value,
+            dataset_payload,
+            matrix_payload,
+            plan_payload,
+            standardizer_payload,
+        ),
+    )
+
+
+def decode_normalized_fold(
+    document: object,
+    dataset_payload: object,
+    matrix_payload: object,
+    plan_payload: object,
+    standardizer_payload: object,
+) -> dict[str, Any]:
+    return _decode_canonical(
+        document,
+        lambda value: validate_normalized_fold(
+            value,
+            dataset_payload,
+            matrix_payload,
+            plan_payload,
+            standardizer_payload,
         ),
     )

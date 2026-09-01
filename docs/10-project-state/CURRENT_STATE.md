@@ -64,6 +64,12 @@ dataset, return matrix, walk-forward plan and fold. A test changes only future/t
 levels and proves the fitted statistics stay identical. The zero-variance policy is
 explicit, artifacts replay exactly, and forty-five laboratory tests pass locally;
 still no model, forecast, ranking or decision exists.
+Train-only standardizer checkpoint `cf6e362` passed all three GitHub jobs in run
+33512088284. Frozen statistics can now transform the same fold's complete test interval
+without refitting; zero variance maps explicitly to zero. The reference transform has
+a pinned identity and all upstream provenance is required for replay. Fifty laboratory
+tests pass locally; the output remains feature-only with no prediction, score,
+allocation or decision.
 
 The owner authorized staged Data Foundation and deterministic-baseline development,
 with each stage dependent on the previous quality gate. Private GitHub authentication

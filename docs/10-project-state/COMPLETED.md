@@ -109,6 +109,12 @@ Phase 1 checkpoint `0f90210`; not merged to `main`.
   walk-forward plan and fold. Hand calculations, unchanged statistics after test-tail
   mutation, explicit zero variance, exact artifact replay, incomplete-range rejection
   and resealed-tamper rejection bring the laboratory to forty-five passing tests.
+- Train-only standardizer checkpoint `cf6e362` passed all three jobs in GitHub run
+  [33512088284](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33512088284).
+- Added the exact train-fitted test transform with explicit zero-variance output,
+  complete test-interval enforcement, pinned reference identity, full upstream
+  provenance, artifact replay and foreign/tampered-standardizer rejection. Fifty tests
+  pass; no prediction, score, allocation or decision is produced.
 
 ## Phase 1 — Completed Units on the Working Branch
 

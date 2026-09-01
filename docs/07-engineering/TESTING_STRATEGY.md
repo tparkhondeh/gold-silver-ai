@@ -91,6 +91,10 @@ variance handling, prove changing test-tail values cannot alter fitted statistic
 pin exact reference identity, require complete training coverage and provenance-bound
 artifact replay, and reject invalid folds or resealed tampering. Forty-five laboratory
 tests pass locally.
+Five transform tests hand-check application of frozen training statistics, require
+zero output for zero variance, pin the exact reference transform, enforce complete
+test coverage and exact standardizer provenance, verify canonical artifact replay,
+and reject a foreign standardizer or resealed tampering. Fifty laboratory tests pass.
 
 ## Related Documents
 

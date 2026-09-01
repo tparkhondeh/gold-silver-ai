@@ -66,3 +66,9 @@ The earliest computable return and rolling-window boundary are enforced; test ro
 cannot influence the statistics. Zero-variance instruments are recorded explicitly
 for the future `emit_zero_when_applied` policy. The standardizer artifact is bound to
 the exact dataset, return matrix, walk-forward plan and fold.
+
+`apply_train_fitted_standardizer()` applies that frozen standardizer only to the same
+fold's complete test interval. It never recomputes statistics. Zero standard deviation
+maps to an explicit zero; other values use `(value - training mean) / training standard
+deviation`. The normalized-fold artifact is bound to all upstream identities and still
+contains no prediction, score, allocation or decision.

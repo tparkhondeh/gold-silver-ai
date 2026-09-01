@@ -155,6 +155,11 @@ financial engine remain separate gates.
     bound to the exact dataset, return matrix, walk-forward plan and fold; changing
     test-tail values cannot change the statistics. Zero variance is explicit and no
     model, ranking or decision is produced.
+31. **TRAIN-FITTED TEST TRANSFORM COMPLETE:** frozen statistics are applied to the
+    same fold's complete test interval without refitting. Zero variance emits an
+    explicit zero; exact dataset/matrix/plan/standardizer provenance and artifact
+    replay are required. The output is a feature artifact, never a prediction, score,
+    allocation or decision.
 
 All implementation available from published provider contracts is complete; real
 provider history execution remains paused at item 6 for Tier-A licensing/cost decisions.

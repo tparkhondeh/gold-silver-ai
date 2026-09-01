@@ -2,11 +2,13 @@
 
 from .artifacts import (
     decode_evaluation_result,
+    decode_normalized_fold,
     decode_return_matrix,
     decode_synthetic_dataset,
     decode_train_only_standardizer,
     decode_walk_forward_plan,
     encode_evaluation_result,
+    encode_normalized_fold,
     encode_return_matrix,
     encode_synthetic_dataset,
     encode_train_only_standardizer,
@@ -41,8 +43,11 @@ from .parquet_transport import (
     encode_synthetic_dataset_parquet,
 )
 from .normalization import (
+    NORMALIZED_FOLD_SCHEMA_VERSION,
     STANDARDIZER_SCHEMA_VERSION,
+    apply_train_fitted_standardizer,
     fit_train_only_standardizer,
+    validate_normalized_fold,
     validate_train_only_standardizer,
 )
 from .walk_forward import WALK_FORWARD_SCHEMA_VERSION, build_walk_forward_plan, validate_walk_forward_plan
@@ -53,6 +58,7 @@ __all__ = [
     "CASH_CONTROL_ID",
     "EQUAL_WEIGHT_CONTROL_ID",
     "NO_TRADE_CONTROL_ID",
+    "NORMALIZED_FOLD_SCHEMA_VERSION",
     "PARQUET_SCHEMA_VERSION",
     "REFERENCE_DATASET_ID",
     "REFERENCE_PERIODS",
@@ -60,16 +66,19 @@ __all__ = [
     "STANDARDIZER_SCHEMA_VERSION",
     "WALK_FORWARD_SCHEMA_VERSION",
     "build_reference_dataset",
+    "apply_train_fitted_standardizer",
     "build_walk_forward_plan",
     "build_point_in_time_return_matrix",
     "canonical_json",
     "decode_evaluation_result",
+    "decode_normalized_fold",
     "decode_return_matrix",
     "decode_synthetic_dataset",
     "decode_train_only_standardizer",
     "decode_synthetic_dataset_parquet",
     "decode_walk_forward_plan",
     "encode_evaluation_result",
+    "encode_normalized_fold",
     "encode_return_matrix",
     "encode_synthetic_dataset",
     "encode_train_only_standardizer",
@@ -87,5 +96,6 @@ __all__ = [
     "validate_synthetic_dataset",
     "validate_walk_forward_plan",
     "validate_point_in_time_return_matrix",
+    "validate_normalized_fold",
     "validate_train_only_standardizer",
 ]

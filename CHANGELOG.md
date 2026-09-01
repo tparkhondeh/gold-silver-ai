@@ -66,6 +66,12 @@ state is recorded in `docs/10-project-state/CURRENT_STATE.md`.
   provenance. Hand-calculated statistics, test-tail isolation, explicit zero variance,
   canonical artifact replay and fail-closed range/tamper handling bring the laboratory
   to forty-five passing tests without producing a model, forecast, ranking or decision.
+- Train-only standardizer checkpoint `cf6e362` passed all three GitHub Actions jobs in
+  run [33512088284](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33512088284).
+- Added an exact train-fitted test transform with explicit zero-variance handling,
+  complete test coverage, full upstream provenance, canonical artifact replay and a
+  pinned reference identity. Fifty laboratory tests pass; the artifact contains no
+  prediction, score, allocation or decision.
 
 ### Fail-closed Navasan history authorization — ۱۴۰۵/۰۶/۱۰
 

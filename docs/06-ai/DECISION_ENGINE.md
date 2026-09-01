@@ -80,7 +80,9 @@ records carried-forward delayed observations explicitly and performs no fitting,
 forecast, ranking or recommendation. Its train-only standardizer now fits population
 z-score statistics solely from the training membership of one validated walk-forward
 fold and binds the result to the exact dataset, matrix, plan and fold. It still emits
-no forecast, ranking or recommendation.
+no forecast, ranking or recommendation. The corresponding transform applies those
+frozen statistics to the complete test interval without refitting; its output remains
+an evaluation-only feature artifact, not a score or decision.
 
 ## Decision History Requirement
 

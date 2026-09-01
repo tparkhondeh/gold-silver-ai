@@ -14,7 +14,9 @@ from .walk_forward import validate_walk_forward_plan
 
 
 STANDARDIZER_SCHEMA_VERSION = "asha.synthetic.standardizer.v1"
+NORMALIZED_FOLD_SCHEMA_VERSION = "asha.synthetic.normalized_fold.v1"
 _STANDARDIZER_ID = re.compile(r"ASHA_STANDARDIZER_[a-f0-9]{64}\Z")
+_NORMALIZED_FOLD_ID = re.compile(r"ASHA_NORMALIZED_FOLD_[a-f0-9]{64}\Z")
 _QUANTUM = Decimal("0.000000000001")
 _STANDARDIZER_KEYS = {
     "schemaVersion",
@@ -33,6 +35,24 @@ _STANDARDIZER_KEYS = {
     "reasonCodes",
 }
 _STATISTIC_KEYS = {"instrumentId", "observationCount", "mean", "standardDeviation"}
+_NORMALIZED_KEYS = {
+    "schemaVersion",
+    "normalizedFoldId",
+    "status",
+    "financialUseAllowed",
+    "datasetReference",
+    "returnMatrixReference",
+    "walkForwardPlanReference",
+    "standardizerReference",
+    "methodologyReference",
+    "foldIndex",
+    "testStartIndex",
+    "testEndIndex",
+    "rows",
+    "reasonCodes",
+}
+_NORMALIZED_ROW_KEYS = {"periodIndex", "values"}
+_NORMALIZED_VALUE_KEYS = {"instrumentId", "value"}
 
 
 def _decimal_string(value: Decimal) -> str:
@@ -207,3 +227,141 @@ def validate_train_only_standardizer(
     if unsigned != _build_unsigned(dataset, matrix, plan, fold["foldIndex"]):
         raise ContractViolation("standardizer does not match exact train-only replay")
     return standardizer
+
+
+def _build_normalized_unsigned(
+    matrix: dict[str, Any],
+    plan: dict[str, Any],
+    standardizer: dict[str, Any],
+) -> dict[str, Any]:
+    fold = plan["folds"][standardizer["foldIndex"]]
+    test_start = fold["testStartIndex"]
+    test_end = fold["testEndIndex"]
+    if matrix["startIndex"] > test_start or matrix["endIndex"] < test_end:
+        raise ContractViolation("return matrix does not cover the complete test interval")
+    test_rows = [row for row in matrix["rows"] if test_start <= row["periodIndex"] <= test_end]
+    if [row["periodIndex"] for row in test_rows] != list(range(test_start, test_end + 1)):
+        raise ContractViolation("test feature rows are not contiguous")
+    statistics = {item["instrumentId"]: item for item in standardizer["instrumentStatistics"]}
+    if set(statistics) != set(matrix["instrumentIds"]):
+        raise ContractViolation("standardizer and return matrix instrument sets differ")
+
+    rows = []
+    with localcontext() as context:
+        context.prec = 50
+        context.rounding = ROUND_HALF_EVEN
+        for row in test_rows:
+            values = []
+            for item in row["returns"]:
+                statistic = statistics[item["instrumentId"]]
+                mean = Decimal(statistic["mean"])
+                standard_deviation = Decimal(statistic["standardDeviation"])
+                normalized = (
+                    Decimal("0")
+                    if standard_deviation == 0
+                    else (Decimal(item["value"]) - mean) / standard_deviation
+                )
+                values.append({
+                    "instrumentId": item["instrumentId"],
+                    "value": _decimal_string(normalized),
+                })
+            rows.append({"periodIndex": row["periodIndex"], "values": values})
+
+    return {
+        "schemaVersion": NORMALIZED_FOLD_SCHEMA_VERSION,
+        "status": "evaluation_only",
+        "financialUseAllowed": False,
+        "datasetReference": deepcopy(matrix["datasetReference"]),
+        "returnMatrixReference": deepcopy(standardizer["returnMatrixReference"]),
+        "walkForwardPlanReference": deepcopy(standardizer["walkForwardPlanReference"]),
+        "standardizerReference": {
+            "standardizerId": standardizer["standardizerId"],
+            "schemaVersion": standardizer["schemaVersion"],
+        },
+        "methodologyReference": {
+            "entityId": "STATUS_TBD",
+            "version": 0,
+            "approvalState": "unapproved",
+        },
+        "foldIndex": standardizer["foldIndex"],
+        "testStartIndex": test_start,
+        "testEndIndex": test_end,
+        "rows": rows,
+        "reasonCodes": [
+            "METHODOLOGY_NOT_APPROVED",
+            "REAL_FINANCIAL_USE_DISABLED",
+            "SYNTHETIC_DATA_ONLY",
+            "TRAIN_FITTED_TRANSFORM_ONLY",
+        ],
+    }
+
+
+def apply_train_fitted_standardizer(
+    dataset_payload: object,
+    matrix_payload: object,
+    plan_payload: object,
+    standardizer_payload: object,
+) -> dict[str, Any]:
+    """Apply frozen training statistics to one fold's test rows without refitting."""
+
+    dataset = validate_synthetic_dataset(dataset_payload)
+    matrix = validate_point_in_time_return_matrix(matrix_payload, dataset)
+    plan = validate_walk_forward_plan(plan_payload, dataset)
+    standardizer = validate_train_only_standardizer(standardizer_payload, dataset, matrix, plan)
+    unsigned = _build_normalized_unsigned(matrix, plan, standardizer)
+    normalized = {**unsigned, "normalizedFoldId": f"ASHA_NORMALIZED_FOLD_{fingerprint(unsigned)}"}
+    return validate_normalized_fold(normalized, dataset, matrix, plan, standardizer)
+
+
+def validate_normalized_fold(
+    normalized_payload: object,
+    dataset_payload: object,
+    matrix_payload: object,
+    plan_payload: object,
+    standardizer_payload: object,
+) -> dict[str, Any]:
+    """Recompute a test transform and reject refitting, provenance drift or tampering."""
+
+    dataset = validate_synthetic_dataset(dataset_payload)
+    matrix = validate_point_in_time_return_matrix(matrix_payload, dataset)
+    plan = validate_walk_forward_plan(plan_payload, dataset)
+    standardizer = validate_train_only_standardizer(standardizer_payload, dataset, matrix, plan)
+    if not isinstance(normalized_payload, dict) or set(normalized_payload) != _NORMALIZED_KEYS:
+        raise ContractViolation("normalized fold has unexpected fields")
+    normalized = deepcopy(normalized_payload)
+    if normalized["schemaVersion"] != NORMALIZED_FOLD_SCHEMA_VERSION:
+        raise ContractViolation("unsupported normalized-fold schema version")
+    if normalized["status"] != "evaluation_only" or normalized["financialUseAllowed"] is not False:
+        raise ContractViolation("normalized fold must remain evaluation-only")
+    if normalized["methodologyReference"] != {
+        "entityId": "STATUS_TBD",
+        "version": 0,
+        "approvalState": "unapproved",
+    }:
+        raise ContractViolation("normalized fold cannot approve a methodology")
+    if normalized["reasonCodes"] != [
+        "METHODOLOGY_NOT_APPROVED",
+        "REAL_FINANCIAL_USE_DISABLED",
+        "SYNTHETIC_DATA_ONLY",
+        "TRAIN_FITTED_TRANSFORM_ONLY",
+    ]:
+        raise ContractViolation("normalized fold is missing permanent safety reasons")
+    if not isinstance(normalized["rows"], list) or not normalized["rows"]:
+        raise ContractViolation("normalized fold needs test rows")
+    if any(not isinstance(row, dict) or set(row) != _NORMALIZED_ROW_KEYS for row in normalized["rows"]):
+        raise ContractViolation("normalized row has unexpected fields")
+    if any(
+        not isinstance(value, dict) or set(value) != _NORMALIZED_VALUE_KEYS
+        for row in normalized["rows"]
+        for value in row["values"]
+    ):
+        raise ContractViolation("normalized value has unexpected fields")
+    normalized_id = normalized["normalizedFoldId"]
+    unsigned = {key: value for key, value in normalized.items() if key != "normalizedFoldId"}
+    if not isinstance(normalized_id, str) or not _NORMALIZED_FOLD_ID.fullmatch(normalized_id):
+        raise ContractViolation("normalized-fold ID is invalid")
+    if normalized_id != f"ASHA_NORMALIZED_FOLD_{fingerprint(unsigned)}":
+        raise ContractViolation("normalized-fold fingerprint mismatch")
+    if unsigned != _build_normalized_unsigned(matrix, plan, standardizer):
+        raise ContractViolation("normalized fold does not match exact train-fitted replay")
+    return normalized
