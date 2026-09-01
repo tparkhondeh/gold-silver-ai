@@ -29,7 +29,6 @@ test("splits each metal into documented inclusive 90-day history requests", () =
     "continuity_audit",
   ]);
 });
-
 test("keeps an exact 90-day range in one request per metal", () => {
   const plan = buildGoldApiBackfillPlan({
     start: "2024-01-01",
@@ -49,4 +48,3 @@ test("fails closed for invalid, reversed, future, empty, unapproved, or excessiv
   assert.throws(() => buildGoldApiBackfillPlan({ ...valid, metals: ["XPT"] }, "2026-09-01"), /not approved/);
   assert.throws(() => buildGoldApiBackfillPlan({ ...valid, start: "0001-01-01" }, "2026-09-01"), /safety limit/);
 });
-

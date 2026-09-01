@@ -28,7 +28,6 @@ export type GoldApiHistoricalContinuityReport = {
 function epochDay(date: string) {
   return Math.floor(Date.parse(`${date}T00:00:00.000Z`) / 86_400_000);
 }
-
 function dateFromEpochDay(value: number) {
   return new Date(value * 86_400_000).toISOString().slice(0, 10);
 }
@@ -99,4 +98,3 @@ export function auditGoldApiHistoricalContinuity(
     canAuthorizeStorage: false,
   };
 }
-

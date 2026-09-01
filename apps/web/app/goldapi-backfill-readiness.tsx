@@ -14,7 +14,6 @@ const LOOPBACK_HOSTS = new Set(["localhost", "127.0.0.1", "[::1]", "::1"]);
 function subscribeToLocation() {
   return () => undefined;
 }
-
 function getLoopbackSnapshot(): boolean | null {
   return typeof window === "undefined" ? null : LOOPBACK_HOSTS.has(window.location.hostname);
 }
@@ -127,4 +126,3 @@ export function GoldApiBackfillReadiness() {
     </section>
   );
 }
-

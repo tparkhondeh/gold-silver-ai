@@ -29,7 +29,6 @@ test("records omitted provider dates without interpolation or storage permission
   assert.equal(report.canAuthorizeStorage, false);
   assert.deepEqual(report.issues, []);
 });
-
 test("quarantines duplicate, out-of-range, and mixed-metal points", () => {
   const normal = points([{ date: "2025-01-01", price: 2_624.18 }])[0];
   const report = auditGoldApiHistoricalContinuity([
@@ -59,4 +58,3 @@ test("fails closed for reversed or over-90-day continuity ranges", () => {
     end: "2025-04-01",
   }), /exceeds/);
 });
-

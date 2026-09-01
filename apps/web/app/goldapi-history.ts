@@ -30,7 +30,6 @@ function asExactObject(value: unknown, allowedKeys: Set<string>, label: string) 
   }
   return record;
 }
-
 function utcDay(date: string) {
   return Math.floor(Date.parse(`${date}T00:00:00.000Z`) / 86_400_000);
 }
@@ -91,4 +90,3 @@ export function normalizeGoldApiHistoryPayload(
     };
   });
 }
-

@@ -29,7 +29,6 @@ test("normalizes ordered daily history and preserves a missing date as a gap", (
   });
   assert.deepEqual(points.map((point) => point.providerDateGregorian), ["2025-01-01", "2025-01-03"]);
 });
-
 test("rejects contract drift, request mismatches, and invalid ranges", () => {
   assert.throws(() => normalizeGoldApiHistoryPayload({ ...payload(), currency: "EUR" }, request, collectedAt), /not USD/);
   assert.throws(() => normalizeGoldApiHistoryPayload({ ...payload(), metal: "XAG" }, request, collectedAt), /does not match/);
@@ -60,4 +59,3 @@ test("rejects duplicate, unordered, out-of-range, malformed, or excessive points
   const many = Array.from({ length: 91 }, (_, index) => ({ date: "2025-01-01", price: 2_624 + index }));
   assert.throws(() => normalizeGoldApiHistoryPayload({ ...payload(), prices: many }, request, collectedAt), /exceeds 90 points/);
 });
-
