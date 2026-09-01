@@ -1,7 +1,17 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { parseNavasanQuotaHealth } from "../app/navasan-quota-view.ts";
+import { formatNavasanNextEligibleLabel, parseNavasanQuotaHealth } from "../app/navasan-quota-view.ts";
+
+test("formats a local countdown without performing a health or provider request", () => {
+  const future = formatNavasanNextEligibleLabel("2026-09-01T09:40:00.000Z", Date.parse("2026-09-01T03:00:00.000Z"));
+  assert.match(future, /۶ ساعت و ۴۰ دقیقه/);
+  assert.match(future, /دیگر/);
+  assert.match(formatNavasanNextEligibleLabel("2026-09-01T09:40:00.000Z", Date.parse("2026-09-01T09:39:40.000Z")), /۱ دقیقه/);
+  assert.match(formatNavasanNextEligibleLabel("2026-09-01T09:40:00.000Z", Date.parse("2026-09-01T09:40:00.000Z")), /اکنون/);
+  assert.match(formatNavasanNextEligibleLabel(null, Date.parse("2026-09-01T03:00:00.000Z")), /تماس قبلی ثبت نشده/);
+  assert.match(formatNavasanNextEligibleLabel("invalid", Date.parse("2026-09-01T03:00:00.000Z")), /متوقف/);
+});
 
 test("accepts only the complete free-plan quota health contract", () => {
   const result = parseNavasanQuotaHealth({ engines: [{

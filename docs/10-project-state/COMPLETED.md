@@ -68,10 +68,12 @@ subsequent changes still require their own push and CI verification.
 - Added a deterministic next-call boundary from the newest durable reservation and
   active safe cadence. `/api/health` and the local Persian Data Trust card show the
   first exact time a new live request can be reserved.
+- The card also updates its Persian time-remaining label locally every 30 seconds,
+  without another health read or provider request.
 - The calculation is local-only and consumed no provider allowance; usage remained
   4 used / 111 remaining.
-- Local typecheck, lint, build, 125 unit tests and 16 real PostgreSQL tests pass with
-  93.72% line, 79.09% branch and 94.59% function coverage.
+- Local typecheck, lint, build, 126 unit tests and 16 real PostgreSQL tests pass with
+  93.75% line, 79.18% branch and 94.63% function coverage.
 - Working-branch checkpoint `9a07947` passed both GitHub Actions jobs in run
   [33497221903](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33497221903);
   remote `main` remained unchanged.

@@ -12,9 +12,11 @@ state is recorded in `docs/10-project-state/CURRENT_STATE.md`.
 - Added a deterministic next-call calculation from the newest durable reservation
   and the active safe cadence. Health and the Persian Data Trust card now show the
   first exact time another live call is allowed.
+- Added a Persian time-remaining label that refreshes inside the browser every 30
+  seconds. It performs no health refresh and no provider request.
 - The calculation reads only local PostgreSQL state and makes no provider request.
-  Local usage stayed at 4 used / 111 remaining. Local build, lint, 125 unit tests and
-  16 real PostgreSQL tests pass with 93.72% line, 79.09% branch and 94.59% function
+  Local usage stayed at 4 used / 111 remaining. Local build, lint, 126 unit tests and
+  16 real PostgreSQL tests pass with 93.75% line, 79.18% branch and 94.63% function
   coverage.
 - Working-branch checkpoint `9a07947` passed both GitHub Actions jobs in run
   [33497221903](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33497221903);

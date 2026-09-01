@@ -59,6 +59,29 @@ function parseLatestOutcome(value: unknown): NavasanLatestOutcome | null | undef
   return { outcome, quoteCount, durationMs, completedAt };
 }
 
+export function formatNavasanNextEligibleLabel(nextEligibleAt: string | null, nowMilliseconds: number) {
+  if (!nextEligibleAt) return "تماس قبلی ثبت نشده است؛ نخستین دریافت طبق سقف پایدار مجاز خواهد بود.";
+  const nextMilliseconds = Date.parse(nextEligibleAt);
+  if (!Number.isFinite(nextMilliseconds) || !Number.isFinite(nowMilliseconds)) {
+    return "زمان تماس بعدی معتبر نیست؛ دریافت تازه متوقف می‌ماند.";
+  }
+  if (nextMilliseconds <= nowMilliseconds) {
+    return "فاصلهٔ امن تمام شده است؛ دریافت بعدی اکنون می‌تواند با ثبت سهمیه انجام شود.";
+  }
+
+  const totalMinutes = Math.max(1, Math.ceil((nextMilliseconds - nowMilliseconds) / 60_000));
+  const days = Math.floor(totalMinutes / 1_440);
+  const hours = Math.floor((totalMinutes % 1_440) / 60);
+  const minutes = totalMinutes % 60;
+  const parts = [
+    days > 0 ? `${days.toLocaleString("fa-IR")} روز` : null,
+    hours > 0 ? `${hours.toLocaleString("fa-IR")} ساعت` : null,
+    minutes > 0 ? `${minutes.toLocaleString("fa-IR")} دقیقه` : null,
+  ].filter((part): part is string => part !== null);
+
+  return `نخستین تماس مجاز بعدی: ${new Date(nextMilliseconds).toLocaleString("fa-IR")} (${parts.join(" و ")} دیگر)`;
+}
+
 export function parseNavasanQuotaHealth(payload: unknown): NavasanQuotaView {
   if (!payload || typeof payload !== "object") return { state: "blocked", message: "پاسخ سلامت معتبر نیست." };
   const engines = (payload as { engines?: unknown }).engines;
