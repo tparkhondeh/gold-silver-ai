@@ -16,6 +16,8 @@ state is recorded in `docs/10-project-state/CURRENT_STATE.md`.
   command passed against the real running host without revealing a credential.
 - Typecheck, lint, production build, 103 unit tests and 14 real PostgreSQL tests pass;
   source coverage is 93.77% lines, 76.31% branches and 93.96% functions.
+- Checkpoint `38fba17` passed both GitHub quality jobs in run 33480065419; remote
+  `main` remained unchanged.
 
 ### Fail-closed local readiness — ۱۴۰۵/۰۶/۱۰
 

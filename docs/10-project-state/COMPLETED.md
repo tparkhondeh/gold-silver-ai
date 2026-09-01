@@ -71,6 +71,8 @@ subsequent changes still require their own push and CI verification.
   remote, privileged, credential-free or option-bearing database URLs.
 - The command recognized the real running application as healthy without printing a
   credential. Typecheck, lint, build, 103 unit tests and 14 real PostgreSQL tests pass.
+- Checkpoint `38fba17` passed both GitHub jobs in run 33480065419; remote `main`
+  remained unchanged.
 
 ### Fail-closed local readiness command — ۱۴۰۵/۰۶/۱۰
 

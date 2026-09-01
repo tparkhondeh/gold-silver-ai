@@ -94,7 +94,8 @@ remained unchanged.
 The prepared Windows owner host now has a one-step local launcher. It validates the
 exact protected persistence environment, starts project PostgreSQL, and starts or
 confirms the loopback web app without logging credentials. The real host correctly
-recognized its already-healthy application.
+recognized its already-healthy application. Launcher checkpoint `38fba17` passed
+both GitHub jobs in run 33480065419; remote `main` remained unchanged.
 
 ## Snapshot
 
