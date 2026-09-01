@@ -11,6 +11,7 @@ from .contracts import ContractViolation, RESULT_SCHEMA_VERSION, seal_evaluation
 
 CASH_CONTROL_ID = "ASHA_BENCHMARK_CASH_CONTROL_V1"
 EQUAL_WEIGHT_CONTROL_ID = "ASHA_BENCHMARK_EQUAL_WEIGHT_CONTROL_V1"
+NO_TRADE_CONTROL_ID = "ASHA_BENCHMARK_NO_TRADE_CONTROL_V1"
 _METRIC_QUANTUM = Decimal("0.00000001")
 
 
@@ -58,8 +59,24 @@ def _path_metrics(levels_by_period: list[dict[str, Decimal]], instrument_ids: li
         return (wealth - Decimal("1")) * Decimal("100"), maximum_drawdown * Decimal("100")
 
 
+def _buy_and_hold_metrics(levels_by_period: list[dict[str, Decimal]], instrument_ids: list[str]) -> tuple[Decimal, Decimal]:
+    initial = levels_by_period[0]
+    peak = Decimal("1")
+    wealth = peak
+    maximum_drawdown = Decimal("0")
+    count = Decimal(len(instrument_ids))
+    with localcontext() as context:
+        context.prec = 50
+        context.rounding = ROUND_HALF_EVEN
+        for current in levels_by_period[1:]:
+            wealth = sum(current[instrument_id] / initial[instrument_id] for instrument_id in instrument_ids) / count
+            peak = max(peak, wealth)
+            maximum_drawdown = max(maximum_drawdown, (peak - wealth) / peak)
+        return (wealth - Decimal("1")) * Decimal("100"), maximum_drawdown * Decimal("100")
+
+
 def evaluate_comparison_controls(dataset_payload: object, start_index: int, end_index: int) -> dict:
-    """Evaluate cash and period-rebalanced 1/N controls on synthetic levels only."""
+    """Evaluate cash, period-rebalanced 1/N, and no-trade controls on synthetic levels."""
 
     dataset = validate_synthetic_dataset(dataset_payload)
     maximum_period = max(row["periodIndex"] for row in dataset["observations"])
@@ -84,6 +101,7 @@ def evaluate_comparison_controls(dataset_payload: object, start_index: int, end_
         raise ContractViolation("cash comparison control requires SYNTH_CASH")
     cash_change, cash_drawdown = _path_metrics(levels_by_period, ["SYNTH_CASH"])
     equal_change, equal_drawdown = _path_metrics(levels_by_period, instrument_ids)
+    no_trade_change, no_trade_drawdown = _buy_and_hold_metrics(levels_by_period, instrument_ids)
 
     common_metrics = {
         "end_index": str(end_index),
@@ -133,6 +151,18 @@ def evaluate_comparison_controls(dataset_payload: object, start_index: int, end_
                     "cumulative_change_percent": _metric(equal_change),
                     "instrument_count": str(len(instrument_ids)),
                     "maximum_drawdown_percent": _metric(equal_drawdown),
+                },
+                "reasonCodes": ["SYNTHETIC_COMPARISON_CONTROL"],
+            },
+            {
+                "benchmarkId": NO_TRADE_CONTROL_ID,
+                "status": "computed",
+                "metrics": {
+                    **common_metrics,
+                    "carried_forward_observation_count": str(carried_forward_count),
+                    "cumulative_change_percent": _metric(no_trade_change),
+                    "instrument_count": str(len(instrument_ids)),
+                    "maximum_drawdown_percent": _metric(no_trade_drawdown),
                 },
                 "reasonCodes": ["SYNTHETIC_COMPARISON_CONTROL"],
             },

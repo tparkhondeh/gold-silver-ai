@@ -20,6 +20,7 @@ from asha_financial_lab.artifacts import encode_evaluation_result, encode_synthe
 from asha_financial_lab.controls import (  # noqa: E402
     CASH_CONTROL_ID,
     EQUAL_WEIGHT_CONTROL_ID,
+    NO_TRADE_CONTROL_ID,
     evaluate_comparison_controls,
 )
 from asha_financial_lab.synthetic import build_reference_dataset  # noqa: E402
@@ -62,7 +63,7 @@ class ComparisonControlTests(unittest.TestCase):
     def test_hand_computed_cash_and_equal_weight_controls(self) -> None:
         result = evaluate_comparison_controls(_hand_fixture(), 0, 2)
         self.assertEqual(validate_evaluation_result(result), result)
-        cash, equal_weight = result["benchmarkResults"]
+        cash, equal_weight, no_trade = result["benchmarkResults"]
         self.assertEqual(cash["benchmarkId"], CASH_CONTROL_ID)
         self.assertEqual(cash["metrics"]["cumulative_change_percent"], "0.00000000")
         self.assertEqual(cash["metrics"]["maximum_drawdown_percent"], "0.00000000")
@@ -70,6 +71,9 @@ class ComparisonControlTests(unittest.TestCase):
         self.assertEqual(equal_weight["metrics"]["cumulative_change_percent"], "0.83333333")
         self.assertEqual(equal_weight["metrics"]["maximum_drawdown_percent"], "8.33333333")
         self.assertEqual(equal_weight["metrics"]["carried_forward_observation_count"], "0")
+        self.assertEqual(no_trade["benchmarkId"], NO_TRADE_CONTROL_ID)
+        self.assertEqual(no_trade["metrics"]["cumulative_change_percent"], "0.00000000")
+        self.assertEqual(no_trade["metrics"]["maximum_drawdown_percent"], "9.09090909")
 
     def test_delayed_value_is_carried_forward_not_seen_early(self) -> None:
         result = evaluate_comparison_controls(_hand_fixture(delayed_second_path=True), 0, 2)
@@ -77,6 +81,9 @@ class ComparisonControlTests(unittest.TestCase):
         self.assertEqual(equal_weight["metrics"]["carried_forward_observation_count"], "1")
         self.assertEqual(equal_weight["metrics"]["cumulative_change_percent"], "-0.11111111")
         self.assertEqual(equal_weight["metrics"]["maximum_drawdown_percent"], "3.33333333")
+        no_trade = result["benchmarkResults"][2]
+        self.assertEqual(no_trade["metrics"]["cumulative_change_percent"], "0.00000000")
+        self.assertEqual(no_trade["metrics"]["maximum_drawdown_percent"], "3.22580645")
 
     def test_reference_control_replay_is_exact_and_locked(self) -> None:
         dataset = build_reference_dataset()
@@ -100,8 +107,16 @@ class ComparisonControlTests(unittest.TestCase):
             "1.96755954",
         )
         self.assertEqual(
+            first["benchmarkResults"][2]["metrics"]["cumulative_change_percent"],
+            "12.75241318",
+        )
+        self.assertEqual(
+            first["benchmarkResults"][2]["metrics"]["maximum_drawdown_percent"],
+            "2.01327700",
+        )
+        self.assertEqual(
             first["resultId"],
-            "ASHA_EVAL_654ad475c58313afee68067efe85889ba25f6d169fb0b7036bc209c55c8c964e",
+            "ASHA_EVAL_26d3de92be5283f3f4ff85816fa1ff838bbcaa09c4cdbe2cbf760cf35c896ec6",
         )
         self.assertEqual(
             replay_comparison_control_artifacts(

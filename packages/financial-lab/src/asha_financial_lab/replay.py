@@ -5,7 +5,7 @@ from __future__ import annotations
 from .artifacts import decode_evaluation_result, decode_synthetic_dataset
 from .baseline import BASELINE_MODEL_ID, NO_DECISION_BENCHMARK_ID, evaluate_no_decision
 from .contracts import ContractViolation
-from .controls import CASH_CONTROL_ID, EQUAL_WEIGHT_CONTROL_ID, evaluate_comparison_controls
+from .controls import CASH_CONTROL_ID, EQUAL_WEIGHT_CONTROL_ID, NO_TRADE_CONTROL_ID, evaluate_comparison_controls
 
 
 def _canonical_index(value: object, label: str) -> int:
@@ -45,7 +45,11 @@ def replay_comparison_control_artifacts(dataset_document: object, result_documen
     if stored_result["modelReference"]["entityId"] != BASELINE_MODEL_ID:
         raise ContractViolation("stored result does not use the deterministic baseline")
     benchmarks = stored_result["benchmarkResults"]
-    if [item["benchmarkId"] for item in benchmarks] != [CASH_CONTROL_ID, EQUAL_WEIGHT_CONTROL_ID]:
+    if [item["benchmarkId"] for item in benchmarks] != [
+        CASH_CONTROL_ID,
+        EQUAL_WEIGHT_CONTROL_ID,
+        NO_TRADE_CONTROL_ID,
+    ]:
         raise ContractViolation("stored result does not contain the expected comparison controls")
 
     start_index = _canonical_index(benchmarks[0]["metrics"].get("start_index"), "start index")

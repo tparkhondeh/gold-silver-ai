@@ -71,9 +71,10 @@ Benchmark implementations inside the laboratory are comparison controls, not sel
 financial methodology. They cannot produce a real recommendation, register a real
 decision, call a provider, or unlock the Phase 1 financial-decision engine. Real-data
 admission and any methodology promotion require a later owner-approved contract/ADR.
-The first controls are a constant synthetic-cash path and period-rebalanced synthetic
-1/N path. Their calculation rules are documented with the isolated package; both
-permanently emit `no_decision` and exist only to test point-in-time mechanics.
+The first controls are a constant synthetic-cash path, period-rebalanced synthetic
+1/N path, and an initially equal synthetic no-trade path. Their calculation rules are
+documented with the isolated package; all permanently emit `no_decision` and exist
+only to test point-in-time mechanics.
 
 ## Decision History Requirement
 

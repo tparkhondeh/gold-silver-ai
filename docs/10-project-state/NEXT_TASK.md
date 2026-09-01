@@ -130,11 +130,11 @@ financial engine remain separate gates.
     UTF-8 JSON bytes. Duplicate keys, invalid encoding, alternate formatting,
     oversized files, foreign-model results and resealed false results fail closed;
     exact replay recomputes and compares the entire no-decision result.
-26. **FIRST COMPARISON CONTROLS COMPLETE:** constant synthetic cash and period-
-    rebalanced synthetic 1/N controls use only point-in-time-known levels, count
+26. **FIRST COMPARISON CONTROLS COMPLETE:** constant synthetic cash, period-
+    rebalanced synthetic 1/N, and initially equal no-trade controls use only point-in-time-known levels, count
     carried-forward delayed rows, and report deterministic cumulative change and
     maximum drawdown. They remain `no_decision`, methodology-unapproved and exactly
-    replayable; they are laboratory rulers, not portfolio advice.
+    replayable; all are laboratory rulers, not portfolio advice.
 
 All implementation available from published provider contracts is complete; real
 provider history execution remains paused at item 6 for Tier-A licensing/cost decisions.

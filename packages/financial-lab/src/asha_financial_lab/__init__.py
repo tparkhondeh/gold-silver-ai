@@ -16,7 +16,12 @@ from .contracts import (
     validate_evaluation_result,
     validate_synthetic_dataset,
 )
-from .controls import CASH_CONTROL_ID, EQUAL_WEIGHT_CONTROL_ID, evaluate_comparison_controls
+from .controls import (
+    CASH_CONTROL_ID,
+    EQUAL_WEIGHT_CONTROL_ID,
+    NO_TRADE_CONTROL_ID,
+    evaluate_comparison_controls,
+)
 from .synthetic import REFERENCE_DATASET_ID, REFERENCE_PERIODS, build_reference_dataset
 from .replay import replay_comparison_control_artifacts, replay_no_decision_artifacts
 
@@ -25,6 +30,7 @@ __all__ = [
     "BASELINE_MODEL_ID",
     "CASH_CONTROL_ID",
     "EQUAL_WEIGHT_CONTROL_ID",
+    "NO_TRADE_CONTROL_ID",
     "REFERENCE_DATASET_ID",
     "REFERENCE_PERIODS",
     "build_reference_dataset",

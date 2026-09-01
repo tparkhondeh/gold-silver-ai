@@ -78,10 +78,12 @@ Phase 1 checkpoint `0f90210`; not merged to `main`.
   [33509106798](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33509106798).
 - Canonical artifact checkpoint `10de1d7` passed all three jobs in GitHub run
   [33509410256](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33509410256).
-- Constant synthetic-cash and period-rebalanced synthetic 1/N comparison controls use
-  only then-known levels, count delayed carry-forward, and exactly replay cumulative
+- Constant synthetic-cash, period-rebalanced synthetic 1/N, and initially equal
+  no-trade comparison controls use only then-known levels, count delayed carry-forward, and exactly replay cumulative
   change and maximum drawdown. Twenty-five laboratory tests pass locally; these
   controls are permanently no-decision and are not an approved methodology.
+- Cash/1N control checkpoint `a5087d6` passed all three jobs in GitHub run
+  [33509893452](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33509893452).
 
 ## Phase 1 — Completed Units on the Working Branch
 

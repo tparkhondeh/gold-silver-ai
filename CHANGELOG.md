@@ -34,10 +34,12 @@ state is recorded in `docs/10-project-state/CURRENT_STATE.md`.
   [33509106798](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33509106798).
 - Canonical-artifact checkpoint `10de1d7` passed all three GitHub Actions jobs in run
   [33509410256](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33509410256).
-- Added constant synthetic-cash and period-rebalanced synthetic 1/N comparison
-  controls. They use only then-known observations, count delayed carry-forward, pin
+- Added constant synthetic-cash, period-rebalanced synthetic 1/N, and initially equal
+  no-trade comparison controls. They use only then-known observations, count delayed carry-forward, pin
   exact reference metrics/result identity, reject resealed false outputs, and always
   remain no-decision/no-use/no-execution. Twenty-five laboratory tests pass locally.
+- Cash/1N checkpoint `a5087d6` passed all three GitHub Actions jobs in run
+  [33509893452](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33509893452).
 
 ### Fail-closed Navasan history authorization — ۱۴۰۵/۰۶/۱۰
 
