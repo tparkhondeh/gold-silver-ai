@@ -63,6 +63,16 @@ requirements. Full details: `PHASE_0_AUDIT.md` § 15.
 `main`. The stabilization commits are now confirmed on the private remote;
 subsequent changes still require their own push and CI verification.
 
+### Fail-closed Navasan history authorization — ۱۴۰۵/۰۶/۱۰
+
+- A configured live key can no longer enable `dailyCurrency` or `ohlcSearch` by
+  itself. Real history now requires both an explicit execution switch and a bounded
+  reference to an approved written-license record.
+- A controlled request to the running local app returned HTTP 423 before quota or
+  network access; usage remained 4 used / 111 remaining.
+- Local typecheck, lint, build, 127 unit tests and 16 real PostgreSQL tests pass with
+  93.79% line, 79.30% branch and 94.64% function coverage.
+
 ### Dependency security re-audit — ۱۴۰۵/۰۶/۱۰
 
 - The live-registry production audit is clean. The exact full development tree now

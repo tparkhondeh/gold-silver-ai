@@ -310,8 +310,9 @@ licensed real data, validation, financial methodology and production operations.
   Migration 0006 adds immutable source-reconciliation records and requires a bounded
   plain-language reason on every correction. Migrations 0007–0011 add exact transaction
   and evaluation-only valuation lineage, immutable provider-call reservations and a
-  bounded latest provider-runtime status; 126 unit and 16 real PostgreSQL tests pass
-  locally. Source coverage is 93.75% lines, 79.18% branches and 94.63% functions.
+  bounded latest provider-runtime status and a pre-quota dual authorization lock for
+  real Navasan history; 127 unit and 16 real PostgreSQL tests pass locally. Source
+  coverage is 93.79% lines, 79.30% branches and 94.64% functions.
   GoldAPI global-history checkpoint `eab4b16` passed GitHub quality/audit and real
   PostgreSQL jobs in run 33489418166; remote `main` remained unchanged.
   Navasan free-plan safety checkpoint `6b64e16` also passed both GitHub jobs in run
@@ -326,6 +327,8 @@ licensed real data, validation, financial methodology and production operations.
   and one moderate development-only esbuild advisory under drizzle-kit. The latest
   stable generator still carries that deprecated loader; no beta/breaking upgrade
   was forced. See `KNOWN_ISSUES.md` item 8.
+  A controlled owner-local history request returned HTTP 423 before quota resolution
+  or network access; the Navasan counter remained 4 used / 111 remaining.
   In the fresh-session laboratory, a fixed
   five-row CSV sample exercises preview plus a memory-only commit result (three
   accepted, one duplicate, one quarantined) without reaching the server or implying

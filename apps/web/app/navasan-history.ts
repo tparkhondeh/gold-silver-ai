@@ -9,6 +9,10 @@ import {
 
 export type NavasanHistoryEndpoint = "dailyCurrency" | "ohlcSearch";
 
+export type NavasanHistoryAuthorization =
+  | { ready: true; licenseReference: string }
+  | { ready: false; reason: "execution_disabled" | "license_reference_missing" };
+
 type DailyRow = { timestamp?: unknown; date?: unknown; value?: unknown; change?: unknown };
 type OhlcRow = { timestamp?: unknown; date?: unknown; open?: unknown; high?: unknown; low?: unknown; close?: unknown };
 
@@ -39,6 +43,19 @@ export type NormalizedNavasanOhlcPoint = {
 };
 
 const approvedProviderCodes = new Set<string>(navasanInstrumentMappings.map((item) => item.providerCode));
+
+export function inspectNavasanHistoryAuthorization(
+  environment: Record<string, string | undefined>,
+): NavasanHistoryAuthorization {
+  if (environment.NAVASAN_HISTORY_EXECUTION_ENABLED !== "true") {
+    return { ready: false, reason: "execution_disabled" };
+  }
+  const licenseReference = environment.NAVASAN_HISTORY_LICENSE_REFERENCE?.trim() ?? "";
+  if (!/^[A-Za-z0-9][A-Za-z0-9._/-]{7,127}$/.test(licenseReference)) {
+    return { ready: false, reason: "license_reference_missing" };
+  }
+  return { ready: true, licenseReference };
+}
 
 export function parseNavasanProviderCode(value: unknown): NavasanProviderCode {
   if (typeof value !== "string" || !approvedProviderCodes.has(value)) {

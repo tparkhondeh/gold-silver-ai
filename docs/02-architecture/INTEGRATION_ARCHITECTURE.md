@@ -12,7 +12,9 @@ adapters, with XAUS/Gold-API.com restricted to informational fallback use. The
 adapters exist behind the normalized `/api/market` boundary. GoldAPI's current
 official live path, exact XAU/XAG+USD response contract, ordered daily-history
 normalizer, 90-day no-network chunk planner and missing-date audit are implemented;
-real history execution remains locked. A replacement Navasan
+real history execution remains locked. Navasan history requires both an explicit
+execution flag and a bounded reference to an approved written-license record; this
+gate runs before quota reservation or network access. A replacement Navasan
 credential and toman unit are configured only on the owner-local host; durable quota
 reservation now gates current and local history calls. Hosted credentials, licensed
 historical backfill, an independent Iranian cross-check, and operational decision use

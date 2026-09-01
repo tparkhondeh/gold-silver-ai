@@ -7,6 +7,7 @@ import {
   normalizeNavasanDailyPayload,
   normalizeNavasanJalaliDate,
   normalizeNavasanOhlcPayload,
+  inspectNavasanHistoryAuthorization,
   parseNavasanProviderCode,
   type NavasanHistoryEndpoint,
 } from "../../../navasan-history.ts";
@@ -103,6 +104,18 @@ export function createNavasanHistoryPost(
       input = validateRequest(JSON.parse(rawBody) as HistoryRequest);
     } catch {
       return json({ ok: false, code: "invalid_request", message: "درخواست تاریخچه معتبر نیست" }, 422);
+    }
+
+    const historyAuthorization = inspectNavasanHistoryAuthorization(environment);
+    if (!historyAuthorization.ready) {
+      const missingLicenseReference = historyAuthorization.reason === "license_reference_missing";
+      return json({
+        ok: false,
+        code: missingLicenseReference ? "history_license_reference_missing" : "history_execution_disabled",
+        message: missingLicenseReference
+          ? "شناسهٔ مجوز کتبی تاریخچه ثبت نشده است؛ هیچ سهمیه یا شبکه‌ای مصرف نشد"
+          : "اجرای واقعی تاریخچه غیرفعال است؛ هیچ سهمیه یا شبکه‌ای مصرف نشد",
+      }, 423);
     }
 
     const configuration = inspectNavasanConfiguration(environment);

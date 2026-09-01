@@ -7,6 +7,17 @@ state is recorded in `docs/10-project-state/CURRENT_STATE.md`.
 
 ## [Unreleased]
 
+### Fail-closed Navasan history authorization — ۱۴۰۵/۰۶/۱۰
+
+- Added a second, explicit authorization boundary for `dailyCurrency` and
+  `ohlcSearch`. A live key is no longer sufficient: execution must be deliberately
+  enabled and reference an approved written-license record.
+- The lock is evaluated before quota resolution or network access. A controlled
+  request against the running local app returned HTTP 423 and left free-plan usage
+  unchanged at 4 used / 111 remaining.
+- Local build, lint, typecheck, 127 unit tests and 16 real PostgreSQL tests pass with
+  93.79% line, 79.30% branch and 94.64% function coverage.
+
 ### Dependency security re-audit — ۱۴۰۵/۰۶/۱۰
 
 - Re-audited the exact locked dependency tree against the live registry. The

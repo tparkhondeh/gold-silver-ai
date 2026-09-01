@@ -7,7 +7,7 @@
 Migrations 0003–0011 now cover the owner snapshot, immutable provenance,
 exact point-in-time dataset/decision lineage, source-reconciliation records and
 mandatory correction reasons, plus the read-only transaction/evaluation-valuation
-ledger, provider quota and latest operational status. Local build, 126 unit tests,
+ledger, provider quota and latest operational status. Local build, 127 unit tests,
 16 real PostgreSQL tests,
 restore, activation, and health checks pass. Production account authentication,
 empirical divergence thresholds, historical backfill, and the real
@@ -91,6 +91,10 @@ financial engine remain separate gates.
     development-only esbuild advisory remains behind drizzle-kit; no stable
     compatibility-proven upstream replacement is available, so the trusted-input
     generator stays isolated from production and the beta upgrade remains deferred.
+18. **HISTORY AUTHORIZATION LOCK COMPLETE:** a live Navasan key cannot activate
+    history by itself. `dailyCurrency` and `ohlcSearch` require both an explicit
+    execution switch and an approved written-license reference. The gate runs before
+    quota or network access; a local replay returned HTTP 423 with usage unchanged.
 
 All implementation available from published provider contracts is complete; real
 provider history execution remains paused at item 6 for Tier-A licensing/cost decisions.

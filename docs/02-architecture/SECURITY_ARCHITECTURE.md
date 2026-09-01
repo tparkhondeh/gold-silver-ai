@@ -14,7 +14,9 @@ fixed local subject is not a production identity system. The Phase 1 local bound
 loopback host allowlisting, exact same-origin validation, `Sec-Fetch-Site` checking,
 a non-simple action-matched intent header, JSON-only input, strict size limits,
 no-store responses, and omission of raw payloads from preview output. Persistence
-also requires explicit enable flags and a loopback-only PostgreSQL URL. Portfolio
+also requires explicit enable flags and a loopback-only PostgreSQL URL. Navasan
+history additionally requires a separate execution flag plus a written-license
+reference, checked before quota reservation or network access. Portfolio
 writes add optimistic version checks to prevent silent stale-browser overwrites. The
 transferred owner host is migrated and integration-tested; public persistence stays
 disabled until a production identity provider and deployment store are approved.

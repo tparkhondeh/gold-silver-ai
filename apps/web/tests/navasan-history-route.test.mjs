@@ -7,6 +7,8 @@ const environment = {
   NAVASAN_API_KEY: "synthetic-test-credential",
   NAVASAN_VALUE_UNIT: "TOMAN",
   NAVASAN_KEY_ROTATION_CONFIRMED: "true",
+  NAVASAN_HISTORY_EXECUTION_ENABLED: "true",
+  NAVASAN_HISTORY_LICENSE_REFERENCE: "synthetic-license-fixture-v1",
 };
 
 function request(payload, url = "http://localhost/api/operator/navasan-history") {
@@ -52,5 +54,36 @@ test("rejects public access and exhausted quota before any provider request", as
   assert.equal(publicResponse.status, 403);
   const quotaResponse = await post(request({ action: "dailyCurrency", item: "usd_sell", date: "1405-06-08" }));
   assert.equal(quotaResponse.status, 429);
+  assert.equal(fetchCount, 0);
+});
+
+test("keeps history locked before quota reservation and network access", async () => {
+  let quotaResolutionCount = 0;
+  let fetchCount = 0;
+  const resolveQuota = async () => {
+    quotaResolutionCount += 1;
+    return { available: true, ledger: { async reserve() { throw new Error("must not reserve"); } } };
+  };
+  const fetcher = async () => {
+    fetchCount += 1;
+    return Response.json([]);
+  };
+
+  const disabled = createNavasanHistoryPost(resolveQuota, fetcher, {
+    ...environment,
+    NAVASAN_HISTORY_EXECUTION_ENABLED: "false",
+  });
+  const disabledResponse = await disabled(request({ action: "dailyCurrency", item: "usd_sell", date: "1405-06-08" }));
+  assert.equal(disabledResponse.status, 423);
+  assert.equal((await disabledResponse.json()).code, "history_execution_disabled");
+
+  const missingReference = createNavasanHistoryPost(resolveQuota, fetcher, {
+    ...environment,
+    NAVASAN_HISTORY_LICENSE_REFERENCE: "",
+  });
+  const missingReferenceResponse = await missingReference(request({ action: "dailyCurrency", item: "usd_sell", date: "1405-06-08" }));
+  assert.equal(missingReferenceResponse.status, 423);
+  assert.equal((await missingReferenceResponse.json()).code, "history_license_reference_missing");
+  assert.equal(quotaResolutionCount, 0);
   assert.equal(fetchCount, 0);
 });
