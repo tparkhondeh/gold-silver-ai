@@ -24,6 +24,7 @@ duplicate information across files — link instead.
 |---|---|
 | "Where is the project right now?" | `docs/10-project-state/CURRENT_STATE.md` |
 | "What should be worked on next?" | `docs/10-project-state/NEXT_TASK.md` |
+| "What is the owner's simple progress coordinate?" | `docs/10-project-state/PRE_API_READINESS_AUDIT_FA.md` |
 | "What are the rules for how we work?" | `docs/00-governance/` |
 | "What is the product supposed to do?" | `docs/01-product/PRODUCT_SPECIFICATION.md` |
 | "How is the system built?" | `docs/02-architecture/` |

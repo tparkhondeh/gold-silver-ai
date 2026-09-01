@@ -72,6 +72,8 @@ surfaces are ready and that real financial use is still safely blocked.
   the short operating-rules file and points to everything else.
 - **Want to know what's happening right now?** Read
   `docs/10-project-state/CURRENT_STATE.md` and `NEXT_TASK.md`.
+- **Want a simple Persian progress map?** Read
+  [`PRE_API_READINESS_AUDIT_FA.md`](docs/10-project-state/PRE_API_READINESS_AUDIT_FA.md).
 - **Want to know what's still undecided?** Read
   `docs/10-project-state/OPEN_DECISIONS.md`.
 

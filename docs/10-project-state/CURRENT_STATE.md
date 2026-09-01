@@ -96,6 +96,10 @@ exact protected persistence environment, starts project PostgreSQL, and starts o
 confirms the loopback web app without logging credentials. The real host correctly
 recognized its already-healthy application. Launcher checkpoint `38fba17` passed
 both GitHub jobs in run 33480065419; remote `main` remained unchanged.
+The consolidated Persian pre-API audit is in `PRE_API_READINESS_AUDIT_FA.md`. It marks
+the accepted Phase 1 no-paid-API/local scope complete and gives a provisional 55%
+whole-real-release coordinate, with the remaining weight explicitly assigned to
+licensed real data, validation, financial methodology and production operations.
 
 ## Snapshot
 

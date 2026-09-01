@@ -7,6 +7,14 @@ state is recorded in `docs/10-project-state/CURRENT_STATE.md`.
 
 ## [Unreleased]
 
+### Pre-API readiness audit — ۱۴۰۵/۰۶/۱۰
+
+- Added a concise Persian quality-gate audit and progress map for the owner.
+- The accepted local/no-paid-API Phase 1 scope is complete; the provisional whole
+  real-release coordinate is 55%, with the remainder explicitly assigned to licensed
+  real data, independent validation, approved financial methodology and production
+  operations. This estimate is not a financial-readiness claim.
+
 ### One-step owner-local launch — ۱۴۰۵/۰۶/۱۰
 
 - Added `npm run local:run` for the prepared Windows owner host. It starts project

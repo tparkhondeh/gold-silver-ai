@@ -62,6 +62,9 @@ financial engine remain separate gates.
     protected three-key persistence file, starts project PostgreSQL, and starts or
     confirms the loopback web app without printing credentials or contacting a
     provider.
+12. **PRE-API AUDIT COMPLETE:** `PRE_API_READINESS_AUDIT_FA.md` records the completed
+    local/no-paid-API scope, evidence, provisional whole-release coordinate and exact
+    external/owner gates. No prompt from the owner is needed to repeat completed work.
 
 The API-dependent implementation slice is complete and remains paused at item 6 for
 a Tier-A owner decision. The owner explicitly authorized continued independent local
