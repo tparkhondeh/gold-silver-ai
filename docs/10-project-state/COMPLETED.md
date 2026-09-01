@@ -103,6 +103,12 @@ Phase 1 checkpoint `0f90210`; not merged to `main`.
   109-row reference exposes 11 delayed carry-forwards, exact artifact replay, invalid-
   range and resealed-tamper rejection. Thirty-nine laboratory tests pass; no model or
   decision is produced.
+- Point-in-time feature checkpoint `d1363c7` passed all three jobs in GitHub run
+  [33511686844](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33511686844).
+- Added train-only population z-score statistics bound to the exact dataset, matrix,
+  walk-forward plan and fold. Hand calculations, unchanged statistics after test-tail
+  mutation, explicit zero variance, exact artifact replay, incomplete-range rejection
+  and resealed-tamper rejection bring the laboratory to forty-five passing tests.
 
 ## Phase 1 — Completed Units on the Working Branch
 

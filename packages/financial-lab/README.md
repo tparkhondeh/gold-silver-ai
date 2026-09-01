@@ -59,3 +59,10 @@ that period and catches up only when published. The matrix is bound to the datas
 has its own versioned JSON Schema and canonical artifact, and is fully recomputed on
 validation. It is feature plumbing only: no fitting, forecast, ranking or decision is
 performed.
+
+`fit_train_only_standardizer()` computes population z-score mean and standard
+deviation only from feature rows inside one validated walk-forward training interval.
+The earliest computable return and rolling-window boundary are enforced; test rows
+cannot influence the statistics. Zero-variance instruments are recorded explicitly
+for the future `emit_zero_when_applied` policy. The standardizer artifact is bound to
+the exact dataset, return matrix, walk-forward plan and fold.

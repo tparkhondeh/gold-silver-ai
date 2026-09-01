@@ -58,6 +58,12 @@ records 12-decimal latest-known changes and explicit carried-forward instrument 
 Its pinned reference has 109 rows and 11 visible delays; exact artifact replay is
 dataset-bound. Thirty-nine laboratory tests pass, with no fitting, forecast, ranking
 or decision output.
+Point-in-time feature checkpoint `d1363c7` passed all three GitHub jobs in run
+33511686844. Train-only population z-score statistics are now bound to the exact
+dataset, return matrix, walk-forward plan and fold. A test changes only future/test
+levels and proves the fitted statistics stay identical. The zero-variance policy is
+explicit, artifacts replay exactly, and forty-five laboratory tests pass locally;
+still no model, forecast, ranking or decision exists.
 
 The owner authorized staged Data Foundation and deterministic-baseline development,
 with each stage dependent on the previous quality gate. Private GitHub authentication

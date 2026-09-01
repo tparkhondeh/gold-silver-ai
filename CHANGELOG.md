@@ -60,6 +60,12 @@ state is recorded in `docs/10-project-state/CURRENT_STATE.md`.
   12-decimal changes, explicit delayed carry-forward, canonical artifact replay and a
   pinned 109-row/11-delay reference identity. Thirty-nine laboratory tests pass; it
   performs no fitting, forecast, ranking or decision.
+- Point-in-time feature checkpoint `d1363c7` passed all three GitHub Actions jobs in
+  run [33511686844](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33511686844).
+- Added train-only population z-score statistics with exact dataset/matrix/plan/fold
+  provenance. Hand-calculated statistics, test-tail isolation, explicit zero variance,
+  canonical artifact replay and fail-closed range/tamper handling bring the laboratory
+  to forty-five passing tests without producing a model, forecast, ranking or decision.
 
 ### Fail-closed Navasan history authorization — ۱۴۰۵/۰۶/۱۰
 

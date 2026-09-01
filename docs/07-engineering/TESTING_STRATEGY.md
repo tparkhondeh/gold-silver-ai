@@ -86,6 +86,11 @@ Five feature-contract tests verify a delayed level is carried forward without
 look-ahead and catches up only when available, pin the 109-row/11-delay reference
 matrix identity, require exact dataset-bound artifact replay, and reject invalid ranges
 or resealed tampering. Thirty-nine laboratory tests pass locally.
+Six train-only normalization tests hand-check mean/standard deviation and zero-
+variance handling, prove changing test-tail values cannot alter fitted statistics,
+pin exact reference identity, require complete training coverage and provenance-bound
+artifact replay, and reject invalid folds or resealed tampering. Forty-five laboratory
+tests pass locally.
 
 ## Related Documents
 

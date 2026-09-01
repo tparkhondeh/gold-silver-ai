@@ -150,6 +150,11 @@ financial engine remain separate gates.
     and catch up only when published. The versioned matrix is bound to the exact
     dataset and recomputed on replay. It performs no fitting, forecast, ranking or
     decision.
+30. **TRAIN-ONLY NORMALIZATION COMPLETE:** population z-score statistics are fitted
+    only from one validated fold's complete training-feature interval. The artifact is
+    bound to the exact dataset, return matrix, walk-forward plan and fold; changing
+    test-tail values cannot change the statistics. Zero variance is explicit and no
+    model, ranking or decision is produced.
 
 All implementation available from published provider contracts is complete; real
 provider history execution remains paused at item 6 for Tier-A licensing/cost decisions.

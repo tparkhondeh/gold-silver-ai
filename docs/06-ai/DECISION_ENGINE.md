@@ -77,8 +77,10 @@ documented with the isolated package; all permanently emit `no_decision` and exi
 only to test point-in-time mechanics.
 The laboratory also has a dataset-bound point-in-time synthetic return matrix. It
 records carried-forward delayed observations explicitly and performs no fitting,
-forecast, ranking or recommendation; any later normalization must be fitted only on
-the training membership of a validated walk-forward fold.
+forecast, ranking or recommendation. Its train-only standardizer now fits population
+z-score statistics solely from the training membership of one validated walk-forward
+fold and binds the result to the exact dataset, matrix, plan and fold. It still emits
+no forecast, ranking or recommendation.
 
 ## Decision History Requirement
 

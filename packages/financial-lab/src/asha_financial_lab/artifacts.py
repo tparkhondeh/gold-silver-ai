@@ -12,6 +12,7 @@ from .contracts import (
     validate_synthetic_dataset,
 )
 from .features import validate_point_in_time_return_matrix
+from .normalization import validate_train_only_standardizer
 from .walk_forward import validate_walk_forward_plan
 
 
@@ -84,3 +85,37 @@ def encode_return_matrix(payload: object, dataset_payload: object) -> bytes:
 
 def decode_return_matrix(document: object, dataset_payload: object) -> dict[str, Any]:
     return _decode_canonical(document, lambda value: validate_point_in_time_return_matrix(value, dataset_payload))
+
+
+def encode_train_only_standardizer(
+    payload: object,
+    dataset_payload: object,
+    matrix_payload: object,
+    plan_payload: object,
+) -> bytes:
+    return _encode_canonical(
+        payload,
+        lambda value: validate_train_only_standardizer(
+            value,
+            dataset_payload,
+            matrix_payload,
+            plan_payload,
+        ),
+    )
+
+
+def decode_train_only_standardizer(
+    document: object,
+    dataset_payload: object,
+    matrix_payload: object,
+    plan_payload: object,
+) -> dict[str, Any]:
+    return _decode_canonical(
+        document,
+        lambda value: validate_train_only_standardizer(
+            value,
+            dataset_payload,
+            matrix_payload,
+            plan_payload,
+        ),
+    )

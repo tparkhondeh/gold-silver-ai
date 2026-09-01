@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://goldsilver.wealthos.ir/contracts/asha.synthetic.standardizer.v1.schema.json",
+  "title": "Asha train-only synthetic standardizer v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "standardizerId",
+    "status",
+    "financialUseAllowed",
+    "datasetReference",
+    "returnMatrixReference",
+    "walkForwardPlanReference",
+    "methodologyReference",
+    "foldIndex",
+    "trainingFeatureStartIndex",
+    "trainingFeatureEndIndex",
+    "parameters",
+    "instrumentStatistics",
+    "reasonCodes"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "asha.synthetic.standardizer.v1" },
+    "standardizerId": { "type": "string", "pattern": "^ASHA_STANDARDIZER_[a-f0-9]{64}$" },
+    "status": { "const": "evaluation_only" },
+    "financialUseAllowed": { "const": false },
+    "datasetReference": { "type": "object" },
+    "returnMatrixReference": { "type": "object" },
+    "walkForwardPlanReference": { "type": "object" },
+    "methodologyReference": {
+      "const": { "entityId": "STATUS_TBD", "version": 0, "approvalState": "unapproved" }
+    },
+    "foldIndex": { "type": "integer", "minimum": 0 },
+    "trainingFeatureStartIndex": { "type": "integer", "minimum": 1 },
+    "trainingFeatureEndIndex": { "type": "integer", "minimum": 1 },
+    "parameters": {
+      "const": { "kind": "zscore_population_v1", "zeroVariancePolicy": "emit_zero_when_applied" }
+    },
+    "instrumentStatistics": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["instrumentId", "observationCount", "mean", "standardDeviation"],
+        "properties": {
+          "instrumentId": { "type": "string", "pattern": "^SYNTH_[A-Z0-9_]{2,64}$" },
+          "observationCount": { "type": "integer", "minimum": 1 },
+          "mean": { "type": "string", "pattern": "^-?(0|[1-9][0-9]{0,11})\\.[0-9]{12}$" },
+          "standardDeviation": { "type": "string", "pattern": "^(0|[1-9][0-9]{0,11})\\.[0-9]{12}$" }
+        }
+      }
+    },
+    "reasonCodes": {
+      "const": [
+        "METHODOLOGY_NOT_APPROVED",
+        "REAL_FINANCIAL_USE_DISABLED",
+        "SYNTHETIC_DATA_ONLY",
+        "TRAIN_ONLY_FIT"
+      ]
+    }
+  }
+}
