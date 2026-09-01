@@ -50,6 +50,10 @@ npm run dev -- --port 4174
 npm run ops:check-local
 ```
 
+- پس از آماده‌سازی PostgreSQL محافظت‌شده روی Windows، `npm run local:run` راه سادهٔ
+  اجرای هم‌زمان دیتابیس و برنامه است. در سیستم کاملاً جدید ابتدا باید راه‌اندازی
+  دیتابیس طبق بخش ۴ انجام شود.
+
 - رابط: [localhost:4174](http://localhost:4174/)، وضعیت سرویس: [/api/health](http://localhost:4174/api/health).
 - حالت پیش‌فرض آزمایشگاهی و دارای داده‌های صریحاً ساختگی است؛ سبد مشترک بین مرورگرها هنوز کامل نیست.
 - عامل توسعه ابتدا `AGENTS.md`، `CLAUDE.md`، `docs/10-project-state/CURRENT_STATE.md` و `NEXT_TASK.md` را بخواند؛ مسیر checkout همین سیستم مبناست، نه مسیر مطلق دستگاه قبلی در گزارش‌های تاریخی.

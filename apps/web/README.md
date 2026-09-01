@@ -25,6 +25,7 @@ npm test
 npm run test:db
 npm run db:backup
 npm run ops:check-local
+npm run local:run
 ```
 
 `npm test` builds the application, runs the unit/contract/API suites, and enforces
@@ -36,6 +37,10 @@ the main database.
 `npm run ops:check-local` contacts only the exact local health endpoint on port 4174;
 it fails if persistence is unavailable or the financial-use lock is missing. It does
 not contact a market-data provider.
+On the prepared owner Windows host, `npm run local:run` is the safe one-step launcher.
+It validates the protected runtime file, starts PostgreSQL, and either confirms the
+existing loopback application or runs it in the foreground. It never prints the
+database password; press Ctrl+C to stop a newly started web process.
 
 ## Safety boundaries
 

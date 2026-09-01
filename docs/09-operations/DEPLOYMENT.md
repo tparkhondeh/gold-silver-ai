@@ -14,9 +14,16 @@ and no production authentication. Portfolio/demo state is browser-session-local;
 the loopback CSV operator is disabled on the public hostname. Reviewers must use
 synthetic, non-sensitive inputs.
 
-The local application remains the only approved operator surface. PostgreSQL,
-environment separation for persistent data, monitoring, backup, and a stable release
-process remain `STATUS: TBD` or partial in their respective operations documents.
+The local application remains the only approved operator surface. Its project-owned
+PostgreSQL, protected persistence environment, one-step owner-local launcher, strict
+readiness check and verified local backup are active. Hosted persistence, production
+identity, offsite backup, alerting and a stable release process remain `STATUS: TBD`
+or partial in their respective operations documents.
+
+On the prepared owner Windows host, `npm run local:run` starts PostgreSQL, validates
+the protected runtime boundary and starts the web application only on
+`127.0.0.1:4174`. It runs in the foreground and does not make deployment or DNS
+changes.
 
 ## Owner-hosted server preflight
 

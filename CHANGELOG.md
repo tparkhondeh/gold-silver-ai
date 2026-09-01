@@ -7,6 +7,16 @@ state is recorded in `docs/10-project-state/CURRENT_STATE.md`.
 
 ## [Unreleased]
 
+### One-step owner-local launch — ۱۴۰۵/۰۶/۱۰
+
+- Added `npm run local:run` for the prepared Windows owner host. It starts project
+  PostgreSQL, validates the protected persistence environment, and starts or confirms
+  the web application only on `127.0.0.1:4174`.
+- Added strict rejection tests for unsafe runtime keys and database targets. The
+  command passed against the real running host without revealing a credential.
+- Typecheck, lint, production build, 103 unit tests and 14 real PostgreSQL tests pass;
+  source coverage is 93.77% lines, 76.31% branches and 93.96% functions.
+
 ### Fail-closed local readiness — ۱۴۰۵/۰۶/۱۰
 
 - Added `npm run ops:check-local`, restricted to the exact loopback health endpoint

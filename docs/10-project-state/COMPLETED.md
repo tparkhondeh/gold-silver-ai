@@ -63,6 +63,15 @@ requirements. Full details: `PHASE_0_AUDIT.md` § 15.
 `main`. The stabilization commits are now confirmed on the private remote;
 subsequent changes still require their own push and CI verification.
 
+### One-step owner-local launcher — ۱۴۰۵/۰۶/۱۰
+
+- Added a Windows-local command that starts project PostgreSQL, validates the exact
+  protected three-key persistence file and starts the web app only on loopback.
+- It rejects missing, disabled, duplicate, unexpected or malformed entries and
+  remote, privileged, credential-free or option-bearing database URLs.
+- The command recognized the real running application as healthy without printing a
+  credential. Typecheck, lint, build, 103 unit tests and 14 real PostgreSQL tests pass.
+
 ### Fail-closed local readiness command — ۱۴۰۵/۰۶/۱۰
 
 - Added a no-provider command that accepts only the exact loopback health endpoint

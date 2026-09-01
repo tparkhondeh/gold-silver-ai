@@ -42,6 +42,9 @@ npm run dev -- --port 4174
 
 Open [the local application](http://localhost:4174/). A fresh browser session opens
 the labelled synthetic laboratory. Personal data is not shared between browsers.
+On the prepared owner Windows host, `npm run local:run` is the preferred one-step
+command: it starts the project database, loads only the protected local persistence
+settings, and starts the web application on loopback if it is not already healthy.
 Run `npm run typecheck`, `npm run lint`, and `npm test` for the local gates;
 `npm test` builds before testing the rendered application and API contracts, and
 enforces minimum source-code coverage of 85% lines, 65% branches, and 80% functions.

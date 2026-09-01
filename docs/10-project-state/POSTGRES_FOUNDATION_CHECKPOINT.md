@@ -1,6 +1,6 @@
 # PostgreSQL Foundation Checkpoint
 
-**Version 0.13.0** · ASHA engineering · ۱۴۰۵/۰۶/۱۰ (2026-09-01) · Work in progress
+**Version 0.14.0** · ASHA engineering · ۱۴۰۵/۰۶/۱۰ (2026-09-01) · Work in progress
 
 ## AI READING INSTRUCTION
 
@@ -17,7 +17,7 @@ not a Data Foundation acceptance report or a financial-readiness claim.
 - Owner subsequently authorized committing/pushing this work for transfer to another computer despite the local database blocker. See the root `CONTINUE_ON_ANOTHER_SYSTEM.md`.
 - No merge, public deployment, Phase 2 branch, market ingestion or financial activation is authorized by this handoff.
 - Previous CI [33304773397](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33304773397) passed for the published HEAD only.
-- Current local gates: typecheck, lint, build, **100 unit/contract tests and 14 real
+- Current local gates: typecheck, lint, build, **103 unit/contract tests and 14 real
   PostgreSQL migration/concurrency/restore tests passed; zero skipped**.
 - GitHub [run 33396556534](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33396556534) **PASSED** for checkpoint `d0ea16f`: quality job (lint/typecheck/build/tests/production audit) and real PostgreSQL migration/integration/restore job.
 - GitHub [run 33417744818](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33417744818) **PASSED** for Navasan quota/history checkpoint `b0bb80a`: quality job and real PostgreSQL migration/concurrency/restore job.
@@ -137,6 +137,10 @@ locally verified signed file, not an independently published checksum comparison
 ## 6. Changelog
 
 **[SPEC]**
+
+- 0.14.0: added a one-step Windows owner-local launcher that validates the protected
+  persistence environment, starts project PostgreSQL and starts or confirms only the
+  loopback app. The live host passed; 103 unit plus 14 real PostgreSQL tests pass.
 
 - 0.13.0: added an exact-loopback, no-provider local readiness command. It requires
   database-backed Phase 1 health and fails unless financial use remains blocked; the

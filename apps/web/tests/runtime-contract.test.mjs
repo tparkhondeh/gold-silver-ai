@@ -14,5 +14,6 @@ test("the default test command builds first and enforces source coverage on Node
   assert.match(manifest.scripts["test:coverage"], /--test-coverage-include=scripts\/\*\*\/\*\.ts/);
   assert.doesNotMatch(manifest.scripts["test:coverage"], /dist\/\*\*/);
   assert.equal(manifest.scripts["db:backup"], "node --experimental-strip-types scripts/local-postgres.mjs backup");
+  assert.equal(manifest.scripts["local:run"], "node --experimental-strip-types scripts/start-local-app.mjs");
   assert.equal(manifest.scripts["ops:check-local"], "node --experimental-strip-types scripts/check-local-readiness.mjs");
 });

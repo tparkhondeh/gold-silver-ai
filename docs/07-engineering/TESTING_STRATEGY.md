@@ -39,6 +39,9 @@ The local operations check is also contract-tested: it accepts only the exact
 loopback health endpoint on port 4174, requires every database-backed Phase 1 surface,
 and fails if the explicit financial-use lock is absent. Provider endpoints are never
 part of this check.
+The owner-local launcher has separate tests for missing, disabled, duplicated,
+unexpected and malformed runtime entries plus remote, privileged, credential-free,
+wrong-database and option-bearing PostgreSQL URLs.
 
 `npm test` builds first, then delegates to `npm run test:coverage`. Both the coverage
 command and the faster `npm run test:unit` command use
