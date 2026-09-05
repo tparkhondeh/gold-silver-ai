@@ -174,3 +174,9 @@ any real data is acquired. It covers all eight factors and five constraints, fix
 chronological train/validation/test isolation and parameter freezing, and lists ten
 fail-closed promotion gates. The fingerprinted artifact contains requirements only:
 no provider, observation, calibrated value, financial permission or execution route.
+
+`evaluate_synthetic_calibration_evidence()` tests the ten-gate dependency mechanics
+with twenty exact artificial checks. It emits deterministic passed/failed/blocked
+states and blocks later gates after the first failure or omission. A fully satisfied
+synthetic fixture still leaves real calibration unevaluated, promotion blocked and
+parameter mutation, financial use and execution disabled.

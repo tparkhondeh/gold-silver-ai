@@ -32,6 +32,10 @@ state is recorded in `docs/10-project-state/CURRENT_STATE.md`.
   disabled. Eight new tests bring the laboratory total to 214.
 - Iran-calibration-manifest checkpoint `4588088` passed all three GitHub Actions jobs
   in run 33993319908; `main` remained unchanged.
+- Added canonical synthetic evidence/result contracts for the ten calibration gates.
+  Twenty artificial checks produce deterministic passed, failed or dependency-blocked
+  mechanics while real calibration, parameter mutation, financial use, promotion and
+  execution remain locked. Eight new tests bring the laboratory total to 222.
 
 - Recorded the owner's acceptance of Phase 1 Data Foundation for progression and the
   exact synthetic-only Phase 2 boundary in ADR 0009.

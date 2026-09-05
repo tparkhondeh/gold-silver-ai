@@ -23,10 +23,13 @@ A versioned requirements-only Iran calibration manifest now predeclares the exac
 factor/constraint fields, 1,260-observation train/validation/test isolation, parameter
 freeze and ten fail-closed promotion gates without selecting a provider or containing
 real data.
+A deterministic synthetic evaluator now applies twenty artificial checks to those ten
+gates and reports passed, failed or dependency-blocked mechanics. Even an all-pass
+fixture keeps every real-world gate unevaluated and promotion disabled.
 Synthetic reference actions and a same-fold two-window comparison against six controls
 are exactly replayable and unranked. The web demo mirrors the method and exposes its
 calculations behind a plain-language disclosure. Financial use, execution, Iran
-fitness and real-data approval remain false. Two hundred and fourteen laboratory tests,
+fitness and real-data approval remain false. Two hundred and twenty-two laboratory tests,
 the production web build, lint, typecheck, all 130 web tests and coverage gates pass
 locally.
 Code checkpoint `909d537` passed all three GitHub Actions jobs in run

@@ -45,6 +45,10 @@ from .transparent_decision import (
     validate_transparent_guarded_decision,
 )
 from .iran_calibration_manifest import validate_iran_calibration_manifest
+from .calibration_gate_evaluator import (
+    validate_calibration_gate_result,
+    validate_synthetic_calibration_evidence,
+)
 from .synthetic_stress import (
     validate_stressed_return_matrix,
     validate_synthetic_stress_scenario,
@@ -1241,3 +1245,43 @@ def encode_iran_calibration_manifest(payload: object) -> bytes:
 
 def decode_iran_calibration_manifest(document: object) -> dict[str, Any]:
     return _decode_canonical(document, validate_iran_calibration_manifest)
+
+
+def encode_synthetic_calibration_evidence(
+    payload: object, manifest_payload: object
+) -> bytes:
+    return _encode_canonical(
+        payload,
+        lambda value: validate_synthetic_calibration_evidence(value, manifest_payload),
+    )
+
+
+def decode_synthetic_calibration_evidence(
+    document: object, manifest_payload: object
+) -> dict[str, Any]:
+    return _decode_canonical(
+        document,
+        lambda value: validate_synthetic_calibration_evidence(value, manifest_payload),
+    )
+
+
+def encode_calibration_gate_result(
+    payload: object, evidence_payload: object, manifest_payload: object
+) -> bytes:
+    return _encode_canonical(
+        payload,
+        lambda value: validate_calibration_gate_result(
+            value, evidence_payload, manifest_payload
+        ),
+    )
+
+
+def decode_calibration_gate_result(
+    document: object, evidence_payload: object, manifest_payload: object
+) -> dict[str, Any]:
+    return _decode_canonical(
+        document,
+        lambda value: validate_calibration_gate_result(
+            value, evidence_payload, manifest_payload
+        ),
+    )

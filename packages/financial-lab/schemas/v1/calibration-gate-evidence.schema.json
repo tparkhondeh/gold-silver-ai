@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://goldsilver.wealthos.ir/contracts/asha.synthetic.calibration_gate_evidence.v1.schema.json",
+  "title": "Asha synthetic calibration gate evidence v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion", "bundleId", "scenarioId", "manifestReference", "boundary",
+    "gateEvidence"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "asha.synthetic.calibration_gate_evidence.v1" },
+    "bundleId": { "type": "string", "pattern": "^ASHA_SYNTHETIC_CALIBRATION_EVIDENCE_[a-f0-9]{64}$" },
+    "scenarioId": { "type": "string", "pattern": "^[A-Z][A-Z0-9_]{2,80}$" },
+    "manifestReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["manifestId", "manifestVersion", "schemaVersion"],
+      "properties": {
+        "manifestId": { "type": "string", "pattern": "^ASHA_IRAN_CALIBRATION_MANIFEST_[a-f0-9]{64}$" },
+        "manifestVersion": { "const": 1 },
+        "schemaVersion": { "const": "asha.synthetic.iran_calibration_manifest.v1" }
+      }
+    },
+    "boundary": {
+      "const": {
+        "datasetKind": "synthetic_gate_evidence_fixture",
+        "containsMarketObservations": false,
+        "containsProviderCredentials": false,
+        "realDataIngestionAllowed": false,
+        "financialUseAllowed": false,
+        "executionAllowed": false
+      }
+    },
+    "gateEvidence": {
+      "type": "array",
+      "minItems": 10,
+      "maxItems": 10,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["gateId", "checks"],
+        "properties": {
+          "gateId": { "type": "string", "pattern": "^G(0[1-9]|10)_[A-Z0-9_]+$" },
+          "checks": {
+            "type": "array",
+            "minItems": 2,
+            "maxItems": 2,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["checkId", "state", "syntheticEvidenceId"],
+              "properties": {
+                "checkId": { "type": "string", "pattern": "^[A-Z][A-Z0-9_]+$" },
+                "state": { "enum": ["satisfied", "failed", "missing"] },
+                "syntheticEvidenceId": {
+                  "type": ["string", "null"],
+                  "pattern": "^ASHA_SYNTHETIC_GATE_EVIDENCE_[A-Z0-9_]+_V1$"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

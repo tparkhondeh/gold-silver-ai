@@ -20,11 +20,17 @@ point-in-time/cost/liquidity evidence, train/validation/test isolation, paramete
 freeze and pass/fail gates needed later for all eight factors and five constraints.
 Every gate remains unevaluated and no provider or observation is present.
 
-The immediate next safe unit is a synthetic calibration gate-evidence evaluator. It
-may accept only explicitly artificial evidence records matching the manifest and emit
-deterministic pass/fail/blocked states for each gate. It must not ingest real data,
-select a provider, set acceptance thresholds, change method parameters, claim
-performance or enable financial use/execution.
+The synthetic calibration gate-evidence evaluator is complete. Twenty exact artificial
+checks exercise all ten gates and their dependency order; all-satisfied, missing and
+failed fixtures replay deterministically. Synthetic passage cannot affect any real
+gate or permission.
+
+The immediate next safe unit is a canonical synthetic parameter-freeze bundle. It
+must capture the exact laboratory-v1 weights, bands, horizons, constraints, cost and
+missing-data rules, stress-label registry and the explicit unset state of real
+acceptance thresholds. It must be fingerprinted before any synthetic test fixture is
+linked and must not derive a parameter from synthetic outcomes, set real thresholds,
+claim performance or enable financial use/execution.
 
 Migrations 0003–0011 now cover the owner snapshot, immutable provenance,
 exact point-in-time dataset/decision lineage, source-reconciliation records and
@@ -315,6 +321,11 @@ financial engine remain separate gates.
    floors, chronological split isolation, parameter freezing and ten fail-closed
    promotion gates. Eight tests bring the laboratory total to 214; every gate remains
    unevaluated and the artifact contains no provider, real datum or execution route.
+59. **SYNTHETIC CALIBRATION GATE EVALUATOR COMPLETE:** twenty exact artificial checks
+   feed ten ordered gates and produce deterministic pass, fail or dependency-blocked
+   results. Eight tests bring the laboratory total to 222; even all-pass mechanics
+   keep real calibration unevaluated and parameter change, promotion, financial use
+   and execution disabled.
 
 All implementation available from published provider contracts is complete; real
 provider history execution remains paused at item 6 for Tier-A licensing/cost decisions.

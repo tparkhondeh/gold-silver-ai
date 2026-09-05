@@ -43,3 +43,12 @@ No gate currently passes: every one is `not_evaluated`. Future real evaluation a
 requires licensed Iranian data, an independent cross-check, a frozen artifact,
 out-of-sample replay, shadow review and a separate owner ADR. Synthetic results cannot
 prove financial performance and neither financial use nor execution is enabled.
+
+## Synthetic gate evaluator
+
+`asha.synthetic.calibration_gate_evidence.v1` and
+`asha.synthetic.calibration_gate_result.v1` now test the gate sequence without market
+data. Twenty exact artificial checks cover the ten gates. A failed gate is reported
+and every dependent gate is blocked; missing evidence blocks the current and later
+gates. Even when all artificial checks pass, every `realWorldState` remains
+`not_evaluated`, promotion remains blocked and parameters cannot be changed.

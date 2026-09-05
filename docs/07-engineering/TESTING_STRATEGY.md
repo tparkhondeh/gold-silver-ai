@@ -233,6 +233,11 @@ Eight Iran-calibration-manifest tests require all factor/constraint inputs, exac
 chronological isolation, point-in-time lineage, parameter freezing, ten unevaluated
 gates and canonical replay. They reject fingerprint-resealed history, constraint,
 gate or real-use drift. The laboratory total is now two hundred and fourteen tests.
+Eight calibration-gate-evaluator tests cover exact twenty-check completeness,
+dependency blocking, missing and failed evidence, canonical transport and resealed
+tampering. They prove that synthetic mechanical passage cannot approve real
+calibration, parameter mutation, financial use or execution. The laboratory total is
+now two hundred and twenty-two tests.
 
 ## Related Documents
 
