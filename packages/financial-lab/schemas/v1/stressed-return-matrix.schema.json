@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://goldsilver.wealthos.ir/contracts/asha.synthetic.stressed_return_matrix.v1.schema.json",
+  "title": "Asha explicit synthetic stressed return matrix v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion", "stressedMatrixId", "status", "financialUseAllowed",
+    "executionAllowed", "decisionState", "datasetReference",
+    "baseReturnMatrixReference", "stressScenarioReference", "methodologyReference",
+    "startIndex", "endIndex", "instrumentIds", "rows", "reasonCodes"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "asha.synthetic.stressed_return_matrix.v1" },
+    "stressedMatrixId": {
+      "type": "string",
+      "pattern": "^ASHA_STRESSED_RETURN_MATRIX_[a-f0-9]{64}$"
+    },
+    "status": { "const": "evaluation_only" },
+    "financialUseAllowed": { "const": false },
+    "executionAllowed": { "const": false },
+    "decisionState": { "const": "no_decision" },
+    "datasetReference": { "type": "object" },
+    "baseReturnMatrixReference": { "type": "object" },
+    "stressScenarioReference": { "type": "object" },
+    "methodologyReference": {
+      "const": { "entityId": "STATUS_TBD", "version": 0, "approvalState": "unapproved" }
+    },
+    "startIndex": { "type": "integer", "minimum": 1 },
+    "endIndex": { "type": "integer", "minimum": 1 },
+    "instrumentIds": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "type": "string", "pattern": "^SYNTH_[A-Z0-9_]{2,64}$" }
+    },
+    "rows": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["periodIndex", "returns"],
+        "properties": {
+          "periodIndex": { "type": "integer", "minimum": 1 },
+          "returns": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["instrumentId", "baseReturn", "additiveReturnShock", "stressedReturn"],
+              "properties": {
+                "instrumentId": { "type": "string", "pattern": "^SYNTH_[A-Z0-9_]{2,64}$" },
+                "baseReturn": { "type": "string" },
+                "additiveReturnShock": { "type": "string" },
+                "stressedReturn": { "type": "string" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "reasonCodes": {
+      "const": [
+        "EXPLICIT_SYNTHETIC_SHOCKS_ONLY", "FEATURE_MECHANICS_ONLY",
+        "METHODOLOGY_NOT_APPROVED", "NO_FINANCIAL_DECISION",
+        "REAL_FINANCIAL_USE_DISABLED", "SYNTHETIC_DATA_ONLY"
+      ]
+    }
+  }
+}

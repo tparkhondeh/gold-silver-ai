@@ -167,6 +167,11 @@ Five HRP walk-forward tests hand-check all three fold ranges and metrics, pin th
 report identity, require every intermediate artifact ID, prove first-fold future
 isolation, require canonical transport, and reject incomplete or resealed reports.
 One hundred and twenty laboratory tests pass with no aggregate claim or decision.
+Six synthetic-stress tests hand-check additive shock arithmetic, preserve visible base
+and zero-default values, pin deterministic replay, require synthetic namespaces and
+sorted unique cells, enforce exact matrix coverage and reject total-loss or resealed
+false values. One hundred and twenty-six laboratory tests pass; no crisis methodology,
+probability, threshold, ranking or decision is inferred.
 
 ## Related Documents
 

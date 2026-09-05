@@ -8,9 +8,11 @@ The owner accepted the Phase 1 Data Foundation for progression and authorized th
 synthetic-only Phase 2 laboratory on 2026-09-01. ADR 0009 is binding: no real data,
 paid API, real recommendation, production registry write, or execution is permitted.
 The isolated Python package, versioned synthetic input/output contract, independent CI
-gate, canonical artifacts and exact no-decision replay are complete. The immediate
-unit is hand-verifiable synthetic benchmark mechanics, beginning with comparison
-controls that can never emit a financial decision or enter the application runtime.
+gate, canonical artifacts, exact no-decision replay, three multi-fold comparison
+controls and the explicit synthetic stress-return matrix are complete. The immediate
+safe unit is to evaluate already-frozen benchmark weights against that exact stressed
+matrix without refitting, ranking, aggregation or methodology selection. It must
+remain synthetic-only and can never enter the application runtime.
 
 Migrations 0003–0011 now cover the owner snapshot, immutable provenance,
 exact point-in-time dataset/decision lineage, source-reconciliation records and
@@ -229,8 +231,13 @@ financial engine remain separate gates.
 46. **HRP MULTI-FOLD REPORT COMPLETE:** every fold rebuilds the complete standardizer-
     to-covariance-to-correlation-to-clustering-to-order-to-weight chain and freezes it
     for only that test interval. All artifact identities and separate fold metrics are
-    replayable under `none_fold_metrics_only`; no aggregate claim or methodology
-    approval is emitted.
+   replayable under `none_fold_metrics_only`; no aggregate claim or methodology
+   approval is emitted.
+47. **EXPLICIT SYNTHETIC STRESS MATRIX COMPLETE:** a versioned scenario lists bounded
+   additive shocks against synthetic period/path identities only. The derived matrix
+   retains the base return, an explicit shock value for every cell and the stressed
+   result; exact provenance and canonical replay reject omissions, ambiguity and
+   tampering. It emits no metric, ranking, recommendation or operational decision.
 
 All implementation available from published provider contracts is complete; real
 provider history execution remains paused at item 6 for Tier-A licensing/cost decisions.

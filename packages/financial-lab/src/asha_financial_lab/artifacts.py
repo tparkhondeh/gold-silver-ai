@@ -28,6 +28,10 @@ from .features import validate_point_in_time_return_matrix
 from .normalization import validate_normalized_fold, validate_train_only_standardizer
 from .minimum_cvar_control import validate_minimum_cvar_comparison_control_weights
 from .minimum_cvar_walk_forward import validate_minimum_cvar_walk_forward_report
+from .synthetic_stress import (
+    validate_stressed_return_matrix,
+    validate_synthetic_stress_scenario,
+)
 from .walk_forward import validate_walk_forward_plan
 from .walk_forward_evaluation import validate_inverse_volatility_walk_forward_report
 
@@ -763,5 +767,41 @@ def decode_hrp_walk_forward_report(
         document,
         lambda value: validate_hrp_walk_forward_report(
             value, dataset_payload, matrix_payload, plan_payload
+        ),
+    )
+
+
+def encode_synthetic_stress_scenario(payload: object) -> bytes:
+    return _encode_canonical(payload, validate_synthetic_stress_scenario)
+
+
+def decode_synthetic_stress_scenario(document: object) -> dict[str, Any]:
+    return _decode_canonical(document, validate_synthetic_stress_scenario)
+
+
+def encode_stressed_return_matrix(
+    payload: object,
+    dataset_payload: object,
+    matrix_payload: object,
+    scenario_payload: object,
+) -> bytes:
+    return _encode_canonical(
+        payload,
+        lambda value: validate_stressed_return_matrix(
+            value, dataset_payload, matrix_payload, scenario_payload
+        ),
+    )
+
+
+def decode_stressed_return_matrix(
+    document: object,
+    dataset_payload: object,
+    matrix_payload: object,
+    scenario_payload: object,
+) -> dict[str, Any]:
+    return _decode_canonical(
+        document,
+        lambda value: validate_stressed_return_matrix(
+            value, dataset_payload, matrix_payload, scenario_payload
         ),
     )

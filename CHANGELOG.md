@@ -163,6 +163,11 @@ state is recorded in `docs/10-project-state/CURRENT_STATE.md`.
 - Added an HRP multi-fold report with every standardizer, covariance, correlation,
   distance, cluster, order, weight and evaluation identity per fold. Separate metrics
   cannot become an aggregate performance claim. One hundred and twenty tests pass.
+- Added canonical explicit synthetic stress scenarios and a stressed-return matrix.
+  Each cell retains its base return, visible additive shock and deterministic stressed
+  result. Invalid namespaces/ranges, ambiguous shocks, total-loss arithmetic and
+  resealed tampering fail closed. One hundred and twenty-six tests pass; no real
+  crisis model, ranking, decision, financial use or execution is enabled.
 
 ### Fail-closed Navasan history authorization — ۱۴۰۵/۰۶/۱۰
 

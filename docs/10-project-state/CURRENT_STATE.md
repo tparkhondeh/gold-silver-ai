@@ -2,7 +2,7 @@
 
 **Source of truth for:** where the project stands right now.
 
-_Last updated in the product calendar: ۱۴۰۵/۰۶/۱۰ (Phase 2 synthetic laboratory active)_
+_Last updated in the product calendar: ۱۴۰۵/۰۶/۱۴ (Phase 2 synthetic laboratory active)_
 
 ## Current Execution Gate
 
@@ -175,6 +175,13 @@ clustering/order/weight/evaluation chain can now replay independently across all
 synthetic folds. Its report records every artifact identity and keeps fold metrics
 separate with no aggregate claim. One hundred and twenty tests pass locally; every
 output remains `no_decision`, no-use and no-execution.
+An explicit synthetic stress-scenario contract can now apply bounded additive shocks
+to exact cells of a provenance-bound return matrix. Every output cell preserves its
+base return, explicit shock (including visible zero for unspecified cells), and
+stressed return. Real identifiers, ambiguous ordering, out-of-matrix shocks, total-
+loss arithmetic and resealed false values fail closed. One hundred and twenty-six
+laboratory tests pass locally. This is crisis-test plumbing only: no crisis definition,
+threshold, benchmark ranking, financial decision, real use or execution is approved.
 
 The owner authorized staged Data Foundation and deterministic-baseline development,
 with each stage dependent on the previous quality gate. Private GitHub authentication

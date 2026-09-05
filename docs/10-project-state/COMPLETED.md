@@ -208,6 +208,12 @@ Phase 1 checkpoint `0f90210`; not merged to `main`.
   train-only feature/clustering/weight chain per fold, freezes it for that test range,
   and keeps metrics separate with no aggregate claim. One hundred and twenty tests
   pass; incomplete or resealed reports fail closed.
+- Added versioned explicit synthetic stress scenarios and a provenance-bound stressed
+  return matrix. Every base value, applied shock and stressed value remains visible;
+  unspecified cells become explicit zero shocks. Real namespaces, ambiguous entries,
+  out-of-range cells, invalid total-loss arithmetic and resealed false values fail
+  closed. One hundred and twenty-six tests pass; no risk threshold, benchmark ranking,
+  financial decision or execution is introduced.
 
 ## Phase 1 — Completed Units on the Working Branch
 

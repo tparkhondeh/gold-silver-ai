@@ -78,6 +78,10 @@ instability without converting separate folds into a claimed overall result.
 The complete HRP feature and weighting chain can now repeat across every fold as well.
 Every intermediate identity is recorded, weights are frozen before each test, and
 fold metrics cannot be aggregated into a claimed overall performance result.
+The laboratory also has a versioned explicit-shock matrix for synthetic crisis-test
+mechanics. It applies only caller-supplied additive shocks to exact synthetic
+period/path cells and preserves base, shock and stressed values for replay. It does
+not define a real crisis, severity, probability, threshold or approved risk method.
 
 ## Related Documents
 
