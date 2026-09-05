@@ -128,3 +128,9 @@ publication to the already-pinned synthetic stress/walk-forward artifact and pre
 method-specific non-equivalence limitations. Data sufficiency, Iran validation and
 real cost/liquidity cells stay `not_evaluated`; exact validation rejects even a
 fingerprint-resealed change to the reviewed record.
+
+`build_methodology_evidence_gap_report()` turns that exact registry into a separate
+ten-criterion gap inventory for each method. Every cell says only `documented`,
+`synthetic_only` or `not_evaluated`, retains its evidence and limitations, and lists
+what is still unresolved. The canonical report cannot emit a completeness score,
+ranking, selection, financial permission or execution permission.

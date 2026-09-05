@@ -52,5 +52,13 @@ does not mean the method is the newest or best. Later alternatives were not rank
 The registry keeps Iranian data sufficiency, Iran-specific validation and real
 cost/liquidity evidence explicitly `not_evaluated` for all three controls.
 
+The versioned evidence-gap report now projects those exact records into 30 separate
+method/criterion cells. Each cell shows `documented`, `synthetic_only` or
+`not_evaluated`, the evidence references, retained limitations and explicit unresolved
+requirements. It also carries each method's data needs, Iranian gaps, robustness checks
+and known failure modes without producing a completeness score, rank or selection.
+Its machine-readable schema and canonical fingerprint make omissions or resealed
+changes fail closed.
+
 `STATUS: TBD` for a real method decision. Recording these sources does not select or
 approve any method.

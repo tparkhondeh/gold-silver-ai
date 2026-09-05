@@ -199,6 +199,11 @@ locators, versions and review date; require all Iranian/real-cost cells to remai
 unmet; preserve method-specific non-equivalence limitations; round-trip canonical
 bytes; and reject fingerprint-resealed source or evidence drift. One hundred and
 sixty-six laboratory tests pass with selection still blocked.
+Six evidence-gap tests preserve all 30 method/criterion cells and their three plain
+statuses, require unresolved requirements and method-level Iran/data/robustness gaps,
+pin the schema and canonical report identity, state that source identity is not
+performance evidence, and reject resealed report or source-registry drift. One hundred
+and seventy-two laboratory tests pass without a score, rank or selected method.
 
 ## Related Documents
 

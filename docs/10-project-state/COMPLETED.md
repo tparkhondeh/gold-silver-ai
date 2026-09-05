@@ -258,6 +258,11 @@ Phase 1 checkpoint `0f90210`; not merged to `main`.
   remain unmet. One hundred and sixty-six tests pass without scoring or selection.
 - Reviewed-source registry checkpoint `1aeed02` passed all three jobs in GitHub run
   [33978255294](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33978255294).
+- Added the exact methodology evidence-gap report. It preserves all 30 separate
+  method/criterion cells, plain evidence status, references, limitations, unresolved
+  requirements, data needs, Iran gaps, robustness checks and failure modes. One
+  hundred and seventy-two tests pass; completeness scoring, ranking, selection and
+  operational use remain impossible.
 
 ## Phase 1 — Completed Units on the Working Branch
 

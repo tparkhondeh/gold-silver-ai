@@ -235,6 +235,13 @@ explicitly unmet. One hundred and sixty-six tests pass locally; source identity 
 auditable but no method is scored, ranked, selected or approved.
 Reviewed-source registry checkpoint `1aeed02` passed all three GitHub jobs in run
 33978255294.
+A versioned evidence-gap report now derives only from that exact registry and keeps
+all 30 method/criterion cells separate. Each cell exposes `documented`,
+`synthetic_only` or `not_evaluated`, evidence references, limitations and exact open
+requirements. Method-level data needs, Iranian gaps, robustness checks and failure
+modes remain visible. One hundred and seventy-two laboratory tests pass locally; the
+report cannot compute completeness, rank methods, select one or enter application
+runtime.
 
 The owner authorized staged Data Foundation and deterministic-baseline development,
 with each stage dependent on the previous quality gate. Private GitHub authentication

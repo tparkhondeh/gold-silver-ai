@@ -35,6 +35,7 @@ from .methodology_evidence import (
 from .reviewed_methodologies import (
     validate_reviewed_comparison_methodology_registry,
 )
+from .methodology_gaps import validate_methodology_evidence_gap_report
 from .synthetic_stress import (
     validate_stressed_return_matrix,
     validate_synthetic_stress_scenario,
@@ -1151,3 +1152,11 @@ def decode_reviewed_comparison_methodology_registry(
     return _decode_canonical(
         document, validate_reviewed_comparison_methodology_registry
     )
+
+
+def encode_methodology_evidence_gap_report(payload: object) -> bytes:
+    return _encode_canonical(payload, validate_methodology_evidence_gap_report)
+
+
+def decode_methodology_evidence_gap_report(document: object) -> dict[str, Any]:
+    return _decode_canonical(document, validate_methodology_evidence_gap_report)

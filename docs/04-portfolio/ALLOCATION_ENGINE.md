@@ -84,6 +84,9 @@ allocation-methodology decision.
 Primary publications are now recorded for all three controls with explicit
 non-equivalence limitations. This makes their origin auditable but does not claim that
 any is current-best, suitable for Iran or eligible for selection.
+The exact evidence-gap report now makes every unresolved criterion, data need,
+Iran-specific gap, robustness check and failure mode visible per method. It cannot
+score or compare completeness, so the Tier-A methodology decision remains open.
 
 ## Related Documents
 

@@ -11,12 +11,14 @@ The isolated Python package, versioned synthetic input/output contract, independ
 gate, canonical artifacts, exact no-decision replay, three multi-fold comparison
 controls, the explicit synthetic stress-return matrix and frozen-weight stress
 evaluation, versioned multi-scenario suites and multi-fold stress replay for
-inverse-volatility, HRP and minimum-CVaR are complete. The immediate safe unit is a
-versioned evidence-gap report derived only from the exact reviewed registry. For each
-method and each predeclared criterion, it must expose `documented`, `synthetic only` or
-`not evaluated`, list the unresolved requirements and keep methods separate. It must
-not compute a completeness score, rank candidates or imply that source identity proves
-real or Iranian performance, and nothing can enter the application runtime yet.
+inverse-volatility, HRP and minimum-CVaR are complete. Their exact evidence-gap report
+also keeps every method/criterion cell and unresolved requirement separate without a
+score, rank or selection. The immediate safe unit is a versioned research-candidate
+intake contract. It must require authoritative source identity, review/search date,
+candidate scope, non-equivalence limits and explicit evidence gaps before a newly
+discovered method can enter research. It may list candidates but cannot score, rank,
+select, implement or imply real/Iranian fitness; it cannot automate network research
+or enter the application runtime.
 
 Migrations 0003–0011 now cover the owner snapshot, immutable provenance,
 exact point-in-time dataset/decision lineage, source-reconciliation records and
@@ -278,6 +280,12 @@ financial engine remain separate gates.
    validation and real cost/liquidity evidence remain explicitly unmet. One hundred
    and sixty-six tests reject resealed research drift; no method is scored, ranked,
    selected or approved.
+54. **METHODOLOGY EVIDENCE-GAP REPORT COMPLETE:** all 30 exact method/criterion cells
+   expose `documented`, `synthetic_only` or `not_evaluated` with their evidence,
+   limitations and unresolved requirements. Method-level data needs, Iranian gaps,
+   robustness checks and failure modes stay separate. One hundred and seventy-two
+   tests reject omitted or resealed evidence; no completeness score, rank, selection,
+   financial use or runtime integration is possible.
 
 All implementation available from published provider contracts is complete; real
 provider history execution remains paused at item 6 for Tier-A licensing/cost decisions.

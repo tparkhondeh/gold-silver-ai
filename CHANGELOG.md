@@ -214,6 +214,11 @@ state is recorded in `docs/10-project-state/CURRENT_STATE.md`.
 - Reviewed-source registry checkpoint `1aeed02` passed all three GitHub Actions jobs in
   run
   [33978255294](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33978255294).
+- Added a canonical methodology evidence-gap report derived only from the exact
+  reviewed registry. All 30 method/criterion cells retain their plain status,
+  references, limitations and unresolved requirements; method-level data, Iran,
+  robustness and failure-mode gaps remain separate. Six new tests bring the laboratory
+  total to one hundred and seventy-two with no score, ranking or selection.
 
 ### Fail-closed Navasan history authorization — ۱۴۰۵/۰۶/۱۰
 

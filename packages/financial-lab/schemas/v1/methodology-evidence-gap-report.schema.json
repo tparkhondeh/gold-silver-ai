@@ -1,0 +1,182 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://goldsilver.wealthos.ir/contracts/asha.methodology.evidence_gap_report.v1.schema.json",
+  "title": "Asha methodology evidence-gap report v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion", "reportId", "reportVersion", "status",
+    "financialUseAllowed", "executionAllowed", "selectionAllowed",
+    "methodologyApprovalState", "registryReference", "methods", "summary",
+    "reportPolicy", "reasonCodes"
+  ],
+  "$defs": {
+    "textList": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 32,
+      "uniqueItems": true,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "referenceList": {
+      "type": "array",
+      "maxItems": 32,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^[A-Z][A-Za-z0-9_.:-]{2,160}$"
+      }
+    }
+  },
+  "properties": {
+    "schemaVersion": { "const": "asha.methodology.evidence_gap_report.v1" },
+    "reportId": {
+      "type": "string",
+      "pattern": "^ASHA_METHODOLOGY_EVIDENCE_GAP_REPORT_[a-f0-9]{64}$"
+    },
+    "reportVersion": { "const": 1 },
+    "status": { "const": "research_gap_inventory_only" },
+    "financialUseAllowed": { "const": false },
+    "executionAllowed": { "const": false },
+    "selectionAllowed": { "const": false },
+    "methodologyApprovalState": { "const": "unapproved" },
+    "registryReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["registryId", "registryVersion", "rubricId"],
+      "properties": {
+        "registryId": {
+          "type": "string",
+          "pattern": "^ASHA_METHODOLOGY_EVIDENCE_REGISTRY_[a-f0-9]{64}$"
+        },
+        "registryVersion": { "type": "integer", "minimum": 1 },
+        "rubricId": {
+          "type": "string",
+          "pattern": "^ASHA_METHODOLOGY_RUBRIC_[a-f0-9]{64}$"
+        }
+      }
+    },
+    "methods": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 32,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "methodologyId", "methodologyVersion", "displayName",
+          "selectionEligibility", "sourceIdentityMeaning", "criterionGaps",
+          "unresolvedDataRequirements", "iranSpecificGaps",
+          "requiredRobustnessChecks", "knownFailureModes"
+        ],
+        "properties": {
+          "methodologyId": {
+            "type": "string",
+            "pattern": "^ASHA_(BENCHMARK|METHOD)_[A-Z0-9_]{3,80}_V[1-9][0-9]*$"
+          },
+          "methodologyVersion": { "type": "integer", "minimum": 1 },
+          "displayName": { "type": "string", "pattern": "^\\[LAB ONLY\\] " },
+          "selectionEligibility": {
+            "const": "blocked_owner_methodology_decision_required"
+          },
+          "sourceIdentityMeaning": {
+            "const": "documented_context_only_not_real_or_iranian_performance_evidence"
+          },
+          "criterionGaps": {
+            "type": "array",
+            "minItems": 10,
+            "maxItems": 10,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "criterionId", "plainLanguageQuestion", "iranSpecific",
+                "evidenceStatus", "evidenceReferences", "requiredEvidenceKinds",
+                "unresolvedRequirements", "limitations"
+              ],
+              "properties": {
+                "criterionId": {
+                  "type": "string",
+                  "pattern": "^[A-Z][A-Z0-9_]{2,80}$"
+                },
+                "plainLanguageQuestion": { "type": "string", "minLength": 1 },
+                "iranSpecific": { "type": "boolean" },
+                "evidenceStatus": {
+                  "enum": ["documented", "synthetic_only", "not_evaluated"]
+                },
+                "evidenceReferences": { "$ref": "#/$defs/referenceList" },
+                "requiredEvidenceKinds": { "$ref": "#/$defs/textList" },
+                "unresolvedRequirements": { "$ref": "#/$defs/textList" },
+                "limitations": { "$ref": "#/$defs/textList" }
+              }
+            }
+          },
+          "unresolvedDataRequirements": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 32,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "requirementId", "description", "minimumEvidenceRule",
+                "iranDataStatus"
+              ],
+              "properties": {
+                "requirementId": {
+                  "type": "string",
+                  "pattern": "^[A-Z][A-Z0-9_]{2,80}$"
+                },
+                "description": { "type": "string", "minLength": 1 },
+                "minimumEvidenceRule": { "const": "STATUS_TBD_OWNER_APPROVAL" },
+                "iranDataStatus": {
+                  "enum": ["not_assessed", "not_available", "synthetic_only"]
+                }
+              }
+            }
+          },
+          "iranSpecificGaps": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["status", "requiredEvidence", "gapCodes"],
+            "properties": {
+              "status": { "enum": ["not_started", "requirements_documented"] },
+              "requiredEvidence": { "$ref": "#/$defs/textList" },
+              "gapCodes": { "$ref": "#/$defs/textList" }
+            }
+          },
+          "requiredRobustnessChecks": { "$ref": "#/$defs/textList" },
+          "knownFailureModes": { "$ref": "#/$defs/textList" }
+        }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "methodologyCount", "criterionCellCount", "completenessScoreProduced",
+        "rankingProduced", "selectionProduced"
+      ],
+      "properties": {
+        "methodologyCount": { "type": "integer", "minimum": 1 },
+        "criterionCellCount": { "type": "integer", "minimum": 1 },
+        "completenessScoreProduced": { "const": false },
+        "rankingProduced": { "const": false },
+        "selectionProduced": { "const": false }
+      }
+    },
+    "reportPolicy": {
+      "const": "separate_method_and_criterion_gaps_no_score_rank_or_selection"
+    },
+    "reasonCodes": {
+      "const": [
+        "ALL_METHODS_REMAIN_UNAPPROVED",
+        "IRAN_VALIDATION_REQUIRED",
+        "NO_COMPLETENESS_SCORE",
+        "NO_METHOD_RANKING",
+        "NO_METHOD_SELECTION",
+        "REAL_DATA_EVIDENCE_REQUIRED"
+      ]
+    }
+  }
+}

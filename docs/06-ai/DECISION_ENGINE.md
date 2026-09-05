@@ -247,6 +247,9 @@ content/input/output fingerprints, risk state, and typed cross-version reference
 The runtime account is read-only for these registries. Retention, operational state
 transition governance, and the real deterministic engine remain `STATUS: TBD`; no
 financial output has been registered or unlocked by this storage foundation.
+The isolated laboratory additionally emits an exact methodology evidence-gap report.
+It preserves separate unresolved cells and explicitly produces no completeness score,
+ranking or selection; it is not connected to the application runtime.
 
 ## Related Documents
 
