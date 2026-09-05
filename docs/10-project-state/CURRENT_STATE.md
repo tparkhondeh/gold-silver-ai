@@ -190,6 +190,8 @@ return/wealth paths and their separate cumulative-change/drawdown metrics, requi
 every explicit shock to be used exactly once, and contains no winner, rank or
 threshold. One hundred and thirty-two laboratory tests pass locally; the result stays
 `no_decision`, no-use and no-execution.
+Frozen inverse-volatility stress-evaluation checkpoint `069018d` passed all three
+GitHub jobs in run 33963506190.
 
 The owner authorized staged Data Foundation and deterministic-baseline development,
 with each stage dependent on the previous quality gate. Private GitHub authentication

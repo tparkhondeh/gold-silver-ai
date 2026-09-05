@@ -174,6 +174,9 @@ state is recorded in `docs/10-project-state/CURRENT_STATE.md`.
   explicit synthetic shocks. Both paths and metrics replay exactly; shocks outside
   the associated test fold, foreign weights and resealed values fail closed. One
   hundred and thirty-two tests pass with no ranking, threshold or decision output.
+- Frozen inverse-volatility stress checkpoint `069018d` passed all three GitHub
+  Actions jobs in run
+  [33963506190](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33963506190).
 
 ### Fail-closed Navasan history authorization — ۱۴۰۵/۰۶/۱۰
 

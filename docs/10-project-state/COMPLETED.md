@@ -220,6 +220,9 @@ Phase 1 checkpoint `0f90210`; not merged to `main`.
   weights. It reports separate base/stressed paths and metrics, applies every explicit
   shock exactly once, rejects foreign weights and resealed metrics, and cannot rank,
   set a threshold, recommend or execute. One hundred and thirty-two tests pass.
+- Frozen inverse-volatility stress checkpoint `069018d` passed all three jobs in
+  GitHub run
+  [33963506190](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33963506190).
 
 ## Phase 1 — Completed Units on the Working Branch
 
