@@ -217,6 +217,8 @@ laboratory tests pass locally; missing/reordered folds, altered metrics and nonc
 minimum-CVaR parameters fail closed. The permanent
 `none_fold_or_scenario_metrics_only` policy forbids a combined score, ranking,
 threshold, methodology approval, recommendation or execution.
+Multi-fold/multi-scenario stress checkpoint `eaf41c6` passed all three GitHub jobs
+in run 33972395723.
 
 The owner authorized staged Data Foundation and deterministic-baseline development,
 with each stage dependent on the previous quality gate. Private GitHub authentication
