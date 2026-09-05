@@ -198,6 +198,8 @@ fixed over the associated shocked test fold, records separate base/stressed path
 and rejects foreign provenance, altered metrics or canonical-transport drift. One
 hundred and thirty-eight laboratory tests pass locally. The shared contract still
 cannot rank controls, set a threshold, recommend, approve a methodology or execute.
+Extended frozen-control stress checkpoint `4a1ace9` passed all three GitHub jobs in
+run 33965934288.
 
 The owner authorized staged Data Foundation and deterministic-baseline development,
 with each stage dependent on the previous quality gate. Private GitHub authentication
