@@ -238,6 +238,10 @@ dependency blocking, missing and failed evidence, canonical transport and reseal
 tampering. They prove that synthetic mechanical passage cannot approve real
 calibration, parameter mutation, financial use or execution. The laboratory total is
 now two hundred and twenty-two tests.
+Eight parameter-freeze tests reconcile equal factor weights, exact cutoffs, horizons
+and reference-fixture constraints; require empty evaluation links and real thresholds;
+round-trip canonical bytes; and reject resealed weight, outcome-derived, permission
+or threshold drift. The laboratory total is now two hundred and thirty tests.
 
 ## Related Documents
 

@@ -168,5 +168,8 @@ The exact future Iran evidence, minimum-history, point-in-time, split, freeze an
 promotion requirements are now versioned in
 `docs/05-data/IRAN_CALIBRATION_MANIFEST.md`. This records how validation must happen;
 it does not perform calibration or alter the laboratory-v1 values.
+Those existing values and their still-unset real thresholds are now fingerprint-frozen
+in `docs/04-portfolio/PARAMETER_FREEZE_V1.md`; this is an anti-result-chasing control,
+not Iranian validation.
 
 `STATUS: IMPLEMENTED AS A LABORATORY PROPOSAL; NOT IRAN-VALIDATED OR FINANCIALLY APPROVED`.

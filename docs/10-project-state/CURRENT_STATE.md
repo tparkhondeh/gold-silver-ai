@@ -26,10 +26,14 @@ real data.
 A deterministic synthetic evaluator now applies twenty artificial checks to those ten
 gates and reports passed, failed or dependency-blocked mechanics. Even an all-pass
 fixture keeps every real-world gate unevaluated and promotion disabled.
+A canonical parameter bundle now freezes the complete laboratory-v1 factors, cutoffs,
+horizons, constraints and calculation rules before future evaluation links. Real
+acceptance thresholds and stress magnitudes remain null and cannot be set from
+synthetic outcomes.
 Synthetic reference actions and a same-fold two-window comparison against six controls
 are exactly replayable and unranked. The web demo mirrors the method and exposes its
 calculations behind a plain-language disclosure. Financial use, execution, Iran
-fitness and real-data approval remain false. Two hundred and twenty-two laboratory tests,
+fitness and real-data approval remain false. Two hundred and thirty laboratory tests,
 the production web build, lint, typecheck, all 130 web tests and coverage gates pass
 locally.
 Code checkpoint `909d537` passed all three GitHub Actions jobs in run

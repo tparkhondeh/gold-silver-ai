@@ -25,6 +25,9 @@ Delivered:
 - a synthetic gate-evidence evaluator with twenty exact artificial checks, ordered
   dependency blocking and permanent real-calibration/promotion locks; 8 new tests
   bring the laboratory total to 222.
+- a fingerprinted laboratory-v1 parameter freeze with exact factors, cutoffs,
+  horizons, constraints and rules plus explicitly null real thresholds; 8 new tests
+  bring the laboratory total to 230.
 
 ## Phase 0 — Foundation & Governance
 

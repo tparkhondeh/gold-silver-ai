@@ -25,11 +25,15 @@ checks exercise all ten gates and their dependency order; all-satisfied, missing
 failed fixtures replay deterministically. Synthetic passage cannot affect any real
 gate or permission.
 
-The immediate next safe unit is a canonical synthetic parameter-freeze bundle. It
-must capture the exact laboratory-v1 weights, bands, horizons, constraints, cost and
-missing-data rules, stress-label registry and the explicit unset state of real
-acceptance thresholds. It must be fingerprinted before any synthetic test fixture is
-linked and must not derive a parameter from synthetic outcomes, set real thresholds,
+The canonical laboratory-v1 parameter-freeze bundle is complete. It captures exact
+weights, bands, horizons, constraints, allocation/cost/missing-data rules and stress
+labels before future evaluation links. All real thresholds, stress magnitudes and
+probabilities remain explicitly unset.
+
+The immediate next safe unit is a synthetic calibration preflight linking the exact
+freeze identity to the gate evaluator. G07 may be mechanically satisfied only when
+the freeze remains canonical, has no evaluation/test links, is not outcome-derived and
+keeps all real thresholds unset. The bridge must not alter parameters, set a real gate,
 claim performance or enable financial use/execution.
 
 Migrations 0003–0011 now cover the owner snapshot, immutable provenance,
@@ -326,6 +330,11 @@ financial engine remain separate gates.
    results. Eight tests bring the laboratory total to 222; even all-pass mechanics
    keep real calibration unevaluated and parameter change, promotion, financial use
    and execution disabled.
+60. **LABORATORY-V1 PARAMETER FREEZE COMPLETE:** a canonical artifact captures all
+   factor cutoffs, equal weights, horizons, constraints and calculation/missing-data
+   rules before future evidence links. Six real acceptance thresholds and five stress
+   magnitudes/probabilities remain null. Eight tests bring the laboratory total to 230;
+   any change requires a new version and cannot be derived from synthetic outcomes.
 
 All implementation available from published provider contracts is complete; real
 provider history execution remains paused at item 6 for Tier-A licensing/cost decisions.

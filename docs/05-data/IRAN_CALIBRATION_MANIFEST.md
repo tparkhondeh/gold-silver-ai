@@ -52,3 +52,7 @@ data. Twenty exact artificial checks cover the ten gates. A failed gate is repor
 and every dependent gate is blocked; missing evidence blocks the current and later
 gates. Even when all artificial checks pass, every `realWorldState` remains
 `not_evaluated`, promotion remains blocked and parameters cannot be changed.
+
+The laboratory-v1 inputs referenced by the parameter-freeze gate are now captured in
+`docs/04-portfolio/PARAMETER_FREEZE_V1.md`; all real acceptance thresholds and stress
+magnitudes remain explicitly unset.

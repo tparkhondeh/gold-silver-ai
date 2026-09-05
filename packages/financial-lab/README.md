@@ -180,3 +180,9 @@ with twenty exact artificial checks. It emits deterministic passed/failed/blocke
 states and blocks later gates after the first failure or omission. A fully satisfied
 synthetic fixture still leaves real calibration unevaluated, promotion blocked and
 parameter mutation, financial use and execution disabled.
+
+`build_parameter_freeze_bundle()` snapshots the exact laboratory-v1 factors, cutoffs,
+horizons, constraints, allocation/cost/missing-data rules and stress labels before a
+future calibration result is linked. Real acceptance thresholds, stress magnitudes
+and probabilities remain null; any drift requires a new version and resealed changes
+fail exact validation.
