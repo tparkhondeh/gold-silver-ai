@@ -219,6 +219,8 @@ state is recorded in `docs/10-project-state/CURRENT_STATE.md`.
   references, limitations and unresolved requirements; method-level data, Iran,
   robustness and failure-mode gaps remain separate. Six new tests bring the laboratory
   total to one hundred and seventy-two with no score, ranking or selection.
+- Evidence-gap report checkpoint `b8d5878` passed all three GitHub Actions jobs in run
+  [33981364535](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33981364535).
 
 ### Fail-closed Navasan history authorization — ۱۴۰۵/۰۶/۱۰
 

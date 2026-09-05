@@ -242,6 +242,8 @@ requirements. Method-level data needs, Iranian gaps, robustness checks and failu
 modes remain visible. One hundred and seventy-two laboratory tests pass locally; the
 report cannot compute completeness, rank methods, select one or enter application
 runtime.
+Evidence-gap report checkpoint `b8d5878` passed all three GitHub jobs in run
+33981364535.
 
 The owner authorized staged Data Foundation and deterministic-baseline development,
 with each stage dependent on the previous quality gate. Private GitHub authentication
