@@ -38,8 +38,19 @@ explainability, data requirements, Iran gaps, robustness requirements and one se
 evidence cell for every criterion. Canonical replay rejects omissions or attempts to
 enable selection.
 
-`STATUS: TBD` for the real evidence entries. The next research unit must review and
-record primary sources for the existing inverse-volatility, HRP and minimum-CVaR
-comparison controls, including a currentness/supersession check. Recording those
-sources still will not select or approve any method.
+The first exact research registry now records these primary publications, reviewed on
+2026-09-05:
 
+| Laboratory control | Primary source | Exact limitation retained in the registry |
+|---|---|---|
+| HRP-style | [López de Prado, *Building Diversified Portfolios that Outperform Out-of-Sample*](https://doi.org/10.3905/jpm.2016.42.4.059) | The laboratory implements one explicit linkage/bisection variant, not every later extension |
+| Inverse volatility | [Maillard, Roncalli & Teïletche, *The Properties of Equally Weighted Risk Contribution Portfolios*](https://doi.org/10.3905/jpm.2010.36.4.060) | Inverse volatility ignores correlations and is not full equal-risk contribution when correlations differ |
+| Minimum CVaR | [Rockafellar & Uryasev, *Optimization of Conditional Value-at-Risk*](https://doi.org/10.21314/JOR.2000.038) | The bounded discrete grid tests mechanics; it is not the paper's full continuous optimizer |
+
+`current_at_review_date` means the exact cited publication and locator were checked; it
+does not mean the method is the newest or best. Later alternatives were not ranked.
+The registry keeps Iranian data sufficiency, Iran-specific validation and real
+cost/liquidity evidence explicitly `not_evaluated` for all three controls.
+
+`STATUS: TBD` for a real method decision. Recording these sources does not select or
+approve any method.

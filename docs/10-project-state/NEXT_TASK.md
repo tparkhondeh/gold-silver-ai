@@ -12,12 +12,11 @@ gate, canonical artifacts, exact no-decision replay, three multi-fold comparison
 controls, the explicit synthetic stress-return matrix and frozen-weight stress
 evaluation, versioned multi-scenario suites and multi-fold stress replay for
 inverse-volatility, HRP and minimum-CVaR are complete. The immediate safe unit is a
-primary-source research pass for the three existing controls. Populate versioned
-evidence entries only after checking the original/official source identity, version,
-review date and possible supersession; record assumptions, explainability, data needs,
-Iran-validation gaps and the exact synthetic artifacts already available. Do not score,
-rank, select or approve a method: source metadata is evidence, not proof of real or
-Iranian performance, and nothing can enter the application runtime yet.
+versioned evidence-gap report derived only from the exact reviewed registry. For each
+method and each predeclared criterion, it must expose `documented`, `synthetic only` or
+`not evaluated`, list the unresolved requirements and keep methods separate. It must
+not compute a completeness score, rank candidates or imply that source identity proves
+real or Iranian performance, and nothing can enter the application runtime yet.
 
 Migrations 0003–0011 now cover the owner snapshot, immutable provenance,
 exact point-in-time dataset/decision lineage, source-reconciliation records and
@@ -273,6 +272,12 @@ financial engine remain separate gates.
    complete separate evidence cells. One hundred and sixty tests reject missing or
    reordered evidence, unapproved source types, mismatched versions, scoring, ranking,
    selection, methodology approval and operational promotion.
+53. **PRIMARY-SOURCE COMPARISON REGISTRY COMPLETE:** one exact primary publication,
+   review date, method-specific limitation and pinned synthetic artifact are recorded
+   for inverse-volatility, HRP and minimum-CVaR. Iranian data sufficiency, local
+   validation and real cost/liquidity evidence remain explicitly unmet. One hundred
+   and sixty-six tests reject resealed research drift; no method is scored, ranked,
+   selected or approved.
 
 All implementation available from published provider contracts is complete; real
 provider history execution remains paused at item 6 for Tier-A licensing/cost decisions.

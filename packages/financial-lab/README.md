@@ -121,3 +121,10 @@ requirements, Iran-specific gaps, robustness requirements and one separate cell 
 every rubric criterion. Canonical replay rejects missing cells and any attempt to
 enable selection or claim completed Iranian validation. The contract records a source
 review; it cannot independently verify the researcher's authority/currentness claim.
+
+`build_reviewed_comparison_methodology_registry()` supplies the first exact research
+records for inverse volatility, HRP and minimum-CVaR. Each record links one primary
+publication to the already-pinned synthetic stress/walk-forward artifact and preserves
+method-specific non-equivalence limitations. Data sufficiency, Iran validation and
+real cost/liquidity cells stay `not_evaluated`; exact validation rejects even a
+fingerprint-resealed change to the reviewed record.

@@ -227,6 +227,12 @@ to one hundred and sixty. No score, weight, threshold, ranking or selection exis
 real source entries and every financial-methodology decision remain pending.
 Methodology-evidence governance checkpoint `5ca14c5` passed all three GitHub jobs in
 run 33975366552.
+An exact research registry now records one primary publication for each existing
+inverse-volatility, HRP and minimum-CVaR comparison control, the 2026-09-05 review
+date, method-specific non-equivalence limitations and the pinned synthetic stress
+artifact. Data sufficiency, Iranian validation and real cost/liquidity evidence remain
+explicitly unmet. One hundred and sixty-six tests pass locally; source identity is now
+auditable but no method is scored, ranked, selected or approved.
 
 The owner authorized staged Data Foundation and deterministic-baseline development,
 with each stage dependent on the previous quality gate. Private GitHub authentication

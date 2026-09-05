@@ -121,6 +121,10 @@ explainability, data requirements, Iran-validation gaps, robustness requirements
 separate criterion evidence. No score, threshold, ranking or selection is defined;
 the governing research process is documented in
 `docs/04-portfolio/METHODOLOGY_EVIDENCE.md`.
+The first exact registry records the primary publication for each of the three reviewed
+controls and links it to the pinned synthetic walk-forward stress evidence. The record
+also states where the laboratory implementation is narrower than the publication.
+Iranian adequacy, real costs/liquidity and all selection fields remain unresolved.
 
 ## Decision History Requirement
 

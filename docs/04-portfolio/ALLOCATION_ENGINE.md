@@ -81,6 +81,9 @@ requires the versioned source, assumptions, data needs, Iran gaps, robustness ch
 and explainability evidence described in `METHODOLOGY_EVIDENCE.md`. The first rubric
 contains no score, threshold, ranking or winner, so it does not resolve the still-open
 allocation-methodology decision.
+Primary publications are now recorded for all three controls with explicit
+non-equivalence limitations. This makes their origin auditable but does not claim that
+any is current-best, suitable for Iran or eligible for selection.
 
 ## Related Documents
 

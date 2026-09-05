@@ -194,6 +194,11 @@ three-control evidence-registry fixture, require source identity/version/review 
 complete criterion cells and canonical transport, and reject authority drift,
 reordered evidence, claimed Iranian validation, scoring or selection. One hundred and
 sixty laboratory tests pass; no method is ranked or approved.
+Six reviewed-source tests pin the exact three-control research registry, publication
+locators, versions and review date; require all Iranian/real-cost cells to remain
+unmet; preserve method-specific non-equivalence limitations; round-trip canonical
+bytes; and reject fingerprint-resealed source or evidence drift. One hundred and
+sixty-six laboratory tests pass with selection still blocked.
 
 ## Related Documents
 

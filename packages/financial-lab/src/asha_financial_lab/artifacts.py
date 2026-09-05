@@ -32,6 +32,9 @@ from .methodology_evidence import (
     validate_methodology_evaluation_rubric,
     validate_methodology_evidence_registry,
 )
+from .reviewed_methodologies import (
+    validate_reviewed_comparison_methodology_registry,
+)
 from .synthetic_stress import (
     validate_stressed_return_matrix,
     validate_synthetic_stress_scenario,
@@ -1133,4 +1136,18 @@ def decode_methodology_evidence_registry(
     return _decode_canonical(
         document,
         lambda value: validate_methodology_evidence_registry(value, rubric_payload),
+    )
+
+
+def encode_reviewed_comparison_methodology_registry(payload: object) -> bytes:
+    return _encode_canonical(
+        payload, validate_reviewed_comparison_methodology_registry
+    )
+
+
+def decode_reviewed_comparison_methodology_registry(
+    document: object,
+) -> dict[str, Any]:
+    return _decode_canonical(
+        document, validate_reviewed_comparison_methodology_registry
     )

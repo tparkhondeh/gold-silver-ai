@@ -252,6 +252,10 @@ Phase 1 checkpoint `0f90210`; not merged to `main`.
 - Methodology-evidence governance checkpoint `5ca14c5` passed all three jobs in GitHub
   run
   [33975366552](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33975366552).
+- Added the exact reviewed-source registry for inverse-volatility, HRP and minimum-
+  CVaR. Primary publication identities, review date, non-equivalence limitations and
+  pinned synthetic evidence are replayable; Iranian adequacy and real cost/liquidity
+  remain unmet. One hundred and sixty-six tests pass without scoring or selection.
 
 ## Phase 1 — Completed Units on the Working Branch
 

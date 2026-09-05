@@ -206,6 +206,11 @@ state is recorded in `docs/10-project-state/CURRENT_STATE.md`.
 - Methodology-evidence governance checkpoint `5ca14c5` passed all three GitHub Actions
   jobs in run
   [33975366552](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33975366552).
+- Added an exact primary-source registry for inverse-volatility, HRP and minimum-CVaR.
+  It records publication identity, 2026-09-05 review date, method-specific limitations
+  and pinned synthetic evidence while Iranian adequacy and real cost/liquidity remain
+  unmet. Six new tests bring the laboratory total to one hundred and sixty-six; source
+  or evidence drift fails exact replay and no selection is possible.
 
 ### Fail-closed Navasan history authorization — ۱۴۰۵/۰۶/۱۰
 
