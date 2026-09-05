@@ -164,4 +164,9 @@ the test framework are standard-library components. This avoids a new license,
 security, maintenance or reproducibility dependency. Existing PyArrow remains only a
 hash-locked Apache-2.0 serialization dependency and is not used in the decision math.
 
+The exact future Iran evidence, minimum-history, point-in-time, split, freeze and
+promotion requirements are now versioned in
+`docs/05-data/IRAN_CALIBRATION_MANIFEST.md`. This records how validation must happen;
+it does not perform calibration or alter the laboratory-v1 values.
+
 `STATUS: IMPLEMENTED AS A LABORATORY PROPOSAL; NOT IRAN-VALIDATED OR FINANCIALLY APPROVED`.

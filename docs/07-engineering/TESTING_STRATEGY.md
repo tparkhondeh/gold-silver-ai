@@ -229,6 +229,10 @@ display eight factor contributions and exact target amounts, force risk reductio
 when tolerance is breached, and retain the no-financial-use/no-execution lock.
 A sixth cross-engine regression proves blank owner fields select the disclosed
 laboratory defaults instead of silently turning the cash reserve into zero.
+Eight Iran-calibration-manifest tests require all factor/constraint inputs, exact
+chronological isolation, point-in-time lineage, parameter freezing, ten unevaluated
+gates and canonical replay. They reject fingerprint-resealed history, constraint,
+gate or real-use drift. The laboratory total is now two hundred and fourteen tests.
 
 ## Related Documents
 

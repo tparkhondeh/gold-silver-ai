@@ -19,10 +19,14 @@ criteria compare nine candidates without using synthetic returns to choose a win
 `ASHA_TRANSPARENT_GUARDED_DECISION_V1` is the selected laboratory proposal: eight
 visible 12.5% factor bands feed exact constrained targets, percentage changes and
 whole-toman amounts, with reasons, invalidation, evidence gaps and alternatives.
+A versioned requirements-only Iran calibration manifest now predeclares the exact
+factor/constraint fields, 1,260-observation train/validation/test isolation, parameter
+freeze and ten fail-closed promotion gates without selecting a provider or containing
+real data.
 Synthetic reference actions and a same-fold two-window comparison against six controls
 are exactly replayable and unranked. The web demo mirrors the method and exposes its
 calculations behind a plain-language disclosure. Financial use, execution, Iran
-fitness and real-data approval remain false. Two hundred and six laboratory tests,
+fitness and real-data approval remain false. Two hundred and fourteen laboratory tests,
 the production web build, lint, typecheck, all 130 web tests and coverage gates pass
 locally.
 Code checkpoint `909d537` passed all three GitHub Actions jobs in run

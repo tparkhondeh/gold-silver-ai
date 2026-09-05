@@ -1,0 +1,173 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://goldsilver.wealthos.ir/contracts/asha.synthetic.iran_calibration_manifest.v1.schema.json",
+  "title": "Asha Iran calibration requirements-only manifest v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion", "manifestId", "manifestVersion", "status", "jurisdiction",
+    "methodReference", "boundary", "historyPlan", "factorRequirements",
+    "constraintRequirements", "parameterFreeze", "validationGates", "promotionPolicy"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "asha.synthetic.iran_calibration_manifest.v1" },
+    "manifestId": { "type": "string", "pattern": "^ASHA_IRAN_CALIBRATION_MANIFEST_[a-f0-9]{64}$" },
+    "manifestVersion": { "const": 1 },
+    "status": { "const": "requirements_only_not_started" },
+    "jurisdiction": { "const": "IRAN" },
+    "methodReference": {
+      "const": {
+        "methodId": "ASHA_TRANSPARENT_GUARDED_DECISION_V1",
+        "methodVersion": 1,
+        "currentWeightsAndBandsState": "frozen_laboratory_v1_not_iran_calibrated"
+      }
+    },
+    "boundary": {
+      "const": {
+        "datasetKind": "synthetic_contract_fixture",
+        "containsMarketObservations": false,
+        "providerSelected": false,
+        "realDataIngestionAllowed": false,
+        "financialUseAllowed": false,
+        "executionAllowed": false
+      }
+    },
+    "historyPlan": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "frequency", "minimumValidObservations", "trainObservations",
+        "validationObservations", "testObservations", "minimumWalkForwardFolds",
+        "purgeObservations", "embargoObservations", "minimumDistinctRegimes",
+        "minimumCrisisWindows", "walkForwardScope", "splitRule", "testAccessRule"
+      ],
+      "properties": {
+        "frequency": { "const": "instrument_native_close_aligned_without_interpolation" },
+        "minimumValidObservations": { "const": 1260 },
+        "trainObservations": { "const": 756 },
+        "validationObservations": { "const": 252 },
+        "testObservations": { "const": 252 },
+        "minimumWalkForwardFolds": { "const": 6 },
+        "purgeObservations": { "const": 20 },
+        "embargoObservations": { "const": 5 },
+        "minimumDistinctRegimes": { "const": 3 },
+        "minimumCrisisWindows": { "const": 3 },
+        "walkForwardScope": { "const": "development_segment_only_test_untouched" },
+        "splitRule": { "const": "chronological_train_then_validation_then_untouched_test" },
+        "testAccessRule": { "const": "once_after_parameter_and_acceptance_threshold_freeze" }
+      }
+    },
+    "factorRequirements": {
+      "type": "array",
+      "minItems": 8,
+      "maxItems": 8,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "factorId", "requiredFields", "minimumValidObservations",
+          "minimumCoveragePercent", "minimumIndependentSources",
+          "minimumDistinctRegimes", "calibrationTarget", "iranSpecificChecks",
+          "missingDataRule", "finalCalibrationState"
+        ],
+        "properties": {
+          "factorId": {
+            "enum": [
+              "CONCENTRATION", "CONVERSION_COST", "CRISIS_RESILIENCE", "DRAWDOWN",
+              "LIQUIDITY", "TREND", "VALUATION", "VOLATILITY"
+            ]
+          },
+          "requiredFields": { "type": "array", "minItems": 7, "uniqueItems": true, "items": { "type": "string" } },
+          "minimumValidObservations": { "type": "integer", "minimum": 252, "maximum": 1260 },
+          "minimumCoveragePercent": { "enum": ["95.000000", "98.000000", "100.000000"] },
+          "minimumIndependentSources": { "type": "integer", "minimum": 1, "maximum": 2 },
+          "minimumDistinctRegimes": { "const": 3 },
+          "calibrationTarget": { "type": "string", "minLength": 1 },
+          "iranSpecificChecks": { "type": "array", "minItems": 2, "maxItems": 2, "uniqueItems": true, "items": { "type": "string" } },
+          "missingDataRule": { "const": "fail_closed_no_silent_fill" },
+          "finalCalibrationState": { "const": "not_started" }
+        }
+      }
+    },
+    "constraintRequirements": {
+      "type": "array",
+      "minItems": 5,
+      "maxItems": 5,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "constraintId", "laboratoryV1Value", "requiredEvidence",
+          "valueSelectionRule", "ownerConstraintRequired", "finalCalibrationState"
+        ],
+        "properties": {
+          "constraintId": {
+            "enum": [
+              "MAXIMUM_ACCEPTABLE_DRAWDOWN_RATE", "MAXIMUM_SINGLE_ASSET_WEIGHT",
+              "MAXIMUM_TURNOVER_WEIGHT", "MINIMUM_CASH_WEIGHT", "NO_TRADE_BAND_WEIGHT"
+            ]
+          },
+          "laboratoryV1Value": { "enum": ["0.02", "0.15", "0.25", "0.35"] },
+          "requiredEvidence": { "type": "array", "minItems": 2, "maxItems": 2, "uniqueItems": true, "items": { "type": "string" } },
+          "valueSelectionRule": { "const": "train_and_validation_only_then_freeze" },
+          "ownerConstraintRequired": { "const": true },
+          "finalCalibrationState": { "const": "not_started" }
+        }
+      }
+    },
+    "parameterFreeze": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "items", "freezePoint", "requiredArtifact",
+        "syntheticResultsMayChangeParameters", "testResultsMayChangeFrozenParameters"
+      ],
+      "properties": {
+        "items": {
+          "type": "array", "minItems": 10, "maxItems": 10, "uniqueItems": true,
+          "items": {
+            "enum": [
+              "ACCEPTANCE_THRESHOLDS", "CONSTRAINT_VALUES", "FACTOR_BANDS",
+              "FACTOR_WEIGHTS", "HORIZON_WINDOWS", "MISSING_DATA_RULES",
+              "REGIME_LABEL_RULES", "STRESS_WINDOW_REGISTRY",
+              "TRANSACTION_COST_MODEL", "VALUATION_REFERENCE_RULES"
+            ]
+          }
+        },
+        "freezePoint": { "const": "before_any_untouched_test_window_is_opened" },
+        "requiredArtifact": { "const": "canonical_parameter_bundle_with_sha256_fingerprint" },
+        "syntheticResultsMayChangeParameters": { "const": false },
+        "testResultsMayChangeFrozenParameters": { "const": false }
+      }
+    },
+    "validationGates": {
+      "type": "array",
+      "minItems": 10,
+      "maxItems": 10,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["gateId", "stage", "passRule", "failRule", "currentState"],
+        "properties": {
+          "gateId": { "type": "string", "pattern": "^G(0[1-9]|10)_[A-Z0-9_]+$" },
+          "stage": { "enum": ["data", "fit", "test", "promotion"] },
+          "passRule": { "type": "string", "minLength": 1 },
+          "failRule": { "const": "any_missing_or_false_evidence_fails_closed" },
+          "currentState": { "const": "not_evaluated" }
+        }
+      }
+    },
+    "promotionPolicy": {
+      "const": {
+        "allGatesMustPass": true,
+        "licensedIranDataRequired": true,
+        "independentCrossCheckRequired": true,
+        "frozenArtifactFingerprintRequired": true,
+        "laterOwnerAdrRequired": true,
+        "syntheticResultsCanProveFinancialPerformance": false,
+        "currentFinancialUseAllowed": false,
+        "currentExecutionAllowed": false
+      }
+    }
+  }
+}

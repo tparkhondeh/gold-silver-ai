@@ -25,6 +25,11 @@ state is recorded in `docs/10-project-state/CURRENT_STATE.md`.
   tests, 130 web tests, production build, lint, typecheck and coverage gates pass
   locally. Code checkpoint `909d537` passed all three GitHub Actions jobs in run
   33992126608; `main` remained unchanged.
+- Added `asha.synthetic.iran_calibration_manifest.v1`: exact future fields and
+  point-in-time evidence for eight factors, evidence for five constraints, a
+  756/252/252 chronological split, parameter freeze and ten fail-closed gates. It
+  contains no provider or market observations and keeps financial use/execution
+  disabled. Eight new tests bring the laboratory total to 214.
 
 - Recorded the owner's acceptance of Phase 1 Data Foundation for progression and the
   exact synthetic-only Phase 2 boundary in ADR 0009.

@@ -19,6 +19,9 @@ Delivered:
   tests (206 total);
 - a Persian UI mirror with concise action and expandable calculation disclosure;
 - ADR 0010 and the explicit list of Iran calibration/validation requirements.
+- a fingerprinted requirements-only Iran calibration manifest covering all eight
+  factors, five constraints, chronological isolation, parameter freeze and ten
+  fail-closed gates; 8 new tests bring the laboratory total to 214.
 
 ## Phase 0 — Foundation & Governance
 

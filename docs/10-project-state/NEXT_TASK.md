@@ -15,12 +15,16 @@ method-selection, decision and same-fold comparison artifacts are versioned and
 replayable; the UI shows a concise action and expandable calculations. No synthetic
 result ranks financial performance or approves Iran use.
 
-The immediate next safe unit is an Iran calibration manifest: define the exact fields,
-minimum history, point-in-time/cost/liquidity evidence, train/test isolation,
-parameter-freeze rule and pass/fail gates needed later for each factor and constraint.
-It may use schema and synthetic fixtures only. It must not ingest real data, choose a
-provider, purchase an API, change v1 weights from synthetic results, claim performance
-or enable financial use/execution.
+The Iran calibration manifest is complete. It fixes the exact fields, history floors,
+point-in-time/cost/liquidity evidence, train/validation/test isolation, parameter
+freeze and pass/fail gates needed later for all eight factors and five constraints.
+Every gate remains unevaluated and no provider or observation is present.
+
+The immediate next safe unit is a synthetic calibration gate-evidence evaluator. It
+may accept only explicitly artificial evidence records matching the manifest and emit
+deterministic pass/fail/blocked states for each gate. It must not ingest real data,
+select a provider, set acceptance thresholds, change method parameters, claim
+performance or enable financial use/execution.
 
 Migrations 0003–0011 now cover the owner snapshot, immutable provenance,
 exact point-in-time dataset/decision lineage, source-reconciliation records and
@@ -301,13 +305,24 @@ financial engine remain separate gates.
    `not_evaluated`. Six tests bring the laboratory to one hundred and eighty-six; no
    implementation, performance comparison, score, rank, selection, Iran-fitness claim
    or runtime integration exists.
+57. **TRANSPARENT GUARDED LABORATORY METHOD COMPLETE:** the owner-authorized
+   laboratory proposal converts eight equal, visible factor bands into constrained
+   target weights, exact whole-toman amounts, reasons, invalidation and alternatives.
+   It is compared against six controls on identical synthetic folds without aggregate
+   ranking and remains unapproved for real Iranian use.
+58. **IRAN CALIBRATION MANIFEST COMPLETE:** a canonical requirements-only artifact
+   covers all eight factors, five constraints, exact point-in-time fields, history
+   floors, chronological split isolation, parameter freezing and ten fail-closed
+   promotion gates. Eight tests bring the laboratory total to 214; every gate remains
+   unevaluated and the artifact contains no provider, real datum or execution route.
 
 All implementation available from published provider contracts is complete; real
 provider history execution remains paused at item 6 for Tier-A licensing/cost decisions.
 The owner explicitly authorized continued independent local
 hardening, so testing, backup, documentation and other non-provider work may proceed;
-Phase 2 synthetic laboratory mechanics may now proceed. Real financial methodology
-and operational logic remain blocked behind their separate owner/data gates.
+Phase 2 synthetic laboratory mechanics may now proceed. Real method promotion,
+financial use and operational logic remain blocked behind their separate owner/data
+gates.
 
 Vendor contact, subscription purchase and response monitoring are deferred until the
 owner's final API-integration stage. The prior Telegram delivery/read state is not

@@ -44,6 +44,7 @@ from .transparent_decision import (
     validate_transparent_decision_input,
     validate_transparent_guarded_decision,
 )
+from .iran_calibration_manifest import validate_iran_calibration_manifest
 from .synthetic_stress import (
     validate_stressed_return_matrix,
     validate_synthetic_stress_scenario,
@@ -1232,3 +1233,11 @@ def decode_transparent_guarded_decision(document: object, input_payload: object)
         document,
         lambda value: validate_transparent_guarded_decision(value, input_payload),
     )
+
+
+def encode_iran_calibration_manifest(payload: object) -> bytes:
+    return _encode_canonical(payload, validate_iran_calibration_manifest)
+
+
+def decode_iran_calibration_manifest(document: object) -> dict[str, Any]:
+    return _decode_canonical(document, validate_iran_calibration_manifest)

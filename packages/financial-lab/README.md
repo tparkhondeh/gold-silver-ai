@@ -168,3 +168,9 @@ equal-weight, no-trade, inverse-volatility, HRP and minimum-CVaR controls on the
 same two train/test folds. It also fingerprints horizon, crisis and one-factor
 sensitivity checks. No fold/method metric is aggregated or ranked, so synthetic
 performance cannot become the selection reason.
+
+`build_iran_calibration_manifest()` defines the future Iran-validation inputs before
+any real data is acquired. It covers all eight factors and five constraints, fixes
+chronological train/validation/test isolation and parameter freezing, and lists ten
+fail-closed promotion gates. The fingerprinted artifact contains requirements only:
+no provider, observation, calibrated value, financial permission or execution route.
