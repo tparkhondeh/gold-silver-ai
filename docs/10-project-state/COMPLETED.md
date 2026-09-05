@@ -223,6 +223,11 @@ Phase 1 checkpoint `0f90210`; not merged to `main`.
 - Frozen inverse-volatility stress checkpoint `069018d` passed all three jobs in
   GitHub run
   [33963506190](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33963506190).
+- Extended the exact frozen-weight stress evaluation to the reviewed HRP and
+  minimum-CVaR controls. Both canonical artifacts bind the complete upstream weight
+  provenance, keep base/stressed paths separate and reject resealed false metrics.
+  One hundred and thirty-eight tests pass with no ranking, threshold, methodology
+  approval, recommendation or execution.
 
 ## Phase 1 — Completed Units on the Working Branch
 

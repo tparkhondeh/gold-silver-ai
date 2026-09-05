@@ -1,4 +1,4 @@
-"""Evaluate frozen inverse-volatility weights under explicit synthetic shocks."""
+"""Evaluate reviewed frozen comparison weights under explicit synthetic shocks."""
 
 from __future__ import annotations
 
@@ -13,6 +13,11 @@ from .comparison_weights import (
 )
 from .contracts import ContractViolation, fingerprint, validate_synthetic_dataset
 from .features import validate_point_in_time_return_matrix
+from .hrp_control import HRP_CONTROL_ID, validate_hrp_comparison_control_weights
+from .minimum_cvar_control import (
+    MINIMUM_CVAR_CONTROL_ID,
+    validate_minimum_cvar_comparison_control_weights,
+)
 from .normalization import validate_train_only_standardizer
 from .synthetic_stress import (
     validate_stressed_return_matrix,
@@ -132,7 +137,7 @@ def _build_unsigned(
         "financialUseAllowed": False,
         "executionAllowed": False,
         "decisionState": "no_decision",
-        "benchmarkId": INVERSE_VOLATILITY_CONTROL_ID,
+        "benchmarkId": weight_set["benchmarkId"],
         "datasetReference": deepcopy(matrix["datasetReference"]),
         "baseReturnMatrixReference": {
             "matrixId": matrix["matrixId"], "schemaVersion": matrix["schemaVersion"],
@@ -180,6 +185,60 @@ def _build_unsigned(
             "SYNTHETIC_DATA_ONLY",
         ],
     }
+
+
+def _validate_stress_evaluation_payload(
+    payload: object,
+    matrix: dict[str, Any],
+    stressed_matrix: dict[str, Any],
+    scenario: dict[str, Any],
+    plan: dict[str, Any],
+    weight_set: dict[str, Any],
+) -> dict[str, Any]:
+    if not isinstance(payload, dict) or set(payload) != _EVALUATION_KEYS:
+        raise ContractViolation("stress evaluation has unexpected fields")
+    evaluation = deepcopy(payload)
+    if evaluation["schemaVersion"] != STRESS_EVALUATION_SCHEMA_VERSION:
+        raise ContractViolation("unsupported stress-evaluation schema version")
+    if (
+        evaluation["status"] != "evaluation_only"
+        or evaluation["financialUseAllowed"] is not False
+        or evaluation["executionAllowed"] is not False
+        or evaluation["decisionState"] != "no_decision"
+        or evaluation["benchmarkId"] != weight_set["benchmarkId"]
+        or evaluation["comparisonPolicy"] != "side_by_side_no_ranking"
+    ):
+        raise ContractViolation("stress evaluation crossed its comparison-only boundary")
+    if evaluation["benchmarkId"] not in {
+        INVERSE_VOLATILITY_CONTROL_ID, HRP_CONTROL_ID, MINIMUM_CVAR_CONTROL_ID,
+    }:
+        raise ContractViolation("stress evaluation benchmark is not a reviewed control")
+    if evaluation["methodologyReference"] != {
+        "entityId": "STATUS_TBD", "version": 0, "approvalState": "unapproved",
+    }:
+        raise ContractViolation("stress evaluation cannot approve a methodology")
+    if evaluation["reasonCodes"] != [
+        "COMPARISON_CONTROL_ONLY", "EXPLICIT_SYNTHETIC_SHOCKS_ONLY",
+        "FROZEN_WEIGHTS_ONLY", "METHODOLOGY_NOT_APPROVED", "NO_FINANCIAL_DECISION",
+        "NO_RANKING_OR_THRESHOLD", "REAL_FINANCIAL_USE_DISABLED", "SYNTHETIC_DATA_ONLY",
+    ]:
+        raise ContractViolation("stress evaluation is missing permanent safety reasons")
+    if not isinstance(evaluation["periodResults"], list) or any(
+        not isinstance(item, dict) or set(item) != _PERIOD_KEYS
+        for item in evaluation["periodResults"]
+    ):
+        raise ContractViolation("stress evaluation period results have unexpected fields")
+    if not isinstance(evaluation["metrics"], dict) or set(evaluation["metrics"]) != _METRIC_KEYS:
+        raise ContractViolation("stress evaluation metrics have unexpected fields")
+    evaluation_id = evaluation["stressEvaluationId"]
+    unsigned = {key: value for key, value in evaluation.items() if key != "stressEvaluationId"}
+    if not isinstance(evaluation_id, str) or not _EVALUATION_ID.fullmatch(evaluation_id):
+        raise ContractViolation("stress evaluation ID is invalid")
+    if evaluation_id != f"ASHA_STRESS_EVALUATION_{fingerprint(unsigned)}":
+        raise ContractViolation("stress evaluation fingerprint mismatch")
+    if unsigned != _build_unsigned(matrix, stressed_matrix, scenario, plan, weight_set):
+        raise ContractViolation("stress evaluation does not match exact side-by-side replay")
+    return evaluation
 
 
 def evaluate_inverse_volatility_stress_fold(
@@ -241,43 +300,138 @@ def validate_inverse_volatility_stress_evaluation(
     weight_set = validate_inverse_volatility_control_weights(
         weight_set_payload, dataset, matrix, plan, standardizer
     )
-    if not isinstance(payload, dict) or set(payload) != _EVALUATION_KEYS:
-        raise ContractViolation("stress evaluation has unexpected fields")
-    evaluation = deepcopy(payload)
-    if evaluation["schemaVersion"] != STRESS_EVALUATION_SCHEMA_VERSION:
-        raise ContractViolation("unsupported stress-evaluation schema version")
-    if (
-        evaluation["status"] != "evaluation_only"
-        or evaluation["financialUseAllowed"] is not False
-        or evaluation["executionAllowed"] is not False
-        or evaluation["decisionState"] != "no_decision"
-        or evaluation["benchmarkId"] != INVERSE_VOLATILITY_CONTROL_ID
-        or evaluation["comparisonPolicy"] != "side_by_side_no_ranking"
-    ):
-        raise ContractViolation("stress evaluation crossed its comparison-only boundary")
-    if evaluation["methodologyReference"] != {
-        "entityId": "STATUS_TBD", "version": 0, "approvalState": "unapproved",
-    }:
-        raise ContractViolation("stress evaluation cannot approve a methodology")
-    if evaluation["reasonCodes"] != [
-        "COMPARISON_CONTROL_ONLY", "EXPLICIT_SYNTHETIC_SHOCKS_ONLY",
-        "FROZEN_WEIGHTS_ONLY", "METHODOLOGY_NOT_APPROVED", "NO_FINANCIAL_DECISION",
-        "NO_RANKING_OR_THRESHOLD", "REAL_FINANCIAL_USE_DISABLED", "SYNTHETIC_DATA_ONLY",
-    ]:
-        raise ContractViolation("stress evaluation is missing permanent safety reasons")
-    if not isinstance(evaluation["periodResults"], list) or any(
-        not isinstance(item, dict) or set(item) != _PERIOD_KEYS
-        for item in evaluation["periodResults"]
-    ):
-        raise ContractViolation("stress evaluation period results have unexpected fields")
-    if not isinstance(evaluation["metrics"], dict) or set(evaluation["metrics"]) != _METRIC_KEYS:
-        raise ContractViolation("stress evaluation metrics have unexpected fields")
-    evaluation_id = evaluation["stressEvaluationId"]
-    unsigned = {key: value for key, value in evaluation.items() if key != "stressEvaluationId"}
-    if not isinstance(evaluation_id, str) or not _EVALUATION_ID.fullmatch(evaluation_id):
-        raise ContractViolation("stress evaluation ID is invalid")
-    if evaluation_id != f"ASHA_STRESS_EVALUATION_{fingerprint(unsigned)}":
-        raise ContractViolation("stress evaluation fingerprint mismatch")
-    if unsigned != _build_unsigned(matrix, stressed_matrix, scenario, plan, weight_set):
-        raise ContractViolation("stress evaluation does not match exact side-by-side replay")
-    return evaluation
+    return _validate_stress_evaluation_payload(
+        payload, matrix, stressed_matrix, scenario, plan, weight_set
+    )
+
+
+def evaluate_minimum_cvar_stress_fold(
+    dataset_payload: object,
+    matrix_payload: object,
+    stressed_matrix_payload: object,
+    scenario_payload: object,
+    plan_payload: object,
+    weight_set_payload: object,
+) -> dict[str, Any]:
+    """Apply frozen minimum-CVaR comparison weights to one synthetic stress fold."""
+
+    dataset = validate_synthetic_dataset(dataset_payload)
+    matrix = validate_point_in_time_return_matrix(matrix_payload, dataset)
+    scenario = validate_synthetic_stress_scenario(scenario_payload)
+    stressed_matrix = validate_stressed_return_matrix(
+        stressed_matrix_payload, dataset, matrix, scenario
+    )
+    plan = validate_walk_forward_plan(plan_payload, dataset)
+    weight_set = validate_minimum_cvar_comparison_control_weights(
+        weight_set_payload, dataset, matrix, plan
+    )
+    unsigned = _build_unsigned(matrix, stressed_matrix, scenario, plan, weight_set)
+    evaluation = {
+        **unsigned,
+        "stressEvaluationId": f"ASHA_STRESS_EVALUATION_{fingerprint(unsigned)}",
+    }
+    return _validate_stress_evaluation_payload(
+        evaluation, matrix, stressed_matrix, scenario, plan, weight_set
+    )
+
+
+def validate_minimum_cvar_stress_evaluation(
+    payload: object,
+    dataset_payload: object,
+    matrix_payload: object,
+    stressed_matrix_payload: object,
+    scenario_payload: object,
+    plan_payload: object,
+    weight_set_payload: object,
+) -> dict[str, Any]:
+    """Recompute a minimum-CVaR stress comparison and reject drift or tampering."""
+
+    dataset = validate_synthetic_dataset(dataset_payload)
+    matrix = validate_point_in_time_return_matrix(matrix_payload, dataset)
+    scenario = validate_synthetic_stress_scenario(scenario_payload)
+    stressed_matrix = validate_stressed_return_matrix(
+        stressed_matrix_payload, dataset, matrix, scenario
+    )
+    plan = validate_walk_forward_plan(plan_payload, dataset)
+    weight_set = validate_minimum_cvar_comparison_control_weights(
+        weight_set_payload, dataset, matrix, plan
+    )
+    return _validate_stress_evaluation_payload(
+        payload, matrix, stressed_matrix, scenario, plan, weight_set
+    )
+
+
+def evaluate_hrp_stress_fold(
+    dataset_payload: object,
+    matrix_payload: object,
+    stressed_matrix_payload: object,
+    scenario_payload: object,
+    plan_payload: object,
+    standardizer_payload: object,
+    covariance_payload: object,
+    correlation_payload: object,
+    distance_payload: object,
+    clustering_payload: object,
+    order_payload: object,
+    weight_set_payload: object,
+) -> dict[str, Any]:
+    """Apply frozen HRP comparison weights to one explicit synthetic stress fold."""
+
+    dataset = validate_synthetic_dataset(dataset_payload)
+    matrix = validate_point_in_time_return_matrix(matrix_payload, dataset)
+    scenario = validate_synthetic_stress_scenario(scenario_payload)
+    stressed_matrix = validate_stressed_return_matrix(
+        stressed_matrix_payload, dataset, matrix, scenario
+    )
+    plan = validate_walk_forward_plan(plan_payload, dataset)
+    standardizer = validate_train_only_standardizer(
+        standardizer_payload, dataset, matrix, plan
+    )
+    weight_set = validate_hrp_comparison_control_weights(
+        weight_set_payload, dataset, matrix, plan, standardizer, covariance_payload,
+        correlation_payload, distance_payload, clustering_payload, order_payload,
+    )
+    unsigned = _build_unsigned(matrix, stressed_matrix, scenario, plan, weight_set)
+    evaluation = {
+        **unsigned,
+        "stressEvaluationId": f"ASHA_STRESS_EVALUATION_{fingerprint(unsigned)}",
+    }
+    return _validate_stress_evaluation_payload(
+        evaluation, matrix, stressed_matrix, scenario, plan, weight_set
+    )
+
+
+def validate_hrp_stress_evaluation(
+    payload: object,
+    dataset_payload: object,
+    matrix_payload: object,
+    stressed_matrix_payload: object,
+    scenario_payload: object,
+    plan_payload: object,
+    standardizer_payload: object,
+    covariance_payload: object,
+    correlation_payload: object,
+    distance_payload: object,
+    clustering_payload: object,
+    order_payload: object,
+    weight_set_payload: object,
+) -> dict[str, Any]:
+    """Recompute an HRP stress comparison and reject provenance drift or tampering."""
+
+    dataset = validate_synthetic_dataset(dataset_payload)
+    matrix = validate_point_in_time_return_matrix(matrix_payload, dataset)
+    scenario = validate_synthetic_stress_scenario(scenario_payload)
+    stressed_matrix = validate_stressed_return_matrix(
+        stressed_matrix_payload, dataset, matrix, scenario
+    )
+    plan = validate_walk_forward_plan(plan_payload, dataset)
+    standardizer = validate_train_only_standardizer(
+        standardizer_payload, dataset, matrix, plan
+    )
+    weight_set = validate_hrp_comparison_control_weights(
+        weight_set_payload, dataset, matrix, plan, standardizer, covariance_payload,
+        correlation_payload, distance_payload, clustering_payload, order_payload,
+    )
+    return _validate_stress_evaluation_payload(
+        payload, matrix, stressed_matrix, scenario, plan, weight_set
+    )

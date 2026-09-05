@@ -15,8 +15,11 @@ from asha_financial_lab.artifacts import (  # noqa: E402
     encode_inverse_volatility_stress_evaluation,
 )
 from asha_financial_lab.comparison_weights import (  # noqa: E402
+    INVERSE_VOLATILITY_CONTROL_ID,
     build_inverse_volatility_control_weights,
 )
+from asha_financial_lab.hrp_control import HRP_CONTROL_ID  # noqa: E402
+from asha_financial_lab.minimum_cvar_control import MINIMUM_CVAR_CONTROL_ID  # noqa: E402
 from asha_financial_lab.contracts import ContractViolation, fingerprint  # noqa: E402
 from asha_financial_lab.normalization import fit_train_only_standardizer  # noqa: E402
 from asha_financial_lab.stress_evaluation import (  # noqa: E402
@@ -152,6 +155,14 @@ class StressEvaluationTests(unittest.TestCase):
         self.assertEqual(
             schema["properties"]["comparisonPolicy"]["const"],
             "side_by_side_no_ranking",
+        )
+        self.assertEqual(
+            set(schema["properties"]["benchmarkId"]["enum"]),
+            {
+                INVERSE_VOLATILITY_CONTROL_ID,
+                HRP_CONTROL_ID,
+                MINIMUM_CVAR_CONTROL_ID,
+            },
         )
         self.assertFalse(schema["additionalProperties"])
 

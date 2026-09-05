@@ -9,11 +9,12 @@ synthetic-only Phase 2 laboratory on 2026-09-01. ADR 0009 is binding: no real da
 paid API, real recommendation, production registry write, or execution is permitted.
 The isolated Python package, versioned synthetic input/output contract, independent CI
 gate, canonical artifacts, exact no-decision replay, three multi-fold comparison
-controls, the explicit synthetic stress-return matrix and the first frozen-weight
-stress evaluation are complete. The immediate safe unit is to extend that exact
-side-by-side stress mechanic to the already-reviewed HRP and minimum-CVaR controls,
-without refitting, ranking, aggregation or methodology selection. It must remain
-synthetic-only and can never enter the application runtime.
+controls, the explicit synthetic stress-return matrix and frozen-weight stress
+evaluation for inverse-volatility, HRP and minimum-CVaR are complete. The immediate
+safe unit is a versioned multi-scenario crisis suite that repeats these exact
+side-by-side mechanics without refitting, ranking, cross-scenario aggregation or
+methodology selection. It must remain synthetic-only and can never enter the
+application runtime.
 
 Migrations 0003–0011 now cover the owner snapshot, immutable provenance,
 exact point-in-time dataset/decision lineage, source-reconciliation records and
@@ -244,6 +245,12 @@ financial engine remain separate gates.
    paths and metrics remain separate under `side_by_side_no_ranking`; every shock must
    be applied exactly once and no winner, threshold, recommendation or decision is
    emitted.
+49. **HRP AND MINIMUM-CVAR STRESS EVALUATION COMPLETE:** both reviewed controls now
+   reuse the exact frozen-weight stress contract for their associated synthetic test
+   fold. Canonical artifacts bind every upstream identity, preserve separate base and
+   stressed results, and reject resealed false metrics. One hundred and thirty-eight
+   laboratory tests pass; no control comparison, winner, threshold, recommendation,
+   methodology approval or execution is emitted.
 
 All implementation available from published provider contracts is complete; real
 provider history execution remains paused at item 6 for Tier-A licensing/cost decisions.

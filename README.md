@@ -76,6 +76,8 @@ surfaces are ready and that real financial use is still safely blocked.
   `docs/10-project-state/CURRENT_STATE.md` and `NEXT_TASK.md`.
 - **Want a simple Persian progress map?** Read
   [`PRE_API_READINESS_AUDIT_FA.md`](docs/10-project-state/PRE_API_READINESS_AUDIT_FA.md).
+- **Want to test the local product without technical knowledge?** Follow the Persian
+  [`OWNER_SMOKE_TEST_FA.md`](docs/10-project-state/OWNER_SMOKE_TEST_FA.md).
 - **Want to know what's still undecided?** Read
   `docs/10-project-state/OPEN_DECISIONS.md`.
 

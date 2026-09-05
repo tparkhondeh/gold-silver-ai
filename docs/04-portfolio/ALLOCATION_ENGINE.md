@@ -67,6 +67,9 @@ The inverse-volatility control's frozen weights can also be evaluated against an
 explicit synthetic stressed-return matrix for their exact test fold. The artifact
 keeps base and stressed paths separate under a no-ranking policy; it does not refit
 weights, choose an allocation, set a threshold or approve a methodology.
+The reviewed HRP and minimum-CVaR controls now pass through the same contract. Their
+own train-only weights remain frozen and separately identifiable; this adds comparable
+mechanics evidence without comparing or ranking the controls themselves.
 
 ## Related Documents
 

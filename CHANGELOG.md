@@ -177,6 +177,10 @@ state is recorded in `docs/10-project-state/CURRENT_STATE.md`.
 - Frozen inverse-volatility stress checkpoint `069018d` passed all three GitHub
   Actions jobs in run
   [33963506190](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33963506190).
+- Extended the canonical frozen-weight stress evaluation to HRP and minimum-CVaR.
+  Exact weight provenance, base/stressed paths, canonical transport and tamper
+  rejection are covered by one hundred and thirty-eight tests; the shared contract
+  still emits no ranking, threshold, financial decision or execution.
 
 ### Fail-closed Navasan history authorization — ۱۴۰۵/۰۶/۱۰
 

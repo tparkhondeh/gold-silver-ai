@@ -177,6 +177,10 @@ pin the exact artifact identity, require every explicit shock to stay inside the
 associated test fold, preserve the reviewed train-only weight identity and reject
 foreign/resealed weights or metrics. One hundred and thirty-two laboratory tests pass
 under an explicit no-ranking/no-threshold/no-decision policy.
+Six additional tests apply that contract to frozen HRP and minimum-CVaR weights,
+pin both deterministic identities, verify canonical round trips and prove that
+resealed false metrics fail closed. One hundred and thirty-eight laboratory tests
+pass in total; the controls are never ranked or promoted into a methodology.
 
 ## Related Documents
 

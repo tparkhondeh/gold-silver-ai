@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://goldsilver.wealthos.ir/contracts/asha.synthetic.stress_evaluation.v1.schema.json",
-  "title": "Asha frozen inverse-volatility synthetic stress evaluation v1",
+  "title": "Asha frozen comparison-control synthetic stress evaluation v1",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -22,7 +22,13 @@
     "financialUseAllowed": { "const": false },
     "executionAllowed": { "const": false },
     "decisionState": { "const": "no_decision" },
-    "benchmarkId": { "const": "ASHA_BENCHMARK_INVERSE_VOLATILITY_CONTROL_V1" },
+    "benchmarkId": {
+      "enum": [
+        "ASHA_BENCHMARK_INVERSE_VOLATILITY_CONTROL_V1",
+        "ASHA_BENCHMARK_HRP_CONTROL_V1",
+        "ASHA_BENCHMARK_MINIMUM_CVAR_CONTROL_V1"
+      ]
+    },
     "datasetReference": { "type": "object" },
     "baseReturnMatrixReference": { "type": "object" },
     "stressedReturnMatrixReference": { "type": "object" },

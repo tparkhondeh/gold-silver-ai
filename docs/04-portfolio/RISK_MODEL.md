@@ -86,6 +86,9 @@ Frozen inverse-volatility comparison weights can now traverse one exact stressed
 fold without refitting. Base and stressed results remain side by side with no ranking
 or pass/fail threshold; this tests arithmetic and provenance, not resilience or risk
 fitness in a real market.
+Frozen HRP and minimum-CVaR comparison weights can now traverse the same exact
+synthetic stress boundary. Their artifacts remain separate, provenance-bound and
+non-operational; no cross-control winner or crisis-fit claim is produced.
 
 ## Related Documents
 
