@@ -140,3 +140,11 @@ candidate needs dated, manually recorded research; at least one authoritative so
 an explicit mechanism and comparison boundary; non-equivalence limits; and all ten
 criterion gaps. Intake means only "allowed to be researched": implementation, Iranian
 fitness, scoring, ranking, selection, financial use and execution stay blocked.
+
+`build_reviewed_candidate_discovery_catalog()` supplies the first exact intake from a
+bounded primary-literature review dated 2026-09-05. It records HCAA, generalized risk
+parity with ADMM, Wasserstein distributionally robust mean-variance and fast HRP as
+four research-only candidates. Source identity is documented, source currency remains
+`unknown_requires_review`, and every other evidence cell remains `not_evaluated`.
+The catalog is deliberately incomplete and unranked; it implements and approves
+nothing, claims no Iranian fitness, and is not connected to application runtime.

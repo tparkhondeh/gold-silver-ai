@@ -37,6 +37,7 @@ from .reviewed_methodologies import (
 )
 from .methodology_gaps import validate_methodology_evidence_gap_report
 from .research_intake import validate_research_candidate_intake
+from .reviewed_candidates import validate_reviewed_candidate_discovery_catalog
 from .synthetic_stress import (
     validate_stressed_return_matrix,
     validate_synthetic_stress_scenario,
@@ -1179,3 +1180,11 @@ def decode_research_candidate_intake(
         document,
         lambda value: validate_research_candidate_intake(value, gap_report_payload),
     )
+
+
+def encode_reviewed_candidate_discovery_catalog(payload: object) -> bytes:
+    return _encode_canonical(payload, validate_reviewed_candidate_discovery_catalog)
+
+
+def decode_reviewed_candidate_discovery_catalog(document: object) -> dict[str, Any]:
+    return _decode_canonical(document, validate_reviewed_candidate_discovery_catalog)

@@ -209,6 +209,11 @@ the full prohibited-claim boundary, non-equivalence limits and all ten still-ope
 criterion cells. They reject automated-search claims, implementation, Iranian fitness
 or selection; pin the canonical fixture and schema; and bind transport to the exact
 gap report. One hundred and eighty laboratory tests pass.
+Six candidate-catalog tests pin the exact four candidates, DOI/date metadata, bounded
+search scope, currentness uncertainty, all 40 evidence cells and canonical replay.
+They reject fingerprint-resealed changes to a source or search boundary and require
+all candidates to remain unimplemented, Iran-unevaluated and unranked. One hundred and
+eighty-six laboratory tests pass.
 
 ## Related Documents
 

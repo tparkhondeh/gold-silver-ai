@@ -15,11 +15,13 @@ inverse-volatility, HRP and minimum-CVaR are complete. Their exact evidence-gap 
 also keeps every method/criterion cell and unresolved requirement separate without a
 score, rank or selection. The research-candidate intake contract now requires source,
 date, scope, non-equivalence and complete-gap records before a method may be studied.
-The immediate safe unit is the first exact candidate-discovery catalog populated by a
-bounded, dated review of authoritative primary literature. It must record search scope
-and currentness uncertainty, keep every new candidate `not_implemented` and all non-
-source evidence `not_evaluated`, and must not score, rank, select, compare performance,
-claim Iranian fitness or enter application runtime.
+The exact candidate-discovery catalog is now populated from a bounded, dated primary-
+literature review. Four candidates remain unimplemented, currentness-unresolved and
+unranked, with every non-source evidence cell unevaluated. The immediate safe unit is
+a versioned evidence-acquisition plan that maps each open candidate/criterion cell to
+the evidence type and prerequisite gate needed to evaluate it. It must not assign a
+priority, schedule, score or winner; implement a candidate; infer Iranian fitness; use
+real data; or enter application runtime.
 
 Migrations 0003–0011 now cover the owner snapshot, immutable provenance,
 exact point-in-time dataset/decision lineage, source-reconciliation records and
@@ -293,6 +295,13 @@ financial engine remain separate gates.
    tests bring the laboratory to one hundred and eighty; automated-search claims,
    implementation, Iranian fitness, scoring, ranking, selection, financial use and
    runtime integration remain blocked.
+56. **BOUNDED CANDIDATE-DISCOVERY CATALOG COMPLETE:** four exact primary-publication
+   candidates from the recorded 2017–2026 review are stored with dated search scope,
+   currentness uncertainty, method-specific comparison boundaries and non-equivalence
+   limits. Only four source cells are documented; 36 non-source cells stay
+   `not_evaluated`. Six tests bring the laboratory to one hundred and eighty-six; no
+   implementation, performance comparison, score, rank, selection, Iran-fitness claim
+   or runtime integration exists.
 
 All implementation available from published provider contracts is complete; real
 provider history execution remains paused at item 6 for Tier-A licensing/cost decisions.

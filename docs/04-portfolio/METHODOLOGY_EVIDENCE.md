@@ -68,5 +68,21 @@ cannot qualify as sources. A listed candidate remains unimplemented, untested fo
 Iran, unranked and ineligible for selection; the contract performs no network search
 and is not connected to application runtime.
 
+The first bounded discovery record was reviewed on 2026-09-05 and preserves four
+primary-publication candidates without calling any of them best or complete:
+
+| Research-only candidate | Primary publication | Boundary retained now |
+|---|---|---|
+| HCAA | [Raffinot, *Hierarchical Clustering-Based Asset Allocation*](https://doi.org/10.3905/jpm.2018.44.2.089) | Not the existing HRP control; foreign evidence is not Iranian validation |
+| Generalized risk parity with ADMM | [Costa & Kwon, *Generalized risk parity portfolio optimization: an ADMM approach*](https://doi.org/10.1007/s10898-020-00915-x) | Expected returns, bounds, uncertainty and short-selling rules are undecided |
+| Wasserstein robust mean-variance | [Blanchet, Chen & Zhou, *Distributionally Robust Mean-Variance Portfolio Selection with Wasserstein Distances*](https://doi.org/10.1287/mnsc.2021.4155) | Target return, ambiguity radius, constraints and estimation are undecided |
+| Fast HRP | [Salas-Molina & Nin, *Fast hierarchical risk parity methods for portfolio selection*](https://doi.org/10.1007/s10479-026-07149-2) | Not the existing single-linkage HRP control; speed may not matter for this small universe |
+
+This was a bounded 2017–2026 search, not an exhaustive proof of the newest or most
+effective method. Publication identifiers are recorded, but post-review supersession
+monitoring remains required. All four candidates are `not_implemented`; their 36
+non-source evidence cells remain `not_evaluated`. No performance comparison, score,
+rank, selection, Iran-fitness claim or runtime integration exists.
+
 `STATUS: TBD` for a real method decision. Recording these sources does not select or
 approve any method.

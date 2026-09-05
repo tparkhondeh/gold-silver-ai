@@ -271,6 +271,11 @@ Phase 1 checkpoint `0f90210`; not merged to `main`.
   eighty while implementation, Iranian fitness and selection remain blocked.
 - Research-candidate intake checkpoint `f70c594` passed all three jobs in GitHub run
   [33984497183](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33984497183).
+- Added the first exact reviewed candidate-discovery catalog: HCAA, generalized risk
+  parity with ADMM, Wasserstein robust mean-variance and fast HRP. Exact primary-source
+  identity, review scope, currentness uncertainty and non-equivalence limits are
+  retained. Six tests bring the laboratory to one hundred and eighty-six; every
+  candidate stays unimplemented and no method is compared, ranked or selected.
 
 ## Phase 1 — Completed Units on the Working Branch
 

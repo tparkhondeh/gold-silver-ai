@@ -253,6 +253,10 @@ ranking or selection; it is not connected to the application runtime.
 Its research-intake contract may record AI-assisted source discovery only after human
 review and with explicit dates and boundaries. The artifact cannot search the network,
 implement a candidate or promote it toward a decision.
+The first exact discovery catalog records four literature candidates as research-only.
+Their source records are reviewable, but currentness is still unresolved and all
+non-source evidence remains unevaluated. It is not a model-selection system and cannot
+score, rank, recommend, allocate or change runtime behavior.
 
 ## Related Documents
 

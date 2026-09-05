@@ -253,6 +253,14 @@ hundred and eighty laboratory tests pass locally. The contract contains only syn
 test fixtures and performs no network search or runtime integration.
 Research-candidate intake checkpoint `f70c594` passed all three GitHub jobs in run
 33984497183.
+A dated, exact candidate-discovery catalog now records four research-only methods from
+a bounded 2017–2026 primary-literature review: HCAA, generalized risk parity with
+ADMM, Wasserstein distributionally robust mean-variance and fast HRP. All four remain
+`not_implemented` and Iran-unevaluated. Only their four source cells are documented;
+the other 36 evidence cells remain `not_evaluated`, and source currentness remains
+explicitly unresolved. Six new tests bring the laboratory to one hundred and
+eighty-six. The catalog has no performance comparison, score, rank, selection,
+financial permission or runtime connection.
 
 The owner authorized staged Data Foundation and deterministic-baseline development,
 with each stage dependent on the previous quality gate. Private GitHub authentication

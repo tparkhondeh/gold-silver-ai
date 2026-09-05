@@ -89,6 +89,10 @@ Iran-specific gap, robustness check and failure mode visible per method. It cann
 score or compare completeness, so the Tier-A methodology decision remains open.
 New methods must also pass the research-intake contract before study; appearing in
 that list grants no implementation, comparison, allocation or approval status.
+The first bounded discovery catalog names four research-only possibilities from exact
+primary publications. It records what each might later be tested for and why it is not
+equivalent to an existing control, but adds no weights, performance result, priority,
+ranking, approved method or application behavior.
 
 ## Related Documents
 

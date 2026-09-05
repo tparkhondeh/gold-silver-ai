@@ -229,6 +229,12 @@ state is recorded in `docs/10-project-state/CURRENT_STATE.md`.
 - Research-candidate intake checkpoint `f70c594` passed all three GitHub Actions jobs
   in run
   [33984497183](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33984497183).
+- Added the exact bounded candidate-discovery catalog for HCAA, generalized risk
+  parity with ADMM, Wasserstein robust mean-variance and fast HRP. The dated source,
+  scope, currentness uncertainty and non-equivalence records are replayable; only four
+  source cells are documented and 36 non-source cells remain unevaluated. Six new
+  tests bring the laboratory to one hundred and eighty-six with no implementation,
+  performance comparison, score, rank, selection or Iranian-fitness claim.
 
 ### Fail-closed Navasan history authorization — ۱۴۰۵/۰۶/۱۰
 
