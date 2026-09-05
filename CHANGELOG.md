@@ -170,6 +170,10 @@ state is recorded in `docs/10-project-state/CURRENT_STATE.md`.
   crisis model, ranking, decision, financial use or execution is enabled.
 - Synthetic stress-matrix checkpoint `860ed2b` passed all three GitHub Actions jobs
   in run [33962814546](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33962814546).
+- Added a canonical side-by-side evaluation of frozen inverse-volatility weights under
+  explicit synthetic shocks. Both paths and metrics replay exactly; shocks outside
+  the associated test fold, foreign weights and resealed values fail closed. One
+  hundred and thirty-two tests pass with no ranking, threshold or decision output.
 
 ### Fail-closed Navasan history authorization — ۱۴۰۵/۰۶/۱۰
 

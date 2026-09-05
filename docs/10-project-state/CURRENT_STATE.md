@@ -184,6 +184,12 @@ laboratory tests pass locally. This is crisis-test plumbing only: no crisis defi
 threshold, benchmark ranking, financial decision, real use or execution is approved.
 Synthetic stress-matrix checkpoint `860ed2b` passed all three GitHub jobs in run
 33962814546.
+Frozen train-only inverse-volatility weights can now be applied to the exact stressed
+test fold without refitting. The versioned side-by-side artifact preserves both
+return/wealth paths and their separate cumulative-change/drawdown metrics, requires
+every explicit shock to be used exactly once, and contains no winner, rank or
+threshold. One hundred and thirty-two laboratory tests pass locally; the result stays
+`no_decision`, no-use and no-execution.
 
 The owner authorized staged Data Foundation and deterministic-baseline development,
 with each stage dependent on the previous quality gate. Private GitHub authentication

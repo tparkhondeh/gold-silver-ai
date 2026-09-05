@@ -172,6 +172,11 @@ and zero-default values, pin deterministic replay, require synthetic namespaces 
 sorted unique cells, enforce exact matrix coverage and reject total-loss or resealed
 false values. One hundred and twenty-six laboratory tests pass; no crisis methodology,
 probability, threshold, ranking or decision is inferred.
+Six frozen-weight stress-evaluation tests hand-check both weighted paths and metrics,
+pin the exact artifact identity, require every explicit shock to stay inside the
+associated test fold, preserve the reviewed train-only weight identity and reject
+foreign/resealed weights or metrics. One hundred and thirty-two laboratory tests pass
+under an explicit no-ranking/no-threshold/no-decision policy.
 
 ## Related Documents
 

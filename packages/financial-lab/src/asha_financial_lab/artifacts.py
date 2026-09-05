@@ -32,6 +32,7 @@ from .synthetic_stress import (
     validate_stressed_return_matrix,
     validate_synthetic_stress_scenario,
 )
+from .stress_evaluation import validate_inverse_volatility_stress_evaluation
 from .walk_forward import validate_walk_forward_plan
 from .walk_forward_evaluation import validate_inverse_volatility_walk_forward_report
 
@@ -803,5 +804,43 @@ def decode_stressed_return_matrix(
         document,
         lambda value: validate_stressed_return_matrix(
             value, dataset_payload, matrix_payload, scenario_payload
+        ),
+    )
+
+
+def encode_inverse_volatility_stress_evaluation(
+    payload: object,
+    dataset_payload: object,
+    matrix_payload: object,
+    stressed_matrix_payload: object,
+    scenario_payload: object,
+    plan_payload: object,
+    standardizer_payload: object,
+    weight_set_payload: object,
+) -> bytes:
+    return _encode_canonical(
+        payload,
+        lambda value: validate_inverse_volatility_stress_evaluation(
+            value, dataset_payload, matrix_payload, stressed_matrix_payload,
+            scenario_payload, plan_payload, standardizer_payload, weight_set_payload,
+        ),
+    )
+
+
+def decode_inverse_volatility_stress_evaluation(
+    document: object,
+    dataset_payload: object,
+    matrix_payload: object,
+    stressed_matrix_payload: object,
+    scenario_payload: object,
+    plan_payload: object,
+    standardizer_payload: object,
+    weight_set_payload: object,
+) -> dict[str, Any]:
+    return _decode_canonical(
+        document,
+        lambda value: validate_inverse_volatility_stress_evaluation(
+            value, dataset_payload, matrix_payload, stressed_matrix_payload,
+            scenario_payload, plan_payload, standardizer_payload, weight_set_payload,
         ),
     )

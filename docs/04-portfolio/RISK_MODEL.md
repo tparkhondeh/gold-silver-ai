@@ -82,6 +82,10 @@ The laboratory also has a versioned explicit-shock matrix for synthetic crisis-t
 mechanics. It applies only caller-supplied additive shocks to exact synthetic
 period/path cells and preserves base, shock and stressed values for replay. It does
 not define a real crisis, severity, probability, threshold or approved risk method.
+Frozen inverse-volatility comparison weights can now traverse one exact stressed test
+fold without refitting. Base and stressed results remain side by side with no ranking
+or pass/fail threshold; this tests arithmetic and provenance, not resilience or risk
+fitness in a real market.
 
 ## Related Documents
 

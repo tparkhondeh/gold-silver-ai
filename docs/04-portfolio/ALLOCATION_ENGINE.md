@@ -63,6 +63,10 @@ the report explicitly forbids an aggregate performance claim.
 HRP now has the same multi-fold isolation: its full train-only covariance, exact-
 moment correlation, clustering, ordering and weighting chain is rebuilt per fold and
 frozen for that fold's test interval. This remains a comparison report, not approval.
+The inverse-volatility control's frozen weights can also be evaluated against an
+explicit synthetic stressed-return matrix for their exact test fold. The artifact
+keeps base and stressed paths separate under a no-ranking policy; it does not refit
+weights, choose an allocation, set a threshold or approve a methodology.
 
 ## Related Documents
 

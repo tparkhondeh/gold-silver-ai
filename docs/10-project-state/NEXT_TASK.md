@@ -9,10 +9,11 @@ synthetic-only Phase 2 laboratory on 2026-09-01. ADR 0009 is binding: no real da
 paid API, real recommendation, production registry write, or execution is permitted.
 The isolated Python package, versioned synthetic input/output contract, independent CI
 gate, canonical artifacts, exact no-decision replay, three multi-fold comparison
-controls and the explicit synthetic stress-return matrix are complete. The immediate
-safe unit is to evaluate already-frozen benchmark weights against that exact stressed
-matrix without refitting, ranking, aggregation or methodology selection. It must
-remain synthetic-only and can never enter the application runtime.
+controls, the explicit synthetic stress-return matrix and the first frozen-weight
+stress evaluation are complete. The immediate safe unit is to extend that exact
+side-by-side stress mechanic to the already-reviewed HRP and minimum-CVaR controls,
+without refitting, ranking, aggregation or methodology selection. It must remain
+synthetic-only and can never enter the application runtime.
 
 Migrations 0003–0011 now cover the owner snapshot, immutable provenance,
 exact point-in-time dataset/decision lineage, source-reconciliation records and
@@ -238,6 +239,11 @@ financial engine remain separate gates.
    retains the base return, an explicit shock value for every cell and the stressed
    result; exact provenance and canonical replay reject omissions, ambiguity and
    tampering. It emits no metric, ranking, recommendation or operational decision.
+48. **FROZEN INVERSE-VOLATILITY STRESS EVALUATION COMPLETE:** the train-only weights
+   are held fixed over their exact shocked test fold. Base and stressed return/wealth
+   paths and metrics remain separate under `side_by_side_no_ranking`; every shock must
+   be applied exactly once and no winner, threshold, recommendation or decision is
+   emitted.
 
 All implementation available from published provider contracts is complete; real
 provider history execution remains paused at item 6 for Tier-A licensing/cost decisions.

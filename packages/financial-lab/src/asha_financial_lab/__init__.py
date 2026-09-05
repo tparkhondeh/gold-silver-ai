@@ -15,6 +15,7 @@ from .artifacts import (
     decode_hrp_control_weights,
     decode_hrp_control_evaluation,
     decode_hrp_walk_forward_report,
+    decode_inverse_volatility_stress_evaluation,
     decode_minimum_cvar_control_weights,
     decode_minimum_cvar_control_evaluation,
     decode_minimum_cvar_walk_forward_report,
@@ -37,6 +38,7 @@ from .artifacts import (
     encode_hrp_control_weights,
     encode_hrp_control_evaluation,
     encode_hrp_walk_forward_report,
+    encode_inverse_volatility_stress_evaluation,
     encode_minimum_cvar_control_weights,
     encode_minimum_cvar_control_evaluation,
     encode_minimum_cvar_walk_forward_report,
@@ -152,6 +154,11 @@ from .synthetic_stress import (
     validate_stressed_return_matrix,
     validate_synthetic_stress_scenario,
 )
+from .stress_evaluation import (
+    STRESS_EVALUATION_SCHEMA_VERSION,
+    evaluate_inverse_volatility_stress_fold,
+    validate_inverse_volatility_stress_evaluation,
+)
 from .walk_forward import WALK_FORWARD_SCHEMA_VERSION, build_walk_forward_plan, validate_walk_forward_plan
 from .walk_forward_evaluation import (
     WALK_FORWARD_EVALUATION_SCHEMA_VERSION,
@@ -186,6 +193,7 @@ __all__ = [
     "STANDARDIZER_SCHEMA_VERSION",
     "STRESSED_RETURN_MATRIX_SCHEMA_VERSION",
     "STRESS_SCENARIO_SCHEMA_VERSION",
+    "STRESS_EVALUATION_SCHEMA_VERSION",
     "WALK_FORWARD_SCHEMA_VERSION",
     "WALK_FORWARD_EVALUATION_SCHEMA_VERSION",
     "WEIGHTED_CONTROL_EVALUATION_SCHEMA_VERSION",
@@ -220,6 +228,7 @@ __all__ = [
     "decode_hrp_control_weights",
     "decode_hrp_control_evaluation",
     "decode_hrp_walk_forward_report",
+    "decode_inverse_volatility_stress_evaluation",
     "decode_minimum_cvar_control_weights",
     "decode_minimum_cvar_control_evaluation",
     "decode_minimum_cvar_walk_forward_report",
@@ -243,6 +252,7 @@ __all__ = [
     "encode_hrp_control_weights",
     "encode_hrp_control_evaluation",
     "encode_hrp_walk_forward_report",
+    "encode_inverse_volatility_stress_evaluation",
     "encode_minimum_cvar_control_weights",
     "encode_minimum_cvar_control_evaluation",
     "encode_minimum_cvar_walk_forward_report",
@@ -256,6 +266,7 @@ __all__ = [
     "evaluate_hrp_comparison_control_fold",
     "evaluate_minimum_cvar_comparison_control_fold",
     "evaluate_inverse_volatility_control_fold",
+    "evaluate_inverse_volatility_stress_fold",
     "fingerprint",
     "fit_train_only_standardizer",
     "evaluate_no_decision",
@@ -272,6 +283,7 @@ __all__ = [
     "validate_normalized_fold",
     "validate_inverse_volatility_control_weights",
     "validate_inverse_volatility_control_evaluation",
+    "validate_inverse_volatility_stress_evaluation",
     "validate_train_only_standardizer",
     "validate_train_only_covariance",
     "validate_train_only_correlation",
