@@ -33,6 +33,8 @@ their order or showed how a failure or omission blocks dependent gates.
 8. Self-review: missing references, real-data flags, omitted checks and resealed result
    promotion all fail closed.
 9. Owner approval for `main`: not requested; `main` remains unchanged.
+10. Remote verification: checkpoint `2d33a01` passed all three GitHub Actions jobs in
+    run 33996055637.
 
 ## Remaining limit and next safe unit
 

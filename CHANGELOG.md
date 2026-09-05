@@ -36,6 +36,8 @@ state is recorded in `docs/10-project-state/CURRENT_STATE.md`.
   Twenty artificial checks produce deterministic passed, failed or dependency-blocked
   mechanics while real calibration, parameter mutation, financial use, promotion and
   execution remain locked. Eight new tests bring the laboratory total to 222.
+- Synthetic calibration-gate evaluator checkpoint `2d33a01` passed all three GitHub
+  Actions jobs in run 33996055637; `main` remained unchanged.
 
 - Recorded the owner's acceptance of Phase 1 Data Foundation for progression and the
   exact synthetic-only Phase 2 boundary in ADR 0009.
