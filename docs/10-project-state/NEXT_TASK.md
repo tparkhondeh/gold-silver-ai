@@ -10,11 +10,13 @@ paid API, real recommendation, production registry write, or execution is permit
 The isolated Python package, versioned synthetic input/output contract, independent CI
 gate, canonical artifacts, exact no-decision replay, three multi-fold comparison
 controls, the explicit synthetic stress-return matrix and frozen-weight stress
-evaluation and versioned multi-scenario suites for inverse-volatility, HRP and
-minimum-CVaR are complete. The immediate safe unit is to repeat those scenario suites
-across every walk-forward fold while preserving separate fold/scenario cells, exact
-train-only refitting and permanent no-aggregation/no-ranking locks. It must remain
-synthetic-only and can never enter the application runtime.
+evaluation, versioned multi-scenario suites and multi-fold stress replay for
+inverse-volatility, HRP and minimum-CVaR are complete. The immediate safe unit is a
+versioned methodology-evidence registry and predeclared evaluation rubric: it must
+record authoritative source/version, assumptions, explainability, data requirements,
+Iran-specific validation gaps, robustness and implementation status before any
+provisional laboratory method can be selected. Synthetic performance cannot establish
+financial superiority, and nothing can enter the application runtime yet.
 
 Migrations 0003–0011 now cover the owner snapshot, immutable provenance,
 exact point-in-time dataset/decision lineage, source-reconciliation records and
@@ -257,6 +259,13 @@ financial engine remain separate gates.
    and metrics under `none_scenario_metrics_only`; one hundred and forty-five tests
    reject omissions, order drift, canonical tampering, aggregation, ranking and
    operational promotion.
+51. **MULTI-FOLD/MULTI-SCENARIO STRESS REPLAY COMPLETE:** every walk-forward fold
+   rebuilds the selected comparison control from only its training interval, freezes
+   the resulting weights, and evaluates its own ordered synthetic scenario suite.
+   Six fold/scenario cells retain separate identities under
+   `none_fold_or_scenario_metrics_only`; one hundred and fifty-two tests reject
+   missing/reordered inputs, false metrics, noncanonical parameters, aggregation,
+   ranking and operational promotion.
 
 All implementation available from published provider contracts is complete; real
 provider history execution remains paused at item 6 for Tier-A licensing/cost decisions.

@@ -42,6 +42,11 @@ from .stress_suite import (
     validate_inverse_volatility_stress_suite,
     validate_minimum_cvar_stress_suite,
 )
+from .stress_walk_forward import (
+    validate_hrp_stress_walk_forward_report,
+    validate_inverse_volatility_stress_walk_forward_report,
+    validate_minimum_cvar_stress_walk_forward_report,
+)
 from .walk_forward import validate_walk_forward_plan
 from .walk_forward_evaluation import validate_inverse_volatility_walk_forward_report
 
@@ -1025,5 +1030,77 @@ def decode_hrp_stress_suite(
             value, dataset_payload, matrix_payload, plan_payload, standardizer_payload,
             covariance_payload, correlation_payload, distance_payload, clustering_payload,
             order_payload, weight_set_payload, scenario_payloads,
+        ),
+    )
+
+
+def encode_inverse_volatility_stress_walk_forward_report(
+    payload: object, dataset_payload: object, matrix_payload: object,
+    plan_payload: object, fold_scenario_payloads: object,
+) -> bytes:
+    return _encode_canonical(
+        payload,
+        lambda value: validate_inverse_volatility_stress_walk_forward_report(
+            value, dataset_payload, matrix_payload, plan_payload, fold_scenario_payloads
+        ),
+    )
+
+
+def decode_inverse_volatility_stress_walk_forward_report(
+    document: object, dataset_payload: object, matrix_payload: object,
+    plan_payload: object, fold_scenario_payloads: object,
+) -> dict[str, Any]:
+    return _decode_canonical(
+        document,
+        lambda value: validate_inverse_volatility_stress_walk_forward_report(
+            value, dataset_payload, matrix_payload, plan_payload, fold_scenario_payloads
+        ),
+    )
+
+
+def encode_minimum_cvar_stress_walk_forward_report(
+    payload: object, dataset_payload: object, matrix_payload: object,
+    plan_payload: object, fold_scenario_payloads: object,
+) -> bytes:
+    return _encode_canonical(
+        payload,
+        lambda value: validate_minimum_cvar_stress_walk_forward_report(
+            value, dataset_payload, matrix_payload, plan_payload, fold_scenario_payloads
+        ),
+    )
+
+
+def decode_minimum_cvar_stress_walk_forward_report(
+    document: object, dataset_payload: object, matrix_payload: object,
+    plan_payload: object, fold_scenario_payloads: object,
+) -> dict[str, Any]:
+    return _decode_canonical(
+        document,
+        lambda value: validate_minimum_cvar_stress_walk_forward_report(
+            value, dataset_payload, matrix_payload, plan_payload, fold_scenario_payloads
+        ),
+    )
+
+
+def encode_hrp_stress_walk_forward_report(
+    payload: object, dataset_payload: object, matrix_payload: object,
+    plan_payload: object, fold_scenario_payloads: object,
+) -> bytes:
+    return _encode_canonical(
+        payload,
+        lambda value: validate_hrp_stress_walk_forward_report(
+            value, dataset_payload, matrix_payload, plan_payload, fold_scenario_payloads
+        ),
+    )
+
+
+def decode_hrp_stress_walk_forward_report(
+    document: object, dataset_payload: object, matrix_payload: object,
+    plan_payload: object, fold_scenario_payloads: object,
+) -> dict[str, Any]:
+    return _decode_canonical(
+        document,
+        lambda value: validate_hrp_stress_walk_forward_report(
+            value, dataset_payload, matrix_payload, plan_payload, fold_scenario_payloads
         ),
     )

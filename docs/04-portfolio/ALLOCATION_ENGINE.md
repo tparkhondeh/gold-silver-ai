@@ -73,6 +73,9 @@ mechanics evidence without comparing or ranking the controls themselves.
 Each reviewed control can now replay a bounded, ordered suite of explicit synthetic
 stress scenarios while keeping each scenario's result separate. The suite records no
 average, winner or allocation choice and cannot promote a control into production.
+The scenario suite can now repeat across every walk-forward fold. Each fold rebuilds
+its comparison weights from its own training interval and freezes them before stress;
+no metric is combined across folds or scenarios into an allocation claim.
 
 ## Related Documents
 

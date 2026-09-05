@@ -185,6 +185,10 @@ Seven multi-scenario-suite tests pin deterministic reports for all three reviewe
 controls, require two to sixteen sorted unique scenarios, round-trip canonical bytes,
 and reject resealed false scenario metrics. One hundred and forty-five laboratory
 tests pass under `none_scenario_metrics_only`, with no cross-scenario aggregation.
+Seven walk-forward stress tests pin deterministic reports for inverse-volatility, HRP
+and minimum-CVaR, require one ordered scenario set per fold, verify canonical report
+transport, and reject omitted cells or noncanonical parameters. One hundred and
+fifty-two laboratory tests pass under `none_fold_or_scenario_metrics_only`.
 
 ## Related Documents
 

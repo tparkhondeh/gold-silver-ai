@@ -92,6 +92,9 @@ non-operational; no cross-control winner or crisis-fit claim is produced.
 A bounded multi-scenario suite now preserves each explicit synthetic crisis result as
 its own cell. It records count and provenance only—not an average, combined score,
 ranking, pass/fail threshold, probability or real-market resilience claim.
+The same explicit scenarios can now be evaluated in every walk-forward fold after the
+control is refitted only on that fold's training interval. Results remain individual
+fold/scenario cells, preventing a convenient headline number from hiding instability.
 
 ## Related Documents
 

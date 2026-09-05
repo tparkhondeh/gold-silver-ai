@@ -209,6 +209,14 @@ laboratory tests pass locally. No cross-scenario aggregation, ranking, threshold
 methodology approval, recommendation or execution is possible.
 Multi-scenario stress-suite checkpoint `90d307d` passed all three GitHub jobs in run
 33966709184.
+A versioned walk-forward stress report now refits each reviewed comparison control on
+every exact synthetic training fold, freezes those weights for the matching test fold,
+and replays that fold's explicit scenario suite. Each of the six fold/scenario cells
+keeps separate matrix, evaluation and suite identities. One hundred and fifty-two
+laboratory tests pass locally; missing/reordered folds, altered metrics and noncanonical
+minimum-CVaR parameters fail closed. The permanent
+`none_fold_or_scenario_metrics_only` policy forbids a combined score, ranking,
+threshold, methodology approval, recommendation or execution.
 
 The owner authorized staged Data Foundation and deterministic-baseline development,
 with each stage dependent on the previous quality gate. Private GitHub authentication

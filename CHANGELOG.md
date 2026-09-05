@@ -191,6 +191,10 @@ state is recorded in `docs/10-project-state/CURRENT_STATE.md`.
 - Multi-scenario stress-suite checkpoint `90d307d` passed all three GitHub Actions
   jobs in run
   [33966709184](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33966709184).
+- Added canonical walk-forward stress reports for all three reviewed controls. Every
+  training fold rebuilds and freezes its own weights before its ordered scenario
+  suite is evaluated; all fold/scenario metrics remain separate. One hundred and
+  fifty-two tests pass with no combined claim, ranking, threshold or decision.
 
 ### Fail-closed Navasan history authorization — ۱۴۰۵/۰۶/۱۰
 

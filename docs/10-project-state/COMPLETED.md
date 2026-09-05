@@ -237,6 +237,10 @@ Phase 1 checkpoint `0f90210`; not merged to `main`.
   aggregation, ranking, threshold, financial decision or execution is enabled.
 - Multi-scenario stress-suite checkpoint `90d307d` passed all three jobs in GitHub
   run [33966709184](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33966709184).
+- Added multi-fold/multi-scenario stress reports for inverse-volatility, HRP and
+  minimum-CVaR. Every fold refits only from its training interval, freezes the exact
+  weights, and retains each scenario result separately. One hundred and fifty-two
+  tests pass under permanent no-fold/no-scenario aggregation and no-decision locks.
 
 ## Phase 1 — Completed Units on the Working Branch
 
