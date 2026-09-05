@@ -235,6 +235,8 @@ Phase 1 checkpoint `0f90210`; not merged to `main`.
   exact frozen control, with separate identities/metrics and a permanent
   `none_scenario_metrics_only` policy. One hundred and forty-five tests pass; no
   aggregation, ranking, threshold, financial decision or execution is enabled.
+- Multi-scenario stress-suite checkpoint `90d307d` passed all three jobs in GitHub
+  run [33966709184](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33966709184).
 
 ## Phase 1 — Completed Units on the Working Branch
 
