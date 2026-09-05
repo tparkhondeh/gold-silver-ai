@@ -225,6 +225,8 @@ assumptions, explainability, data requirements, Iran gaps, robustness requiremen
 one separate evidence cell per criterion. Eight new tests bring the laboratory total
 to one hundred and sixty. No score, weight, threshold, ranking or selection exists;
 real source entries and every financial-methodology decision remain pending.
+Methodology-evidence governance checkpoint `5ca14c5` passed all three GitHub jobs in
+run 33975366552.
 
 The owner authorized staged Data Foundation and deterministic-baseline development,
 with each stage dependent on the previous quality gate. Private GitHub authentication

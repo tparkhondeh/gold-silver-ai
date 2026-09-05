@@ -249,6 +249,9 @@ Phase 1 checkpoint `0f90210`; not merged to `main`.
   explainability, data needs, Iran gaps, robustness requirements and separate evidence
   cells. One hundred and sixty tests pass; scoring, ranking, selection and methodology
   approval remain impossible.
+- Methodology-evidence governance checkpoint `5ca14c5` passed all three jobs in GitHub
+  run
+  [33975366552](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33975366552).
 
 ## Phase 1 — Completed Units on the Working Branch
 
