@@ -251,6 +251,8 @@ unresolved evidence cells. Marketing sources, source chronology errors, automate
 search claims, implementation, Iranian-fitness claims and selection fail closed. One
 hundred and eighty laboratory tests pass locally. The contract contains only synthetic
 test fixtures and performs no network search or runtime integration.
+Research-candidate intake checkpoint `f70c594` passed all three GitHub jobs in run
+33984497183.
 
 The owner authorized staged Data Foundation and deterministic-baseline development,
 with each stage dependent on the previous quality gate. Private GitHub authentication

@@ -226,6 +226,9 @@ state is recorded in `docs/10-project-state/CURRENT_STATE.md`.
   non-equivalence limits and all ten evidence gaps are mandatory. Eight new tests bring
   the laboratory to one hundred and eighty; no candidate can be implemented, scored,
   ranked, selected or claimed fit for Iran.
+- Research-candidate intake checkpoint `f70c594` passed all three GitHub Actions jobs
+  in run
+  [33984497183](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33984497183).
 
 ### Fail-closed Navasan history authorization — ۱۴۰۵/۰۶/۱۰
 
