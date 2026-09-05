@@ -31,6 +31,8 @@ the production web build, lint, typecheck, all 130 web tests and coverage gates 
 locally.
 Code checkpoint `909d537` passed all three GitHub Actions jobs in run
 33992126608; `main` remained unchanged.
+Iran-calibration-manifest checkpoint `4588088` passed all three GitHub Actions jobs
+in run 33993319908; `main` remained unchanged.
 The isolated `packages/financial-lab` Python 3.12 package now defines strict v1 JSON
 contracts for synthetic datasets and evaluation results. Canonical SHA-256 identities
 make exact replay/tampering visible; real namespaces, real units, premature

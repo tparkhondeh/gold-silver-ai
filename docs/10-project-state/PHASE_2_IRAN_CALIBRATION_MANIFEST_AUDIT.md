@@ -32,6 +32,8 @@ parameter freeze and promotion gate.
 8. Self-review: exact-key validation and resealed-drift tests cover the critical
    boundary; this audit records the remaining limits.
 9. Owner approval for `main`: not requested; `main` remains unchanged.
+10. Remote verification: checkpoint `4588088` passed all three GitHub Actions jobs
+    in run 33993319908.
 
 ## Remaining limits and next safe unit
 
