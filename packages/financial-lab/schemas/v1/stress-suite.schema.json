@@ -1,0 +1,94 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://goldsilver.wealthos.ir/contracts/asha.synthetic.stress_suite.v1.schema.json",
+  "title": "Asha synthetic multi-scenario stress suite v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion", "stressSuiteId", "status", "financialUseAllowed",
+    "executionAllowed", "decisionState", "benchmarkId", "datasetReference",
+    "baseReturnMatrixReference", "walkForwardPlanReference", "weightSetReference",
+    "methodologyReference", "foldIndex", "summary", "scenarioResults", "reasonCodes"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "asha.synthetic.stress_suite.v1" },
+    "stressSuiteId": {
+      "type": "string",
+      "pattern": "^ASHA_STRESS_SUITE_[a-f0-9]{64}$"
+    },
+    "status": { "const": "evaluation_only" },
+    "financialUseAllowed": { "const": false },
+    "executionAllowed": { "const": false },
+    "decisionState": { "const": "no_decision" },
+    "benchmarkId": {
+      "enum": [
+        "ASHA_BENCHMARK_INVERSE_VOLATILITY_CONTROL_V1",
+        "ASHA_BENCHMARK_HRP_CONTROL_V1",
+        "ASHA_BENCHMARK_MINIMUM_CVAR_CONTROL_V1"
+      ]
+    },
+    "datasetReference": { "type": "object" },
+    "baseReturnMatrixReference": { "type": "object" },
+    "walkForwardPlanReference": { "type": "object" },
+    "weightSetReference": { "type": "object" },
+    "methodologyReference": {
+      "const": { "entityId": "STATUS_TBD", "version": 0, "approvalState": "unapproved" }
+    },
+    "foldIndex": { "type": "integer", "minimum": 0 },
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["scenarioCount", "testStartIndex", "testEndIndex", "aggregationPolicy"],
+      "properties": {
+        "scenarioCount": { "type": "integer", "minimum": 2, "maximum": 16 },
+        "testStartIndex": { "type": "integer", "minimum": 1 },
+        "testEndIndex": { "type": "integer", "minimum": 1 },
+        "aggregationPolicy": { "const": "none_scenario_metrics_only" }
+      }
+    },
+    "scenarioResults": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 16,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "stressScenarioReference", "stressedReturnMatrixReference",
+          "stressEvaluationReference", "metrics"
+        ],
+        "properties": {
+          "stressScenarioReference": { "type": "object" },
+          "stressedReturnMatrixReference": { "type": "object" },
+          "stressEvaluationReference": { "type": "object" },
+          "metrics": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "periodCount", "stressCellCount", "baseCumulativeChangePercent",
+              "stressedCumulativeChangePercent", "baseMaximumDrawdownPercent",
+              "stressedMaximumDrawdownPercent"
+            ],
+            "properties": {
+              "periodCount": { "type": "integer", "minimum": 1 },
+              "stressCellCount": { "type": "integer", "minimum": 1 },
+              "baseCumulativeChangePercent": { "type": "string" },
+              "stressedCumulativeChangePercent": { "type": "string" },
+              "baseMaximumDrawdownPercent": { "type": "string" },
+              "stressedMaximumDrawdownPercent": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "reasonCodes": {
+      "const": [
+        "COMPARISON_CONTROL_ONLY", "EXPLICIT_SYNTHETIC_SCENARIOS_ONLY",
+        "FROZEN_WEIGHTS_ONLY", "METHODOLOGY_NOT_APPROVED",
+        "NO_CROSS_SCENARIO_AGGREGATION", "NO_FINANCIAL_DECISION",
+        "NO_RANKING_OR_THRESHOLD", "REAL_FINANCIAL_USE_DISABLED",
+        "SYNTHETIC_DATA_ONLY"
+      ]
+    }
+  }
+}

@@ -37,6 +37,11 @@ from .stress_evaluation import (
     validate_inverse_volatility_stress_evaluation,
     validate_minimum_cvar_stress_evaluation,
 )
+from .stress_suite import (
+    validate_hrp_stress_suite,
+    validate_inverse_volatility_stress_suite,
+    validate_minimum_cvar_stress_suite,
+)
 from .walk_forward import validate_walk_forward_plan
 from .walk_forward_evaluation import validate_inverse_volatility_walk_forward_report
 
@@ -934,5 +939,91 @@ def decode_hrp_stress_evaluation(
             scenario_payload, plan_payload, standardizer_payload, covariance_payload,
             correlation_payload, distance_payload, clustering_payload, order_payload,
             weight_set_payload,
+        ),
+    )
+
+
+def encode_inverse_volatility_stress_suite(
+    payload: object, dataset_payload: object, matrix_payload: object,
+    plan_payload: object, standardizer_payload: object, weight_set_payload: object,
+    scenario_payloads: object,
+) -> bytes:
+    return _encode_canonical(
+        payload,
+        lambda value: validate_inverse_volatility_stress_suite(
+            value, dataset_payload, matrix_payload, plan_payload, standardizer_payload,
+            weight_set_payload, scenario_payloads,
+        ),
+    )
+
+
+def decode_inverse_volatility_stress_suite(
+    document: object, dataset_payload: object, matrix_payload: object,
+    plan_payload: object, standardizer_payload: object, weight_set_payload: object,
+    scenario_payloads: object,
+) -> dict[str, Any]:
+    return _decode_canonical(
+        document,
+        lambda value: validate_inverse_volatility_stress_suite(
+            value, dataset_payload, matrix_payload, plan_payload, standardizer_payload,
+            weight_set_payload, scenario_payloads,
+        ),
+    )
+
+
+def encode_minimum_cvar_stress_suite(
+    payload: object, dataset_payload: object, matrix_payload: object,
+    plan_payload: object, weight_set_payload: object, scenario_payloads: object,
+) -> bytes:
+    return _encode_canonical(
+        payload,
+        lambda value: validate_minimum_cvar_stress_suite(
+            value, dataset_payload, matrix_payload, plan_payload, weight_set_payload,
+            scenario_payloads,
+        ),
+    )
+
+
+def decode_minimum_cvar_stress_suite(
+    document: object, dataset_payload: object, matrix_payload: object,
+    plan_payload: object, weight_set_payload: object, scenario_payloads: object,
+) -> dict[str, Any]:
+    return _decode_canonical(
+        document,
+        lambda value: validate_minimum_cvar_stress_suite(
+            value, dataset_payload, matrix_payload, plan_payload, weight_set_payload,
+            scenario_payloads,
+        ),
+    )
+
+
+def encode_hrp_stress_suite(
+    payload: object, dataset_payload: object, matrix_payload: object,
+    plan_payload: object, standardizer_payload: object, covariance_payload: object,
+    correlation_payload: object, distance_payload: object, clustering_payload: object,
+    order_payload: object, weight_set_payload: object, scenario_payloads: object,
+) -> bytes:
+    return _encode_canonical(
+        payload,
+        lambda value: validate_hrp_stress_suite(
+            value, dataset_payload, matrix_payload, plan_payload, standardizer_payload,
+            covariance_payload, correlation_payload, distance_payload, clustering_payload,
+            order_payload, weight_set_payload, scenario_payloads,
+        ),
+    )
+
+
+def decode_hrp_stress_suite(
+    document: object, dataset_payload: object, matrix_payload: object,
+    plan_payload: object, standardizer_payload: object, covariance_payload: object,
+    correlation_payload: object, distance_payload: object, clustering_payload: object,
+    order_payload: object, weight_set_payload: object, scenario_payloads: object,
+) -> dict[str, Any]:
+    return _decode_canonical(
+        document,
+        lambda value: validate_hrp_stress_suite(
+            value, dataset_payload, matrix_payload, plan_payload, standardizer_payload,
+            covariance_payload, correlation_payload, distance_payload, clustering_payload,
+            order_payload, weight_set_payload, scenario_payloads,
         ),
     )

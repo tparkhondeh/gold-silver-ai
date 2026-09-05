@@ -10,11 +10,11 @@ paid API, real recommendation, production registry write, or execution is permit
 The isolated Python package, versioned synthetic input/output contract, independent CI
 gate, canonical artifacts, exact no-decision replay, three multi-fold comparison
 controls, the explicit synthetic stress-return matrix and frozen-weight stress
-evaluation for inverse-volatility, HRP and minimum-CVaR are complete. The immediate
-safe unit is a versioned multi-scenario crisis suite that repeats these exact
-side-by-side mechanics without refitting, ranking, cross-scenario aggregation or
-methodology selection. It must remain synthetic-only and can never enter the
-application runtime.
+evaluation and versioned multi-scenario suites for inverse-volatility, HRP and
+minimum-CVaR are complete. The immediate safe unit is to repeat those scenario suites
+across every walk-forward fold while preserving separate fold/scenario cells, exact
+train-only refitting and permanent no-aggregation/no-ranking locks. It must remain
+synthetic-only and can never enter the application runtime.
 
 Migrations 0003–0011 now cover the owner snapshot, immutable provenance,
 exact point-in-time dataset/decision lineage, source-reconciliation records and
@@ -251,6 +251,12 @@ financial engine remain separate gates.
    stressed results, and reject resealed false metrics. One hundred and thirty-eight
    laboratory tests pass; no control comparison, winner, threshold, recommendation,
    methodology approval or execution is emitted.
+50. **MULTI-SCENARIO STRESS SUITES COMPLETE:** two to sixteen sorted, unique and
+   explicit synthetic scenarios can replay against one exact frozen weight set for
+   each reviewed control. Every scenario retains separate matrix/evaluation identities
+   and metrics under `none_scenario_metrics_only`; one hundred and forty-five tests
+   reject omissions, order drift, canonical tampering, aggregation, ranking and
+   operational promotion.
 
 All implementation available from published provider contracts is complete; real
 provider history execution remains paused at item 6 for Tier-A licensing/cost decisions.

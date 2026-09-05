@@ -230,6 +230,11 @@ Phase 1 checkpoint `0f90210`; not merged to `main`.
   approval, recommendation or execution.
 - Extended frozen-control stress checkpoint `4a1ace9` passed all three jobs in GitHub
   run [33965934288](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33965934288).
+- Added versioned multi-scenario stress suites for inverse-volatility, HRP and
+  minimum-CVaR. Two to sixteen explicit scenarios replay independently against the
+  exact frozen control, with separate identities/metrics and a permanent
+  `none_scenario_metrics_only` policy. One hundred and forty-five tests pass; no
+  aggregation, ranking, threshold, financial decision or execution is enabled.
 
 ## Phase 1 — Completed Units on the Working Branch
 

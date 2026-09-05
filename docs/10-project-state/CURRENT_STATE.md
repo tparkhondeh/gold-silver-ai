@@ -200,6 +200,13 @@ hundred and thirty-eight laboratory tests pass locally. The shared contract stil
 cannot rank controls, set a threshold, recommend, approve a methodology or execute.
 Extended frozen-control stress checkpoint `4a1ace9` passed all three GitHub jobs in
 run 33965934288.
+A versioned multi-scenario stress suite now replays between two and sixteen explicit
+synthetic scenarios against one exact frozen inverse-volatility, HRP or minimum-CVaR
+weight set. Every scenario keeps its own stressed-matrix/evaluation identities and
+metrics; the suite has a permanent `none_scenario_metrics_only` policy and rejects
+missing, reordered, duplicate or resealed results. One hundred and forty-five
+laboratory tests pass locally. No cross-scenario aggregation, ranking, threshold,
+methodology approval, recommendation or execution is possible.
 
 The owner authorized staged Data Foundation and deterministic-baseline development,
 with each stage dependent on the previous quality gate. Private GitHub authentication

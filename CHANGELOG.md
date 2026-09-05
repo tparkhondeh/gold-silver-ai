@@ -184,6 +184,10 @@ state is recorded in `docs/10-project-state/CURRENT_STATE.md`.
 - Extended frozen-control stress checkpoint `4a1ace9` passed all three GitHub Actions
   jobs in run
   [33965934288](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33965934288).
+- Added canonical multi-scenario stress suites for all three reviewed controls.
+  Sorted unique scenarios keep separate stressed-matrix/evaluation identities and
+  metrics; exact replay rejects omissions, reordering or resealed results. One hundred
+  and forty-five tests pass under permanent no-aggregation/no-ranking locks.
 
 ### Fail-closed Navasan history authorization — ۱۴۰۵/۰۶/۱۰
 

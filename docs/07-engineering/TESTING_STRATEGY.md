@@ -181,6 +181,10 @@ Six additional tests apply that contract to frozen HRP and minimum-CVaR weights,
 pin both deterministic identities, verify canonical round trips and prove that
 resealed false metrics fail closed. One hundred and thirty-eight laboratory tests
 pass in total; the controls are never ranked or promoted into a methodology.
+Seven multi-scenario-suite tests pin deterministic reports for all three reviewed
+controls, require two to sixteen sorted unique scenarios, round-trip canonical bytes,
+and reject resealed false scenario metrics. One hundred and forty-five laboratory
+tests pass under `none_scenario_metrics_only`, with no cross-scenario aggregation.
 
 ## Related Documents
 

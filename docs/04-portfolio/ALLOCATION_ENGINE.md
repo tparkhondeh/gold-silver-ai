@@ -70,6 +70,9 @@ weights, choose an allocation, set a threshold or approve a methodology.
 The reviewed HRP and minimum-CVaR controls now pass through the same contract. Their
 own train-only weights remain frozen and separately identifiable; this adds comparable
 mechanics evidence without comparing or ranking the controls themselves.
+Each reviewed control can now replay a bounded, ordered suite of explicit synthetic
+stress scenarios while keeping each scenario's result separate. The suite records no
+average, winner or allocation choice and cannot promote a control into production.
 
 ## Related Documents
 

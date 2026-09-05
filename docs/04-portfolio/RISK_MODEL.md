@@ -89,6 +89,9 @@ fitness in a real market.
 Frozen HRP and minimum-CVaR comparison weights can now traverse the same exact
 synthetic stress boundary. Their artifacts remain separate, provenance-bound and
 non-operational; no cross-control winner or crisis-fit claim is produced.
+A bounded multi-scenario suite now preserves each explicit synthetic crisis result as
+its own cell. It records count and provenance only—not an average, combined score,
+ranking, pass/fail threshold, probability or real-market resilience claim.
 
 ## Related Documents
 
