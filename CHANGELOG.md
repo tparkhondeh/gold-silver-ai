@@ -42,6 +42,8 @@ state is recorded in `docs/10-project-state/CURRENT_STATE.md`.
   cutoffs, horizons, constraints and calculation rules. Real acceptance thresholds,
   stress magnitudes, evidence links and dataset identity stay null/empty; synthetic
   outcomes cannot set them. Eight new tests bring the laboratory total to 230.
+- Laboratory-v1 parameter-freeze checkpoint `c11e4e7` passed all three GitHub Actions
+  jobs in run 33998926719; `main` remained unchanged.
 
 - Recorded the owner's acceptance of Phase 1 Data Foundation for progression and the
   exact synthetic-only Phase 2 boundary in ADR 0009.

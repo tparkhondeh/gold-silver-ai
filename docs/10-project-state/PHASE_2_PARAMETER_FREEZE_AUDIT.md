@@ -28,6 +28,8 @@ it does not choose new financial parameters or claim Iranian suitability.
 8. Self-review: weight, threshold, provenance and permission mutations fail even when
    their fingerprint is recomputed.
 9. Owner approval for `main`: not requested; `main` remains unchanged.
+10. Remote verification: checkpoint `c11e4e7` passed all three GitHub Actions jobs in
+    run 33998926719.
 
 ## Next safe unit
 
