@@ -112,3 +112,12 @@ while retaining the validated 12-decimal covariance artifact as upstream provena
 This avoids using rounded transport values as calculation inputs. The complete HRP
 chain can therefore replay across every fold with `build_hrp_walk_forward_report()`;
 all intermediate artifact IDs and fold metrics remain separate and no-decision.
+
+`build_methodology_evaluation_rubric()` fixes ten evidence questions before any real
+comparison begins. It deliberately contains no score, weight, pass threshold, ranking
+or selection rule. `build_methodology_evidence_registry()` requires every candidate
+to record versioned authoritative-source metadata, assumptions, explainability, data
+requirements, Iran-specific gaps, robustness requirements and one separate cell for
+every rubric criterion. Canonical replay rejects missing cells and any attempt to
+enable selection or claim completed Iranian validation. The contract records a source
+review; it cannot independently verify the researcher's authority/currentness claim.

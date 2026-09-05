@@ -115,6 +115,12 @@ headline performance claim.
 HRP multi-fold output records every deterministic intermediate artifact and separately
 evaluated fold. The LLM can explain those records but cannot combine them into a new
 performance number or remove the permanent safety state.
+A versioned methodology-evidence registry and predeclared rubric now sit before any
+future method selection. They preserve source/version/currentness review, assumptions,
+explainability, data requirements, Iran-validation gaps, robustness requirements and
+separate criterion evidence. No score, threshold, ranking or selection is defined;
+the governing research process is documented in
+`docs/04-portfolio/METHODOLOGY_EVIDENCE.md`.
 
 ## Decision History Requirement
 

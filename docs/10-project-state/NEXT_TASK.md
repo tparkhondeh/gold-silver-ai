@@ -12,11 +12,12 @@ gate, canonical artifacts, exact no-decision replay, three multi-fold comparison
 controls, the explicit synthetic stress-return matrix and frozen-weight stress
 evaluation, versioned multi-scenario suites and multi-fold stress replay for
 inverse-volatility, HRP and minimum-CVaR are complete. The immediate safe unit is a
-versioned methodology-evidence registry and predeclared evaluation rubric: it must
-record authoritative source/version, assumptions, explainability, data requirements,
-Iran-specific validation gaps, robustness and implementation status before any
-provisional laboratory method can be selected. Synthetic performance cannot establish
-financial superiority, and nothing can enter the application runtime yet.
+primary-source research pass for the three existing controls. Populate versioned
+evidence entries only after checking the original/official source identity, version,
+review date and possible supersession; record assumptions, explainability, data needs,
+Iran-validation gaps and the exact synthetic artifacts already available. Do not score,
+rank, select or approve a method: source metadata is evidence, not proof of real or
+Iranian performance, and nothing can enter the application runtime yet.
 
 Migrations 0003–0011 now cover the owner snapshot, immutable provenance,
 exact point-in-time dataset/decision lineage, source-reconciliation records and
@@ -266,6 +267,12 @@ financial engine remain separate gates.
    `none_fold_or_scenario_metrics_only`; one hundred and fifty-two tests reject
    missing/reordered inputs, false metrics, noncanonical parameters, aggregation,
    ranking and operational promotion.
+52. **METHODOLOGY EVIDENCE CONTRACT COMPLETE:** a versioned ten-criterion rubric and
+   evidence registry require source identity/version/currentness review, assumptions,
+   explainability, data requirements, Iran-specific gaps, robustness requirements and
+   complete separate evidence cells. One hundred and sixty tests reject missing or
+   reordered evidence, unapproved source types, mismatched versions, scoring, ranking,
+   selection, methodology approval and operational promotion.
 
 All implementation available from published provider contracts is complete; real
 provider history execution remains paused at item 6 for Tier-A licensing/cost decisions.

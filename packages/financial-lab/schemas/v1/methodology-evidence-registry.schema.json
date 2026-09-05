@@ -1,0 +1,271 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://goldsilver.wealthos.ir/contracts/asha.methodology.evidence_registry.v1.schema.json",
+  "title": "Asha methodology evidence registry v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion", "registryId", "registryVersion", "status",
+    "financialUseAllowed", "executionAllowed", "selectionAllowed",
+    "methodologyApprovalState", "rubricReference", "entries", "summary",
+    "evidencePolicy", "reasonCodes"
+  ],
+  "$defs": {
+    "textList": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 32,
+      "uniqueItems": true,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "referenceList": {
+      "type": "array",
+      "maxItems": 32,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^[A-Z][A-Za-z0-9_.:-]{2,160}$"
+      }
+    }
+  },
+  "properties": {
+    "schemaVersion": { "const": "asha.methodology.evidence_registry.v1" },
+    "registryId": {
+      "type": "string",
+      "pattern": "^ASHA_METHODOLOGY_EVIDENCE_REGISTRY_[a-f0-9]{64}$"
+    },
+    "registryVersion": { "type": "integer", "minimum": 1 },
+    "status": { "const": "research_governance_only" },
+    "financialUseAllowed": { "const": false },
+    "executionAllowed": { "const": false },
+    "selectionAllowed": { "const": false },
+    "methodologyApprovalState": { "const": "unapproved" },
+    "rubricReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["rubricId", "schemaVersion"],
+      "properties": {
+        "rubricId": {
+          "type": "string",
+          "pattern": "^ASHA_METHODOLOGY_RUBRIC_[a-f0-9]{64}$"
+        },
+        "schemaVersion": { "const": "asha.methodology.evaluation_rubric.v1" }
+      }
+    },
+    "entries": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 32,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "methodologyId", "methodologyVersion", "displayName", "role",
+          "implementationStatus", "authoritativeSources", "assumptions",
+          "explainability", "dataRequirements", "iranSpecificValidation",
+          "robustness", "criterionEvidence", "selectionEligibility"
+        ],
+        "properties": {
+          "methodologyId": {
+            "type": "string",
+            "pattern": "^ASHA_(BENCHMARK|METHOD)_[A-Z0-9_]{3,80}_V[1-9][0-9]*$"
+          },
+          "methodologyVersion": { "type": "integer", "minimum": 1 },
+          "displayName": { "type": "string", "pattern": "^\\[LAB ONLY\\] " },
+          "role": { "enum": ["comparison_control", "research_candidate"] },
+          "implementationStatus": {
+            "enum": [
+              "not_implemented", "contract_only",
+              "comparison_control_implemented"
+            ]
+          },
+          "authoritativeSources": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 16,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "sourceId", "sourceVersion", "sourceType", "title",
+                "authoringBody", "locator", "publishedOrRevisedOn",
+                "reviewedOn", "currencyStatus"
+              ],
+              "properties": {
+                "sourceId": {
+                  "type": "string",
+                  "pattern": "^ASHA_METHODOLOGY_SOURCE_[A-Z0-9_]{3,80}_V[1-9][0-9]*$"
+                },
+                "sourceVersion": { "type": "integer", "minimum": 1 },
+                "sourceType": {
+                  "enum": [
+                    "official_method_documentation",
+                    "peer_reviewed_primary_research",
+                    "regulatory_or_standards_guidance"
+                  ]
+                },
+                "title": { "type": "string", "minLength": 1 },
+                "authoringBody": { "type": "string", "minLength": 1 },
+                "locator": { "type": "string", "minLength": 1 },
+                "publishedOrRevisedOn": {
+                  "type": "string",
+                  "format": "date"
+                },
+                "reviewedOn": { "type": "string", "format": "date" },
+                "currencyStatus": {
+                  "enum": [
+                    "current_at_review_date", "superseded",
+                    "unknown_requires_review"
+                  ]
+                }
+              }
+            }
+          },
+          "assumptions": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 32,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "assumptionId", "statement", "evidenceStatus",
+                "sourceReferences"
+              ],
+              "properties": {
+                "assumptionId": {
+                  "type": "string",
+                  "pattern": "^ASHA_METHOD_ASSUMPTION_[A-Z0-9_]{3,80}$"
+                },
+                "statement": { "type": "string", "minLength": 1 },
+                "evidenceStatus": {
+                  "enum": [
+                    "documented_only", "requires_iran_validation",
+                    "synthetic_mechanics_only"
+                  ]
+                },
+                "sourceReferences": { "$ref": "#/$defs/textList" }
+              }
+            }
+          },
+          "explainability": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "mechanismSummary", "requiredDisclosures", "knownFailureModes"
+            ],
+            "properties": {
+              "mechanismSummary": { "type": "string", "minLength": 1 },
+              "requiredDisclosures": { "$ref": "#/$defs/textList" },
+              "knownFailureModes": { "$ref": "#/$defs/textList" }
+            }
+          },
+          "dataRequirements": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 32,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "requirementId", "description", "minimumEvidenceRule",
+                "iranDataStatus"
+              ],
+              "properties": {
+                "requirementId": {
+                  "type": "string",
+                  "pattern": "^[A-Z][A-Z0-9_]{2,80}$"
+                },
+                "description": { "type": "string", "minLength": 1 },
+                "minimumEvidenceRule": { "const": "STATUS_TBD_OWNER_APPROVAL" },
+                "iranDataStatus": {
+                  "enum": ["not_assessed", "not_available", "synthetic_only"]
+                }
+              }
+            }
+          },
+          "iranSpecificValidation": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["status", "requiredEvidence", "gapCodes"],
+            "properties": {
+              "status": { "enum": ["not_started", "requirements_documented"] },
+              "requiredEvidence": { "$ref": "#/$defs/textList" },
+              "gapCodes": { "$ref": "#/$defs/textList" }
+            }
+          },
+          "robustness": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "status", "requiredChecks", "evidenceArtifactReferences"
+            ],
+            "properties": {
+              "status": { "enum": ["not_evaluated", "synthetic_mechanics_only"] },
+              "requiredChecks": { "$ref": "#/$defs/textList" },
+              "evidenceArtifactReferences": { "$ref": "#/$defs/referenceList" }
+            }
+          },
+          "criterionEvidence": {
+            "type": "array",
+            "minItems": 10,
+            "maxItems": 10,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "criterionId", "evidenceStatus", "evidenceReferences",
+                "limitations"
+              ],
+              "properties": {
+                "criterionId": {
+                  "type": "string",
+                  "pattern": "^[A-Z][A-Z0-9_]{2,80}$"
+                },
+                "evidenceStatus": {
+                  "enum": [
+                    "not_evaluated", "documented_only",
+                    "synthetic_mechanics_only"
+                  ]
+                },
+                "evidenceReferences": { "$ref": "#/$defs/referenceList" },
+                "limitations": { "$ref": "#/$defs/textList" }
+              }
+            }
+          },
+          "selectionEligibility": {
+            "const": "blocked_owner_methodology_decision_required"
+          }
+        }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "methodologyCount", "sourceReferenceCount", "criterionCellCount",
+        "selectionEligibleCount"
+      ],
+      "properties": {
+        "methodologyCount": { "type": "integer", "minimum": 1 },
+        "sourceReferenceCount": { "type": "integer", "minimum": 1 },
+        "criterionCellCount": { "type": "integer", "minimum": 10 },
+        "selectionEligibleCount": { "const": 0 }
+      }
+    },
+    "evidencePolicy": {
+      "const": "separate_criterion_cells_no_scoring_ranking_or_selection"
+    },
+    "reasonCodes": {
+      "const": [
+        "AUTHORITATIVE_SOURCE_IDENTITY_REQUIRED",
+        "CURRENTNESS_REVIEW_RECORDED_NOT_VERIFIED_BY_CONTRACT",
+        "IRAN_VALIDATION_REQUIRED",
+        "METHODOLOGY_NOT_APPROVED",
+        "NO_SCORING_RANKING_OR_SELECTION",
+        "OWNER_APPROVAL_REQUIRED",
+        "SYNTHETIC_PERFORMANCE_CANNOT_PROVE_SUPERIORITY"
+      ]
+    }
+  }
+}

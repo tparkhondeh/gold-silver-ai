@@ -76,9 +76,15 @@ average, winner or allocation choice and cannot promote a control into productio
 The scenario suite can now repeat across every walk-forward fold. Each fold rebuilds
 its comparison weights from its own training interval and freezes them before stress;
 no metric is combined across folds or scenarios into an allocation claim.
+Before any control can become a candidate for owner selection, the laboratory now
+requires the versioned source, assumptions, data needs, Iran gaps, robustness checks
+and explainability evidence described in `METHODOLOGY_EVIDENCE.md`. The first rubric
+contains no score, threshold, ranking or winner, so it does not resolve the still-open
+allocation-methodology decision.
 
 ## Related Documents
 
 - Underlying analysis: `PORTFOLIO_MODEL.md`
 - Turning allocation gaps into concrete actions: `ROTATION_ENGINE.md`
 - Risk constraints: `RISK_MODEL.md`
+- Research/evidence gate: `METHODOLOGY_EVIDENCE.md`

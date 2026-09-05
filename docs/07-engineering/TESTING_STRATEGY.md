@@ -189,6 +189,11 @@ Seven walk-forward stress tests pin deterministic reports for inverse-volatility
 and minimum-CVaR, require one ordered scenario set per fold, verify canonical report
 transport, and reject omitted cells or noncanonical parameters. One hundred and
 fifty-two laboratory tests pass under `none_fold_or_scenario_metrics_only`.
+Eight methodology-governance tests pin the predeclared ten-criterion rubric and a
+three-control evidence-registry fixture, require source identity/version/review date,
+complete criterion cells and canonical transport, and reject authority drift,
+reordered evidence, claimed Iranian validation, scoring or selection. One hundred and
+sixty laboratory tests pass; no method is ranked or approved.
 
 ## Related Documents
 

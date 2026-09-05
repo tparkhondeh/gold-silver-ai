@@ -244,6 +244,11 @@ Phase 1 checkpoint `0f90210`; not merged to `main`.
 - Multi-fold/multi-scenario stress checkpoint `eaf41c6` passed all three jobs in
   GitHub run
   [33972395723](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33972395723).
+- Added a versioned ten-criterion methodology rubric and evidence-registry contract.
+  Each method must retain source version/currentness review, assumptions,
+  explainability, data needs, Iran gaps, robustness requirements and separate evidence
+  cells. One hundred and sixty tests pass; scoring, ranking, selection and methodology
+  approval remain impossible.
 
 ## Phase 1 — Completed Units on the Working Branch
 

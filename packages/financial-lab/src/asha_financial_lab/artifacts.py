@@ -28,6 +28,10 @@ from .features import validate_point_in_time_return_matrix
 from .normalization import validate_normalized_fold, validate_train_only_standardizer
 from .minimum_cvar_control import validate_minimum_cvar_comparison_control_weights
 from .minimum_cvar_walk_forward import validate_minimum_cvar_walk_forward_report
+from .methodology_evidence import (
+    validate_methodology_evaluation_rubric,
+    validate_methodology_evidence_registry,
+)
 from .synthetic_stress import (
     validate_stressed_return_matrix,
     validate_synthetic_stress_scenario,
@@ -1103,4 +1107,30 @@ def decode_hrp_stress_walk_forward_report(
         lambda value: validate_hrp_stress_walk_forward_report(
             value, dataset_payload, matrix_payload, plan_payload, fold_scenario_payloads
         ),
+    )
+
+
+def encode_methodology_evaluation_rubric(payload: object) -> bytes:
+    return _encode_canonical(payload, validate_methodology_evaluation_rubric)
+
+
+def decode_methodology_evaluation_rubric(document: object) -> dict[str, Any]:
+    return _decode_canonical(document, validate_methodology_evaluation_rubric)
+
+
+def encode_methodology_evidence_registry(
+    payload: object, rubric_payload: object
+) -> bytes:
+    return _encode_canonical(
+        payload,
+        lambda value: validate_methodology_evidence_registry(value, rubric_payload),
+    )
+
+
+def decode_methodology_evidence_registry(
+    document: object, rubric_payload: object
+) -> dict[str, Any]:
+    return _decode_canonical(
+        document,
+        lambda value: validate_methodology_evidence_registry(value, rubric_payload),
     )

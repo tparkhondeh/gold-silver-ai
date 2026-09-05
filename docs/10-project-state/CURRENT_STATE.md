@@ -219,6 +219,12 @@ minimum-CVaR parameters fail closed. The permanent
 threshold, methodology approval, recommendation or execution.
 Multi-fold/multi-scenario stress checkpoint `eaf41c6` passed all three GitHub jobs
 in run 33972395723.
+A versioned methodology-evaluation rubric now predeclares ten evidence questions, and
+a paired registry contract requires source identity/version/currentness review,
+assumptions, explainability, data requirements, Iran gaps, robustness requirements and
+one separate evidence cell per criterion. Eight new tests bring the laboratory total
+to one hundred and sixty. No score, weight, threshold, ranking or selection exists;
+real source entries and every financial-methodology decision remain pending.
 
 The owner authorized staged Data Foundation and deterministic-baseline development,
 with each stage dependent on the previous quality gate. Private GitHub authentication
