@@ -134,3 +134,9 @@ ten-criterion gap inventory for each method. Every cell says only `documented`,
 `synthetic_only` or `not_evaluated`, retains its evidence and limitations, and lists
 what is still unresolved. The canonical report cannot emit a completeness score,
 ranking, selection, financial permission or execution permission.
+
+`build_research_candidate_intake()` is the gate for newly discovered methods. A
+candidate needs dated, manually recorded research; at least one authoritative source;
+an explicit mechanism and comparison boundary; non-equivalence limits; and all ten
+criterion gaps. Intake means only "allowed to be researched": implementation, Iranian
+fitness, scoring, ranking, selection, financial use and execution stay blocked.

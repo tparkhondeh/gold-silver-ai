@@ -204,6 +204,11 @@ statuses, require unresolved requirements and method-level Iran/data/robustness 
 pin the schema and canonical report identity, state that source identity is not
 performance evidence, and reject resealed report or source-registry drift. One hundred
 and seventy-two laboratory tests pass without a score, rank or selected method.
+Eight research-intake tests require authoritative source type and review chronology,
+the full prohibited-claim boundary, non-equivalence limits and all ten still-open
+criterion cells. They reject automated-search claims, implementation, Iranian fitness
+or selection; pin the canonical fixture and schema; and bind transport to the exact
+gap report. One hundred and eighty laboratory tests pass.
 
 ## Related Documents
 

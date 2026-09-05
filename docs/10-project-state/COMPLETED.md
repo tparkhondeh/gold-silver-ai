@@ -265,6 +265,10 @@ Phase 1 checkpoint `0f90210`; not merged to `main`.
   operational use remain impossible.
 - Evidence-gap report checkpoint `b8d5878` passed all three jobs in GitHub run
   [33981364535](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33981364535).
+- Added the versioned research-candidate intake contract. Dated manual research,
+  authoritative source identity, explicit scope/non-equivalence and all ten open
+  evidence cells are mandatory. Eight tests bring the laboratory to one hundred and
+  eighty while implementation, Iranian fitness and selection remain blocked.
 
 ## Phase 1 — Completed Units on the Working Branch
 

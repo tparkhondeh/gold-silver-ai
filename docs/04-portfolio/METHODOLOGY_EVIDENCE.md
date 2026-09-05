@@ -60,5 +60,13 @@ and known failure modes without producing a completeness score, rank or selectio
 Its machine-readable schema and canonical fingerprint make omissions or resealed
 changes fail closed.
 
+A separate research-candidate intake contract now governs how newer methods may be
+added for study. It requires a dated, manually recorded search, human review, at least
+one authoritative source that is not superseded, a narrow mechanism/comparison scope,
+explicit non-equivalence limits and ten untouched evidence-gap cells. Marketing pages
+cannot qualify as sources. A listed candidate remains unimplemented, untested for
+Iran, unranked and ineligible for selection; the contract performs no network search
+and is not connected to application runtime.
+
 `STATUS: TBD` for a real method decision. Recording these sources does not select or
 approve any method.

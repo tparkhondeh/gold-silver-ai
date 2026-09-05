@@ -250,6 +250,9 @@ financial output has been registered or unlocked by this storage foundation.
 The isolated laboratory additionally emits an exact methodology evidence-gap report.
 It preserves separate unresolved cells and explicitly produces no completeness score,
 ranking or selection; it is not connected to the application runtime.
+Its research-intake contract may record AI-assisted source discovery only after human
+review and with explicit dates and boundaries. The artifact cannot search the network,
+implement a candidate or promote it toward a decision.
 
 ## Related Documents
 

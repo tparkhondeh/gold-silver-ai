@@ -244,6 +244,13 @@ report cannot compute completeness, rank methods, select one or enter applicatio
 runtime.
 Evidence-gap report checkpoint `b8d5878` passed all three GitHub jobs in run
 33981364535.
+A versioned research-candidate intake now prevents a newly discovered method from
+entering even the research list without dated manual search, human review,
+authoritative source identity, explicit scope, non-equivalence limits and all ten
+unresolved evidence cells. Marketing sources, source chronology errors, automated-
+search claims, implementation, Iranian-fitness claims and selection fail closed. One
+hundred and eighty laboratory tests pass locally. The contract contains only synthetic
+test fixtures and performs no network search or runtime integration.
 
 The owner authorized staged Data Foundation and deterministic-baseline development,
 with each stage dependent on the previous quality gate. Private GitHub authentication

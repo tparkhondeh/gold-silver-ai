@@ -87,6 +87,8 @@ any is current-best, suitable for Iran or eligible for selection.
 The exact evidence-gap report now makes every unresolved criterion, data need,
 Iran-specific gap, robustness check and failure mode visible per method. It cannot
 score or compare completeness, so the Tier-A methodology decision remains open.
+New methods must also pass the research-intake contract before study; appearing in
+that list grants no implementation, comparison, allocation or approval status.
 
 ## Related Documents
 
