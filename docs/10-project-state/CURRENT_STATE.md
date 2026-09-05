@@ -233,6 +233,8 @@ date, method-specific non-equivalence limitations and the pinned synthetic stres
 artifact. Data sufficiency, Iranian validation and real cost/liquidity evidence remain
 explicitly unmet. One hundred and sixty-six tests pass locally; source identity is now
 auditable but no method is scored, ranked, selected or approved.
+Reviewed-source registry checkpoint `1aeed02` passed all three GitHub jobs in run
+33978255294.
 
 The owner authorized staged Data Foundation and deterministic-baseline development,
 with each stage dependent on the previous quality gate. Private GitHub authentication

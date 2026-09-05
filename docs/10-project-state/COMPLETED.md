@@ -256,6 +256,8 @@ Phase 1 checkpoint `0f90210`; not merged to `main`.
   CVaR. Primary publication identities, review date, non-equivalence limitations and
   pinned synthetic evidence are replayable; Iranian adequacy and real cost/liquidity
   remain unmet. One hundred and sixty-six tests pass without scoring or selection.
+- Reviewed-source registry checkpoint `1aeed02` passed all three jobs in GitHub run
+  [33978255294](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33978255294).
 
 ## Phase 1 — Completed Units on the Working Branch
 

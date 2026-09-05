@@ -211,6 +211,9 @@ state is recorded in `docs/10-project-state/CURRENT_STATE.md`.
   and pinned synthetic evidence while Iranian adequacy and real cost/liquidity remain
   unmet. Six new tests bring the laboratory total to one hundred and sixty-six; source
   or evidence drift fails exact replay and no selection is possible.
+- Reviewed-source registry checkpoint `1aeed02` passed all three GitHub Actions jobs in
+  run
+  [33978255294](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/33978255294).
 
 ### Fail-closed Navasan history authorization — ۱۴۰۵/۰۶/۱۰
 
