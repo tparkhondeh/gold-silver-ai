@@ -1,0 +1,82 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://goldsilver.wealthos.ir/contracts/asha.synthetic.method_comparison.v1.schema.json",
+  "title": "Asha same-fold synthetic method comparison v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion", "reportId", "status", "financialUseAllowed",
+    "executionAllowed", "decisionState", "datasetReference",
+    "returnMatrixReference", "walkForwardPlanReference", "selectedMethodId",
+    "selectionBasis", "comparisonMethodIds", "summary", "foldResults",
+    "scenarioAndSensitivityChecks", "reasonCodes"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "asha.synthetic.method_comparison.v1" },
+    "reportId": { "type": "string", "pattern": "^ASHA_METHOD_COMPARISON_[a-f0-9]{64}$" },
+    "status": { "const": "evaluation_only" },
+    "financialUseAllowed": { "const": false },
+    "executionAllowed": { "const": false },
+    "decisionState": { "const": "synthetic_comparison_only" },
+    "datasetReference": { "$ref": "#/$defs/reference" },
+    "returnMatrixReference": { "$ref": "#/$defs/reference" },
+    "walkForwardPlanReference": { "$ref": "#/$defs/reference" },
+    "selectedMethodId": { "const": "ASHA_TRANSPARENT_GUARDED_DECISION_V1" },
+    "selectionBasis": { "const": "engineering_fit_only_not_synthetic_performance" },
+    "comparisonMethodIds": {
+      "type": "array", "minItems": 7, "maxItems": 7, "uniqueItems": true,
+      "items": { "type": "string" }
+    },
+    "summary": {
+      "type": "object", "additionalProperties": false,
+      "required": ["foldCount", "methodCount", "aggregationPolicy", "rankingPolicy"],
+      "properties": {
+        "foldCount": { "const": 2 },
+        "methodCount": { "const": 7 },
+        "aggregationPolicy": { "const": "none_fold_or_method_metrics_only" },
+        "rankingPolicy": { "const": "none_synthetic_performance_cannot_select" }
+      }
+    },
+    "foldResults": {
+      "type": "array", "minItems": 2, "maxItems": 2,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": [
+          "foldIndex", "trainStartIndex", "trainEndIndex", "testStartIndex",
+          "testEndIndex", "proposedMethodReferences", "methodResults"
+        ],
+        "properties": {
+          "foldIndex": { "type": "integer", "minimum": 0 },
+          "trainStartIndex": { "type": "integer", "minimum": 0 },
+          "trainEndIndex": { "type": "integer", "minimum": 0 },
+          "testStartIndex": { "type": "integer", "minimum": 0 },
+          "testEndIndex": { "type": "integer", "minimum": 0 },
+          "proposedMethodReferences": { "type": "object" },
+          "methodResults": {
+            "type": "array", "minItems": 7, "maxItems": 7,
+            "items": {
+              "type": "object", "additionalProperties": false,
+              "required": ["methodId", "weights", "metrics"],
+              "properties": {
+                "methodId": { "type": "string" },
+                "weights": { "type": "array", "minItems": 4, "maxItems": 4 },
+                "metrics": { "type": "object" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "scenarioAndSensitivityChecks": {
+      "type": "array", "minItems": 4, "maxItems": 4,
+      "items": { "type": "object" }
+    },
+    "reasonCodes": { "type": "array", "minItems": 6, "uniqueItems": true }
+  },
+  "$defs": {
+    "reference": {
+      "type": "object", "minProperties": 2,
+      "additionalProperties": { "type": ["string", "integer"] }
+    }
+  }
+}

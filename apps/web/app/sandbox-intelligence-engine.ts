@@ -47,6 +47,8 @@ type SyntheticHistoryProfile = {
   trend90Percent: number;
   wavePercent: number;
   liquidityScore: number;
+  conversionCostPercent: number;
+  valuationPercentile: number;
 };
 
 type ScenarioResult = {
@@ -86,11 +88,26 @@ export type SandboxAssetIntelligence = SandboxIntelligenceInput & {
   worstScenario: ScenarioResult;
   score: number;
   scoreBreakdown: {
-    momentum: number;
+    concentration: number;
+    conversionCost: number;
+    crisisResilience: number;
+    drawdown: number;
+    liquidity: number;
+    trend: number;
     valuation: number;
-    resilience: number;
-    risk: number;
+    volatility: number;
   };
+  factorContributions: Array<{
+    id: string;
+    label: string;
+    input: number;
+    points: number;
+    weight: number;
+    weightedContribution: number;
+  }>;
+  targetWeightPercent: number;
+  changePercentPoint: number;
+  evidenceAdequacyPercent: number;
   signal: "increase" | "hold" | "reduce";
   signalLabel: string;
   signalStrengthPercent: number;
@@ -108,6 +125,11 @@ export type SandboxIntelligenceResult = {
   totalValueToman: number;
   assets: SandboxAssetIntelligence[];
   overallDecision: DecisionRoute;
+  evidenceState: {
+    syntheticFactorCoveragePercent: number;
+    iranValidationStatus: "not_evaluated";
+    missingRequirements: string[];
+  };
 };
 
 export type SandboxAnalysisLens = {
@@ -121,41 +143,50 @@ export type SandboxAnalysisLens = {
 };
 
 export const sandboxIntelligenceMethodology = {
-  id: "ASHA_SYNTHETIC_INTELLIGENCE_V1",
-  version: "1.0.0",
+  id: "ASHA_TRANSPARENT_GUARDED_DECISION_V1",
+  version: "1.0.0-laboratory-ui",
   datasetId: "ASHA_SYNTHETIC_MARKET_V1",
   historyDatasetId: "ASHA_SYNTHETIC_HISTORY_90_V1",
   status: "synthetic_demo_only",
   executionAllowed: false,
+  financialUseAllowed: false,
   observationCount: 90,
-  weights: {
-    short: { momentum: 0.4, valuation: 0.2, resilience: 0.25, risk: 0.15 },
-    long: { momentum: 0.25, valuation: 0.3, resilience: 0.3, risk: 0.15 },
+  factorWeights: {
+    concentration: 0.125,
+    conversionCost: 0.125,
+    crisisResilience: 0.125,
+    drawdown: 0.125,
+    liquidity: 0.125,
+    trend: 0.125,
+    valuation: 0.125,
+    volatility: 0.125,
   },
   thresholds: {
-    increaseScore: 6,
-    reduceScore: -4,
-    peerSwitchGap: 8,
-    crossClassRotationGap: 15,
+    increaseScore: 12.5,
+    reduceScore: -12.5,
+    noTradeBandPercentPoint: 2,
     maximumRotationPercent: 25,
+    riskBreachMultiplier: 0.5,
+    riskBreachCashTransferFraction: 0.5,
   },
-  limitation: "تمام قیمت‌ها، تاریخچه، سناریوها و ضرایب این موتور ساختگی و نسخه‌دارند. خروجی برای ارزیابی منطق و تجربهٔ محصول است و اجرای معامله ندارد.",
+  targetRule: "equal_anchor_times_one_plus_quarter_composite_then_normalize_and_cap",
+  limitation: "تمام قیمت‌ها، تاریخچه، سناریوها، هزینه‌ها و ضرایب این موتور ساختگی و نسخه‌دارند. خروجی فقط پیشنهاد آزمایشگاهی است؛ هنوز برای ایران اعتبارسنجی و برای استفادهٔ مالی تأیید نشده است.",
 } as const;
 
 const historyProfiles: Record<string, SyntheticHistoryProfile> = {
-  "طلای ۱۸ عیار": { trend90Percent: 8, wavePercent: 2.2, liquidityScore: 5 },
-  "سکه امامی": { trend90Percent: 10, wavePercent: 4.2, liquidityScore: 4 },
-  "شمش نقره ۹۹۹": { trend90Percent: 16, wavePercent: 6.4, liquidityScore: 3 },
-  "ارز خارجی": { trend90Percent: 9, wavePercent: 2.4, liquidityScore: 5 },
-  "وجه نقد و سپرده بانکی": { trend90Percent: 1.8, wavePercent: 0.15, liquidityScore: 5 },
-  "سهام": { trend90Percent: 7, wavePercent: 7.2, liquidityScore: 4 },
-  "صندوق سرمایه‌گذاری و ETF": { trend90Percent: 8, wavePercent: 4.4, liquidityScore: 5 },
-  "رمزارز": { trend90Percent: 18, wavePercent: 15, liquidityScore: 3 },
-  "ملک و زمین": { trend90Percent: 6, wavePercent: 1.4, liquidityScore: 2 },
-  "کسب‌وکار خصوصی": { trend90Percent: 9, wavePercent: 3.4, liquidityScore: 1 },
+  "طلای ۱۸ عیار": { trend90Percent: 8, wavePercent: 2.2, liquidityScore: 5, conversionCostPercent: 0.5, valuationPercentile: 0.35 },
+  "سکه امامی": { trend90Percent: 10, wavePercent: 4.2, liquidityScore: 4, conversionCostPercent: 1, valuationPercentile: 0.65 },
+  "شمش نقره ۹۹۹": { trend90Percent: 16, wavePercent: 6.4, liquidityScore: 3, conversionCostPercent: 2, valuationPercentile: 0.55 },
+  "ارز خارجی": { trend90Percent: 9, wavePercent: 2.4, liquidityScore: 5, conversionCostPercent: 0.8, valuationPercentile: 0.5 },
+  "وجه نقد و سپرده بانکی": { trend90Percent: 1.8, wavePercent: 0.15, liquidityScore: 5, conversionCostPercent: 0, valuationPercentile: 0.5 },
+  "سهام": { trend90Percent: 7, wavePercent: 7.2, liquidityScore: 4, conversionCostPercent: 0.6, valuationPercentile: 0.5 },
+  "صندوق سرمایه‌گذاری و ETF": { trend90Percent: 8, wavePercent: 4.4, liquidityScore: 5, conversionCostPercent: 0.3, valuationPercentile: 0.45 },
+  "رمزارز": { trend90Percent: 18, wavePercent: 15, liquidityScore: 3, conversionCostPercent: 1.5, valuationPercentile: 0.8 },
+  "ملک و زمین": { trend90Percent: 6, wavePercent: 1.4, liquidityScore: 2, conversionCostPercent: 5, valuationPercentile: 0.55 },
+  "کسب‌وکار خصوصی": { trend90Percent: 9, wavePercent: 3.4, liquidityScore: 1, conversionCostPercent: 4, valuationPercentile: 0.6 },
 };
 
-const defaultHistoryProfile: SyntheticHistoryProfile = { trend90Percent: 5, wavePercent: 4, liquidityScore: 3 };
+const defaultHistoryProfile: SyntheticHistoryProfile = { trend90Percent: 5, wavePercent: 4, liquidityScore: 3, conversionCostPercent: 1.5, valuationPercentile: 0.5 };
 
 const lensScenario: Record<Exclude<SandboxIntelligenceCategory, "summary" | "technical" | "bubble" | "portfolio">, string> = {
   geopolitical: "fx-stress",
@@ -263,15 +294,54 @@ function actionLabel(signal: SandboxAssetIntelligence["signal"]) {
 }
 
 function baseRoute(asset: Omit<SandboxAssetIntelligence, "homogeneousDecision" | "heterogeneousDecision">): DecisionRoute {
-  const amount = asset.signal === "hold" ? 0 : Math.round(asset.valueToman * (asset.signal === "increase" ? 0.1 : 0.15));
+  const amount = asset.signal === "hold" ? 0 : Math.round(Math.abs(asset.changePercentPoint) * asset.valueToman / Math.max(asset.allocationPercent, 0.000001));
   return {
     code: asset.signal,
     label: actionLabel(asset.signal),
     sourceName: asset.name,
     destinationName: asset.signal === "increase" ? asset.name : null,
     amountToman: amount,
-    reason: `امتیاز مرکب ${asset.score.toLocaleString("fa-IR", { maximumFractionDigits: 1 })} از مومنتوم، ارزش‌گذاری، تاب‌آوری سناریویی و ریسک به‌دست آمده است.`,
+    reason: asset.name === "وجه نقد و سپرده بانکی"
+      ? `وزن هدف ${formatPercent(asset.targetWeightPercent)} از قاعدهٔ ذخیرهٔ نقد و انتقال ریسک محاسبه شده است؛ امتیازهای دارایی برای نقد اعمال نمی‌شوند.`
+      : `امتیاز ${asset.score.toLocaleString("fa-IR", { maximumFractionDigits: 1 })} از ۸ عامل هم‌وزن ساخته و وزن هدف ${formatPercent(asset.targetWeightPercent)} محاسبه شده است.`,
   };
+}
+
+function fiveBand(value: number, boundaries: readonly [number, number, number, number], lowerGood: boolean) {
+  const bucket = value <= boundaries[0] ? 2 : value <= boundaries[1] ? 1 : value <= boundaries[2] ? 0 : value <= boundaries[3] ? -1 : -2;
+  return lowerGood ? bucket : -bucket;
+}
+
+function trendPoints(trendPercent: number, volatilityPercent: number) {
+  const ratio = trendPercent / Math.max(volatilityPercent, 0.000001);
+  return { points: ratio <= -1 ? -2 : ratio <= -0.25 ? -1 : ratio < 0.25 ? 0 : ratio < 1 ? 1 : 2, ratio };
+}
+
+function median(values: number[]) {
+  const ordered = [...values].sort((left, right) => left - right);
+  const middle = Math.floor(ordered.length / 2);
+  return ordered.length % 2 ? ordered[middle] : (ordered[middle - 1] + ordered[middle]) / 2;
+}
+
+function cappedTargets(preferences: Map<string, number>, pool: number, cap: number) {
+  const remaining = new Set(preferences.keys());
+  const result = new Map<string, number>();
+  let remainingPool = pool;
+  while (remaining.size) {
+    const preferenceTotal = [...remaining].reduce((sum, id) => sum + (preferences.get(id) ?? 0), 0);
+    const tentative = new Map([...remaining].map((id) => [id, remainingPool * (preferences.get(id) ?? 0) / preferenceTotal]));
+    const over = [...remaining].filter((id) => (tentative.get(id) ?? 0) > cap).sort();
+    if (!over.length) {
+      tentative.forEach((weight, id) => result.set(id, weight));
+      break;
+    }
+    over.forEach((id) => {
+      result.set(id, cap);
+      remaining.delete(id);
+      remainingPool -= cap;
+    });
+  }
+  return result;
 }
 
 export function calculateSandboxIntelligence(
@@ -280,44 +350,47 @@ export function calculateSandboxIntelligence(
   horizon: SandboxIntelligenceHorizon,
 ): SandboxIntelligenceResult {
   const totalValueToman = inputs.reduce((sum, input) => sum + input.valueToman, 0);
-  const weights = sandboxIntelligenceMethodology.weights[horizon];
-
-  const baseAssets = inputs.map((input) => {
+  const cashInput = inputs.find((input) => input.name === "وجه نقد و سپرده بانکی") ?? null;
+  const prepared = inputs.map((input) => {
     const history = calculateHistoryMetrics(input.name, input.valueToman);
+    const syntheticProfile = historyProfiles[input.name] ?? defaultHistoryProfile;
     const valuation = valuationMetrics(input.premium);
     const scenarios = scenarioResults(input);
     const bestScenario = [...scenarios].sort((left, right) => right.movePercent - left.movePercent)[0];
     const worstScenario = [...scenarios].sort((left, right) => left.movePercent - right.movePercent)[0];
+    return { input, history, syntheticProfile, valuation, scenarios, bestScenario, worstScenario };
+  });
+  const nonCashPrepared = prepared.filter(({ input }) => input.id !== cashInput?.id);
+  const medianVolatility = Math.max(0.000001, median(nonCashPrepared.map(({ history }) => history.volatility20Percent)));
+  const tolerance = Math.max(profile.maxAcceptableDrawdownPercent, 0.000001);
+  const currentWeights = new Map(inputs.map((input) => [input.id, totalValueToman > 0 ? input.valueToman / totalValueToman : 0]));
+  const preferenceById = new Map<string, number>();
+  const riskBreachedIds = new Set<string>();
+
+  const scored = prepared.map(({ input, history, syntheticProfile, valuation, scenarios, bestScenario, worstScenario }) => {
     const selectedMomentum = horizon === "short" ? history.momentum20Percent : history.momentum60Percent;
-    const momentum = clamp(selectedMomentum * 5, -100, 100);
-    const valuationScore = valuation.distanceFromAveragePercentPoint !== null
-      ? clamp(-valuation.distanceFromAveragePercentPoint * 4, -100, 100)
-      : clamp((input.returnPercent ?? 0) * 2, -100, 100);
-    const resilience = clamp(worstScenario.movePercent * 3, -100, 100);
-    const risk = (3 - input.riskScore) * 20;
-    const score = round(
-      momentum * weights.momentum
-      + valuationScore * weights.valuation
-      + resilience * weights.resilience
-      + risk * weights.risk,
-    );
-    const stressToleranceBreached = Math.abs(worstScenario.movePercent) > profile.maxAcceptableDrawdownPercent;
-    const signal = input.name === "وجه نقد و سپرده بانکی"
-      ? "hold" as const
-      : stressToleranceBreached
-        ? "reduce" as const
-        : score >= sandboxIntelligenceMethodology.thresholds.increaseScore
-          ? "increase" as const
-          : score <= sandboxIntelligenceMethodology.thresholds.reduceScore
-            ? "reduce" as const
-            : "hold" as const;
-    const invalidation = stressToleranceBreached
-      ? `اگر بدترین فشار به داخل تحمل ${formatPercent(-profile.maxAcceptableDrawdownPercent)} برگردد، کاهش ریسک متوقف و تصمیم دوباره محاسبه می‌شود.`
-      : signal === "increase"
-      ? `اگر مومنتوم ${horizon === "short" ? "۲۰" : "۶۰"} مشاهده‌ای صفر یا منفی شود، یا افت سناریویی از ${formatPercent(-profile.maxAcceptableDrawdownPercent)} عبور کند.`
-      : signal === "reduce"
-        ? "اگر امتیاز مرکب به بالاتر از ۵- برسد و مومنتوم انتخاب‌شده مثبت شود، کاهش متوقف و تصمیم دوباره محاسبه می‌شود."
-        : `اگر امتیاز به ${sandboxIntelligenceMethodology.thresholds.increaseScore.toLocaleString("fa-IR")} یا ${Math.abs(sandboxIntelligenceMethodology.thresholds.reduceScore).toLocaleString("fa-IR")}− برسد، نگهداری بازبینی می‌شود.`;
+    const currentWeight = currentWeights.get(input.id) ?? 0;
+    const valuationPercentile = valuation.rangePositionPercent === null ? syntheticProfile.valuationPercentile : valuation.rangePositionPercent / 100;
+    const trend = trendPoints(selectedMomentum, history.volatility20Percent);
+    const rawFactors = {
+      concentration: { id: "CONCENTRATION", label: "تمرکز سبد", input: currentWeight, points: fiveBand(currentWeight / Math.max(profile.maxSingleAssetPercent / 100, 0.000001), [0.5, 0.75, 1, 1.25], true) },
+      conversionCost: { id: "CONVERSION_COST", label: "هزینهٔ تبدیل", input: syntheticProfile.conversionCostPercent / 100, points: fiveBand(syntheticProfile.conversionCostPercent / 100, [0.0025, 0.0075, 0.015, 0.03], true) },
+      crisisResilience: { id: "CRISIS_RESILIENCE", label: "تاب‌آوری بحران", input: worstScenario.movePercent / 100, points: fiveBand(Math.abs(worstScenario.movePercent) / tolerance, [0.25, 0.5, 0.75, 1], true) },
+      drawdown: { id: "DRAWDOWN", label: "افت", input: history.maxDrawdownPercent / 100, points: fiveBand(Math.abs(history.maxDrawdownPercent) / tolerance, [0.25, 0.5, 0.75, 1], true) },
+      liquidity: { id: "LIQUIDITY", label: "نقدشوندگی", input: history.liquidityScore, points: history.liquidityScore - 3 },
+      trend: { id: "TREND", label: "روند نسبت به نوسان", input: trend.ratio, points: trend.points },
+      valuation: { id: "VALUATION", label: "ارزش‌گذاری", input: valuationPercentile, points: fiveBand(valuationPercentile, [0.2, 0.4, 0.6, 0.8], true) },
+      volatility: { id: "VOLATILITY", label: "نوسان", input: history.volatility20Percent / 100, points: fiveBand(history.volatility20Percent / medianVolatility, [0.5, 0.85, 1.15, 1.5], true) },
+    };
+    const isCash = input.id === cashInput?.id;
+    const scoreBreakdown = Object.fromEntries(Object.entries(rawFactors).map(([key, factor]) => [key, isCash ? 0 : factor.points])) as SandboxAssetIntelligence["scoreBreakdown"];
+    const composite = isCash ? 0 : Object.values(rawFactors).reduce((sum, factor) => sum + factor.points * 0.125, 0);
+    const score = round(composite * 50, 6);
+    const riskBreached = !isCash && (Math.abs(worstScenario.movePercent) > tolerance || Math.abs(history.maxDrawdownPercent) > tolerance);
+    if (riskBreached) riskBreachedIds.add(input.id);
+    if (input.id !== cashInput?.id) {
+      preferenceById.set(input.id, Math.max(0.25, (1 + 0.25 * composite) * (riskBreached ? 0.5 : 1)));
+    }
     return {
       ...input,
       history,
@@ -326,11 +399,43 @@ export function calculateSandboxIntelligence(
       bestScenario,
       worstScenario,
       score,
-      scoreBreakdown: { momentum: round(momentum), valuation: round(valuationScore), resilience: round(resilience), risk: round(risk) },
+      scoreBreakdown,
+      factorContributions: Object.values(rawFactors).map((factor) => isCash
+        ? { ...factor, label: `${factor.label} (برای نقد اعمال نمی‌شود)`, points: 0, weight: 0.125, weightedContribution: 0 }
+        : { ...factor, weight: 0.125, weightedContribution: round(factor.points * 0.125, 6) }),
+      targetWeightPercent: 0,
+      changePercentPoint: 0,
+      evidenceAdequacyPercent: 100,
+      signal: "hold" as const,
+      signalLabel: actionLabel("hold"),
+      signalStrengthPercent: round(clamp(50 + Math.abs(score), 50, 95)),
+      invalidation: "با عبور هر عامل از یکی از بازه‌های ازپیش‌تعریف‌شده، تغییر محدودیت‌های مالک یا ناقص‌شدن منشأ داده، تصمیم دوباره محاسبه می‌شود.",
+      riskBreached,
+    };
+  });
+
+  const targetWeights = new Map<string, number>();
+  const minimumCashWeight = cashInput ? profile.liquidityReservePercent / 100 : 0;
+  const targetCashWeight = cashInput ? Math.min(0.5, minimumCashWeight + [...riskBreachedIds].reduce((sum, id) => sum + (currentWeights.get(id) ?? 0) * 0.5, 0)) : 0;
+  cappedTargets(preferenceById, 1 - targetCashWeight, profile.maxSingleAssetPercent / 100).forEach((weight, id) => targetWeights.set(id, weight));
+  if (cashInput) targetWeights.set(cashInput.id, targetCashWeight);
+  const rawTurnover = inputs.reduce((sum, input) => sum + Math.abs((targetWeights.get(input.id) ?? 0) - (currentWeights.get(input.id) ?? 0)), 0) / 2;
+  const turnoverScale = rawTurnover <= 0.25 ? 1 : 0.25 / rawTurnover;
+  const stagedWeights = new Map(inputs.map((input) => [input.id, (currentWeights.get(input.id) ?? 0) + turnoverScale * ((targetWeights.get(input.id) ?? 0) - (currentWeights.get(input.id) ?? 0))]));
+
+  const baseAssets = scored.map((asset) => {
+    const changePercentPoint = round(((stagedWeights.get(asset.id) ?? 0) - (currentWeights.get(asset.id) ?? 0)) * 100, 6);
+    const signal = Math.abs(changePercentPoint) < sandboxIntelligenceMethodology.thresholds.noTradeBandPercentPoint
+      ? "hold" as const : changePercentPoint > 0 ? "increase" as const : "reduce" as const;
+    return {
+      ...asset,
+      targetWeightPercent: round((stagedWeights.get(asset.id) ?? 0) * 100, 6),
+      changePercentPoint,
       signal,
       signalLabel: actionLabel(signal),
-      signalStrengthPercent: round(clamp(50 + Math.abs(score), 50, 95)),
-      invalidation,
+      invalidation: asset.riskBreached
+        ? `اگر بدترین فشار و افت هر دو دوباره داخل تحمل ${formatPercent(-profile.maxAcceptableDrawdownPercent)} قرار گیرند، کاهش متوقف و همهٔ عوامل دوباره محاسبه می‌شوند.`
+        : asset.invalidation,
     };
   });
 
@@ -339,31 +444,33 @@ export function calculateSandboxIntelligence(
     const peer = baseAssets
       .filter((candidate) => candidate.id !== asset.id && candidate.assetClassId === asset.assetClassId)
       .sort((left, right) => right.score - left.score)[0] ?? null;
-    const homogeneousDecision = peer && peer.score - asset.score >= sandboxIntelligenceMethodology.thresholds.peerSwitchGap
+    const peerGain = peer ? peer.changePercentPoint : 0;
+    const homogeneousDecision = asset.signal === "reduce" && peer && peerGain > 0
       ? {
           code: "switch_peer" as const,
           label: `تعویض آزمایشی بخشی به ${peer.name}`,
           sourceName: asset.name,
           destinationName: peer.name,
-          amountToman: Math.round(asset.valueToman * 0.15),
-          reason: `امتیاز هم‌کلاس ${peer.name} برابر ${formatScore(peer.score)} و ${formatScore(peer.score - asset.score)} واحد بالاتر از دارایی مبدأ است.`,
+          amountToman: Math.round(Math.min(Math.abs(asset.changePercentPoint), peerGain) * totalValueToman / 100),
+          reason: `موتور وزن ${asset.name} را ${formatPercent(Math.abs(asset.changePercentPoint))} کم و وزن هم‌کلاس ${peer.name} را ${formatPercent(peerGain)} زیاد کرده است.`,
         }
       : base;
     const crossClass = baseAssets
       .filter((candidate) => candidate.id !== asset.id && candidate.assetClassId !== asset.assetClassId && candidate.riskScore <= asset.riskScore)
       .sort((left, right) => right.score - left.score)[0] ?? null;
-    const scoreGap = crossClass ? crossClass.score - asset.score : 0;
-    const stressToleranceBreached = Math.abs(asset.worstScenario.movePercent) > profile.maxAcceptableDrawdownPercent;
-    const heterogeneousDecision = crossClass && (stressToleranceBreached || scoreGap >= sandboxIntelligenceMethodology.thresholds.crossClassRotationGap)
+    const cashDestination = baseAssets.find((candidate) => candidate.id === cashInput?.id) ?? null;
+    const destination = asset.riskBreached && cashDestination?.changePercentPoint && cashDestination.changePercentPoint > 0 ? cashDestination : crossClass;
+    const destinationGain = destination?.changePercentPoint ?? 0;
+    const heterogeneousDecision = asset.signal === "reduce" && destination && destinationGain > 0
       ? {
           code: "rotate" as const,
-          label: `تبدیل آزمایشی بخشی به ${crossClass.name}`,
+          label: `تبدیل آزمایشی بخشی به ${destination.name}`,
           sourceName: asset.name,
-          destinationName: crossClass.name,
-          amountToman: Math.round(asset.valueToman * Math.min(0.25, Math.max(0.08, scoreGap / 200))),
-          reason: stressToleranceBreached
-            ? `بدترین فشار ${formatPercent(asset.worstScenario.movePercent)} از تحمل افت ${formatPercent(-profile.maxAcceptableDrawdownPercent)} عبور می‌کند و ریسک مقصد (${crossClass.riskScore.toLocaleString("fa-IR")}/۵) بیشتر نیست.`
-            : `اختلاف امتیاز ${formatScore(scoreGap)} واحد است و ریسک مقصد (${crossClass.riskScore.toLocaleString("fa-IR")}/۵) از مبدأ بیشتر نیست.`,
+          destinationName: destination.name,
+          amountToman: Math.round(Math.min(Math.abs(asset.changePercentPoint), destinationGain) * totalValueToman / 100),
+          reason: asset.riskBreached
+            ? `افت یا فشار ساختگی از تحمل ${formatPercent(-profile.maxAcceptableDrawdownPercent)} عبور کرده و قاعدهٔ ثابت، نیمی از وزن موقعیت پرریسک را به ذخیرهٔ نقد هدایت می‌کند.`
+            : `وزن هدف مبدأ ${formatPercent(asset.targetWeightPercent)} و مقصد ${formatPercent(destination.targetWeightPercent)} است؛ مبلغ از تغییر وزن محدودشده محاسبه شده است.`,
         }
       : {
           code: "hold" as const,
@@ -372,58 +479,33 @@ export function calculateSandboxIntelligence(
           destinationName: null,
           amountToman: 0,
           reason: crossClass
-            ? `اختلاف امتیاز بهترین مقصد کم‌ریسک‌تر ${formatScore(scoreGap)} واحد و کمتر از آستانهٔ ${formatScore(sandboxIntelligenceMethodology.thresholds.crossClassRotationGap)} واحد است.`
+            ? "پس از اعمال امتیازها، سقف تمرکز، ذخیرهٔ نقد، باند عدم معامله و سقف گردش، انتقال بین‌کلاسی لازم نیست."
             : "مقصدی با کلاس متفاوت و ریسک مساوی یا کمتر در سبد ساختگی وجود ندارد.",
         };
     return { ...asset, homogeneousDecision, heterogeneousDecision };
   });
 
-  const cash = assets.find((asset) => asset.name === "وجه نقد و سپرده بانکی") ?? null;
-  const requiredCashToman = totalValueToman * (profile.liquidityReservePercent / 100);
-  const cashGapToman = Math.max(0, requiredCashToman - (cash?.valueToman ?? 0));
-  const largestNonCash = [...assets]
-    .filter((asset) => asset.name !== "وجه نقد و سپرده بانکی")
-    .sort((left, right) => right.allocationPercent - left.allocationPercent)[0] ?? null;
-  const concentrationExcessToman = largestNonCash
-    ? Math.max(0, largestNonCash.valueToman - totalValueToman * (profile.maxSingleAssetPercent / 100))
-    : 0;
-  const weakest = [...assets].filter((asset) => asset.name !== "وجه نقد و سپرده بانکی").sort((left, right) => left.score - right.score)[0] ?? null;
-  const strongest = [...assets].sort((left, right) => right.score - left.score)[0] ?? null;
+  const decreases = [...assets].filter((asset) => asset.changePercentPoint < -sandboxIntelligenceMethodology.thresholds.noTradeBandPercentPoint).sort((left, right) => left.changePercentPoint - right.changePercentPoint);
+  const increases = [...assets].filter((asset) => asset.changePercentPoint > sandboxIntelligenceMethodology.thresholds.noTradeBandPercentPoint).sort((left, right) => right.changePercentPoint - left.changePercentPoint);
   let overallDecision: DecisionRoute = {
     code: "hold",
     label: "حفظ ترکیب و پایش روزانه",
     sourceName: "سبد",
     destinationName: null,
     amountToman: 0,
-    reason: "ذخیرهٔ نقد، تمرکز و اختلاف امتیاز دارایی‌ها در محدودهٔ قواعد آزمایشگاه است.",
+    reason: "پس از اعمال هشت عامل و همهٔ قیود، هیچ تغییر وزنی بیرون از باند ۲ واحد درصد باقی نمانده است.",
   };
-  if (horizon === "short" && cashGapToman > 0 && weakest && cash) {
+  if (decreases.length && increases.length) {
+    const source = decreases[0];
+    const destination = increases[0];
+    const transferPercent = Math.min(Math.abs(source.changePercentPoint), destination.changePercentPoint);
     overallDecision = {
       code: "rotate",
-      label: `افزایش ذخیرهٔ نقد از محل ${weakest.name}`,
-      sourceName: weakest.name,
-      destinationName: cash.name,
-      amountToman: Math.round(Math.min(cashGapToman, weakest.valueToman * 0.25)),
-      reason: `ذخیرهٔ نقد ${formatMoney(cashGapToman)} کمتر از هدف ${formatPercent(profile.liquidityReservePercent)} است؛ ضعیف‌ترین امتیاز متعلق به ${weakest.name} است.`,
-    };
-  } else if (concentrationExcessToman > 0 && largestNonCash && strongest) {
-    const destination = strongest.id === largestNonCash.id ? cash ?? strongest : strongest;
-    overallDecision = {
-      code: "rotate",
-      label: `کاهش تمرکز ${largestNonCash.name}`,
-      sourceName: largestNonCash.name,
+      label: `تبدیل آزمایشی از ${source.name} به ${destination.name}`,
+      sourceName: source.name,
       destinationName: destination.name,
-      amountToman: Math.round(Math.min(concentrationExcessToman, largestNonCash.valueToman * 0.25)),
-      reason: `وزن ${formatPercent(largestNonCash.allocationPercent)} از سقف ${formatPercent(profile.maxSingleAssetPercent)} بیشتر است؛ مقصد از میان امتیازهای بهتر انتخاب شده است.`,
-    };
-  } else if (weakest && strongest && strongest.score - weakest.score >= 25) {
-    overallDecision = {
-      code: "rotate",
-      label: `چرخش محدود از ${weakest.name} به ${strongest.name}`,
-      sourceName: weakest.name,
-      destinationName: strongest.name,
-      amountToman: Math.round(weakest.valueToman * 0.1),
-      reason: `اختلاف امتیاز دو موقعیت ${formatScore(strongest.score - weakest.score)} واحد است؛ اندازهٔ چرخش به ۱۰٪ موقعیت ضعیف محدود شده است.`,
+      amountToman: Math.round(totalValueToman * transferPercent / 100),
+      reason: `بزرگ‌ترین کاهش ${formatPercent(Math.abs(source.changePercentPoint))} و بزرگ‌ترین افزایش ${formatPercent(destination.changePercentPoint)} است؛ مبلغ دقیق از کوچک‌ترِ این دو تغییر محاسبه می‌شود.`,
     };
   }
 
@@ -436,6 +518,18 @@ export function calculateSandboxIntelligence(
     totalValueToman,
     assets,
     overallDecision,
+    evidenceState: {
+      syntheticFactorCoveragePercent: 100,
+      iranValidationStatus: "not_evaluated",
+      missingRequirements: [
+        "تاریخچهٔ مجاز و نقطه‌به‌زمان بازار ایران",
+        "فاصلهٔ خریدوفروش، عمق و نقدشوندگی ایران",
+        "هزینه، مالیات و کارمزد واقعی تبدیل",
+        "تاریخچهٔ حباب سکه و طلای ایران",
+        "کالیبراسیون رژیم تورم، ارز و شوک سیاسی",
+        "آزمون خارج از نمونه و اجرای سایه‌ای",
+      ],
+    },
   };
 }
 
@@ -467,7 +561,7 @@ export function buildSandboxAnalysisLens(
   if (category === "summary") {
     return {
       headline: `${asset.signalLabel} برای ${asset.name}`,
-      verdict: `امتیاز مرکب ${asset.score.toLocaleString("fa-IR", { maximumFractionDigits: 1 })} است؛ تصمیم از چهار مؤلفهٔ عددی ساخته شده و با تغییر افق دوباره محاسبه می‌شود.`,
+      verdict: `امتیاز مرکب ${asset.score.toLocaleString("fa-IR", { maximumFractionDigits: 1 })} است؛ تصمیم از ۸ عامل هم‌وزن و قیود ثابت ساخته شده و با تغییر افق دوباره محاسبه می‌شود.`,
       metrics: baseMetrics,
       findings: [
         `بازده نسبت به بهای خرید: ${asset.returnPercent === null ? "نامشخص" : formatPercent(asset.returnPercent)}.`,
@@ -519,11 +613,11 @@ export function buildSandboxAnalysisLens(
       findings: applicable ? [
         `میانگین حباب ${formatPercent(asset.premium.average ?? 0)} است.`,
         `کمینه ${formatPercent(asset.premium.minimum ?? 0)} و بیشینه ${formatPercent(asset.premium.maximum ?? 0)} است.`,
-        `اثر ارزش‌گذاری پیش از وزن‌دهی: ${formatScore(asset.scoreBreakdown.valuation)} امتیاز.`,
+        `امتیاز ارزش‌گذاری پیش از وزن‌دهی: ${formatScore(asset.scoreBreakdown.valuation)} از بازهٔ ۲- تا ۲+.`,
       ] : [
         "برای این کلاس دارایی قیمت مرجع همگن با فرمول حباب تعریف نشده است.",
         `بازده بهای خرید ${asset.returnPercent === null ? "نامشخص" : formatPercent(asset.returnPercent)} است.`,
-        `اثر ارزش‌گذاری جایگزین پیش از وزن‌دهی: ${formatScore(asset.scoreBreakdown.valuation)} امتیاز.`,
+        `امتیاز ارزش‌گذاری جایگزین پیش از وزن‌دهی: ${formatScore(asset.scoreBreakdown.valuation)} از بازهٔ ۲- تا ۲+.`,
       ],
       decision,
       invalidation: asset.invalidation,
@@ -574,7 +668,7 @@ export function buildSandboxAnalysisLens(
     metrics: [
       { label: "اثر روی دارایی", value: formatPercent(scenario.movePercent), detail: scenario.label, tone: metricTone(scenario.movePercent) },
       { label: "اثر ریالی", value: formatMoney(scenario.impactToman), detail: `ارزش پایه ${formatMoney(asset.valueToman)}`, tone: metricTone(scenario.impactToman) },
-      { label: "امتیاز تاب‌آوری", value: formatScore(asset.scoreBreakdown.resilience), detail: "واحد امتیاز قبل از وزن‌دهی", tone: metricTone(asset.scoreBreakdown.resilience) },
+      { label: "امتیاز تاب‌آوری", value: formatScore(asset.scoreBreakdown.crisisResilience), detail: "از بازهٔ ۲- تا ۲+، پیش از وزن‌دهی ۱۲٫۵٪", tone: metricTone(asset.scoreBreakdown.crisisResilience) },
       { label: "بدترین سناریو", value: formatPercent(asset.worstScenario.movePercent), detail: asset.worstScenario.label, tone: metricTone(asset.worstScenario.movePercent) },
     ],
     findings: [

@@ -9,6 +9,22 @@ state is recorded in `docs/10-project-state/CURRENT_STATE.md`.
 
 ### Phase 2 synthetic laboratory authorization — ۱۴۰۵/۰۶/۱۰
 
+- Recorded the owner's later laboratory-method authorization in ADR 0010 without
+  weakening the ban on real data, money, recommendations, APIs or execution.
+- Added a dated, fingerprinted selection record covering nine methods, ten equal
+  engineering-fit criteria and eighteen primary/official sources. Synthetic returns
+  cannot affect selection and Iran/performance states remain unevaluated.
+- Implemented `ASHA_TRANSPARENT_GUARDED_DECISION_V1`: eight equal factor bands, explicit
+  target/cash/concentration/turnover/no-trade rules, exact weights and amounts,
+  reasons, invalidation, alternatives and evidence gaps under permanent locks.
+- Added an unranked same-fold comparison against cash, equal weight, no-trade, inverse
+  volatility, HRP and minimum-CVaR plus synthetic horizon, crisis and one-factor
+  sensitivity checks.
+- Upgraded the Persian demo to show the concise action, current/target weights, exact
+  amount and expandable eight-factor calculation. Two hundred and six laboratory
+  tests, 130 web tests, production build, lint, typecheck and coverage gates pass
+  locally; remote CI follows.
+
 - Recorded the owner's acceptance of Phase 1 Data Foundation for progression and the
   exact synthetic-only Phase 2 boundary in ADR 0009.
 - Created `codex/phase-2-decision-engine` from verified Phase 1 HEAD `0f90210`; no

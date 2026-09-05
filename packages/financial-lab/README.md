@@ -148,3 +148,23 @@ four research-only candidates. Source identity is documented, source currency re
 `unknown_requires_review`, and every other evidence cell remains `not_evaluated`.
 The catalog is deliberately incomplete and unranked; it implements and approves
 nothing, claims no Iranian fitness, and is not connected to application runtime.
+
+`build_methodology_selection_record()` records the owner's 2026-09-05 permission to
+choose a laboratory proposal. It compares nine methods on ten predeclared, equally
+weighted engineering-fit criteria—not returns—and selects
+`ASHA_TRANSPARENT_GUARDED_DECISION_V1`. Eighteen peer-reviewed/official sources,
+including positive and critical trend evidence, are pinned with assumptions and
+limitations. The artifact explicitly rejects best-performance, current-best, Iran-
+fit and production-approval claims.
+
+`build_transparent_guarded_decision()` consumes a fingerprinted synthetic portfolio
+with eight explicit factor inputs. Each factor receives -2..+2 points and exactly
+12.5% weight. Code converts the score into constrained target weights and whole-toman
+amounts, records reasons, factor contributions, horizon, invalidation, missing
+evidence and same-/cross-class alternatives, and keeps financial use/execution false.
+
+`build_method_comparison_report()` evaluates the proposal beside synthetic cash,
+equal-weight, no-trade, inverse-volatility, HRP and minimum-CVaR controls on the exact
+same two train/test folds. It also fingerprints horizon, crisis and one-factor
+sensitivity checks. No fold/method metric is aggregated or ranked, so synthetic
+performance cannot become the selection reason.

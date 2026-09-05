@@ -38,6 +38,12 @@ from .reviewed_methodologies import (
 from .methodology_gaps import validate_methodology_evidence_gap_report
 from .research_intake import validate_research_candidate_intake
 from .reviewed_candidates import validate_reviewed_candidate_discovery_catalog
+from .methodology_selection import validate_methodology_selection_record
+from .method_comparison import validate_method_comparison_report
+from .transparent_decision import (
+    validate_transparent_decision_input,
+    validate_transparent_guarded_decision,
+)
 from .synthetic_stress import (
     validate_stressed_return_matrix,
     validate_synthetic_stress_scenario,
@@ -1188,3 +1194,41 @@ def encode_reviewed_candidate_discovery_catalog(payload: object) -> bytes:
 
 def decode_reviewed_candidate_discovery_catalog(document: object) -> dict[str, Any]:
     return _decode_canonical(document, validate_reviewed_candidate_discovery_catalog)
+
+
+def encode_methodology_selection_record(payload: object) -> bytes:
+    return _encode_canonical(payload, validate_methodology_selection_record)
+
+
+def decode_methodology_selection_record(document: object) -> dict[str, Any]:
+    return _decode_canonical(document, validate_methodology_selection_record)
+
+
+def encode_method_comparison_report(payload: object) -> bytes:
+    return _encode_canonical(payload, validate_method_comparison_report)
+
+
+def decode_method_comparison_report(document: object) -> dict[str, Any]:
+    return _decode_canonical(document, validate_method_comparison_report)
+
+
+def encode_transparent_decision_input(payload: object) -> bytes:
+    return _encode_canonical(payload, validate_transparent_decision_input)
+
+
+def decode_transparent_decision_input(document: object) -> dict[str, Any]:
+    return _decode_canonical(document, validate_transparent_decision_input)
+
+
+def encode_transparent_guarded_decision(payload: object, input_payload: object) -> bytes:
+    return _encode_canonical(
+        payload,
+        lambda value: validate_transparent_guarded_decision(value, input_payload),
+    )
+
+
+def decode_transparent_guarded_decision(document: object, input_payload: object) -> dict[str, Any]:
+    return _decode_canonical(
+        document,
+        lambda value: validate_transparent_guarded_decision(value, input_payload),
+    )

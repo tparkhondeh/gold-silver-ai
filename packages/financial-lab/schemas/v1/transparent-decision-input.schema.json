@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://goldsilver.wealthos.ir/contracts/asha.synthetic.decision_input.v1.schema.json",
+  "title": "Asha synthetic transparent-decision input v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion", "datasetId", "datasetVersion", "datasetKind",
+    "financialUseAllowed", "horizon", "totalValueToman", "constraints",
+    "assets", "contentFingerprint"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "asha.synthetic.decision_input.v1" },
+    "datasetId": { "type": "string", "pattern": "^ASHA_SYNTHETIC_DECISION_[A-Z0-9_]{3,48}_V[1-9][0-9]*$" },
+    "datasetVersion": { "type": "integer", "minimum": 1 },
+    "datasetKind": { "const": "synthetic_fixture" },
+    "financialUseAllowed": { "const": false },
+    "horizon": { "enum": ["short", "long"] },
+    "totalValueToman": { "type": "string", "pattern": "^(0|[1-9][0-9]{0,14})$" },
+    "constraints": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "cashInstrumentId", "minimumCashWeight", "maximumSingleAssetWeight",
+        "maximumTurnoverWeight", "noTradeBandWeight", "maximumAcceptableDrawdownRate"
+      ],
+      "properties": {
+        "cashInstrumentId": { "type": "string", "pattern": "^SYNTH_[A-Z0-9_]{2,48}$" },
+        "minimumCashWeight": { "$ref": "#/$defs/rate" },
+        "maximumSingleAssetWeight": { "$ref": "#/$defs/rate" },
+        "maximumTurnoverWeight": { "$ref": "#/$defs/rate" },
+        "noTradeBandWeight": { "$ref": "#/$defs/rate" },
+        "maximumAcceptableDrawdownRate": { "$ref": "#/$defs/rate" }
+      }
+    },
+    "assets": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 32,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "instrumentId", "displayName", "assetClassId", "currentValueToman",
+          "shortTrendReturn", "longTrendReturn", "volatilityRate",
+          "maximumDrawdownRate", "worstStressReturn", "valuationPercentile",
+          "liquidityScore", "conversionCostRate", "dataStatus"
+        ],
+        "properties": {
+          "instrumentId": { "type": "string", "pattern": "^SYNTH_[A-Z0-9_]{2,48}$" },
+          "displayName": { "type": "string", "pattern": "^\\[SYNTHETIC\\] " },
+          "assetClassId": { "type": "string", "pattern": "^SYNTH_CLASS_[A-Z0-9_]{2,48}$" },
+          "currentValueToman": { "type": "string", "pattern": "^(0|[1-9][0-9]{0,14})$" },
+          "shortTrendReturn": { "$ref": "#/$defs/signedRate" },
+          "longTrendReturn": { "$ref": "#/$defs/signedRate" },
+          "volatilityRate": { "$ref": "#/$defs/rate" },
+          "maximumDrawdownRate": { "$ref": "#/$defs/signedRate" },
+          "worstStressReturn": { "$ref": "#/$defs/signedRate" },
+          "valuationPercentile": { "$ref": "#/$defs/rate" },
+          "liquidityScore": { "type": "integer", "minimum": 1, "maximum": 5 },
+          "conversionCostRate": { "$ref": "#/$defs/rate" },
+          "dataStatus": { "const": "synthetic_complete" }
+        }
+      }
+    },
+    "contentFingerprint": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+  },
+  "$defs": {
+    "rate": { "type": "string", "pattern": "^(0|1)(\\.[0-9]{1,12})?$" },
+    "signedRate": { "type": "string", "pattern": "^-?(0|1)(\\.[0-9]{1,12})?$" }
+  }
+}

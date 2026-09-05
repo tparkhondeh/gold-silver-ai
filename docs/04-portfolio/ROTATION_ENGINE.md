@@ -31,10 +31,10 @@ The owner has approved three presentation layers for future decision support:
 3. **Best overall action** — evaluate the whole portfolio and market/data state
    together before presenting the best permitted action.
 
-Phase 1 implements only the labelled UI structure and deterministic readiness
-gates for these layers. Target selection, ranking, thresholds, confidence, and
-action rules remain methodology `STATUS: TBD` and cannot be inferred from this
-taxonomy.
+Phase 1 implements the labelled UI structure and deterministic readiness gates. The
+Phase 2 demo now mirrors ADR 0010's laboratory-only target and action rules with
+visibly synthetic inputs. Real target selection, thresholds and actions remain
+locked until Iranian validation and a later production approval.
 
 ## Non-Negotiable Constraints
 
@@ -49,9 +49,11 @@ taxonomy.
 
 ## Status
 
-`STATUS: PARTIAL` for the owner-approved output taxonomy and UI shell. Methodology
-remains `STATUS: TBD` (e.g. target selection, thresholds for triggering a suggested
-action, and how conviction is communicated). `DECISION REQUIRED: YES` at design time.
+`STATUS: PARTIAL`. The synthetic UI can show increase, reduce, hold or cross-asset
+convert; current weight, exact target weight, percentage-point change and whole-toman
+amount; factor reasons; alternatives; and invalidation. The 2-percentage-point no-
+trade band and 25% turnover cap are laboratory parameters. Real methodology remains
+`STATUS: TBD` and execution stays absent.
 
 ## Related Documents
 

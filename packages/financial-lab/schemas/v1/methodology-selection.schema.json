@@ -1,0 +1,98 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://goldsilver.wealthos.ir/contracts/asha.synthetic.methodology_selection.v1.schema.json",
+  "title": "Asha synthetic methodology engineering-fit selection v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion", "selectionId", "status", "reviewedOn",
+    "financialUseAllowed", "executionAllowed", "comparisonPurpose", "scoreScale",
+    "criteria", "sources", "candidates", "selectedMethodId", "selectionState",
+    "selectionRationale", "rejectedClaims"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "asha.synthetic.methodology_selection.v1" },
+    "selectionId": { "type": "string", "pattern": "^ASHA_METHODOLOGY_SELECTION_[a-f0-9]{64}$" },
+    "status": { "const": "laboratory_selection_only" },
+    "reviewedOn": { "const": "2026-09-05" },
+    "financialUseAllowed": { "const": false },
+    "executionAllowed": { "const": false },
+    "comparisonPurpose": { "const": "engineering_fit_not_financial_performance" },
+    "scoreScale": {
+      "const": { "minimum": 0, "maximum": 2, "meaning": "poor_partial_strong_engineering_fit" }
+    },
+    "criteria": {
+      "type": "array",
+      "minItems": 10,
+      "maxItems": 10,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["criterionId", "weight", "description"],
+        "properties": {
+          "criterionId": { "type": "string", "pattern": "^[A-Z][A-Z0-9_]+$" },
+          "weight": { "const": "0.100000" },
+          "description": { "type": "string", "minLength": 1, "maxLength": 200 }
+        }
+      }
+    },
+    "sources": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "sourceId", "title", "authorsOrInstitution", "venue", "year", "locator",
+          "sourceType", "reviewedOn", "assumption", "limitation"
+        ],
+        "properties": {
+          "sourceId": { "type": "string" },
+          "title": { "type": "string" },
+          "authorsOrInstitution": { "type": "string" },
+          "venue": { "type": "string" },
+          "year": { "type": "integer", "minimum": 1900 },
+          "locator": { "type": "string", "format": "uri" },
+          "sourceType": { "enum": ["peer_reviewed_primary_research", "official_standard"] },
+          "reviewedOn": { "const": "2026-09-05" },
+          "assumption": { "type": "string" },
+          "limitation": { "type": "string" }
+        }
+      }
+    },
+    "candidates": {
+      "type": "array",
+      "minItems": 9,
+      "maxItems": 9,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "methodId", "displayName", "sourceIds", "criterionScores",
+          "engineeringFitScore", "strengths", "limitations",
+          "iranCalibrationStatus", "financialPerformanceStatus"
+        ],
+        "properties": {
+          "methodId": { "type": "string" },
+          "displayName": { "type": "string" },
+          "sourceIds": { "type": "array", "minItems": 1, "uniqueItems": true },
+          "criterionScores": { "type": "array", "minItems": 10, "maxItems": 10 },
+          "engineeringFitScore": { "type": "string" },
+          "strengths": { "type": "array", "minItems": 1 },
+          "limitations": { "type": "array", "minItems": 1 },
+          "iranCalibrationStatus": { "const": "not_evaluated" },
+          "financialPerformanceStatus": { "const": "not_evaluated" }
+        }
+      }
+    },
+    "selectedMethodId": { "const": "ASHA_TRANSPARENT_GUARDED_DECISION_V1" },
+    "selectionState": { "const": "owner_authorized_laboratory_proposal" },
+    "selectionRationale": { "type": "array", "minItems": 1, "uniqueItems": true },
+    "rejectedClaims": {
+      "const": [
+        "BEST_FINANCIAL_PERFORMANCE", "CURRENT_BEST_METHOD_IN_LITERATURE",
+        "FIT_FOR_IRAN", "PRODUCTION_APPROVAL"
+      ]
+    }
+  }
+}

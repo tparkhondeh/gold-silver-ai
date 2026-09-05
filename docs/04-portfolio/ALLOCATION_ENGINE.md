@@ -22,10 +22,15 @@ instrument, respecting the owner's constraints
 
 ## Status
 
-`STATUS: TBD` for methodology (e.g. optimization approach, constraint handling,
-how conviction/confidence is represented). `DECISION REQUIRED: YES` at design
-time — this is a financial-methodology decision requiring owner review per
-`docs/00-governance/PROJECT_RULES.md` § 2-3.
+`STATUS: PARTIAL`. The owner selected a **laboratory proposal** in ADR 0010; the
+real/production methodology remains `STATUS: TBD` pending Iranian validation and a
+later explicit approval. The proposal is not an instruction for capital allocation.
+
+`ASHA_TRANSPARENT_GUARDED_DECISION_V1` converts eight equal-weight factor bands into
+a target around an equal-capital anchor. It then applies a synthetic cash floor,
+single-asset cap, maximum turnover and no-trade band. Every proposed weight and whole-
+toman amount is code-computed and replayable. The exact v1 formulas and calibration
+gaps are recorded in `METHODOLOGY_EVIDENCE.md` and ADR 0010.
 
 The isolated Phase 2 laboratory now includes inverse-volatility **comparison-control**
 weights computed from train-only synthetic population deviations. Zero variance gets

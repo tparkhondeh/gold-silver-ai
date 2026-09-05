@@ -88,6 +88,10 @@ instruction-source boundary Claude Code itself operates under
 
 The AI layer itself is not implemented. This document is binding on any future
 implementation, not just on Claude Code's own conduct while building the project.
+The ADR 0010 laboratory engine reinforces this boundary: code fixes every factor,
+weight, band, target, amount and reason code. AI is permitted only to translate that
+artifact into plain Persian; it cannot invent a missing number, change an allocation
+or turn a synthetic proposal into financial advice.
 
 ## Related Documents
 

@@ -7,21 +7,20 @@
 The owner accepted the Phase 1 Data Foundation for progression and authorized the
 synthetic-only Phase 2 laboratory on 2026-09-01. ADR 0009 is binding: no real data,
 paid API, real recommendation, production registry write, or execution is permitted.
-The isolated Python package, versioned synthetic input/output contract, independent CI
-gate, canonical artifacts, exact no-decision replay, three multi-fold comparison
-controls, the explicit synthetic stress-return matrix and frozen-weight stress
-evaluation, versioned multi-scenario suites and multi-fold stress replay for
-inverse-volatility, HRP and minimum-CVaR are complete. Their exact evidence-gap report
-also keeps every method/criterion cell and unresolved requirement separate without a
-score, rank or selection. The research-candidate intake contract now requires source,
-date, scope, non-equivalence and complete-gap records before a method may be studied.
-The exact candidate-discovery catalog is now populated from a bounded, dated primary-
-literature review. Four candidates remain unimplemented, currentness-unresolved and
-unranked, with every non-source evidence cell unevaluated. The immediate safe unit is
-a versioned evidence-acquisition plan that maps each open candidate/criterion cell to
-the evidence type and prerequisite gate needed to evaluate it. It must not assign a
-priority, schedule, score or winner; implement a candidate; infer Iranian fitness; use
-real data; or enter application runtime.
+The isolated laboratory, its comparison controls, stress/walk-forward mechanics,
+evidence registry and candidate catalog are complete. Under the owner's 2026-09-05
+authorization, ADR 0010 now selects and implements
+`ASHA_TRANSPARENT_GUARDED_DECISION_V1` as a **synthetic proposal only**. Its input,
+method-selection, decision and same-fold comparison artifacts are versioned and
+replayable; the UI shows a concise action and expandable calculations. No synthetic
+result ranks financial performance or approves Iran use.
+
+The immediate next safe unit is an Iran calibration manifest: define the exact fields,
+minimum history, point-in-time/cost/liquidity evidence, train/test isolation,
+parameter-freeze rule and pass/fail gates needed later for each factor and constraint.
+It may use schema and synthetic fixtures only. It must not ingest real data, choose a
+provider, purchase an API, change v1 weights from synthetic results, claim performance
+or enable financial use/execution.
 
 Migrations 0003–0011 now cover the owner snapshot, immutable provenance,
 exact point-in-time dataset/decision lineage, source-reconciliation records and

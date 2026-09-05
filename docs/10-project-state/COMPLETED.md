@@ -4,6 +4,22 @@
 merged to `main`. This is a log, not a plan — see `docs/01-product/ROADMAP.md` for
 what's ahead.
 
+## Phase 2 — Transparent Laboratory Decision Proposal (2026-09-05)
+
+**Status:** Complete on `codex/phase-2-decision-engine` as a synthetic, evaluation-
+only unit. This is not merged to `main` and is not approved for Iranian financial use.
+
+Delivered:
+- a dated eighteen-source, nine-method, ten-criterion engineering-fit record;
+- the versioned eight-factor transparent guarded decision engine with exact target
+  percentages, whole-toman amounts, reasons, alternatives and invalidation;
+- same-fold comparison against six controls plus horizon, crisis and one-factor
+  sensitivity checks, with no performance aggregation or ranking;
+- versioned JSON contracts, canonical replay/tamper rejection and 20 new laboratory
+  tests (206 total);
+- a Persian UI mirror with concise action and expandable calculation disclosure;
+- ADR 0010 and the explicit list of Iran calibration/validation requirements.
+
 ## Phase 0 — Foundation & Governance
 
 **Status:** Complete on branch `phase-0-foundation`; owner approved continuation

@@ -257,6 +257,13 @@ The first exact discovery catalog records four literature candidates as research
 Their source records are reviewable, but currentness is still unresolved and all
 non-source evidence remains unevaluated. It is not a model-selection system and cannot
 score, rank, recommend, allocate or change runtime behavior.
+ADR 0010 now authorizes one separate laboratory proposal. Its versioned input/output
+contracts deterministically calculate eight factor contributions, target weights,
+actions, exact amounts, alternatives, invalidation and missing evidence. A same-fold
+report compares it with cash, equal weight, no-trade, inverse volatility, HRP and
+minimum-CVaR without aggregation or ranking. Every result remains synthetic,
+evaluation-only, financial-use-disabled and execution-disabled; no real decision has
+been registered or unlocked.
 
 ## Related Documents
 

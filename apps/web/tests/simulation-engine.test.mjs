@@ -51,6 +51,26 @@ test("keeps sandbox readiness and methodology visibly non-operational", () => {
   assert.equal(sandboxMethodology.executionAllowed, false);
 });
 
+test("uses disclosed laboratory defaults when owner fields are still blank", () => {
+  const result = calculateSandboxDecision([
+    { id: "asset", name: "طلای ۱۸ عیار", valueToman: 900, costToman: 800 },
+    { id: "cash", name: "وجه نقد و سپرده بانکی", valueToman: 100, costToman: 100 },
+  ], {
+    liquidityReservePercent: "",
+    maxSingleAssetPercent: "",
+    maxAcceptableDrawdownPercent: "",
+    shortTermMonths: "",
+    longTermYears: "",
+  }, "short");
+
+  assert.equal(result.profile.liquidityReservePercent, 15);
+  assert.equal(result.profile.maxSingleAssetPercent, 30);
+  assert.equal(result.profile.maxAcceptableDrawdownPercent, 20);
+  assert.equal(result.profile.shortTermMonths, 6);
+  assert.equal(result.profile.longTermYears, 5);
+  assert.equal(result.cashGapToman, 50);
+});
+
 test("provides bounded synthetic premium history only for applicable demo assets", () => {
   const gold = buildSandboxPremiumMetrics("طلای ۱۸ عیار", 33);
   assert.equal(gold.applicable, true);

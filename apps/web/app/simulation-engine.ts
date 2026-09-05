@@ -111,6 +111,7 @@ const sandboxRiskScore: Record<string, number> = {
 };
 
 function boundedNumber(raw: string | undefined, minimum: number, maximum: number, fallback: number) {
+  if (raw === undefined || raw.trim() === "") return fallback;
   const value = Number(raw);
   return Number.isFinite(value) && value >= minimum && value <= maximum ? value : fallback;
 }

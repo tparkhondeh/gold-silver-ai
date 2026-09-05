@@ -12,6 +12,19 @@ non-operational financial laboratory. ADR 0009 records the exact boundary. Branc
 `codex/phase-2-decision-engine` was created from verified Phase 1 HEAD `0f90210`;
 neither acceptance nor branching authorizes a merge to `main`, real data, a paid API,
 financial recommendations, or execution.
+On 2026-09-05 the owner separately authorized selecting and implementing a proposed
+method **inside that laboratory only**. ADR 0010 records the narrow authorization.
+Eighteen reviewed primary/official sources and ten equally weighted engineering-fit
+criteria compare nine candidates without using synthetic returns to choose a winner.
+`ASHA_TRANSPARENT_GUARDED_DECISION_V1` is the selected laboratory proposal: eight
+visible 12.5% factor bands feed exact constrained targets, percentage changes and
+whole-toman amounts, with reasons, invalidation, evidence gaps and alternatives.
+Synthetic reference actions and a same-fold two-window comparison against six controls
+are exactly replayable and unranked. The web demo mirrors the method and exposes its
+calculations behind a plain-language disclosure. Financial use, execution, Iran
+fitness and real-data approval remain false. Two hundred and six laboratory tests,
+the production web build, lint, typecheck, all 130 web tests and coverage gates pass
+locally; remote CI is pending this checkpoint.
 The isolated `packages/financial-lab` Python 3.12 package now defines strict v1 JSON
 contracts for synthetic datasets and evaluation results. Canonical SHA-256 identities
 make exact replay/tampering visible; real namespaces, real units, premature

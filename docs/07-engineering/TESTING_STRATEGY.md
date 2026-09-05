@@ -214,6 +214,21 @@ search scope, currentness uncertainty, all 40 evidence cells and canonical repla
 They reject fingerprint-resealed changes to a source or search boundary and require
 all candidates to remain unimplemented, Iran-unevaluated and unranked. One hundred and
 eighty-six laboratory tests pass.
+Six methodology-selection tests require ten equal engineering-fit criteria, reconcile
+all nine candidate scores, preserve eighteen primary/official sources (including
+trend critiques), reject resealed winner drift, verify canonical transport and keep
+Iran/performance unassessed. Eight transparent-decision tests hand-check the exact
+factor score, target weights and whole-toman actions; reconcile eight 12.5% factor
+contributions; exercise horizon/sensitivity and safety locks; and reject tampering.
+Six same-fold comparison tests cover the proposal plus six controls over two fixed
+test folds, require exact-sum weights, preserve the no-aggregate/no-rank policy,
+exercise crisis and one-factor sensitivity, verify canonical transport and reject
+resealed metrics. The laboratory total is now two hundred and six tests.
+Five web tests additionally require the synthetic UI mirror to remain deterministic,
+display eight factor contributions and exact target amounts, force risk reduction
+when tolerance is breached, and retain the no-financial-use/no-execution lock.
+A sixth cross-engine regression proves blank owner fields select the disclosed
+laboratory defaults instead of silently turning the cash reserve into zero.
 
 ## Related Documents
 

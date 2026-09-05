@@ -64,6 +64,9 @@ test("calculates deterministic, traceable synthetic intelligence", () => {
   assert.equal(first.assets.length, 3);
   assert.ok(first.assets.every((asset) => asset.history.observationCount === 90));
   assert.ok(first.assets.every((asset) => Number.isFinite(asset.score)));
+  assert.ok(first.assets.every((asset) => asset.factorContributions.length === 8));
+  assert.ok(first.assets.find((asset) => asset.id === "cash")?.factorContributions.every((factor) => factor.points === 0));
+  assert.ok(first.assets.every((asset) => asset.evidenceAdequacyPercent === 100));
   assert.ok(first.assets.every((asset) => asset.worstScenario.movePercent <= asset.bestScenario.movePercent));
   assert.ok(new Set(first.assets.map((asset) => asset.signal)).size >= 2);
 });
@@ -74,9 +77,9 @@ test("forces risk reduction when scenario loss breaches the owner tolerance", ()
     name: "رمزارز",
     assetClassId: "crypto",
     assetClassLabel: "دارایی دیجیتال",
-    valueToman: 150,
+    valueToman: 500,
     costToman: 120,
-    allocationPercent: 13,
+    allocationPercent: 33.3333333333,
     returnPercent: 25,
     riskScore: 5,
     riskLabel: "بسیار بالا · ساختگی",
@@ -94,15 +97,12 @@ test("keeps score arithmetic hand-verifiable and decision amounts bounded", () =
   const result = calculateSandboxIntelligence(inputs, profile, "short");
   const gold = result.assets.find((asset) => asset.id === "gold");
   assert.ok(gold);
-  const weights = sandboxIntelligenceMethodology.weights.short;
-  const expected = gold.scoreBreakdown.momentum * weights.momentum
-    + gold.scoreBreakdown.valuation * weights.valuation
-    + gold.scoreBreakdown.resilience * weights.resilience
-    + gold.scoreBreakdown.risk * weights.risk;
+  const expected = gold.factorContributions.reduce((sum, factor) => sum + factor.weightedContribution, 0) * 50;
   assert.ok(Math.abs(gold.score - expected) < 0.02);
-  assert.ok(gold.heterogeneousDecision.amountToman <= gold.valueToman * 0.25);
-  assert.equal(result.overallDecision.destinationName, "وجه نقد و سپرده بانکی");
-  assert.ok(result.overallDecision.amountToman <= inputs[0].valueToman * 0.25);
+  assert.ok(gold.heterogeneousDecision.amountToman <= result.totalValueToman * 0.25);
+  assert.ok(result.overallDecision.destinationName);
+  assert.ok(result.overallDecision.amountToman <= result.totalValueToman * 0.25);
+  assert.ok(Math.abs(result.assets.reduce((sum, asset) => sum + asset.targetWeightPercent, 0) - 100) < 0.0001);
 });
 
 test("produces tangible analysis lenses without inventing unsupported VaR", () => {
@@ -114,8 +114,10 @@ test("produces tangible analysis lenses without inventing unsupported VaR", () =
   assert.match(technical?.headline ?? "", /روند|سیگنال/);
   assert.equal((technical?.findings.join(" ") ?? "").includes("VaR جعلی"), true);
   assert.match(bubble?.verdict ?? "", /حباب فعلی/);
-  assert.match(portfolio?.verdict ?? "", /ذخیره|وزن|امتیاز/);
+  assert.match(portfolio?.verdict ?? "", /ذخیره|وزن|امتیاز|تغییر/);
   assert.equal(sandboxIntelligenceMethodology.executionAllowed, false);
+  assert.equal(sandboxIntelligenceMethodology.financialUseAllowed, false);
+  assert.equal(result.evidenceState.iranValidationStatus, "not_evaluated");
 });
 
 test("keeps every owner-approved analysis lens numeric and actionable", () => {

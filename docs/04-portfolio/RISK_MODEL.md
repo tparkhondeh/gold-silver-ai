@@ -29,9 +29,12 @@ portfolio level, feeding into `PORTFOLIO_MODEL.md`, `ALLOCATION_ENGINE.md`, and
 
 ## Status
 
-`STATUS: TBD` for specific risk metrics, methodology, and thresholds. `DECISION
-REQUIRED: YES` at design time, including the owner's actual risk tolerance
-(`docs/01-product/USER_REQUIREMENTS.md`).
+`STATUS: PARTIAL`. ADR 0010 selects only a synthetic laboratory risk/decision
+proposal; real thresholds and the owner's operational tolerance remain `STATUS: TBD`.
+The proposal includes explicit volatility, maximum drawdown, worst stress,
+liquidity, concentration and conversion-cost factor bands. A drawdown/stress breach
+halves the affected preference and transfers half its current weight toward the
+synthetic cash buffer. These are versioned test hypotheses, not measured Iranian risk.
 
 The isolated Phase 2 laboratory now has a train-only population-covariance feature
 for synthetic returns. It uses one validated walk-forward fold, is bound to the exact
