@@ -24,7 +24,9 @@ are exactly replayable and unranked. The web demo mirrors the method and exposes
 calculations behind a plain-language disclosure. Financial use, execution, Iran
 fitness and real-data approval remain false. Two hundred and six laboratory tests,
 the production web build, lint, typecheck, all 130 web tests and coverage gates pass
-locally; remote CI is pending this checkpoint.
+locally.
+Code checkpoint `909d537` passed all three GitHub Actions jobs in run
+33992126608; `main` remained unchanged.
 The isolated `packages/financial-lab` Python 3.12 package now defines strict v1 JSON
 contracts for synthetic datasets and evaluation results. Canonical SHA-256 identities
 make exact replay/tampering visible; real namespaces, real units, premature

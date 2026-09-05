@@ -53,6 +53,8 @@ Every numeric parameter is code, schema or input—not LLM output.
    pass. Final source coverage is 94.11% lines, 79.57% branches and 94.72% functions.
 8. Self-review: this document records the review and remaining limitations.
 9. Owner approval for `main`: not requested or inferred; `main` remains unchanged.
+10. Remote verification: code checkpoint `909d537` passed all three GitHub Actions
+    jobs in run 33992126608.
 
 ## Risks and unresolved evidence
 
