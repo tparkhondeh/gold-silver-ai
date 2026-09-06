@@ -29,7 +29,8 @@ blocked.
 8. Self-review: resealed link, threshold, stress, outcome, promotion and permission
    mutations fail closed; missing/failed/prior-blocked gates remain closed.
 9. Owner approval for `main`: not requested; `main` remains unchanged.
-10. Remote verification: pending the branch checkpoint workflow.
+10. Remote verification: checkpoint `eb2749c` passed all three GitHub Actions jobs in
+    run 34001635329.
 
 ## Next safe unit
 

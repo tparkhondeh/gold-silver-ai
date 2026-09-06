@@ -50,6 +50,8 @@ state is recorded in `docs/10-project-state/CURRENT_STATE.md`.
   or fingerprint-resealed drift fails closed. Eight new tests bring the laboratory
   total to 238, while real calibration, promotion, financial use and execution remain
   locked.
+- Freeze-aware calibration-preflight checkpoint `eb2749c` passed all three GitHub
+  Actions jobs in run 34001635329; `main` remained unchanged.
 
 - Recorded the owner's acceptance of Phase 1 Data Foundation for progression and the
   exact synthetic-only Phase 2 boundary in ADR 0009.
