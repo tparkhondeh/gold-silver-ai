@@ -29,6 +29,8 @@ import { NavasanBackfillReadiness } from "./navasan-backfill-readiness";
 import { GoldApiBackfillReadiness } from "./goldapi-backfill-readiness";
 import { NavasanQuotaStatus } from "./navasan-quota-status";
 import { CalibrationReadinessPanel } from "./calibration-readiness-panel";
+import { DecisionActionWorkbench } from "./decision-action-workbench";
+import { browserMarketFallbackAllowed } from "./market-network-policy";
 import { assetCategories, assetOptions, getAssetCategoryForAsset, getAssetOptionsForCategory } from "./asset-catalog";
 import { currentJalaliDate, currentJalaliParts, formatJalaliDate, toPersianDigits } from "./jalali-calendar";
 import { PersianDatePicker } from "./persian-date-picker";
@@ -97,6 +99,7 @@ type LiveQuote = {
 };
 
 type FeedResponse = {
+  networkAllowed?: boolean;
   collectedAt: string;
   quotes: LiveQuote[];
   sources: Array<{ id: string; name: string; status: string; message: string }>;
@@ -369,7 +372,7 @@ export default function Home() {
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       const payload = await response.json() as FeedResponse;
       const hasGlobalQuote = payload.quotes.some((quote) => quote.instrumentCode === "XAU_USD");
-      if (!hasGlobalQuote) {
+      if (!hasGlobalQuote && browserMarketFallbackAllowed(payload)) {
         try {
           const publicResponse = await fetch("https://xaus.com/api/v1/spot?compact=1", { cache: "no-store", credentials: "omit", referrerPolicy: "no-referrer" });
           if (!publicResponse.ok) throw new Error(`HTTP ${publicResponse.status}`);
@@ -996,9 +999,10 @@ export default function Home() {
           </section>}
 
           {view === "decisions" && <section className="view-stack">
-            <div className="view-hero"><SectionTitle eyebrow="ASHA DECISIONS" title="تصمیم‌های متناسب با هر دارایی" text="این صفحه فقط سؤال تصمیم را پاسخ می‌دهد: مقایسه در همان کلاس، امکان تبدیل بین کلاس‌ها، و بهترین اقدام مجاز برای کل سبد."/><div className="market-actions"><span className={portfolioMode === "demo" ? "status-chip warning" : decisionReadiness.operational ? "status-chip safe" : "status-chip warning"}>{portfolioMode === "demo" ? "۶ از ۶ · آزمایشی" : `${decisionReadiness.passedCount.toLocaleString("fa-IR")} از ۶ دروازه`}</span><HorizonToggle value={decisionHorizon} onChange={setDecisionHorizon}/></div></div>
-            {selectedHolding && <section className="asset-context-bar compact" aria-label="انتخاب دارایی برای تصمیم"><div><small>تصمیم متمرکز روی</small><strong>{selectedHolding.name}</strong></div><div className="asset-context-list">{holdings.map((holding) => <button key={holding.id} className={holding.id === selectedHolding.id ? "active" : ""} onClick={() => setSelectedHoldingId(holding.id)}>{holding.name}</button>)}</div><button className="ghost-button" onClick={() => setView("asset-center")}>نمای ۳۶۰ درجه</button></section>}
-            <section className="panel decision-desk">
+            <div className="view-hero"><SectionTitle eyebrow="ASHA DECISIONS" title="تصمیم‌های متناسب با هر دارایی" text="مقدار ورود، خروج و تبدیل را همراه قیمت، هزینه و افق زمانی بررسی کن."/><div className="market-actions"><span className={portfolioMode === "demo" ? "status-chip warning" : decisionReadiness.operational ? "status-chip safe" : "status-chip warning"}>{portfolioMode === "demo" ? "میز آزمون آماده است" : `${decisionReadiness.passedCount.toLocaleString("fa-IR")} از ۶ دروازه`}</span>{portfolioMode !== "demo" && <HorizonToggle value={decisionHorizon} onChange={setDecisionHorizon}/>}</div></div>
+            {portfolioMode !== "demo" && selectedHolding && <section className="asset-context-bar compact" aria-label="انتخاب دارایی برای تصمیم"><div><small>تصمیم متمرکز روی</small><strong>{selectedHolding.name}</strong></div><div className="asset-context-list">{holdings.map((holding) => <button key={holding.id} className={holding.id === selectedHolding.id ? "active" : ""} onClick={() => setSelectedHoldingId(holding.id)}>{holding.name}</button>)}</div><button className="ghost-button" onClick={() => setView("asset-center")}>نمای ۳۶۰ درجه</button></section>}
+            {portfolioMode === "demo" && <DecisionActionWorkbench />}
+            <section className="panel decision-desk" hidden={portfolioMode === "demo"}>
               <div className="panel-head decision-head"><SectionTitle eyebrow="DECISION MODES" title="میز تصمیم اشا" text="اطلاعات هر دارایی از تحلیل جدا نمی‌شود، اما برای حفظ تمرکز فقط نتیجهٔ آمادگی و شواهد لازم در این صفحه نمایش داده می‌شود."/><span className="method-version compact"><span>{portfolioMode === "demo" ? sandboxIntelligenceMethodology.id : decisionFramework.id}</span><b>نسخه {portfolioMode === "demo" ? sandboxIntelligenceMethodology.version : decisionFramework.version}</b></span></div>
               {portfolioMode === "demo" && <div className="sandbox-decision-banner"><b>موتور تحلیل و تصمیم شبیه‌سازی فعال است</b><p>ورودی بازار: {sandboxIntelligenceMethodology.datasetId} · تاریخچه: {sandboxIntelligenceMethodology.historyDatasetId} · تصمیم هر دارایی یک گزینهٔ مستقل است و «بهترین اقدام کل» اولویت نهایی سبد را تعیین می‌کند · اجرای معامله وجود ندارد</p></div>}
               <details className="owner-constraints-panel">

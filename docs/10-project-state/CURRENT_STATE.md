@@ -10,7 +10,19 @@ The latest owner request authorizes a quantitative short/medium decision workben
 with exact price/quantity/cost/funding outputs and editable synthetic examples. Its
 scope and acceptance inventory are in `../04-portfolio/DECISION_ACTION_PLAN.md`.
 The preceding 64-slot empty intake plan passes all 254 laboratory tests locally
-(247 existing plus seven new, 344 seconds). Remote verification follows commit/push.
+(247 existing plus seven new, 344 seconds). Its commit `6e3c4ae` passed all three
+GitHub jobs in run 34009462993.
+The quantitative workbench is now implemented: exact BigInt quantities/costs,
+single-budget short/medium sizing, seven explicit action/error fixtures plus the
+existing factor method, editable controls, ordered funding, risk constraints and
+canonical browser save/restore. All 153 web tests and 16 PostgreSQL integration
+tests pass. Local health is ready, online market calls are disabled, and a complete
+25-table backup/restore is verified. The source-linked engine map, exact evidence
+and remaining release dependencies are in `DECISION_WORKBENCH_DELIVERY_AUDIT.md`.
+Owner testing instructions are in `../09-operations/OWNER_DECISION_TEST_FA.md`.
+Only passed acceptance items in the bounded workbench inventory count toward its
+completion; do not describe that as the percentage of the full financial product.
+Final-commit CI must be checked separately from the earlier intake checkpoint.
 No recurring automation should be recreated. The working branch remains
 `codex/phase-2-decision-engine`; the clean pre-change Git history is backed up in a
 verified local bundle under `.cache/checkpoints/`.

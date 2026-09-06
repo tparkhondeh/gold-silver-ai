@@ -52,8 +52,16 @@ data or advance calibration. The owner now explicitly requests the quantitative
 decision workbench: exact entry/exit quantities and prices, same/cross-class funding,
 short/medium horizon reconciliation, hold/wait/undecidable, editable synthetic
 examples and save/restore. Follow `../04-portfolio/DECISION_ACTION_PLAN.md` and its
-bounded acceptance inventory. Complete independent technical units without creating
-another recurring automation. Do not silently relabel price limits as forecasts.
+bounded acceptance inventory. The workbench implementation and local checks are now
+complete; see `DECISION_WORKBENCH_DELIVERY_AUDIT.md` and the Persian owner test guide.
+Verify three GitHub jobs against its delivered head, then capture owner usability
+findings without reopening completed governance artifacts or adding side features.
+The next independent engineering extension is same-fold comparison of the new
+physical-lot sizing layer under identical costs/constraints, followed by a shared
+synthetic integration with the broader dashboard. Neither extension may treat the
+old method's comparison as validation of the new sizing layer. Production identity,
+real inputs/calibration and paid connections remain separately governed.
+Do not create another recurring automation or relabel price limits as forecasts.
 
 Migrations 0003–0011 now cover the owner snapshot, immutable provenance,
 exact point-in-time dataset/decision lineage, source-reconciliation records and

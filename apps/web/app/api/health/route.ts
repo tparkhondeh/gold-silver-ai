@@ -6,10 +6,12 @@ import { decisionFramework } from "../../decision-support";
 import { inspectNavasanConfiguration } from "../../navasan-adapter";
 import { inspectNavasanHistoryAuthorization } from "../../navasan-history";
 import { scenarioMethodology } from "../../scenario-engine";
+import { marketNetworkAllowed } from "../../market-network-policy.ts";
 
 export const dynamic = "force-dynamic";
 
 export async function GET() {
+  const networkAllowed = marketNetworkAllowed(process.env);
   const navasanConfiguration = inspectNavasanConfiguration(process.env);
   const navasanHistoryAuthorization = inspectNavasanHistoryAuthorization(process.env);
   const iranFeedConfigured = navasanConfiguration.ready;
@@ -42,8 +44,8 @@ export async function GET() {
     },
     engines: [
       { id: "web", state: "ready", reason: "رابط وب در دسترس است" },
-      { id: "global-market", state: process.env.GOLD_API_TOKEN?.trim() ? "configured" : "fallback", reason: process.env.GOLD_API_TOKEN?.trim() ? "خوراک کلیددار پیکربندی شده" : "خوراک‌های عمومی فقط برای نمایش اطلاع‌رسانی" },
-      { id: "iran-market", state: iranFeedConfigured ? "configured" : "blocked", reason: navasanConfiguration.ready ? `واحد قرارداد ${navasanConfiguration.unit}` : navasanConfiguration.reason === "key_rotation_required" ? "کلید قبلی باید لغو و با کلید جدید جایگزین شود" : "کلید و واحد قراردادی منبع ایرانی کامل نیست" },
+      { id: "global-market", state: !networkAllowed ? "blocked" : process.env.GOLD_API_TOKEN?.trim() ? "configured" : "fallback", reason: !networkAllowed ? "دریافت بازار در مرحلهٔ فعلی خاموش است" : process.env.GOLD_API_TOKEN?.trim() ? "خوراک کلیددار پیکربندی شده" : "خوراک‌های عمومی فقط برای نمایش اطلاع‌رسانی" },
+      { id: "iran-market", state: networkAllowed && iranFeedConfigured ? "configured" : "blocked", reason: !networkAllowed ? "دریافت بازار در مرحلهٔ فعلی خاموش است" : navasanConfiguration.ready ? `واحد قرارداد ${navasanConfiguration.unit}` : navasanConfiguration.reason === "key_rotation_required" ? "کلید قبلی باید لغو و با کلید جدید جایگزین شود" : "کلید و واحد قراردادی منبع ایرانی کامل نیست" },
       {
         id: "navasan-quota",
         state: navasanQuotaDatabase.state,

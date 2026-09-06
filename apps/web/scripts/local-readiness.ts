@@ -41,7 +41,7 @@ const exactEngineStates = new Map([
 ]);
 
 const permittedEngineStates = new Map([
-  ["global-market", new Set(["fallback", "configured"])],
+  ["global-market", new Set(["blocked", "fallback", "configured"])],
   ["iran-market", new Set(["blocked", "configured"])],
 ]);
 

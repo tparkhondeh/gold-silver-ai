@@ -56,12 +56,13 @@ test("exposes an honest machine-readable readiness endpoint", async () => {
 });
 
 test("serves the manual snapshot deterministically and never sends an unrotated Navasan key", async (t) => {
-  const previousEnvironment = { key: process.env.NAVASAN_API_KEY, unit: process.env.NAVASAN_VALUE_UNIT, rotation: process.env.NAVASAN_KEY_ROTATION_CONFIRMED };
+  const previousEnvironment = { key: process.env.NAVASAN_API_KEY, unit: process.env.NAVASAN_VALUE_UNIT, rotation: process.env.NAVASAN_KEY_ROTATION_CONFIRMED, network: process.env.ASHA_MARKET_NETWORK_ENABLED };
+  process.env.ASHA_MARKET_NETWORK_ENABLED = "true";
   process.env.NAVASAN_API_KEY = "synthetic-test-credential";
   process.env.NAVASAN_VALUE_UNIT = "TOMAN";
   process.env.NAVASAN_KEY_ROTATION_CONFIRMED = "false";
   t.after(() => {
-    for (const [name, value] of Object.entries({ NAVASAN_API_KEY: previousEnvironment.key, NAVASAN_VALUE_UNIT: previousEnvironment.unit, NAVASAN_KEY_ROTATION_CONFIRMED: previousEnvironment.rotation })) {
+    for (const [name, value] of Object.entries({ NAVASAN_API_KEY: previousEnvironment.key, NAVASAN_VALUE_UNIT: previousEnvironment.unit, NAVASAN_KEY_ROTATION_CONFIRMED: previousEnvironment.rotation, ASHA_MARKET_NETWORK_ENABLED: previousEnvironment.network })) {
       if (value === undefined) delete process.env[name];
       else process.env[name] = value;
     }
@@ -89,4 +90,11 @@ test("serves the manual snapshot deterministically and never sends an unrotated 
   assert.equal(feed.sources.some((source) => source.id === "navasan" && source.status === "needs_key" && source.message.includes("کلید قبلی")), true);
   assert.equal(outboundRequests.some((url) => url.includes("navasan.tech")), false);
   assert.equal(JSON.stringify(feed).includes("synthetic-test-credential"), false);
+  // Disabling must bypass an already populated cache as well as provider calls.
+  process.env.ASHA_MARKET_NETWORK_ENABLED = "false";
+  outboundRequests.length = 0;
+  const offline = await (await request("/api/market", { accept: "application/json" })).json();
+  assert.equal(offline.networkAllowed, false);
+  assert.deepEqual(offline.quotes, []);
+  assert.deepEqual(outboundRequests, []);
 });

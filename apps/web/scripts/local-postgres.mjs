@@ -126,7 +126,13 @@ async function start(secret) {
   }
   if ((await readFile(join(data, "PG_VERSION"), "utf8")).trim() !== "17") throw new Error("Unexpected PostgreSQL major version");
   try { run("pg_ctl", ["status", "-D", data]); }
-  catch { run("pg_ctl", ["start", "-D", data, "-l", join(privateRoot, "postgres.log"), "-w", "-t", "30"]); }
+  catch {
+    // The long-lived Windows postgres child must not inherit captured pipes:
+    // Node can otherwise wait for their EOF after pg_ctl has successfully exited.
+    execFileSync(binary("pg_ctl"), ["start", "-D", data, "-l", join(privateRoot, "postgres.log"), "-w", "-t", "30"], {
+      windowsHide: true, stdio: "ignore", timeout: 60_000,
+    });
+  }
   const admin = await connect(url("postgres", secret.admin, "postgres"));
   try {
     const result = await admin.query("SELECT current_setting('data_directory') AS directory, current_setting('listen_addresses') AS listeners");

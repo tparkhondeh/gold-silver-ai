@@ -54,6 +54,8 @@ try {
       env: {
         ...process.env,
         ...runtimeEnvironment,
+        ASHA_MARKET_NETWORK_ENABLED: "false",
+        NAVASAN_HISTORY_EXECUTION_ENABLED: "false",
         CLOUDFLARE_INCLUDE_PROCESS_ENV: "true",
       },
       stdio: "inherit",

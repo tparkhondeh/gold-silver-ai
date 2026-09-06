@@ -231,7 +231,8 @@ function buildSyntheticHistory(name: string, currentValue: number) {
 }
 
 function calculateHistoryMetrics(name: string, currentValue: number) {
-  const { values, profile } = buildSyntheticHistory(name, currentValue);
+  // Zero holdings still need finite synthetic unit-history features for entry analysis.
+  const { values, profile } = buildSyntheticHistory(name, Math.max(currentValue, 1));
   const lastIndex = values.length - 1;
   const momentum = (lookback: number) => ((values[lastIndex] / values[lastIndex - lookback]) - 1) * 100;
   const average = (lookback: number) => values.slice(-lookback).reduce((sum, value) => sum + value, 0) / lookback;

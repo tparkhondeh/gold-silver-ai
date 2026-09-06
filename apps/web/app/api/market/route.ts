@@ -6,6 +6,7 @@ import { inspectNavasanConfiguration, normalizeNavasanPayload, type NavasanPaylo
 import { goldApiLiveRequestUrl, normalizeGoldApiLivePayload } from "../../goldapi-adapter";
 import { selectPreferredQuotes } from "../../quote-priority";
 import { rahavardManualSnapshot } from "./rahavard-snapshot";
+import { marketNetworkAllowed } from "../../market-network-policy.ts";
 
 export const dynamic = "force-dynamic";
 
@@ -31,6 +32,7 @@ type SourceState = {
 };
 
 type FeedResult = {
+  networkAllowed: boolean;
   collectedAt: string;
   quotes: Quote[];
   sources: SourceState[];
@@ -270,6 +272,12 @@ async function fetchIranQuotes(apiKey: string, declaredUnit: "IRR" | "TOMAN", co
 }
 
 export async function GET() {
+  // Check before caches, snapshot reads, quota reservations and all provider I/O.
+  if (!marketNetworkAllowed(process.env)) {
+    return NextResponse.json({ networkAllowed: false, collectedAt: new Date().toISOString(), quotes: [], sources: [
+      { id: "market-offline", name: "آزمون بدون اتصال", status: "blocked", message: "منابع آنلاین خاموش‌اند؛ میز تصمیم فقط از ورودی‌های ساختگی استفاده می‌کند." },
+    ] }, { headers: { "Cache-Control": "no-store", "X-Content-Type-Options": "nosniff" } });
+  }
   if (cached && cached.expiresAt > Date.now()) {
     return NextResponse.json(cached.payload, { headers: { "Cache-Control": "private, max-age=30" } });
   }
@@ -359,7 +367,7 @@ export async function GET() {
   });
 
   const deduplicatedQuotes = selectPreferredQuotes(quotes);
-  const payload = { collectedAt, quotes: deduplicatedQuotes, sources } satisfies FeedResult;
+  const payload = { networkAllowed: true, collectedAt, quotes: deduplicatedQuotes, sources } satisfies FeedResult;
   cached = { expiresAt: Date.now() + CACHE_MS, payload };
   return NextResponse.json(payload, { headers: { "Cache-Control": "private, max-age=30", "X-Content-Type-Options": "nosniff" } });
 }
