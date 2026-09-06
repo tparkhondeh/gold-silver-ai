@@ -53,6 +53,10 @@
 .action-conversions b { color: #775d81; }
 .action-alternatives li { padding: 10px; border-bottom: 1px solid #e5dfe8; font-size: .875rem; }
 .action-alternatives span { display: block; }
+.action-comparison-scroll { overflow-x: auto; max-width: 100%; }
+.action-comparison-scroll table { border-collapse: collapse; min-width: 720px; width: 100%; font-size: .875rem; }
+.action-comparison-scroll th, .action-comparison-scroll td { padding: 12px; text-align: right; border-bottom: 1px solid #e5dfe8; }
+.action-comparison-scroll caption { text-align: right; padding: 10px; font-weight: 650; }
 .action-workbench code { display: block; overflow-wrap: anywhere; font-size: 12px; direction: ltr; text-align: left; }
 @media (max-width: 1100px) { .action-card-grid { grid-template-columns: 1fr; } .action-asset-inputs { grid-template-columns: 1fr; } .action-asset-inputs fieldset { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 650px) { .action-workbench { padding: 15px; } .action-input-grid, .action-asset-inputs fieldset, .action-cost-inputs, .action-summary { grid-template-columns: 1fr; } .action-workbench-head { flex-direction: column; } .action-summary { padding: 15px; } }

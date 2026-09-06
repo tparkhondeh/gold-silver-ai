@@ -302,6 +302,11 @@ export function buildActionPlan(payload: unknown): ActionPlan {
   const combined = normalizeTargets(Object.fromEntries(input.assets.map((asset) => [asset.id,
     (short.targetsBps[asset.id] * input.shortBudgetBps + medium.targetsBps[asset.id] * (10_000 - input.shortBudgetBps)) / 10_000,
   ])), input.assets.map((asset) => asset.id));
+  return buildPlanForTargets(input, short, medium, combined,
+    input.scenario === "method" ? sandboxIntelligenceMethodology.id : "ASHA_EXPLICIT_TARGET_SIZING_FIXTURE_V1");
+}
+
+function buildPlanForTargets(input: ActionInput, short: HorizonPlan, medium: HorizonPlan, combined: Record<string, number>, methodologyId: string): ActionPlan {
   const before = input.assets.reduce((sum, asset) => sum + valueOf(asset), BigInt(input.cashToman));
   const targets = Object.fromEntries(input.assets.map((asset) => [asset.id, before * BigInt(combined[asset.id]) / BPS]));
   targets[CASH] = before - Object.values(targets).reduce((sum, v) => sum + v, 0n);
@@ -378,7 +383,7 @@ export function buildActionPlan(payload: unknown): ActionPlan {
     amountToman: fund.amountToman, saleOrderId: fund.saleOrderId!, buyOrderId: order.id,
   })));
   return {
-    schemaVersion: ACTION_PLAN_VERSION, methodologyId: input.scenario === "method" ? sandboxIntelligenceMethodology.id : "ASHA_EXPLICIT_TARGET_SIZING_FIXTURE_V1",
+    schemaVersion: ACTION_PLAN_VERSION, methodologyId,
     state, financialUseAllowed: false, executionAllowed: false, inputSnapshot: input, inputIssues,
     horizons: [short, medium], combinedTargetsBps: combined, rows, orders: chosen.orders, conversions, alternatives,
     portfolio: {
@@ -391,6 +396,24 @@ export function buildActionPlan(payload: unknown): ActionPlan {
     objective: { id: "L1_TARGET_DISTANCE_PLUS_TWO_TIMES_COST_V1", candidateFractionsBps: fractions, noReturnForecast: true },
     validUntil: input.assets.map((asset) => asset.validUntil).sort()[0],
     reviewOn: [addDays(input.asOf, 1), short.endsOn, medium.endsOn].sort()[0], reasonCodes: reasons,
+  };
+}
+
+/** Research harness only: supplied targets never masquerade as the UI method. */
+export function buildSyntheticSizingTrial(payload: unknown, targetPayload: unknown) {
+  const input = validateActionInput(payload);
+  const ids = [...input.assets.map((asset) => asset.id), CASH];
+  exactKeys(targetPayload, ids.join(" "));
+  const targets = targetPayload as Record<string, number>;
+  for (const id of ids) integer(targets[id], 0, 10_000);
+  if (Object.values(targets).reduce((sum, weight) => sum + weight, 0) !== 10_000) throw new Error("جمع وزن‌های مقایسه باید دقیقاً ۱۰۰٪ باشد.");
+  const plan = buildPlanForTargets(input, horizon(input, "short"), horizon(input, "medium"), { ...targets }, "ASHA_EXTERNAL_SYNTHETIC_TARGET_TRIAL_V1");
+  return {
+    schemaVersion: "asha.synthetic.sizing_trial.v1" as const,
+    financialUseAllowed: false as const, executionAllowed: false as const,
+    inputSnapshot: plan.inputSnapshot, targetWeightsBps: plan.combinedTargetsBps,
+    state: plan.state, orders: plan.orders, rows: plan.rows, portfolio: plan.portfolio,
+    inputIssues: plan.inputIssues, reasonCodes: plan.reasonCodes,
   };
 }
 

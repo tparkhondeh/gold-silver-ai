@@ -854,7 +854,7 @@ export default function Home() {
           {navItems.map((item) => <button key={item.id} className={view === item.id ? "active" : ""} aria-current={view === item.id ? "page" : undefined} onClick={() => { setView(item.id); setMenuOpen(false); }}>{item.label}</button>)}
         </nav>
         <div className="sidebar-status"><i /><span><strong>حالت امن فعال</strong><small>بدون معاملهٔ خودکار</small></span></div>
-        <p className="sidebar-version">PHASE 1 · EVALUATION</p>
+        <p className="sidebar-version">{portfolioMode === "demo" ? "PHASE 2 · LABORATORY" : "PHASE 1 · EVALUATION"}</p>
       </aside>
 
       <main className="workspace" id="top">
@@ -1059,7 +1059,7 @@ export default function Home() {
 
           {view === "agents" && <section className="view-stack"><div className="view-hero"><SectionTitle eyebrow="ASHA REVIEW BOARD" title="اشا و هیئت بررسی چندتخصصی" text="اشا دستیار تصمیم پروژه است و بررسی‌های امنیت، مالی، داده و تجربهٔ کاربری را هماهنگ می‌کند؛ به حساب مالی، معامله یا کلیدهای خصوصی دسترسی ندارد."/><span className="status-chip safe">فقط بررسی</span></div><section className="agent-grid"><article><h3>امنیت</h3><p>رازها، دسترسی، زنجیره تأمین و مرز دادهٔ شخصی.</p><b>Plugin نصب شده</b></article><article><h3>داده و مالی</h3><p>منشأ، point-in-time، صحت محاسبات و سوگیری آزمون.</p><b>Plugin نصب شده</b></article><article><h3>محصول و UI</h3><p>RTL، دسترس‌پذیری و فهم‌پذیری برای مالک پروژه.</p><b>Plugin نصب شده</b></article><article><h3>تست و بازبینی</h3><p>رفتار قطعی، رگرسیون و کنترل کیفیت انتشار.</p><b>Plugin نصب شده</b></article></section><section className="guardrail"><div><b>نصب به معنی اجرای دائمی نیست</b><p>در هر Task، Codex تخصص مرتبط را بر اساس درخواست فراخوانی می‌کند. خروجی مالی همچنان باید از موتور قطعی و آزموده‌شده بیاید.</p></div></section></section>}
         </div>
-        <footer><span>اشا · دستیار تصمیم زر و سیم · نسخهٔ ارزیابی Phase 1</span><span>{portfolioMode === "demo" ? "آزمایشگاه فعال · همهٔ داده‌ها ساختگی · بدون اجرای معامله" : "سبد فقط در همین مرورگر · بدون قیمت ساختگی · بدون معاملهٔ خودکار"} · <b>حالت امن</b></span></footer>
+        <footer><span>اشا · دستیار تصمیم زر و سیم · {portfolioMode === "demo" ? "مرحلهٔ ۲: آزمایشگاه تحلیل و تصمیم" : "مرحلهٔ ۱: ارزیابی زیرساخت داده"}</span><span>{portfolioMode === "demo" ? "آزمایشگاه فعال · همهٔ داده‌ها ساختگی · بدون اجرای معامله" : "ذخیرهٔ سبد مطابق وضعیت اتصال محلی · بدون قیمت ساختگی · بدون معاملهٔ خودکار"} · <b>حالت امن</b></span></footer>
       </main>
 
       {notificationOpen && <div className="notification-backdrop" role="presentation" onMouseDown={(event) => { if (event.currentTarget === event.target) setNotificationOpen(false); }}>

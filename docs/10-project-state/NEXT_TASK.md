@@ -56,11 +56,14 @@ bounded acceptance inventory. The workbench implementation and local checks are 
 complete; see `DECISION_WORKBENCH_DELIVERY_AUDIT.md` and the Persian owner test guide.
 Verify three GitHub jobs against its delivered head, then capture owner usability
 findings without reopening completed governance artifacts or adding side features.
-The next independent engineering extension is same-fold comparison of the new
-physical-lot sizing layer under identical costs/constraints, followed by a shared
-synthetic integration with the broader dashboard. Neither extension may treat the
-old method's comparison as validation of the new sizing layer. Production identity,
-real inputs/calibration and paid connections remain separately governed.
+The next independent extension, costed same-fold physical sizing, is now implemented
+and tested. Its exact Python bridge supplies seven train-only weight sets to the
+shared web solver; future-path evaluation is separate and no result is ranked.
+Verify the follow-up's three GitHub jobs. Next product integration work is a shared
+synthetic input contract between the broader dashboard and this first three-metal
+physical-unit workbench; do not pretend that the two independent sample portfolios
+are one. Production identity, real inputs/calibration and paid connections remain
+governed release gates, not prerequisites for testing the ready owner workbench.
 Do not create another recurring automation or relabel price limits as forecasts.
 
 Migrations 0003–0011 now cover the owner snapshot, immutable provenance,

@@ -9,7 +9,7 @@ Branch: `codex/phase-2-decision-engine`. No changes to `main`.
 The source/test roots below are repository-relative. The method/band source is
 `apps/web/app/sandbox-intelligence-engine.ts`; its tests are
 `apps/web/tests/sandbox-intelligence-engine.test.mjs`. The new sizing source and
-15 acceptance tests are `apps/web/app/decision-action-plan.ts` and
+15 core acceptance tests are `apps/web/app/decision-action-plan.ts` and
 `apps/web/tests/decision-action-plan.test.mjs`.
 
 | Engine | Existing/new calculation and acceptance | Technical status |
@@ -25,28 +25,32 @@ The source/test roots below are repository-relative. The method/band source is
 | Concentration | Before/after weights, hard final cap and minimum cash | Integrated; infeasible cap and cash tests |
 | Allocation | Eight-factor targets, one weighted short/medium budget, five candidate sizes | Integrated; no double funding, target sum and optimal-grid tests |
 | Decision/display | Entry/exit, same/cross-class, hold, wait and undecidable; exact quantity, amount, source and conditions | Eight fixtures connected to editable Persian UI |
-| Reproduction | Full typed/versioned input and result, canonical replay on save/restore | Tampering/duplicate JSON rejected; browser save/change/restore checked |
+| Reproduction | Full typed/versioned input and result, canonical replay on save/restore | Tampering/duplicate JSON rejected; browser save/change/reload/restore checked |
+| Shared-cost controls | Actual Python train-only weights through the shared physical solver, separate future evaluation | Seven methods × two folds; eight web and three bridge tests |
 
 Exact formulas/defaults/limitations live in `../04-portfolio/DECISION_ACTION_PLAN.md`,
 not in this status map. Existing Python comparisons and stress/walk-forward evidence
 are reused from `PHASE_2_DECISION_METHOD_AUDIT.md` and tests
 `test_transparent_decision.py`, `test_method_comparison.py`, `test_stress_walk_forward.py`,
-`test_hrp_walk_forward.py` and `test_minimum_cvar_walk_forward.py`. This new integer-lot
-execution-sizing layer has not been ranked against those controls on financial
-performance; existing comparison conclusions do not transfer to it automatically.
+`test_hrp_walk_forward.py` and `test_minimum_cvar_walk_forward.py`. The new integer-lot
+layer has a separate common-cost, fixed-quantity comparison and panel; see
+`../04-portfolio/COSTED_SIZING_COMPARISON.md`. No financial ranking is produced.
 
 ## Verification
 
-- Python: 254 tests passed (344 seconds), including seven new exact 64-slot intake tests.
-- Web: 153 tests pass including 15 action-plan and two network-boundary tests;
+- Python: 254 tests passed (344 seconds); three additional bridge tests passed
+  (107 seconds). Final CI runs all 257 together.
+- Web: 161 tests pass including 15 action-plan, eight comparison and two network-boundary tests;
   production build, TypeScript and lint pass. Source coverage is over the required
-  85% lines / 65% branches / 80% functions. The full test command builds before testing.
+  85% lines / 65% branches / 80% functions (actual 94.62 / 82.54 / 96.10%).
+  The full test command builds before testing.
 - PostgreSQL: all 16 integration tests pass, including restore, row isolation,
   immutable lineage and quota concurrency. Fixtures stay in the separate test database.
 - Browser: current local narrow viewport checked visually; all seven explicit
   action/error fixtures, default computed fixture, editable cash, negative-input
   failure, horizon controls and save/change/restore checked. No wide-screen resize
-  claim is made. Error console was empty after the fresh local navigation.
+  claim is made. Recovery also passed after fresh navigation. Both seven-row
+  comparison tables were inspected. Error console was empty after fresh navigation.
 - Local health: `readyForLocalEvaluation=true`, all 15 checks pass at
   `http://127.0.0.1:4174/api/health`; market endpoint reports `networkAllowed=false`
   and zero quotes. No provider request is required for either check.
@@ -65,7 +69,9 @@ performance; existing comparison conclusions do not transfer to it automatically
   launcher forces both market-network and history execution flags off.
 - Remote evidence: intake commit `6e3c4ae` passed all three jobs in
   [run 34009462993](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/34009462993).
-  The final workbench commit must have its own three successful jobs; use the exact
+  Workbench commit `7986e67` passed all three jobs in
+  [run 34010665537](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/34010665537).
+  The comparison follow-up must have its own three successful jobs; use the exact
   head SHA in [branch Actions](https://github.com/tparkhondeh/gold-silver-ai/actions?query=branch%3Acodex%2Fphase-2-decision-engine).
   A prior successful run is not proof for a later head.
 
@@ -79,8 +85,9 @@ surfaces. A shared, validated production-data/decision integration, durable prom
 decision records, empirical Iranian calibration, licensed history, authenticated
 owner-only deployment and real-data/shadow acceptance are still release gates.
 
-Before financial activation, the new physical sizing layer must also be compared
-using identical execution costs/lots with the existing controls in out-of-sample
-and walk-forward runs. No exact profit peak/trough or probability is implemented.
+Common-cost/lot comparison now passes synthetic out-of-sample mechanics. Before
+financial activation it must be repeated with licensed Iranian inputs, calibrated
+cost/settlement/liquidity and production integration. No exact profit peak/trough
+or probability is implemented.
 Current prices are cost-bounded entry/exit limits, not a prediction in disguise.
 No purchase, vendor follow-up, main merge or recurring automation is authorized here.

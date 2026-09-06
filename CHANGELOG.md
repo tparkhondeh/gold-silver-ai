@@ -7,6 +7,14 @@ state is recorded in `docs/10-project-state/CURRENT_STATE.md`.
 
 ## [Unreleased]
 
+- Added the exact Python-to-web synthetic sizing bridge and a same-cost/lot
+  two-fold comparison for seven existing methods. The shared solver sizes trades
+  before future-path evaluation; costs count once and no financial rank is produced.
+- Added the Persian comparison panel plus eight web and three Python tests; totals
+  are 161 web and 257 lab. Workbench checkpoint `7986e67` passed all three GitHub
+  jobs in run 34010665537.
+- Corrected the demo's visible phase label to Phase 2 laboratory; the separate
+  Phase 1 infrastructure health contract remains unchanged.
 - Added the owner-testable quantitative decision workbench: exact physical units,
   whole-toman cash/cost reconciliation, single-budget short/medium targets, ranked
   sizing candidates, risk/cash/capacity constraints and canonical browser recovery.

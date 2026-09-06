@@ -15,14 +15,20 @@ GitHub jobs in run 34009462993.
 The quantitative workbench is now implemented: exact BigInt quantities/costs,
 single-budget short/medium sizing, seven explicit action/error fixtures plus the
 existing factor method, editable controls, ordered funding, risk constraints and
-canonical browser save/restore. All 153 web tests and 16 PostgreSQL integration
+canonical browser save/restore. All 161 web tests and 16 PostgreSQL integration
 tests pass. Local health is ready, online market calls are disabled, and a complete
 25-table backup/restore is verified. The source-linked engine map, exact evidence
 and remaining release dependencies are in `DECISION_WORKBENCH_DELIVERY_AUDIT.md`.
 Owner testing instructions are in `../09-operations/OWNER_DECISION_TEST_FA.md`.
 Only passed acceptance items in the bounded workbench inventory count toward its
 completion; do not describe that as the percentage of the full financial product.
-Final-commit CI must be checked separately from the earlier intake checkpoint.
+Workbench checkpoint `7986e67` passed all three jobs in run 34010665537.
+The next independent unit is also implemented: seven actual train-only Python
+weight sets pass through the shared physical-lot solver on two identical synthetic
+folds, with common costs/constraints and no future input to sizing. Eight web tests
+and three new Python bridge tests verify this; the comparison panel is connected.
+The lab now has 257 tests in total. Final comparison-commit CI is checked separately
+from the earlier workbench checkpoint; no financial winner or rank is produced.
 No recurring automation should be recreated. The working branch remains
 `codex/phase-2-decision-engine`; the clean pre-change Git history is backed up in a
 verified local bundle under `.cache/checkpoints/`.

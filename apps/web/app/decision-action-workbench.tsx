@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { ActionSizingComparisonPanel } from "./action-sizing-comparison-panel";
 import {
   actionScenarios, buildActionFixture, buildActionPlan, decodeActionPlan, encodeActionPlan,
   type ActionAsset, type ActionInput, type ActionPlan, type ActionScenario, type PlanRow,
@@ -132,5 +133,6 @@ export function DecisionActionWorkbench() {
       </details>
       <details className="action-detail"><summary>تطبیق کل سبد، معیار انتخاب و زمان بازبینی</summary><p>ارزش قبل {money(plan.portfolio.beforeToman)} = ارزش پس از برنامه {money(plan.portfolio.afterToman)} + هزینهٔ کامل {money(plan.portfolio.totalCostToman)}. ذخیرهٔ نقد حداقلی: {money(plan.portfolio.cashReserveToman)}؛ گردش: {percent(plan.portfolio.turnoverBps)}.</p><p>معیار انتخاب: مجموع فاصلهٔ مبلغ دارایی‌ها و نقد از هدف، به‌اضافهٔ دو برابر هزینهٔ تغییر. پنج اندازهٔ صفر، ۲۵، ۵۰، ۷۵ و ۱۰۰ درصدِ تغییر هدف بررسی شدند؛ بهترین گزینهٔ مجاز {percent(plan.portfolio.chosenFractionBps)} بود.</p><p>فاصله از هدف قبل: {money(plan.portfolio.trackingErrorBeforeToman)}؛ بعد: {money(plan.portfolio.trackingErrorAfterToman)}؛ بهبود معیار پس از جریمهٔ هزینه: {money(plan.portfolio.objectiveImprovementToman)}. این عدد سود موردانتظار نیست. جست‌وجو فقط بین همین پنج اندازه است.</p><p>قیمت‌ها تا {displayDate(plan.validUntil)} معتبرند؛ بازبینی در {displayDate(plan.reviewOn)} یا زودتر با تغییر ورودی. نقطهٔ سودگیری و حد ضرر قیمتی توسط این روش پیش‌بینی نمی‌شود؛ حدود نمایش‌داده‌شده، سقف ورود و کف خروجِ مجازند.</p><p>بازه‌های ۳۰ و ۱۸۰ روز و سهم اولیهٔ ۵۰/۵۰ فرض طراحیِ قابل‌تغییر این میز هستند. عوامل روند موجود همچنان از ۲۰ و ۶۰ مشاهدهٔ ساختگی استفاده می‌کنند.</p><code>{plan.schemaVersion} · {plan.methodologyId}</code></details>
     </>}
+    <ActionSizingComparisonPanel />
   </section>;
 }

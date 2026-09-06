@@ -97,6 +97,7 @@ This bounded workbench inventory is not a percentage of the entire financial rel
 | A5 | Owner workbench | Editable cash/prices/costs/limits, cards, factor inputs, ranked sizing options | Passed in current narrow browser viewport |
 | A6 | Recovery and end-to-end | Save/change/restore; real database restart and 25-table backup/restore | Passed locally; browser draft is origin-local |
 | A7 | Delivery checks | Build, coverage, lint, types, audit and three same-head CI jobs | Local checks pass; GitHub run for delivered head is authoritative |
+| A8 | Costed same-fold controls | Seven methods, two folds, common holdings/costs/lots; no future influence on sizing | Eight web and three bridge tests pass; panel connected |
 
 Evidence and remaining release dependencies are in
 `../10-project-state/DECISION_WORKBENCH_DELIVERY_AUDIT.md`; owner steps are in
@@ -132,6 +133,11 @@ Iran validation must cover factor bands/weights, historical-window mapping to
 calendar/trading days, horizon shares, loss tolerance, FX/inflation/political stress,
 coin premium, pure-metal/unit conventions, settlement/physical costs, bid/ask depth,
 tax/fees, rounding/lots, reserve, concentration, turnover and no-trade/benefit limits.
+
+The next independent unit is also implemented: the actual seven Python train-only
+weight sets now pass through the shared physical solver with identical costs and
+constraints. See `COSTED_SIZING_COMPARISON.md` for its separate contracts, exact
+evaluation arithmetic, canonical bridge, assumptions and tests.
 
 Real-source adapters, historical validation and comparisons already built remain
 referenced by CURRENT_STATE. Licensed Iranian quotes/history, calibration, shadow
