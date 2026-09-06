@@ -1,0 +1,104 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://goldsilver.wealthos.ir/contracts/asha.synthetic.calibration_preflight.v1.schema.json",
+  "title": "Asha synthetic calibration parameter-freeze preflight v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion", "preflightId", "status", "manifestReference",
+    "freezeReference", "evidenceReference", "gateEvaluationReference", "checks",
+    "summary", "financialUseAllowed", "executionAllowed", "parameterMutationAllowed"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "asha.synthetic.calibration_preflight.v1" },
+    "preflightId": { "type": "string", "pattern": "^ASHA_SYNTHETIC_CALIBRATION_PREFLIGHT_[a-f0-9]{64}$" },
+    "status": { "const": "synthetic_parameter_freeze_preflight_only" },
+    "manifestReference": {
+      "type": "object", "additionalProperties": false,
+      "required": ["manifestId", "manifestVersion", "schemaVersion"],
+      "properties": {
+        "manifestId": { "type": "string", "pattern": "^ASHA_IRAN_CALIBRATION_MANIFEST_[a-f0-9]{64}$" },
+        "manifestVersion": { "const": 1 },
+        "schemaVersion": { "const": "asha.synthetic.iran_calibration_manifest.v1" }
+      }
+    },
+    "freezeReference": {
+      "type": "object", "additionalProperties": false,
+      "required": ["bundleId", "bundleVersion", "schemaVersion"],
+      "properties": {
+        "bundleId": { "type": "string", "pattern": "^ASHA_SYNTHETIC_PARAMETER_FREEZE_[a-f0-9]{64}$" },
+        "bundleVersion": { "const": 1 },
+        "schemaVersion": { "const": "asha.synthetic.parameter_freeze.v1" }
+      }
+    },
+    "evidenceReference": {
+      "type": "object", "additionalProperties": false,
+      "required": ["bundleId", "scenarioId", "schemaVersion"],
+      "properties": {
+        "bundleId": { "type": "string", "pattern": "^ASHA_SYNTHETIC_CALIBRATION_EVIDENCE_[a-f0-9]{64}$" },
+        "scenarioId": { "type": "string", "pattern": "^[A-Z][A-Z0-9_]{2,80}$" },
+        "schemaVersion": { "const": "asha.synthetic.calibration_gate_evidence.v1" }
+      }
+    },
+    "gateEvaluationReference": {
+      "type": "object", "additionalProperties": false,
+      "required": ["resultId", "schemaVersion"],
+      "properties": {
+        "resultId": { "type": "string", "pattern": "^ASHA_SYNTHETIC_CALIBRATION_GATE_RESULT_[a-f0-9]{64}$" },
+        "schemaVersion": { "const": "asha.synthetic.calibration_gate_result.v1" }
+      }
+    },
+    "checks": {
+      "type": "array", "minItems": 7, "maxItems": 7,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["checkId", "state", "reasonCodes"],
+        "properties": {
+          "checkId": {
+            "enum": [
+              "EXACT_PARAMETER_FREEZE_REPLAYS", "FREEZE_PRECEDES_EVALUATION_LINKS",
+              "FREEZE_NOT_OUTCOME_DERIVED", "REAL_THRESHOLDS_REMAIN_UNSET",
+              "REAL_STRESS_VALUES_REMAIN_UNSET", "G07_EVIDENCE_CHECKS_SATISFIED",
+              "G07_DEPENDENCY_ORDER_PASSED"
+            ]
+          },
+          "state": { "enum": ["passed", "failed", "blocked"] },
+          "reasonCodes": {
+            "type": "array", "minItems": 1, "maxItems": 1,
+            "items": { "type": "string", "minLength": 1 }
+          }
+        }
+      }
+    },
+    "summary": {
+      "type": "object", "additionalProperties": false,
+      "required": [
+        "preflightMechanicalState", "freezeMechanicalState", "g07EvidenceState",
+        "g07MechanicalState", "g07RealWorldState", "linkedGateEvaluationState",
+        "firstBlockingGateId", "realCalibrationState", "promotionState", "reasonCodes"
+      ],
+      "properties": {
+        "preflightMechanicalState": { "enum": ["passed", "failed", "blocked"] },
+        "freezeMechanicalState": { "const": "passed" },
+        "g07EvidenceState": { "enum": ["satisfied", "failed", "missing"] },
+        "g07MechanicalState": { "enum": ["passed", "failed", "blocked"] },
+        "g07RealWorldState": { "const": "not_evaluated" },
+        "linkedGateEvaluationState": { "enum": ["passed", "failed", "blocked"] },
+        "firstBlockingGateId": { "type": ["string", "null"] },
+        "realCalibrationState": { "const": "not_evaluated" },
+        "promotionState": { "const": "blocked_in_synthetic_preflight" },
+        "reasonCodes": {
+          "const": [
+            "SYNTHETIC_PREFLIGHT_IS_NOT_IRAN_VALIDATION",
+            "REAL_IRAN_THRESHOLDS_REMAIN_UNSET",
+            "SYNTHETIC_RESULTS_CANNOT_AUTHORIZE_FINANCIAL_USE",
+            "LATER_REAL_EVIDENCE_AND_OWNER_ADR_REQUIRED"
+          ]
+        }
+      }
+    },
+    "financialUseAllowed": { "const": false },
+    "executionAllowed": { "const": false },
+    "parameterMutationAllowed": { "const": false }
+  }
+}

@@ -30,11 +30,16 @@ weights, bands, horizons, constraints, allocation/cost/missing-data rules and st
 labels before future evaluation links. All real thresholds, stress magnitudes and
 probabilities remain explicitly unset.
 
-The immediate next safe unit is a synthetic calibration preflight linking the exact
-freeze identity to the gate evaluator. G07 may be mechanically satisfied only when
-the freeze remains canonical, has no evaluation/test links, is not outcome-derived and
-keeps all real thresholds unset. The bridge must not alter parameters, set a real gate,
-claim performance or enable financial use/execution.
+The synthetic calibration preflight is complete. It links the exact freeze identity
+to the ordered gate evaluator and permits only synthetic G07 mechanics when the
+canonical bundle is pre-evaluation, outcome-independent and empty of real threshold
+and stress values. It cannot alter a real gate or permission.
+
+The immediate next safe unit is a versioned synthetic calibration-readiness report.
+It should translate each of the ten gate states and its exact still-missing real
+evidence into concise owner-readable text while retaining canonical manifest, freeze,
+evidence, gate-result and preflight identities. It must make no score, performance
+claim, threshold choice, parameter change, real-data request or financial permission.
 
 Migrations 0003–0011 now cover the owner snapshot, immutable provenance,
 exact point-in-time dataset/decision lineage, source-reconciliation records and
@@ -335,6 +340,11 @@ financial engine remain separate gates.
    rules before future evidence links. Six real acceptance thresholds and five stress
    magnitudes/probabilities remain null. Eight tests bring the laboratory total to 230;
    any change requires a new version and cannot be derived from synthetic outcomes.
+61. **FREEZE-AWARE CALIBRATION PREFLIGHT COMPLETE:** the exact manifest, parameter
+   freeze, artificial evidence and ordered gate result now replay as one canonical G07
+   preflight. Eight tests bring the laboratory total to 238; missing, failed, prior-
+   blocked or tampered states close the gate, while real calibration, promotion,
+   financial use and execution remain locked.
 
 All implementation available from published provider contracts is complete; real
 provider history execution remains paused at item 6 for Tier-A licensing/cost decisions.

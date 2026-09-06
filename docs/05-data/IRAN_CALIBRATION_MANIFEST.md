@@ -56,3 +56,13 @@ gates. Even when all artificial checks pass, every `realWorldState` remains
 The laboratory-v1 inputs referenced by the parameter-freeze gate are now captured in
 `docs/04-portfolio/PARAMETER_FREEZE_V1.md`; all real acceptance thresholds and stress
 magnitudes remain explicitly unset.
+
+## Freeze-aware synthetic preflight
+
+`asha.synthetic.calibration_preflight.v1` now links the exact canonical freeze to the
+ordered gate evaluation. It checks that the freeze has no evidence/test links, is not
+outcome-derived and keeps every real acceptance and stress value unset. G07 passes
+only as a software-mechanics result when those conditions, its two artificial checks
+and all prior dependencies pass. Missing, failed or tampered input closes the gate.
+This does not change any real gate: Iran calibration and promotion remain
+`not_evaluated`/blocked, and financial use and execution remain false.

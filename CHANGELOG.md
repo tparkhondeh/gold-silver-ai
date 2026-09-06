@@ -44,6 +44,12 @@ state is recorded in `docs/10-project-state/CURRENT_STATE.md`.
   outcomes cannot set them. Eight new tests bring the laboratory total to 230.
 - Laboratory-v1 parameter-freeze checkpoint `c11e4e7` passed all three GitHub Actions
   jobs in run 33998926719; `main` remained unchanged.
+- Added `asha.synthetic.calibration_preflight.v1`, which binds the exact freeze to G07
+  and the ordered gate result. It requires no prior evidence/test links, no outcome-
+  derived parameters and null real threshold/stress values; missing, failed, blocked
+  or fingerprint-resealed drift fails closed. Eight new tests bring the laboratory
+  total to 238, while real calibration, promotion, financial use and execution remain
+  locked.
 
 - Recorded the owner's acceptance of Phase 1 Data Foundation for progression and the
   exact synthetic-only Phase 2 boundary in ADR 0009.

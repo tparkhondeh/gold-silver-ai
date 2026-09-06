@@ -30,10 +30,14 @@ A canonical parameter bundle now freezes the complete laboratory-v1 factors, cut
 horizons, constraints and calculation rules before future evaluation links. Real
 acceptance thresholds and stress magnitudes remain null and cannot be set from
 synthetic outcomes.
+A freeze-aware synthetic preflight now binds that exact bundle to the ordered gate
+evaluator. G07 mechanics pass only when the freeze remains canonical, pre-evaluation,
+outcome-independent and empty of real thresholds/stress values; missing, failed,
+blocked or tampered inputs fail closed. Real G07 remains unevaluated.
 Synthetic reference actions and a same-fold two-window comparison against six controls
 are exactly replayable and unranked. The web demo mirrors the method and exposes its
 calculations behind a plain-language disclosure. Financial use, execution, Iran
-fitness and real-data approval remain false. Two hundred and thirty laboratory tests,
+fitness and real-data approval remain false. Two hundred and thirty-eight laboratory tests,
 the production web build, lint, typecheck, all 130 web tests and coverage gates pass
 locally.
 Code checkpoint `909d537` passed all three GitHub Actions jobs in run

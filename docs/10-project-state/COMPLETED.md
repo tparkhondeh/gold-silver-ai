@@ -28,6 +28,9 @@ Delivered:
 - a fingerprinted laboratory-v1 parameter freeze with exact factors, cutoffs,
   horizons, constraints and rules plus explicitly null real thresholds; 8 new tests
   bring the laboratory total to 230.
+- a canonical freeze-aware G07 preflight linking the exact manifest, freeze, synthetic
+  evidence and ordered gate result; missing, failed, blocked or tampered states close
+  the gate, while real promotion/use remain locked; 8 new tests bring the total to 238.
 
 ## Phase 0 — Foundation & Governance
 

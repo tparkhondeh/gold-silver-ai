@@ -242,6 +242,11 @@ Eight parameter-freeze tests reconcile equal factor weights, exact cutoffs, hori
 and reference-fixture constraints; require empty evaluation links and real thresholds;
 round-trip canonical bytes; and reject resealed weight, outcome-derived, permission
 or threshold drift. The laboratory total is now two hundred and thirty tests.
+Eight freeze-aware preflight tests bind the exact freeze, manifest, evidence and gate-
+result identities; cover G07 pass, missing, failure and prior-gate blocking; round-trip
+canonical bytes; and reject resealed links, thresholds, stress values, outcome origin,
+promotion or permissions. The laboratory total is now two hundred and thirty-eight
+tests. Passing remains synthetic mechanics only and cannot change a real gate.
 
 ## Related Documents
 

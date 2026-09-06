@@ -50,6 +50,7 @@ from .calibration_gate_evaluator import (
     validate_synthetic_calibration_evidence,
 )
 from .parameter_freeze import validate_parameter_freeze_bundle
+from .calibration_preflight import validate_synthetic_calibration_preflight
 from .synthetic_stress import (
     validate_stressed_return_matrix,
     validate_synthetic_stress_scenario,
@@ -1303,4 +1304,32 @@ def decode_parameter_freeze_bundle(
     return _decode_canonical(
         document,
         lambda value: validate_parameter_freeze_bundle(value, manifest_payload),
+    )
+
+
+def encode_calibration_preflight(
+    payload: object,
+    freeze_payload: object,
+    evidence_payload: object,
+    manifest_payload: object,
+) -> bytes:
+    return _encode_canonical(
+        payload,
+        lambda value: validate_synthetic_calibration_preflight(
+            value, freeze_payload, evidence_payload, manifest_payload
+        ),
+    )
+
+
+def decode_calibration_preflight(
+    document: object,
+    freeze_payload: object,
+    evidence_payload: object,
+    manifest_payload: object,
+) -> dict[str, Any]:
+    return _decode_canonical(
+        document,
+        lambda value: validate_synthetic_calibration_preflight(
+            value, freeze_payload, evidence_payload, manifest_payload
+        ),
     )

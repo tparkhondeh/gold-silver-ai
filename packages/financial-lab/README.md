@@ -186,3 +186,10 @@ horizons, constraints, allocation/cost/missing-data rules and stress labels befo
 future calibration result is linked. Real acceptance thresholds, stress magnitudes
 and probabilities remain null; any drift requires a new version and resealed changes
 fail exact validation.
+
+`build_synthetic_calibration_preflight()` binds that exact freeze identity to the
+ordered gate evaluator. G07 can pass only as synthetic mechanics when the canonical
+freeze still precedes all evidence/test links, was not derived from outcomes and
+keeps real thresholds and stress values unset. A missing or failed G07 check, or any
+earlier blocking gate, fails closed. Real calibration remains unevaluated and
+promotion, parameter mutation, financial use and execution remain disabled.
