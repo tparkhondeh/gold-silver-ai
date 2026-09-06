@@ -247,6 +247,12 @@ result identities; cover G07 pass, missing, failure and prior-gate blocking; rou
 canonical bytes; and reject resealed links, thresholds, stress values, outcome origin,
 promotion or permissions. The laboratory total is now two hundred and thirty-eight
 tests. Passing remains synthetic mechanics only and cannot change a real gate.
+Eight readiness-report tests require all ten gates and all five upstream identities,
+reconcile exact manifest/freeze-derived evidence, distinguish passed/failed/blocked
+synthetic mechanics from unevaluated real states, round-trip canonical Persian JSON
+and reject foreign preflight, omitted evidence, altered text or permission drift.
+They also lock out scores, rankings, performance claims, data requests and threshold
+selection. The laboratory total is now two hundred and forty-six tests.
 
 ## Related Documents
 

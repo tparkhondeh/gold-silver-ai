@@ -1,0 +1,100 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://goldsilver.wealthos.ir/contracts/asha.synthetic.calibration_readiness_report.v1.schema.json",
+  "title": "Asha synthetic owner-readable calibration readiness report v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion", "reportId", "status", "generatedFrom", "gateReadiness",
+    "summary", "boundary", "financialUseAllowed", "executionAllowed",
+    "parameterMutationAllowed"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "asha.synthetic.calibration_readiness_report.v1" },
+    "reportId": { "type": "string", "pattern": "^ASHA_SYNTHETIC_CALIBRATION_READINESS_[a-f0-9]{64}$" },
+    "status": { "const": "synthetic_owner_readiness_view_only" },
+    "generatedFrom": {
+      "type": "object", "additionalProperties": false,
+      "required": ["manifestId", "freezeBundleId", "evidenceBundleId", "gateResultId", "preflightId"],
+      "properties": {
+        "manifestId": { "type": "string", "pattern": "^ASHA_IRAN_CALIBRATION_MANIFEST_[a-f0-9]{64}$" },
+        "freezeBundleId": { "type": "string", "pattern": "^ASHA_SYNTHETIC_PARAMETER_FREEZE_[a-f0-9]{64}$" },
+        "evidenceBundleId": { "type": "string", "pattern": "^ASHA_SYNTHETIC_CALIBRATION_EVIDENCE_[a-f0-9]{64}$" },
+        "gateResultId": { "type": "string", "pattern": "^ASHA_SYNTHETIC_CALIBRATION_GATE_RESULT_[a-f0-9]{64}$" },
+        "preflightId": { "type": "string", "pattern": "^ASHA_SYNTHETIC_CALIBRATION_PREFLIGHT_[a-f0-9]{64}$" }
+      }
+    },
+    "gateReadiness": {
+      "type": "array", "minItems": 10, "maxItems": 10,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": [
+          "gateId", "stage", "ownerTitleFa", "ownerStateFa", "ownerExplanationFa",
+          "syntheticMechanicalState", "realWorldState", "remainingEvidenceCount",
+          "remainingEvidence"
+        ],
+        "properties": {
+          "gateId": { "pattern": "^G(0[1-9]|10)_[A-Z0-9_]+$" },
+          "stage": { "enum": ["data", "fit", "test", "promotion"] },
+          "ownerTitleFa": { "type": "string", "minLength": 1 },
+          "ownerStateFa": { "type": "string", "minLength": 1 },
+          "ownerExplanationFa": { "type": "string", "minLength": 1 },
+          "syntheticMechanicalState": { "enum": ["passed", "failed", "blocked"] },
+          "realWorldState": { "const": "not_evaluated" },
+          "remainingEvidenceCount": { "type": "integer", "minimum": 1 },
+          "remainingEvidence": {
+            "type": "array", "minItems": 1,
+            "items": {
+              "type": "object", "additionalProperties": false,
+              "required": ["evidenceId", "ownerLabelFa", "state"],
+              "properties": {
+                "evidenceId": { "type": "string", "pattern": "^[A-Z0-9_]+$" },
+                "ownerLabelFa": { "type": "string", "minLength": 1 },
+                "state": { "const": "required_not_supplied" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "summary": {
+      "type": "object", "additionalProperties": false,
+      "required": [
+        "ownerHeadlineFa", "ownerNextBoundaryFa", "syntheticGateMechanicsState",
+        "syntheticPreflightMechanicalState", "realCalibrationState",
+        "realReadinessState", "performanceClaimState", "promotionState"
+      ],
+      "properties": {
+        "ownerHeadlineFa": {
+          "enum": [
+            "زیرساخت بررسی آماده است؛ اعتبارسنجی واقعی ایران هنوز شروع نشده است.",
+            "تمرین نرم‌افزاری خطا دارد؛ اعتبارسنجی واقعی ایران هنوز شروع نشده است.",
+            "تمرین نرم‌افزاری متوقف است؛ اعتبارسنجی واقعی ایران هنوز شروع نشده است."
+          ]
+        },
+        "ownerNextBoundaryFa": { "const": "گام واقعی فقط پس از مجوز داده، شواهد ایران و تأیید جداگانهٔ مالک باز می‌شود." },
+        "syntheticGateMechanicsState": { "enum": ["passed", "failed", "blocked"] },
+        "syntheticPreflightMechanicalState": { "enum": ["passed", "failed", "blocked"] },
+        "realCalibrationState": { "const": "not_evaluated" },
+        "realReadinessState": { "const": "blocked_until_licensed_iran_evidence" },
+        "performanceClaimState": { "const": "not_evaluated" },
+        "promotionState": { "const": "blocked_in_synthetic_readiness_report" }
+      }
+    },
+    "boundary": {
+      "const": {
+        "containsMarketObservations": false,
+        "containsProviderSelection": false,
+        "containsProviderCredentials": false,
+        "realDataRequestCreated": false,
+        "methodScoreProduced": false,
+        "methodRankingProduced": false,
+        "performanceClaimAllowed": false,
+        "thresholdSelectionAllowed": false
+      }
+    },
+    "financialUseAllowed": { "const": false },
+    "executionAllowed": { "const": false },
+    "parameterMutationAllowed": { "const": false }
+  }
+}

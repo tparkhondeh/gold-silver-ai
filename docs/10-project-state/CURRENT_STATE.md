@@ -34,10 +34,14 @@ A freeze-aware synthetic preflight now binds that exact bundle to the ordered ga
 evaluator. G07 mechanics pass only when the freeze remains canonical, pre-evaluation,
 outcome-independent and empty of real thresholds/stress values; missing, failed,
 blocked or tampered inputs fail closed. Real G07 remains unevaluated.
+A canonical Persian readiness report now separates the synthetic and real state of
+all ten gates and lists 64 exact remaining real-evidence requirements from the
+manifest and freeze. The count is an inventory, not a score; it creates no data
+request and every real gate remains unevaluated.
 Synthetic reference actions and a same-fold two-window comparison against six controls
 are exactly replayable and unranked. The web demo mirrors the method and exposes its
 calculations behind a plain-language disclosure. Financial use, execution, Iran
-fitness and real-data approval remain false. Two hundred and thirty-eight laboratory tests,
+fitness and real-data approval remain false. Two hundred and forty-six laboratory tests,
 the production web build, lint, typecheck, all 130 web tests and coverage gates pass
 locally.
 Code checkpoint `909d537` passed all three GitHub Actions jobs in run

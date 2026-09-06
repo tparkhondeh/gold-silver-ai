@@ -52,6 +52,11 @@ state is recorded in `docs/10-project-state/CURRENT_STATE.md`.
   locked.
 - Freeze-aware calibration-preflight checkpoint `eb2749c` passed all three GitHub
   Actions jobs in run 34001635329; `main` remained unchanged.
+- Added `asha.synthetic.calibration_readiness_report.v1`: ten concise Persian gate
+  explanations, separate synthetic/real states, five exact upstream identities and a
+  deterministic 64-item real-evidence inventory. It produces no score, ranking,
+  performance claim, data request, threshold selection or permission. Eight new tests
+  bring the laboratory total to 246.
 
 - Recorded the owner's acceptance of Phase 1 Data Foundation for progression and the
   exact synthetic-only Phase 2 boundary in ADR 0009.

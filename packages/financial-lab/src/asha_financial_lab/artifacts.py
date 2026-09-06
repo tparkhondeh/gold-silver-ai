@@ -51,6 +51,7 @@ from .calibration_gate_evaluator import (
 )
 from .parameter_freeze import validate_parameter_freeze_bundle
 from .calibration_preflight import validate_synthetic_calibration_preflight
+from .calibration_readiness_report import validate_calibration_readiness_report
 from .synthetic_stress import (
     validate_stressed_return_matrix,
     validate_synthetic_stress_scenario,
@@ -1331,5 +1332,35 @@ def decode_calibration_preflight(
         document,
         lambda value: validate_synthetic_calibration_preflight(
             value, freeze_payload, evidence_payload, manifest_payload
+        ),
+    )
+
+
+def encode_calibration_readiness_report(
+    payload: object,
+    manifest_payload: object,
+    freeze_payload: object,
+    evidence_payload: object,
+    preflight_payload: object,
+) -> bytes:
+    return _encode_canonical(
+        payload,
+        lambda value: validate_calibration_readiness_report(
+            value, manifest_payload, freeze_payload, evidence_payload, preflight_payload
+        ),
+    )
+
+
+def decode_calibration_readiness_report(
+    document: object,
+    manifest_payload: object,
+    freeze_payload: object,
+    evidence_payload: object,
+    preflight_payload: object,
+) -> dict[str, Any]:
+    return _decode_canonical(
+        document,
+        lambda value: validate_calibration_readiness_report(
+            value, manifest_payload, freeze_payload, evidence_payload, preflight_payload
         ),
     )

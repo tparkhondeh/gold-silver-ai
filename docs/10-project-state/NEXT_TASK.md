@@ -35,11 +35,16 @@ to the ordered gate evaluator and permits only synthetic G07 mechanics when the
 canonical bundle is pre-evaluation, outcome-independent and empty of real threshold
 and stress values. It cannot alter a real gate or permission.
 
-The immediate next safe unit is a versioned synthetic calibration-readiness report.
-It should translate each of the ten gate states and its exact still-missing real
-evidence into concise owner-readable text while retaining canonical manifest, freeze,
-evidence, gate-result and preflight identities. It must make no score, performance
-claim, threshold choice, parameter change, real-data request or financial permission.
+The versioned synthetic calibration-readiness report is complete. It translates all
+ten gate states and 64 still-missing real-evidence requirements into concise Persian,
+retains the five exact upstream identities and produces no score, performance claim,
+threshold choice, parameter change, real-data request or financial permission.
+
+The immediate next safe unit is a checked-in canonical reference report plus a
+read-only Persian web panel for the local synthetic demo. The panel should show the
+headline and ten expandable gates from the validated artifact without importing the
+Python lab into production runtime, calling a provider or implying real readiness.
+Artifact drift, missing gates and any enabled permission must fail closed.
 
 Migrations 0003–0011 now cover the owner snapshot, immutable provenance,
 exact point-in-time dataset/decision lineage, source-reconciliation records and
@@ -345,6 +350,11 @@ financial engine remain separate gates.
    preflight. Eight tests bring the laboratory total to 238; missing, failed, prior-
    blocked or tampered states close the gate, while real calibration, promotion,
    financial use and execution remain locked.
+62. **OWNER-READABLE CALIBRATION REPORT COMPLETE:** a canonical artifact separates
+   synthetic mechanics from the unevaluated real state for every gate and exposes 64
+   exact missing real-evidence items in Persian. Eight tests bring the laboratory
+   total to 246; scores, rankings, claims, requests, threshold choices and permissions
+   are absent or locked.
 
 All implementation available from published provider contracts is complete; real
 provider history execution remains paused at item 6 for Tier-A licensing/cost decisions.

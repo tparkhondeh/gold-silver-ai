@@ -31,6 +31,9 @@ Delivered:
 - a canonical freeze-aware G07 preflight linking the exact manifest, freeze, synthetic
   evidence and ordered gate result; missing, failed, blocked or tampered states close
   the gate, while real promotion/use remain locked; 8 new tests bring the total to 238.
+- a versioned Persian calibration-readiness report covering all ten gates, all five
+  upstream identities and 64 exact remaining real-evidence items without a score,
+  data request, threshold choice or permission; 8 new tests bring the total to 246.
 
 ## Phase 0 — Foundation & Governance
 

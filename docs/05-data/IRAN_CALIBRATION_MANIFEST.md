@@ -66,3 +66,13 @@ only as a software-mechanics result when those conditions, its two artificial ch
 and all prior dependencies pass. Missing, failed or tampered input closes the gate.
 This does not change any real gate: Iran calibration and promotion remain
 `not_evaluated`/blocked, and financial use and execution remain false.
+
+## Owner-readable readiness report
+
+`asha.synthetic.calibration_readiness_report.v1` presents every gate with separate
+synthetic-mechanics and real-Iran states, a short Persian explanation and the exact
+remaining evidence derived from this manifest and the frozen bundle. The current
+canonical fixture lists 64 requirements across the ten gates; this is an inventory,
+not a score or progress percentage. Every real state remains `not_evaluated`. The
+report creates no data request, selects no provider/threshold, makes no performance
+claim and cannot enable financial use or execution.

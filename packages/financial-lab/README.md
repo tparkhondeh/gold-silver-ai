@@ -193,3 +193,10 @@ freeze still precedes all evidence/test links, was not derived from outcomes and
 keeps real thresholds and stress values unset. A missing or failed G07 check, or any
 earlier blocking gate, fails closed. Real calibration remains unevaluated and
 promotion, parameter mutation, financial use and execution remain disabled.
+
+`build_calibration_readiness_report()` turns the ten synthetic gate states into a
+concise Persian owner view while keeping the synthetic and real states separate. The
+64-item remaining-evidence inventory is deterministically derived from the manifest,
+history floors, factor checks, constraint evidence and unset thresholds. It retains
+all five upstream artifact identities and cannot score, rank, claim performance,
+request real data, choose thresholds, mutate parameters or enable financial use.
