@@ -27,7 +27,8 @@ details only when the synthetic demo is active.
 8. Visual review: the local demo rendered the summary, ten gates and expanded evidence
    without overflow or hidden safety labels.
 9. Owner approval for `main`: not requested; `main` remains unchanged.
-10. Remote verification: pending the branch checkpoint workflow.
+10. Remote verification: checkpoint `67277a5` passed all three GitHub Actions jobs
+    in run 34007882823; `main` remained unchanged.
 
 ## Next safe unit
 
