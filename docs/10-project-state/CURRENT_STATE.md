@@ -54,6 +54,8 @@ Laboratory-v1 parameter-freeze checkpoint `c11e4e7` passed all three GitHub Acti
 jobs in run 33998926719; `main` remained unchanged.
 Freeze-aware calibration-preflight checkpoint `eb2749c` passed all three GitHub
 Actions jobs in run 34001635329; `main` remained unchanged.
+Calibration-readiness-report checkpoint `0fff4d9` passed all three GitHub Actions
+jobs in run 34007016125; `main` remained unchanged.
 The isolated `packages/financial-lab` Python 3.12 package now defines strict v1 JSON
 contracts for synthetic datasets and evaluation results. Canonical SHA-256 identities
 make exact replay/tampering visible; real namespaces, real units, premature

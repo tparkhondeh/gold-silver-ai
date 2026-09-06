@@ -29,7 +29,8 @@ It is not a score or progress percentage. Real states remain `not_evaluated`.
 8. Self-review: foreign preflight, omitted evidence, text, claim and permission drift
    fail closed even when the report fingerprint is recomputed.
 9. Owner approval for `main`: not requested; `main` remains unchanged.
-10. Remote verification: pending the branch checkpoint workflow.
+10. Remote verification: checkpoint `0fff4d9` passed all three GitHub Actions jobs
+    in run 34007016125; `main` remained unchanged.
 
 ## Next safe unit
 

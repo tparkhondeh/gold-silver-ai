@@ -57,6 +57,8 @@ state is recorded in `docs/10-project-state/CURRENT_STATE.md`.
   deterministic 64-item real-evidence inventory. It produces no score, ranking,
   performance claim, data request, threshold selection or permission. Eight new tests
   bring the laboratory total to 246.
+- Calibration-readiness-report checkpoint `0fff4d9` passed all three GitHub Actions
+  jobs in run 34007016125; `main` remained unchanged.
 
 - Recorded the owner's acceptance of Phase 1 Data Foundation for progression and the
   exact synthetic-only Phase 2 boundary in ADR 0009.
