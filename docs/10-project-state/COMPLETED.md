@@ -34,6 +34,10 @@ Delivered:
 - a versioned Persian calibration-readiness report covering all ten gates, all five
   upstream identities and 64 exact remaining real-evidence items without a score,
   data request, threshold choice or permission; 8 new tests bring the total to 246.
+- an exact checked-in readiness reference and read-only Persian synthetic-demo panel;
+  browser validation checks its fingerprint, ten ordered gates, 64 missing items and
+  closed permissions before display, while one lab and six web tests bring totals to
+  247 and 136.
 
 ## Phase 0 — Foundation & Governance
 

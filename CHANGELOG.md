@@ -59,6 +59,11 @@ state is recorded in `docs/10-project-state/CURRENT_STATE.md`.
   bring the laboratory total to 246.
 - Calibration-readiness-report checkpoint `0fff4d9` passed all three GitHub Actions
   jobs in run 34007016125; `main` remained unchanged.
+- Added the exact canonical readiness reference and a read-only Persian panel in the
+  local synthetic demo. The browser verifies the fixed fingerprint, ten ordered gates,
+  64 missing evidence items and all closed permissions before display; altered or
+  incomplete artifacts fail closed. One laboratory and six web tests bring totals to
+  247 and 136 without adding a provider call or Python production dependency.
 
 - Recorded the owner's acceptance of Phase 1 Data Foundation for progression and the
   exact synthetic-only Phase 2 boundary in ADR 0009.

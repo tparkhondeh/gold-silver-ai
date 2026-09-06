@@ -40,11 +40,19 @@ ten gate states and 64 still-missing real-evidence requirements into concise Per
 retains the five exact upstream identities and produces no score, performance claim,
 threshold choice, parameter change, real-data request or financial permission.
 
-The immediate next safe unit is a checked-in canonical reference report plus a
-read-only Persian web panel for the local synthetic demo. The panel should show the
-headline and ten expandable gates from the validated artifact without importing the
-Python lab into production runtime, calling a provider or implying real readiness.
-Artifact drift, missing gates and any enabled permission must fail closed.
+The checked-in canonical reference report and read-only Persian web panel are
+complete. The local synthetic demo shows the headline and ten expandable gates only
+after verifying the exact fingerprint, 64 evidence items and all financial locks.
+It imports no Python laboratory runtime, calls no provider and cannot imply real
+readiness. Artifact drift, missing gates and any enabled permission fail closed.
+
+The immediate next safe unit is a versioned synthetic-only calibration-evidence
+intake plan derived from the exact readiness report. It should create one ordered,
+empty collection slot for each of the 64 required evidence IDs and keep every slot
+`not_collected`. Missing, duplicate or foreign IDs and any attempt to attach market
+content, provider identity, credential, score, real-gate result or financial
+permission must fail closed. This unit is a dry run of evidence bookkeeping only; it
+must not request data or advance real calibration.
 
 Migrations 0003–0011 now cover the owner snapshot, immutable provenance,
 exact point-in-time dataset/decision lineage, source-reconciliation records and
@@ -355,6 +363,11 @@ financial engine remain separate gates.
    exact missing real-evidence items in Persian. Eight tests bring the laboratory
    total to 246; scores, rankings, claims, requests, threshold choices and permissions
    are absent or locked.
+63. **LOCAL READINESS PANEL COMPLETE:** the exact canonical report is checked in and
+   shown only in the synthetic demo through a Persian ten-gate disclosure. One lab
+   drift test and six web contract/UI tests bring totals to 247 and 136; a changed
+   artifact, missing gate/evidence or enabled permission stops display, and no
+   provider or Python production runtime is used.
 
 All implementation available from published provider contracts is complete; real
 provider history execution remains paused at item 6 for Tier-A licensing/cost decisions.

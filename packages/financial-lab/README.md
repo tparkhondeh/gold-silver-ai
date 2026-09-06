@@ -200,3 +200,7 @@ concise Persian owner view while keeping the synthetic and real states separate.
 history floors, factor checks, constraint evidence and unset thresholds. It retains
 all five upstream artifact identities and cannot score, rank, claim performance,
 request real data, choose thresholds, mutate parameters or enable financial use.
+`scripts/export_calibration_readiness_reference.py` deterministically regenerates the
+canonical JSON used by the local synthetic web panel. A laboratory test requires the
+checked-in bytes to match the builder exactly, so the two implementations cannot
+silently drift.

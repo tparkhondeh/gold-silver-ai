@@ -253,6 +253,12 @@ synthetic mechanics from unevaluated real states, round-trip canonical Persian J
 and reject foreign preflight, omitted evidence, altered text or permission drift.
 They also lock out scores, rankings, performance claims, data requests and threshold
 selection. The laboratory total is now two hundred and forty-six tests.
+One additional laboratory test requires the checked-in web artifact to equal the
+exact canonical Python report bytes. Six web tests verify its fixed identity and
+fingerprint, ten ordered gates, 64 evidence items, same-origin loading, demo-only
+panel wiring and fail-closed handling of drift, omission or permission changes. The
+current totals are 247 laboratory tests and 136 web tests; source coverage remains
+above the required floors.
 
 ## Related Documents
 

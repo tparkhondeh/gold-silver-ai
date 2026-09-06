@@ -28,6 +28,7 @@ import { OperatorCsvImport } from "./operator-csv-import";
 import { NavasanBackfillReadiness } from "./navasan-backfill-readiness";
 import { GoldApiBackfillReadiness } from "./goldapi-backfill-readiness";
 import { NavasanQuotaStatus } from "./navasan-quota-status";
+import { CalibrationReadinessPanel } from "./calibration-readiness-panel";
 import { assetCategories, assetOptions, getAssetCategoryForAsset, getAssetOptionsForCategory } from "./asset-catalog";
 import { currentJalaliDate, currentJalaliParts, formatJalaliDate, toPersianDigits } from "./jalali-calendar";
 import { PersianDatePicker } from "./persian-date-picker";
@@ -1046,6 +1047,7 @@ export default function Home() {
                 <article className="blocked"><span>تصمیم مالی</span><b>قفل ایمنی</b><small>{decisionReadiness.passedCount.toLocaleString("fa-IR")} از ۶ دروازه آماده</small></article>
               </>}</div>
             </section>
+            {portfolioMode === "demo" && <CalibrationReadinessPanel/>}
             <OperatorCsvImport key={portfolioMode} demoMode={portfolioMode === "demo"}/>
             {portfolioMode !== "demo" && <><NavasanQuotaStatus/><NavasanBackfillReadiness/><GoldApiBackfillReadiness/></>}
             <section className="panel audit-timeline"><h3>زنجیرهٔ اعتماد هر قیمت</h3>{["شناسه ابزار و واحد", "شناسه و قرارداد منبع", "زمان انتشار به UTC", "زمان دریافت به UTC", "اعتبارسنجی قطعی", "نسخهٔ تبدیل و اثر انگشت رکورد"].map((item, index) => <div key={item}><span>{(index + 1).toLocaleString("fa-IR")}</span><p>{item}</p><b>{portfolioMode === "demo" ? "آمادهٔ آزمایشی" : index < 5 && liveQuoteCount ? "ثبت شده" : index < 2 ? "تعریف شده" : "در انتظار داده"}</b></div>)}</section>

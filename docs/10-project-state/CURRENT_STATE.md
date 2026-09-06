@@ -38,11 +38,16 @@ A canonical Persian readiness report now separates the synthetic and real state 
 all ten gates and lists 64 exact remaining real-evidence requirements from the
 manifest and freeze. The count is an inventory, not a score; it creates no data
 request and every real gate remains unevaluated.
+A checked-in canonical copy is now displayed only inside the local synthetic demo.
+The Persian panel verifies the exact report fingerprint, all ten ordered gates, all
+64 evidence items and every financial lock before showing the headline or expandable
+detail. Missing or changed content and any enabled permission stop the panel; the web
+runtime imports no Python laboratory code and calls no provider.
 Synthetic reference actions and a same-fold two-window comparison against six controls
 are exactly replayable and unranked. The web demo mirrors the method and exposes its
 calculations behind a plain-language disclosure. Financial use, execution, Iran
-fitness and real-data approval remain false. Two hundred and forty-six laboratory tests,
-the production web build, lint, typecheck, all 130 web tests and coverage gates pass
+fitness and real-data approval remain false. Two hundred and forty-seven laboratory tests,
+the production web build, lint, typecheck, all 136 web tests and coverage gates pass
 locally.
 Code checkpoint `909d537` passed all three GitHub Actions jobs in run
 33992126608; `main` remained unchanged.

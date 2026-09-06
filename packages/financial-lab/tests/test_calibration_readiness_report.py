@@ -3,7 +3,12 @@ from __future__ import annotations
 from copy import deepcopy
 import json
 from pathlib import Path
+import sys
 import unittest
+
+
+PACKAGE_ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(PACKAGE_ROOT / "src"))
 
 from asha_financial_lab.artifacts import (
     decode_calibration_readiness_report,
@@ -174,6 +179,26 @@ class CalibrationReadinessReportTests(unittest.TestCase):
         self.assertFalse(properties["financialUseAllowed"]["const"])
         self.assertFalse(properties["executionAllowed"]["const"])
         self.assertFalse(properties["parameterMutationAllowed"]["const"])
+
+    def test_checked_in_web_reference_is_the_exact_canonical_report(self) -> None:
+        path = (
+            Path(__file__).resolve().parents[3]
+            / "apps"
+            / "web"
+            / "public"
+            / "artifacts"
+            / "calibration-readiness-report.v1.json"
+        )
+        self.assertEqual(
+            path.read_bytes(),
+            encode_calibration_readiness_report(
+                self.report,
+                self.manifest,
+                self.freeze,
+                self.evidence,
+                self.preflight,
+            ),
+        )
 
 
 if __name__ == "__main__":
