@@ -42,6 +42,7 @@ from .artifacts import (
     decode_parameter_freeze_bundle,
     decode_calibration_preflight,
     decode_calibration_readiness_report,
+    decode_calibration_intake_plan,
     decode_reviewed_comparison_methodology_registry,
     decode_stressed_return_matrix,
     decode_synthetic_stress_scenario,
@@ -89,6 +90,7 @@ from .artifacts import (
     encode_parameter_freeze_bundle,
     encode_calibration_preflight,
     encode_calibration_readiness_report,
+    encode_calibration_intake_plan,
     encode_reviewed_comparison_methodology_registry,
     encode_stressed_return_matrix,
     encode_synthetic_stress_scenario,
@@ -272,6 +274,11 @@ from .calibration_preflight import (
     build_synthetic_calibration_preflight,
     validate_synthetic_calibration_preflight,
 )
+from .calibration_intake_plan import (
+    CALIBRATION_INTAKE_PLAN_SCHEMA_VERSION,
+    build_calibration_intake_plan,
+    validate_calibration_intake_plan,
+)
 from .calibration_readiness_report import (
     CALIBRATION_READINESS_REPORT_SCHEMA_VERSION,
     build_calibration_readiness_report,
@@ -358,6 +365,11 @@ __all__ = [
     "PARAMETER_FREEZE_VERSION",
     "CALIBRATION_PREFLIGHT_SCHEMA_VERSION",
     "CALIBRATION_READINESS_REPORT_SCHEMA_VERSION",
+    "CALIBRATION_INTAKE_PLAN_SCHEMA_VERSION",
+    "build_calibration_intake_plan",
+    "validate_calibration_intake_plan",
+    "encode_calibration_intake_plan",
+    "decode_calibration_intake_plan",
     "EQUAL_WEIGHT_CONTROL_ID",
     "INVERSE_VOLATILITY_CONTROL_ID",
     "INVERSE_VOLATILITY_SCHEMA_VERSION",

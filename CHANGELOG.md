@@ -7,6 +7,11 @@ state is recorded in `docs/10-project-state/CURRENT_STATE.md`.
 
 ## [Unreleased]
 
+- Added the versioned, exact-replay 64-slot empty calibration intake plan; content,
+  credentials, scores and permissions are rejected even after artifact resealing.
+- Recorded the owner's quantitative short/medium decision-workbench scope and
+  measurable acceptance inventory in `docs/04-portfolio/DECISION_ACTION_PLAN.md`.
+
 ### Phase 2 synthetic laboratory authorization — ۱۴۰۵/۰۶/۱۰
 
 - Recorded the owner's later laboratory-method authorization in ADR 0010 without

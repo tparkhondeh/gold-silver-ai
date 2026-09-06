@@ -6,6 +6,15 @@ _Last updated in the product calendar: ۱۴۰۵/۰۶/۱۴ (Phase 2 synthetic lab
 
 ## Current Execution Gate
 
+The latest owner request authorizes a quantitative short/medium decision workbench
+with exact price/quantity/cost/funding outputs and editable synthetic examples. Its
+scope and acceptance inventory are in `../04-portfolio/DECISION_ACTION_PLAN.md`.
+The preceding 64-slot empty intake plan passes all 254 laboratory tests locally
+(247 existing plus seven new, 344 seconds). Remote verification follows commit/push.
+No recurring automation should be recreated. The working branch remains
+`codex/phase-2-decision-engine`; the clean pre-change Git history is backed up in a
+verified local bundle under `.cache/checkpoints/`.
+
 On 2026-09-01 the owner accepted the Phase 1 Data Foundation for progression while
 keeping financial use locked, and authorized Phase 2 only as a completely synthetic,
 non-operational financial laboratory. ADR 0009 records the exact boundary. Branch

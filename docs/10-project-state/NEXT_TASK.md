@@ -46,13 +46,14 @@ after verifying the exact fingerprint, 64 evidence items and all financial locks
 It imports no Python laboratory runtime, calls no provider and cannot imply real
 readiness. Artifact drift, missing gates and any enabled permission fail closed.
 
-The immediate next safe unit is a versioned synthetic-only calibration-evidence
-intake plan derived from the exact readiness report. It should create one ordered,
-empty collection slot for each of the 64 required evidence IDs and keep every slot
-`not_collected`. Missing, duplicate or foreign IDs and any attempt to attach market
-content, provider identity, credential, score, real-gate result or financial
-permission must fail closed. This unit is a dry run of evidence bookkeeping only; it
-must not request data or advance real calibration.
+The 64-slot empty evidence intake plan is implemented with canonical replay and
+seven focused tests; verification is recorded in CURRENT_STATE. It cannot collect
+data or advance calibration. The owner now explicitly requests the quantitative
+decision workbench: exact entry/exit quantities and prices, same/cross-class funding,
+short/medium horizon reconciliation, hold/wait/undecidable, editable synthetic
+examples and save/restore. Follow `../04-portfolio/DECISION_ACTION_PLAN.md` and its
+bounded acceptance inventory. Complete independent technical units without creating
+another recurring automation. Do not silently relabel price limits as forecasts.
 
 Migrations 0003–0011 now cover the owner snapshot, immutable provenance,
 exact point-in-time dataset/decision lineage, source-reconciliation records and
