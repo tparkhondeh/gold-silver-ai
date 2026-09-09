@@ -4,6 +4,24 @@
 
 ## Immediate Next Step
 
+Continue the bounded market technical test from
+[`MARKET_TECHNICAL_TEST_2026-09-10.md`](MARKET_TECHNICAL_TEST_2026-09-10.md), not a
+rebuild of R1. After `2026-09-10T05:59:13.867Z`, recheck durable quota and make **one**
+authorized local Navasan latest request through the corrected transport. Do not
+refund reservations, bypass cooldown or substitute mock observations as real.
+With a usable snapshot, test real-price normalization, valuation, all linked views
+and save/reload; retain explicit stale/missing/undecidable states. No full keyed
+success was established in this delivery. Rahavard data transfer separately requires
+the provider's permission under its current article 2.1; do not scrape or buy access.
+
+Resolve the recorded GitHub TLS connectivity failure, publish only the reviewed
+working-branch commit, then verify all three jobs for that exact commit. No old CI
+result or local origin alignment substitutes for this evidence. Do not create a
+scheduled retry or change main/server. Owner guide:
+[`OWNER_MARKET_TEST_FA.md`](../09-operations/OWNER_MARKET_TEST_FA.md).
+
+## R1 checkpoint and subsequent product route
+
 The owner superseded the same-day review-only restriction for the bounded R1 local
 integration. Startup and shared synthetic portfolio implementation are complete for
 owner evaluation; do not rebuild them. Read

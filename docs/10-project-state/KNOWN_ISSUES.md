@@ -4,6 +4,12 @@
 
 ## Phase 1 Limitations
 
+Current 2026-09-10 blockers supersede older connectivity statements below:
+no usable new real snapshot yet (corrected Navasan transport awaits the retained
+cooldown), Rahavard transfer permission absent, and fresh GitHub/npm audit TLS
+connections failing. Exact evidence and retry boundary:
+[`MARKET_TECHNICAL_TEST_2026-09-10.md`](MARKET_TECHNICAL_TEST_2026-09-10.md).
+
 1. **Resolved: private Git publication.** Browser-authorized Git Credential Manager
    now authenticates successfully. The development branch was published with verified
    HEAD/upstream and unchanged remote `main`; no tag or backup branch was published.

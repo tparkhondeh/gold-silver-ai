@@ -4,6 +4,15 @@
 merged to `main`. This is a log, not a plan — see `docs/01-product/ROADMAP.md` for
 what's ahead.
 
+## Isolated market-test implementation (2026-09-10; partial acceptance)
+
+Versioned separate real-price/fictitious-position contract, exact valuation,
+local quota-protected Navasan latest transport, canonical browser save/replay and
+decluttered nine-view workspace are implemented and locally tested. Existing
+synthetic scenarios and comparison retained. **Actual market-data acceptance and
+new-commit GitHub CI are not complete**; see
+[`MARKET_TECHNICAL_TEST_2026-09-10.md`](MARKET_TECHNICAL_TEST_2026-09-10.md).
+
 ## R1 — Shared synthetic portfolio (2026-09-09)
 
 Implemented on the working branch for owner-local testing; acceptance remains

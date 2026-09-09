@@ -55,6 +55,7 @@ try {
         ...process.env,
         ...runtimeEnvironment,
         ASHA_MARKET_NETWORK_ENABLED: "false",
+        ASHA_LOCAL_MARKET_TEST_ENABLED: "true",
         NAVASAN_HISTORY_EXECUTION_ENABLED: "false",
         CLOUDFLARE_INCLUDE_PROCESS_ENV: "true",
       },

@@ -31,6 +31,7 @@ import { NavasanQuotaStatus } from "./navasan-quota-status";
 import { CalibrationReadinessPanel } from "./calibration-readiness-panel";
 import { DecisionActionWorkbench } from "./decision-action-workbench";
 import { SharedPortfolioWorkspace } from "./shared-portfolio-workspace";
+import { MarketTestWorkspace } from "./market-test-workspace";
 import { sharedViews } from "./shared-portfolio";
 import { browserMarketFallbackAllowed } from "./market-network-policy";
 import { assetCategories, assetOptions, getAssetCategoryForAsset, getAssetOptionsForCategory } from "./asset-catalog";
@@ -330,8 +331,10 @@ export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [holdings, setHoldings] = useState<Holding[]>([]);
   const [portfolioMode, setPortfolioMode] = useState<"personal" | "demo">("personal");
-  const sharedPortfolioActive = portfolioMode === "demo" && sharedViews.some((id) => id === view);
+  const [marketTestActive, setMarketTestActive] = useState(true);
+  const sharedPortfolioActive = !marketTestActive && portfolioMode === "demo" && sharedViews.some((id) => id === view);
   const [holdingsLoaded, setHoldingsLoaded] = useState(false);
+  const [legacyStorageIssue, setLegacyStorageIssue] = useState(false);
   const [portfolioPersistence, setPortfolioPersistence] = useState<PortfolioPersistenceState>({ state: "checking" });
   const [modalOpen, setModalOpen] = useState(false);
   const [editingHoldingId, setEditingHoldingId] = useState<string | null>(null);
@@ -396,6 +399,7 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
+    if (marketTestActive || holdingsLoaded) return;
     const timer = window.setTimeout(() => {
       const saved = sessionStorage.getItem("gold-silver-holdings");
       let restoredHoldings: Holding[] = [];
@@ -404,7 +408,7 @@ export default function Home() {
           const restored = JSON.parse(saved) as Array<Holding & { purchaseDate?: string | null }>;
           restoredHoldings = restored.map((holding) => ({ ...holding, purchaseDate: holding.purchaseDate ?? demoHoldings.find((demo) => demo.id === holding.id)?.purchaseDate ?? null }));
           setHoldings(restoredHoldings);
-        } catch { sessionStorage.removeItem("gold-silver-holdings"); }
+        } catch { setLegacyStorageIssue(true); }
       }
       const savedPortfolioMode = sessionStorage.getItem("gold-silver-portfolio-mode");
       const savedPreference = sessionStorage.getItem(portfolioPreferenceKey);
@@ -423,35 +427,35 @@ export default function Home() {
       }
       const savedNotifications = sessionStorage.getItem("gold-silver-notifications");
       if (savedNotifications) {
-        try { setNotifications(JSON.parse(savedNotifications) as MarketNotification[]); } catch { sessionStorage.removeItem("gold-silver-notifications"); }
+        try { setNotifications(JSON.parse(savedNotifications) as MarketNotification[]); } catch { setLegacyStorageIssue(true); }
       }
       const savedConstraints = sessionStorage.getItem("asha-owner-decision-constraints-v1");
       if (savedConstraints) {
         try {
           const restored = JSON.parse(savedConstraints) as Partial<Record<keyof OwnerDecisionConstraints, unknown>>;
           setOwnerConstraints(Object.fromEntries(ownerConstraintFields.map((field) => [field.key, String(restored[field.key] ?? "")])) as OwnerDecisionConstraints);
-        } catch { sessionStorage.removeItem("asha-owner-decision-constraints-v1"); }
+        } catch { setLegacyStorageIssue(true); }
       }
       const savedQuotes = sessionStorage.getItem("gold-silver-alert-baseline");
       if (savedQuotes) {
         try {
           const restoredQuotes = JSON.parse(savedQuotes) as LiveQuote[];
           previousQuotesRef.current = new Map(restoredQuotes.map((quote) => [quote.instrumentCode, quote]));
-        } catch { sessionStorage.removeItem("gold-silver-alert-baseline"); }
+        } catch { setLegacyStorageIssue(true); }
       }
       setHoldingsLoaded(true);
     }, 0);
     return () => window.clearTimeout(timer);
-  }, []);
+  }, [marketTestActive, holdingsLoaded]);
 
   useEffect(() => {
-    if (!holdingsLoaded || portfolioMode === "demo") return;
+    if (legacyStorageIssue || marketTestActive || !holdingsLoaded || portfolioMode === "demo") return;
     sessionStorage.setItem("gold-silver-holdings", JSON.stringify(holdings));
     sessionStorage.setItem("gold-silver-portfolio-mode", portfolioMode);
-  }, [holdings, holdingsLoaded, portfolioMode]);
+  }, [holdings, holdingsLoaded, portfolioMode, marketTestActive, legacyStorageIssue]);
 
   useEffect(() => {
-    if (!holdingsLoaded || portfolioMode !== "personal") return;
+    if (marketTestActive || !holdingsLoaded || portfolioMode !== "personal") return;
     let active = true;
     void fetch("/api/portfolio", { cache: "no-store" })
       .then(async (response) => {
@@ -467,22 +471,23 @@ export default function Home() {
         if (active) setPortfolioPersistence({ state: "unavailable", message: "ارتباط با دیتابیس برقرار نشد؛ داده‌های مرورگر دست‌نخورده ماند." });
       });
     return () => { active = false; };
-  }, [holdingsLoaded, portfolioMode]);
+  }, [holdingsLoaded, portfolioMode, marketTestActive]);
 
   useEffect(() => {
-    if (!holdingsLoaded) return;
+    if (legacyStorageIssue || marketTestActive || !holdingsLoaded) return;
     sessionStorage.setItem("gold-silver-notifications", JSON.stringify(notifications));
-  }, [holdingsLoaded, notifications]);
+  }, [holdingsLoaded, notifications, marketTestActive, legacyStorageIssue]);
 
   useEffect(() => {
-    if (!holdingsLoaded) return;
+    if (legacyStorageIssue || marketTestActive || !holdingsLoaded) return;
     sessionStorage.setItem("asha-owner-decision-constraints-v1", JSON.stringify(ownerConstraints));
-  }, [holdingsLoaded, ownerConstraints]);
+  }, [holdingsLoaded, ownerConstraints, marketTestActive, legacyStorageIssue]);
 
   useEffect(() => {
+    if (marketTestActive) return;
     const timer = window.setTimeout(() => void refreshMarket(), 0);
     return () => window.clearTimeout(timer);
-  }, [refreshMarket]);
+  }, [refreshMarket, marketTestActive]);
 
   useEffect(() => {
     if (!feed) return;
@@ -810,7 +815,7 @@ export default function Home() {
   }
 
   function activateDemoPortfolio(destination: View) {
-    if (portfolioMode !== "demo") sessionStorage.setItem("asha-personal-holdings-backup-v1", JSON.stringify(holdings));
+    if (holdingsLoaded && !legacyStorageIssue && portfolioMode !== "demo" && !sessionStorage.getItem("asha-personal-holdings-backup-v1")) sessionStorage.setItem("asha-personal-holdings-backup-v1", JSON.stringify(holdings));
     sessionStorage.setItem(portfolioPreferenceKey, "demo");
     setHoldings(demoHoldings.map((holding) => ({ ...holding })));
     setSelectedHoldingId(demoHoldings[0]?.id ?? null);
@@ -823,11 +828,12 @@ export default function Home() {
 
   function clearDemoPortfolio() {
     let restoredHoldings: Holding[] = [];
-    const backup = sessionStorage.getItem("asha-personal-holdings-backup-v1");
+    const backup = sessionStorage.getItem("gold-silver-portfolio-mode") === "personal"
+      ? sessionStorage.getItem("gold-silver-holdings")
+      : sessionStorage.getItem("asha-personal-holdings-backup-v1");
     if (backup) {
-      try { restoredHoldings = JSON.parse(backup) as Holding[]; } catch { restoredHoldings = []; }
+      try { restoredHoldings = JSON.parse(backup) as Holding[]; if (!Array.isArray(restoredHoldings)) throw new Error("Invalid saved portfolio"); } catch { setLegacyStorageIssue(true); return; }
     }
-    sessionStorage.removeItem("asha-personal-holdings-backup-v1");
     sessionStorage.setItem(portfolioPreferenceKey, "personal");
     setHoldings(restoredHoldings);
     setSelectedHoldingId(restoredHoldings[0]?.id ?? null);
@@ -843,6 +849,15 @@ export default function Home() {
     setNotifications((current) => current.map((notification) => ({ ...notification, read: true })));
   }
 
+  function chooseWorkspace(mode: "market" | "demo" | "personal") {
+    setMarketTestActive(mode === "market");
+    if (mode === "market") return;
+    // Load the saved input first: the initial empty React state is not a backup.
+    if (!holdingsLoaded) { sessionStorage.setItem(portfolioPreferenceKey, mode); setPortfolioMode(mode); return; }
+    if (portfolioMode === mode) return;
+    if (mode === "demo") activateDemoPortfolio(view); else clearDemoPortfolio();
+  }
+
   const headerTitle = navItems.find((item) => item.id === view)?.label ?? "نمای کلی";
 
   return (
@@ -856,20 +871,23 @@ export default function Home() {
           {navItems.map((item) => <button key={item.id} className={view === item.id ? "active" : ""} aria-current={view === item.id ? "page" : undefined} onClick={() => { setView(item.id); setMenuOpen(false); }}>{item.label}</button>)}
         </nav>
         <div className="sidebar-status"><i /><span><strong>حالت امن فعال</strong><small>بدون معاملهٔ خودکار</small></span></div>
-        <p className="sidebar-version">{portfolioMode === "demo" ? "PHASE 2 · LABORATORY" : "PHASE 1 · EVALUATION"}</p>
+        <p className="sidebar-version">{marketTestActive ? "MARKET · TECHNICAL TEST" : portfolioMode === "demo" ? "PHASE 2 · LABORATORY" : "PHASE 1 · EVALUATION"}</p>
       </aside>
 
       <main className="workspace" id="top">
         <header className="topbar">
           <div className="top-title"><button className="menu-button" onClick={() => setMenuOpen((value) => !value)} aria-label={menuOpen ? "بستن منو" : "باز کردن منو"} aria-expanded={menuOpen} aria-controls="asha-sidebar">☰</button><div><h1>{headerTitle}</h1><p>اشا؛ سبد، تصمیم و کیفیت داده در یک نمای قابل‌ردیابی</p></div></div>
-          <div className="top-actions"><span className={effectiveDisplayQuoteCount ? "offline-state online" : "offline-state"}><i /><span><strong>{portfolioMode === "demo" ? "سبد مشترکِ ساختگی" : feedLoading ? "در حال دریافت قیمت" : displayQuoteCount ? `${liveQuoteCount.toLocaleString("fa-IR")} قیمت تازه از ${displayQuoteCount.toLocaleString("fa-IR")}` : "منبع قابل نمایش نیست"}</strong><small>{portfolioMode === "demo" ? "ورودی مشترک · بدون خوراک بازار واقعی" : feedError ? `${feedError} · ${marketRateStatus}` : marketRateStatus}</small></span></span><button className="notification-trigger" data-testid="notification-center" onClick={() => setNotificationOpen(true)} aria-label={`اعلان‌ها؛ ${unreadNotificationCount.toLocaleString("fa-IR")} خوانده‌نشده`} aria-expanded={notificationOpen}><span>اعلان‌ها</span>{unreadNotificationCount > 0 && <b>{unreadNotificationCount.toLocaleString("fa-IR")}</b>}</button><button className="primary-button" onClick={portfolioMode === "demo" ? () => setView("portfolio") : openNewHolding}>{portfolioMode === "demo" ? "ویرایش سبد مشترک" : "＋ افزودن دارایی"}</button></div>
+          {!marketTestActive && <div className="top-actions"><span className={effectiveDisplayQuoteCount ? "offline-state online" : "offline-state"}><i /><span><strong>{portfolioMode === "demo" ? "سبد مشترکِ ساختگی" : feedLoading ? "در حال دریافت قیمت" : displayQuoteCount ? `${liveQuoteCount.toLocaleString("fa-IR")} قیمت تازه از ${displayQuoteCount.toLocaleString("fa-IR")}` : "منبع قابل نمایش نیست"}</strong><small>{portfolioMode === "demo" ? "ورودی مشترک · بدون خوراک بازار واقعی" : feedError ? `${feedError} · ${marketRateStatus}` : marketRateStatus}</small></span></span><button className="notification-trigger" data-testid="notification-center" onClick={() => setNotificationOpen(true)} aria-label={`اعلان‌ها؛ ${unreadNotificationCount.toLocaleString("fa-IR")} خوانده‌نشده`} aria-expanded={notificationOpen}><span>اعلان‌ها</span>{unreadNotificationCount > 0 && <b>{unreadNotificationCount.toLocaleString("fa-IR")}</b>}</button><button className="primary-button" onClick={portfolioMode === "demo" ? () => setView("portfolio") : openNewHolding}>{portfolioMode === "demo" ? "ویرایش سبد مشترک" : "＋ افزودن دارایی"}</button></div>}
         </header>
 
-        {portfolioMode === "demo" && <section className="simulation-banner" role="status"><div><b>آزمایشگاه اشا فعال است</b><span>سبد و تصمیم کاملاً ساختگی‌اند؛ دیده‌بان، کیفیت داده و مقایسهٔ روش‌ها آزمون‌های مرجع جداگانه‌اند.</span></div><button className="ghost-button" onClick={clearDemoPortfolio}>بازگشت به داده‌های شخصی</button></section>}
+        <div className="workspace-mode-switch" aria-label="محیط کار"><button className={marketTestActive ? "active" : ""} aria-pressed={marketTestActive} onClick={() => chooseWorkspace("market")}>آزمون با قیمت بازار</button><button className={!marketTestActive && portfolioMode === "demo" ? "active" : ""} aria-pressed={!marketTestActive && portfolioMode === "demo"} onClick={() => chooseWorkspace("demo")}>آزمایشگاه ساختگی</button><button className={!marketTestActive && portfolioMode === "personal" ? "active" : ""} aria-pressed={!marketTestActive && portfolioMode === "personal"} onClick={() => chooseWorkspace("personal")}>سبد شخصی جداگانه</button></div>
+        {!marketTestActive && legacyStorageIssue && <p className="action-error" role="alert">یکی از نسخه‌های قبلی مرورگر خوانده نشد؛ اصل آن حفظ شده و ذخیرهٔ خودکار آن محیط خاموش است. آزمون بازار فضای جداگانه دارد.</p>}
+        {!marketTestActive && portfolioMode === "demo" && <section className="simulation-banner" role="status"><div><b>داده و تصمیم ساختگی</b><span>دیده‌بان و مقایسهٔ روش‌ها، آزمون مرجع جداگانه‌اند.</span></div></section>}
 
         <div className="page-content">
           <SharedPortfolioWorkspace active={sharedPortfolioActive} view={view} onNavigate={setView} />
-          {!sharedPortfolioActive && <>
+          <MarketTestWorkspace active={marketTestActive} view={view} onNavigate={setView} />
+          {!sharedPortfolioActive && !marketTestActive && <>
           {view === "overview" && <>
             <section className="overview-toolbar">
               <div><span>داشبورد ثروت شخصی</span><strong>{holdings.length ? `${holdings.length.toLocaleString("fa-IR")} موقعیت · آمادگی ${readinessScore.toLocaleString("fa-IR")} از ۴` : "برای شروع، دارایی ثبت یا سبد نمایشی را فعال کن"}</strong><small>{portfolioRateStatus}</small></div>
@@ -1064,7 +1082,7 @@ export default function Home() {
           {view === "agents" && <section className="view-stack"><div className="view-hero"><SectionTitle eyebrow="ASHA REVIEW BOARD" title="اشا و هیئت بررسی چندتخصصی" text="اشا دستیار تصمیم پروژه است و بررسی‌های امنیت، مالی، داده و تجربهٔ کاربری را هماهنگ می‌کند؛ به حساب مالی، معامله یا کلیدهای خصوصی دسترسی ندارد."/><span className="status-chip safe">فقط بررسی</span></div><section className="agent-grid"><article><h3>امنیت</h3><p>رازها، دسترسی، زنجیره تأمین و مرز دادهٔ شخصی.</p><b>Plugin نصب شده</b></article><article><h3>داده و مالی</h3><p>منشأ، point-in-time، صحت محاسبات و سوگیری آزمون.</p><b>Plugin نصب شده</b></article><article><h3>محصول و UI</h3><p>RTL، دسترس‌پذیری و فهم‌پذیری برای مالک پروژه.</p><b>Plugin نصب شده</b></article><article><h3>تست و بازبینی</h3><p>رفتار قطعی، رگرسیون و کنترل کیفیت انتشار.</p><b>Plugin نصب شده</b></article></section><section className="guardrail"><div><b>نصب به معنی اجرای دائمی نیست</b><p>در هر Task، Codex تخصص مرتبط را بر اساس درخواست فراخوانی می‌کند. خروجی مالی همچنان باید از موتور قطعی و آزموده‌شده بیاید.</p></div></section></section>}
           </>}
         </div>
-        <footer><span>اشا · دستیار تصمیم زر و سیم · {portfolioMode === "demo" ? "مرحلهٔ ۲: آزمایشگاه تحلیل و تصمیم" : "مرحلهٔ ۱: ارزیابی زیرساخت داده"}</span><span>{portfolioMode === "demo" ? "آزمایشگاه فعال · همهٔ داده‌ها ساختگی · بدون اجرای معامله" : "ذخیرهٔ سبد مطابق وضعیت اتصال محلی · بدون قیمت ساختگی · بدون معاملهٔ خودکار"} · <b>حالت امن</b></span></footer>
+        <footer><span>اشا · دستیار تصمیم زر و سیم · {marketTestActive ? "آزمون فنی اتصال بازار" : portfolioMode === "demo" ? "مرحلهٔ ۲: آزمایشگاه تحلیل و تصمیم" : "مرحلهٔ ۱: ارزیابی زیرساخت داده"}</span><span>{marketTestActive ? "قیمت منبع واقعی · موجودی فرضی · بدون سفارش" : portfolioMode === "demo" ? "آزمایشگاه فعال · همهٔ داده‌ها ساختگی · بدون اجرای معامله" : "ذخیرهٔ سبد مطابق وضعیت اتصال محلی · بدون قیمت ساختگی · بدون معاملهٔ خودکار"} · <b>حالت امن</b></span></footer>
       </main>
 
       {notificationOpen && <div className="notification-backdrop" role="presentation" onMouseDown={(event) => { if (event.currentTarget === event.target) setNotificationOpen(false); }}>

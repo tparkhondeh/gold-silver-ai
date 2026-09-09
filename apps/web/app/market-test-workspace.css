@@ -1,0 +1,10 @@
+.workspace-mode-switch{display:flex;gap:8px;flex-wrap:wrap;padding:12px clamp(20px,3vw,46px);border-bottom:1px solid var(--line)}
+.workspace-mode-switch button{font:inherit;font-size:12px;padding:9px 14px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer;border-radius:8px}
+.workspace-mode-switch button.active{background:var(--green);color:white;border-color:var(--green)}
+.market-test-boundary{display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px;padding:14px 18px;border-inline-start:3px solid var(--gold);background:#f5eddc;font-size:13px}
+.market-test-boundary span{font-size:12px;color:var(--muted)}
+.market-test-workspace .shared-summary{grid-template-columns:repeat(3,minmax(0,1fr))}
+.market-test-workspace .shared-table th,.market-test-workspace .shared-table td{font-size:12px;white-space:normal;min-width:110px}
+.market-provenance{display:block;max-width:230px;font-size:11px;line-height:1.8;color:var(--muted)}
+.market-test-workspace .action-detail{overflow-wrap:anywhere}
+@media(max-width:700px){.market-test-workspace .shared-summary{grid-template-columns:1fr}.workspace-mode-switch{padding-inline:12px}.workspace-mode-switch button{flex:1}}

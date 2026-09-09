@@ -65,3 +65,4 @@ What this decision implies for future work — including what it forecloses.
 - ADR 0008: defer production identity until the real-data gate
 - ADR 0009: synthetic-only independent financial laboratory
 - ADR 0010: transparent guarded laboratory method (synthetic proposal only)
+- ADR 0011: isolated authorized market-data software test; no financial activation

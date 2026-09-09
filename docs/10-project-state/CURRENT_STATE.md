@@ -2,9 +2,26 @@
 
 **Source of truth for:** where the project stands right now.
 
-_Last reviewed: 2026-09-09, Asia/Tehran (R1 owner-local shared synthetic portfolio)_
+_Last reviewed: 2026-09-10, Asia/Tehran (isolated market-data technical test)_
 
 ## Current review and execution scope
+
+The owner now explicitly permits licensed real market observations for **local
+software testing only**, under [ADR 0011](../08-decisions/ADR/0011-isolated-authorized-market-software-test.md).
+A separate versioned market-test workspace and quota-protected Navasan latest route
+are implemented; personal and synthetic portfolios are not merged or overwritten.
+The nine-view browser journey, controlled failures, save/replay and prior synthetic
+decision scenarios were exercised. No financial method, main or server change.
+
+**Not yet complete with real data:** no usable quote was acquired this turn.
+Rahavard transfer requires provider permission; the initial Navasan transport error
+was reproduced and fixed, but its conservative durable cooldown is retained before
+a further keyed request. Current source, quota/time, tests, backup, publication
+limitations and acceptance matrix are recorded once in
+[`MARKET_TECHNICAL_TEST_2026-09-10.md`](MARKET_TECHNICAL_TEST_2026-09-10.md).
+Do not call this full real-data acceptance, successful CI, or project completion.
+
+## Prior R1 review scope (historical)
 
 The owner explicitly authorized local startup, R1 shared-portfolio implementation,
 tests, documentation, commit and push after the same-day read-only audit. Work is
