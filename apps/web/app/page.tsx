@@ -30,6 +30,8 @@ import { GoldApiBackfillReadiness } from "./goldapi-backfill-readiness";
 import { NavasanQuotaStatus } from "./navasan-quota-status";
 import { CalibrationReadinessPanel } from "./calibration-readiness-panel";
 import { DecisionActionWorkbench } from "./decision-action-workbench";
+import { SharedPortfolioWorkspace } from "./shared-portfolio-workspace";
+import { sharedViews } from "./shared-portfolio";
 import { browserMarketFallbackAllowed } from "./market-network-policy";
 import { assetCategories, assetOptions, getAssetCategoryForAsset, getAssetOptionsForCategory } from "./asset-catalog";
 import { currentJalaliDate, currentJalaliParts, formatJalaliDate, toPersianDigits } from "./jalali-calendar";
@@ -328,6 +330,7 @@ export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [holdings, setHoldings] = useState<Holding[]>([]);
   const [portfolioMode, setPortfolioMode] = useState<"personal" | "demo">("personal");
+  const sharedPortfolioActive = portfolioMode === "demo" && sharedViews.some((id) => id === view);
   const [holdingsLoaded, setHoldingsLoaded] = useState(false);
   const [portfolioPersistence, setPortfolioPersistence] = useState<PortfolioPersistenceState>({ state: "checking" });
   const [modalOpen, setModalOpen] = useState(false);
@@ -442,10 +445,9 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    if (!holdingsLoaded) return;
+    if (!holdingsLoaded || portfolioMode === "demo") return;
     sessionStorage.setItem("gold-silver-holdings", JSON.stringify(holdings));
     sessionStorage.setItem("gold-silver-portfolio-mode", portfolioMode);
-    if (portfolioMode === "demo") sessionStorage.setItem("gold-silver-demo-version", demoPortfolioVersion);
   }, [holdings, holdingsLoaded, portfolioMode]);
 
   useEffect(() => {
@@ -860,12 +862,14 @@ export default function Home() {
       <main className="workspace" id="top">
         <header className="topbar">
           <div className="top-title"><button className="menu-button" onClick={() => setMenuOpen((value) => !value)} aria-label={menuOpen ? "بستن منو" : "باز کردن منو"} aria-expanded={menuOpen} aria-controls="asha-sidebar">☰</button><div><h1>{headerTitle}</h1><p>اشا؛ سبد، تصمیم و کیفیت داده در یک نمای قابل‌ردیابی</p></div></div>
-          <div className="top-actions"><span className={effectiveDisplayQuoteCount ? "offline-state online" : "offline-state"}><i /><span><strong>{portfolioMode === "demo" ? `${effectiveLiveQuoteCount.toLocaleString("fa-IR")} قیمت کاملاً ساختگی` : feedLoading ? "در حال دریافت قیمت" : displayQuoteCount ? `${liveQuoteCount.toLocaleString("fa-IR")} قیمت تازه از ${displayQuoteCount.toLocaleString("fa-IR")}` : "منبع قابل نمایش نیست"}</strong><small>{portfolioMode === "demo" ? `آزمایشگاه اشا · ${sandboxMethodology.datasetId}` : feedError ? `${feedError} · ${marketRateStatus}` : marketRateStatus}</small></span></span><button className="notification-trigger" data-testid="notification-center" onClick={() => setNotificationOpen(true)} aria-label={`اعلان‌ها؛ ${unreadNotificationCount.toLocaleString("fa-IR")} خوانده‌نشده`} aria-expanded={notificationOpen}><span>اعلان‌ها</span>{unreadNotificationCount > 0 && <b>{unreadNotificationCount.toLocaleString("fa-IR")}</b>}</button><button className="primary-button" onClick={openNewHolding}>＋ افزودن دارایی</button></div>
+          <div className="top-actions"><span className={effectiveDisplayQuoteCount ? "offline-state online" : "offline-state"}><i /><span><strong>{portfolioMode === "demo" ? "سبد مشترکِ ساختگی" : feedLoading ? "در حال دریافت قیمت" : displayQuoteCount ? `${liveQuoteCount.toLocaleString("fa-IR")} قیمت تازه از ${displayQuoteCount.toLocaleString("fa-IR")}` : "منبع قابل نمایش نیست"}</strong><small>{portfolioMode === "demo" ? "ورودی مشترک · بدون خوراک بازار واقعی" : feedError ? `${feedError} · ${marketRateStatus}` : marketRateStatus}</small></span></span><button className="notification-trigger" data-testid="notification-center" onClick={() => setNotificationOpen(true)} aria-label={`اعلان‌ها؛ ${unreadNotificationCount.toLocaleString("fa-IR")} خوانده‌نشده`} aria-expanded={notificationOpen}><span>اعلان‌ها</span>{unreadNotificationCount > 0 && <b>{unreadNotificationCount.toLocaleString("fa-IR")}</b>}</button><button className="primary-button" onClick={portfolioMode === "demo" ? () => setView("portfolio") : openNewHolding}>{portfolioMode === "demo" ? "ویرایش سبد مشترک" : "＋ افزودن دارایی"}</button></div>
         </header>
 
-        {portfolioMode === "demo" && <section className="simulation-banner" role="status"><div><b>آزمایشگاه کامل اشا فعال است</b><span>قیمت، تحلیل، ریسک و تصمیم این حالت کاملاً ساختگی و غیرعملیاتی‌اند؛ اجرای معامله وجود ندارد.</span></div><button className="ghost-button" onClick={clearDemoPortfolio}>بازگشت به داده‌های شخصی</button></section>}
+        {portfolioMode === "demo" && <section className="simulation-banner" role="status"><div><b>آزمایشگاه اشا فعال است</b><span>سبد و تصمیم کاملاً ساختگی‌اند؛ دیده‌بان، کیفیت داده و مقایسهٔ روش‌ها آزمون‌های مرجع جداگانه‌اند.</span></div><button className="ghost-button" onClick={clearDemoPortfolio}>بازگشت به داده‌های شخصی</button></section>}
 
         <div className="page-content">
+          <SharedPortfolioWorkspace active={sharedPortfolioActive} view={view} onNavigate={setView} />
+          {!sharedPortfolioActive && <>
           {view === "overview" && <>
             <section className="overview-toolbar">
               <div><span>داشبورد ثروت شخصی</span><strong>{holdings.length ? `${holdings.length.toLocaleString("fa-IR")} موقعیت · آمادگی ${readinessScore.toLocaleString("fa-IR")} از ۴` : "برای شروع، دارایی ثبت یا سبد نمایشی را فعال کن"}</strong><small>{portfolioRateStatus}</small></div>
@@ -1058,6 +1062,7 @@ export default function Home() {
           </section>}
 
           {view === "agents" && <section className="view-stack"><div className="view-hero"><SectionTitle eyebrow="ASHA REVIEW BOARD" title="اشا و هیئت بررسی چندتخصصی" text="اشا دستیار تصمیم پروژه است و بررسی‌های امنیت، مالی، داده و تجربهٔ کاربری را هماهنگ می‌کند؛ به حساب مالی، معامله یا کلیدهای خصوصی دسترسی ندارد."/><span className="status-chip safe">فقط بررسی</span></div><section className="agent-grid"><article><h3>امنیت</h3><p>رازها، دسترسی، زنجیره تأمین و مرز دادهٔ شخصی.</p><b>Plugin نصب شده</b></article><article><h3>داده و مالی</h3><p>منشأ، point-in-time، صحت محاسبات و سوگیری آزمون.</p><b>Plugin نصب شده</b></article><article><h3>محصول و UI</h3><p>RTL، دسترس‌پذیری و فهم‌پذیری برای مالک پروژه.</p><b>Plugin نصب شده</b></article><article><h3>تست و بازبینی</h3><p>رفتار قطعی، رگرسیون و کنترل کیفیت انتشار.</p><b>Plugin نصب شده</b></article></section><section className="guardrail"><div><b>نصب به معنی اجرای دائمی نیست</b><p>در هر Task، Codex تخصص مرتبط را بر اساس درخواست فراخوانی می‌کند. خروجی مالی همچنان باید از موتور قطعی و آزموده‌شده بیاید.</p></div></section></section>}
+          </>}
         </div>
         <footer><span>اشا · دستیار تصمیم زر و سیم · {portfolioMode === "demo" ? "مرحلهٔ ۲: آزمایشگاه تحلیل و تصمیم" : "مرحلهٔ ۱: ارزیابی زیرساخت داده"}</span><span>{portfolioMode === "demo" ? "آزمایشگاه فعال · همهٔ داده‌ها ساختگی · بدون اجرای معامله" : "ذخیرهٔ سبد مطابق وضعیت اتصال محلی · بدون قیمت ساختگی · بدون معاملهٔ خودکار"} · <b>حالت امن</b></span></footer>
       </main>

@@ -4,6 +4,14 @@
 merged to `main`. This is a log, not a plan — see `docs/01-product/ROADMAP.md` for
 what's ahead.
 
+## R1 — Shared synthetic portfolio (2026-09-09)
+
+Implemented on the working branch for owner-local testing; acceptance remains
+pending and no main merge is implied. Six views now share input/selection, exact
+quantity/cash decisions and canonical browser save/restore. Eight new web tests,
+browser checks and the unchanged seven-method comparison are recorded in
+[`SHARED_PORTFOLIO_DELIVERY_AUDIT.md`](SHARED_PORTFOLIO_DELIVERY_AUDIT.md).
+
 ## Phase 2 — Transparent Laboratory Decision Proposal (2026-09-05)
 
 **Status:** Complete on `codex/phase-2-decision-engine` as a synthetic, evaluation-

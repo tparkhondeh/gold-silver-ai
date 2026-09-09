@@ -2,11 +2,36 @@
 
 **Source of truth for:** where the project stands right now.
 
-_Last updated in the product calendar: ۱۴۰۵/۰۶/۱۴ (Phase 2 synthetic laboratory active)_
+_Last reviewed: 2026-09-09, Asia/Tehran (R1 owner-local shared synthetic portfolio)_
 
-## Current Execution Gate
+## Current review and execution scope
 
-The latest owner request authorizes a quantitative short/medium decision workbench
+The owner explicitly authorized local startup, R1 shared-portfolio implementation,
+tests, documentation, commit and push after the same-day read-only audit. Work is
+restricted to `codex/phase-2-decision-engine` in the existing owner checkout. No
+server change, deployment, live data, financial API, purchase or main change is authorized.
+
+R1 is implemented for owner testing: six portfolio views share one versioned
+synthetic input, exact cash/quantity calculations and browser save/replay. Existing
+methods and the seven-method reference comparison are reused. Three metals/cash
+are supported; other classes are explicit blockers, not silently excluded. The local
+launcher is running on `http://127.0.0.1:4174/` at verification; runtime continuity
+after the active session is not promised. All 15 readiness checks and 169 web tests
+pass. Source, acceptance matrix, security limitations, CI verification policy and
+remaining work: [`SHARED_PORTFOLIO_DELIVERY_AUDIT.md`](SHARED_PORTFOLIO_DELIVERY_AUDIT.md).
+Owner acceptance of this unit is pending; it is not stable or overall project completion.
+
+The preceding audit evidence, date reconciliation, explicit distinction between code,
+tests, runtime, conditional permission, deployment and owner acceptance are in
+[`PROJECT_COORDINATES_2026-09-09_FA.md`](PROJECT_COORDINATES_2026-09-09_FA.md).
+Its GitHub checks apply only to `122586d`, not the new integration commit. The
+reviewed audit edits are included with this implementation. The completion path is in
+[`ROADMAP.md`](../01-product/ROADMAP.md#proposed-route-to-the-first-owner-operational-release).
+The former 67% management estimate is historical, not a measured current total.
+
+## Implementation checkpoint before this review
+
+The preceding implementation request authorized a quantitative short/medium decision workbench
 with exact price/quantity/cost/funding outputs and editable synthetic examples. Its
 scope and acceptance inventory are in `../04-portfolio/DECISION_ACTION_PLAN.md`.
 The preceding 64-slot empty intake plan passes all 254 laboratory tests locally

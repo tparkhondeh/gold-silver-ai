@@ -4,6 +4,33 @@
 
 ## Immediate Next Step
 
+The owner superseded the same-day review-only restriction for the bounded R1 local
+integration. Startup and shared synthetic portfolio implementation are complete for
+owner evaluation; do not rebuild them. Read
+[`SHARED_PORTFOLIO_DELIVERY_AUDIT.md`](SHARED_PORTFOLIO_DELIVERY_AUDIT.md) and changes
+after its checkpoint. Verify the exact published commit's three CI jobs before
+treating the branch as delivered. Owner's short test route is
+[`OWNER_DECISION_TEST_FA.md`](../09-operations/OWNER_DECISION_TEST_FA.md).
+
+The next proposed development unit is R2: map every registered specialized
+analysis/decision requirement to the shared input, identify actual remaining gaps,
+and connect supported data-quality/valuation/bubble views with explicit unsupported
+states and traceable calculations. Reuse existing methods and tests. No change of
+financial methodology or expansion into an unsupported asset family is implicit.
+Close R1 owner feedback before claiming its acceptance. See R1–R2 in
+[`ROADMAP.md`](../01-product/ROADMAP.md#proposed-route-to-the-first-owner-operational-release).
+Paid feeds are not required for that unit. Domain startup is a separate track:
+recheck the current deployment evidence, runtime compatibility, private access,
+backup and rollback before any future publication; do not reopen the old write-
+permission request as if it were still the observed blocker.
+
+[`PROJECT_COORDINATES_2026-09-09_FA.md`](PROJECT_COORDINATES_2026-09-09_FA.md) preserves
+the earlier code/CI and domain observations; its stopped-local state is historical.
+Future real-data, provider, financial-method and stable-release approvals remain
+separate gates. No recurring automation is authorized.
+
+## Recorded implementation checkpoint
+
 The owner accepted the Phase 1 Data Foundation for progression and authorized the
 synthetic-only Phase 2 laboratory on 2026-09-01. ADR 0009 is binding: no real data,
 paid API, real recommendation, production registry write, or execution is permitted.

@@ -41,7 +41,7 @@ function NumberField({ label, value, onChange, min = 0, max = 1_000_000_000, ste
   return <label className="action-field"><span>{label}</span><input type="number" min={min} max={max} step={step} value={Number.isFinite(value) ? value : ""} onChange={(event) => onChange(event.target.valueAsNumber)} /></label>;
 }
 
-function AssetDecisionCard({ plan, row }: { plan: ActionPlan; row: PlanRow }) {
+export function AssetDecisionCard({ plan, row }: { plan: ActionPlan; row: PlanRow }) {
   const asset = plan.inputSnapshot.assets.find((item) => item.id === row.assetId)!;
   const orders = plan.orders.filter((order) => order.assetId === row.assetId);
   const sourceName = (id: string) => id === "SYNTH_CASH" ? "نقد آزاد" : name(plan.inputSnapshot.assets.find((item) => item.id === id)!);
@@ -66,33 +66,50 @@ function AssetDecisionCard({ plan, row }: { plan: ActionPlan; row: PlanRow }) {
   </article>;
 }
 
-export function DecisionActionWorkbench() {
-  const [input, setInput] = useState<ActionInput>(() => buildActionFixture());
+type WorkbenchProps = {
+  input?: ActionInput;
+  onInputChange?: (input: ActionInput) => void;
+  blockedReason?: string;
+  onSave?: () => void;
+  onRestore?: () => void;
+};
+
+export function DecisionActionWorkbench({ input: sharedInput, onInputChange, blockedReason, onSave, onRestore }: WorkbenchProps = {}) {
+  const [localInput, setLocalInput] = useState<ActionInput>(() => buildActionFixture());
+  const input = sharedInput ?? localInput;
+  const setInput = (next: ActionInput | ((previous: ActionInput) => ActionInput)) => {
+    const value = typeof next === "function" ? next(input) : next;
+    if (sharedInput && onInputChange) onInputChange(value);
+    else setLocalInput(value);
+  };
   const [view, setView] = useState<"final" | "short" | "medium">("final");
   const [notice, setNotice] = useState("");
   const computed = useMemo(() => {
     try {
+      if (blockedReason) throw new Error(blockedReason);
       const final = buildActionPlan(input);
       return { final, selected: view === "final" ? final : buildActionPlan({ ...input, shortBudgetBps: view === "short" ? 10_000 : 0 }), error: "" };
     } catch (error) { return { final: null, selected: null, error: error instanceof Error ? error.message : "ورودی قابل محاسبه نیست." }; }
-  }, [input, view]);
+  }, [input, view, blockedReason]);
   const plan = computed.selected;
   const update = (key: keyof ActionInput, value: number) => { setInput((previous) => ({ ...previous, [key]: value })); setNotice(""); };
   const updateAsset = (id: string, key: keyof ActionAsset, value: number) => {
-    setInput((previous) => ({ ...previous, assets: previous.assets.map((asset) => asset.id !== id ? asset : key === "referencePriceToman"
+    setInput((previous) => ({ ...previous, assets: previous.assets.map((asset) => asset.id !== id ? asset : key === "referencePriceToman" && !sharedInput
       ? { ...asset, referencePriceToman: value, bidToman: Math.floor(value * 9950 / 10_000), askToman: Math.ceil(value * 10050 / 10_000) }
-      : { ...asset, [key]: value }) })); setNotice("");
+      : { ...asset, [key]: (key === "bidToman" || key === "askToman") && Number.isNaN(value) ? null : value }) })); setNotice("");
   };
   const save = () => {
+    if (onSave) { onSave(); return; }
     try { if (!computed.final) throw new Error("ابتدا ورودی را اصلاح کن."); localStorage.setItem(STORAGE_KEY, encodeActionPlan(computed.final)); setNotice("نسخهٔ ورودی و محاسبات در همین مرورگر ذخیره شد."); }
     catch { setNotice("ذخیره انجام نشد؛ ورودی یا دسترسی ذخیرهٔ مرورگر را بررسی کن."); }
   };
   const restore = () => {
+    if (onRestore) { onRestore(); setView("final"); return; }
     try { const document = localStorage.getItem(STORAGE_KEY); if (!document) { setNotice("هنوز نسخه‌ای در این مرورگر ذخیره نشده است."); return; } const restored = decodeActionPlan(document); setInput(restored.inputSnapshot); setView("final"); setNotice("نسخه بازیابی شد و همهٔ محاسبات دوباره تطبیق داده شدند."); }
     catch { setNotice("نسخهٔ ذخیره‌شده ناقص، تغییرکرده یا ناسازگار با نسخهٔ فعلی است؛ ورودی فعلی حفظ شد."); }
   };
   return <section className="panel action-workbench" aria-labelledby="action-workbench-title" data-testid="decision-action-workbench">
-    <div className="action-workbench-head"><div><span className="action-eyebrow">مقدار · قیمت · زمان · دلیل</span><h2 id="action-workbench-title">میز تصمیم‌های عددی</h2><p>سبد ساختگیِ مستقل این میز را تغییر بده و مقدار، هزینه و ماندهٔ نقد را بررسی کن.</p></div><span className="status-chip warning">نسخهٔ آزمایشگاهی ۱</span></div>
+    <div className="action-workbench-head"><div><span className="action-eyebrow">مقدار · قیمت · زمان · دلیل</span><h2 id="action-workbench-title">میز تصمیم‌های عددی</h2><p>{sharedInput ? "این میز به همان سبد اصلی متصل است؛ هر تغییر ورودی در نمای کلی، فهرست، مرکز دارایی و تحلیل نیز منعکس می‌شود. انتخاب سناریو، ورودی سه دارایی و نقد همین سبد را بازنشانی می‌کند." : "سبد ساختگیِ مستقل این میز را تغییر بده و مقدار، هزینه و ماندهٔ نقد را بررسی کن."}</p></div><span className="status-chip warning">نسخهٔ آزمایشگاهی ۱</span></div>
     <div className="action-scenarios" aria-label="سناریوی آزمون">{actionScenarios.map((scenario) => <button type="button" key={scenario} aria-pressed={input.scenario === scenario} className={input.scenario === scenario ? "active" : ""} onClick={() => { setInput(buildActionFixture(scenario)); setView("final"); setNotice(""); }}>{scenarioLabels[scenario]}</button>)}</div>
     <p className="action-source-note">{input.scenario === "method" ? "هدف‌ها از موتور تحلیل هشت‌عاملی محاسبه می‌شوند؛ قیمت و مقدار از ورودی‌های همین میز می‌آیند." : "در این سناریوی آزمون، وزن هدف از قرارداد نمونهٔ ثابت می‌آید؛ موتور، مقدار و هزینه را محاسبه می‌کند. برای تحلیل هشت‌عاملی، گزینهٔ اول را انتخاب کن."}</p>
     <details className="action-inputs"><summary>تغییر ورودی‌ها و محدودیت‌ها</summary>
@@ -104,8 +121,13 @@ export function DecisionActionWorkbench() {
         <NumberField label="حداقل ذخیرهٔ نقد — درصد" value={input.minimumCashBps / 100} onChange={(value) => update("minimumCashBps", Math.round(value * 100))} max={50} />
         <NumberField label="حداکثر وزن هر دارایی — درصد" value={input.maximumAssetBps / 100} onChange={(value) => update("maximumAssetBps", Math.round(value * 100))} min={1} max={100} />
       </div>
-      <div className="action-asset-inputs">{input.assets.map((asset) => <fieldset key={asset.id}><legend>{name(asset)}</legend><NumberField label={`موجودی — ${asset.unit === "gram" ? "گرم" : "عدد"}`} value={asset.quantityMilli / 1000} onChange={(value) => updateAsset(asset.id, "quantityMilli", Math.round(value * 1000))} max={1_000_000} step={asset.lotMilli / 1000} /><NumberField label="قیمت مبنا — تومان برای هر واحد" value={asset.referencePriceToman} onChange={(value) => updateAsset(asset.id, "referencePriceToman", value)} min={1000} /><NumberField label="قیمت فروش — تومان برای هر واحد" value={asset.bidToman ?? NaN} onChange={(value) => updateAsset(asset.id, "bidToman", value)} min={1} /><NumberField label="قیمت خرید — تومان برای هر واحد" value={asset.askToman ?? NaN} onChange={(value) => updateAsset(asset.id, "askToman", value)} min={1} /></fieldset>)}</div>
-      <small>تغییر قیمت مبنا، قیمت خرید و فروش نمونه را با فاصلهٔ نیم‌درصد بازسازی می‌کند؛ سپس می‌توانی هرکدام را جدا تغییر بدهی.</small>
+      <div className="action-asset-inputs">{input.assets.map((asset) => <fieldset key={asset.id}><legend>{name(asset)}</legend>
+        <NumberField label={`موجودی — ${asset.unit === "gram" ? "گرم" : "عدد"}`} value={asset.quantityMilli / 1000} onChange={(value) => updateAsset(asset.id, "quantityMilli", Number((value * 1000).toFixed(6)))} max={1_000_000} step={asset.lotMilli / 1000} />
+        <NumberField label="قیمت مبنا — تومان برای هر واحد" value={asset.referencePriceToman} onChange={(value) => updateAsset(asset.id, "referencePriceToman", value)} min={1000} />
+        <NumberField label="قیمت فروش — تومان برای هر واحد" value={asset.bidToman ?? NaN} onChange={(value) => updateAsset(asset.id, "bidToman", value)} min={1} />
+        <NumberField label="قیمت خرید — تومان برای هر واحد" value={asset.askToman ?? NaN} onChange={(value) => updateAsset(asset.id, "askToman", value)} min={1} />
+      </fieldset>)}</div>
+      <small>{sharedInput ? "قیمت مبنا، خرید و فروش مستقل‌اند؛ تغییر یکی، دیگری را حدس نمی‌زند. قیمت مبنا باید بین قیمت فروش و خرید باشد." : "تغییر قیمت مبنا، قیمت خرید و فروش نمونه را با فاصلهٔ نیم‌درصد بازسازی می‌کند؛ سپس می‌توانی هرکدام را جدا تغییر بدهی."}</small>
       <details className="action-detail"><summary>هزینه، زمان و محدودیت‌های بیشتر</summary><div className="action-input-grid">
         <NumberField label="حداکثر گردش سبد — درصد" value={input.maximumTurnoverBps / 100} onChange={(value) => update("maximumTurnoverBps", Math.round(value * 100))} max={100} />
         <NumberField label="فاصلهٔ مجاز قیمت — درصد" value={input.priceToleranceBps / 100} onChange={(value) => update("priceToleranceBps", Math.round(value * 100))} max={20} step={0.1} />
@@ -133,6 +155,7 @@ export function DecisionActionWorkbench() {
       </details>
       <details className="action-detail"><summary>تطبیق کل سبد، معیار انتخاب و زمان بازبینی</summary><p>ارزش قبل {money(plan.portfolio.beforeToman)} = ارزش پس از برنامه {money(plan.portfolio.afterToman)} + هزینهٔ کامل {money(plan.portfolio.totalCostToman)}. ذخیرهٔ نقد حداقلی: {money(plan.portfolio.cashReserveToman)}؛ گردش: {percent(plan.portfolio.turnoverBps)}.</p><p>معیار انتخاب: مجموع فاصلهٔ مبلغ دارایی‌ها و نقد از هدف، به‌اضافهٔ دو برابر هزینهٔ تغییر. پنج اندازهٔ صفر، ۲۵، ۵۰، ۷۵ و ۱۰۰ درصدِ تغییر هدف بررسی شدند؛ بهترین گزینهٔ مجاز {percent(plan.portfolio.chosenFractionBps)} بود.</p><p>فاصله از هدف قبل: {money(plan.portfolio.trackingErrorBeforeToman)}؛ بعد: {money(plan.portfolio.trackingErrorAfterToman)}؛ بهبود معیار پس از جریمهٔ هزینه: {money(plan.portfolio.objectiveImprovementToman)}. این عدد سود موردانتظار نیست. جست‌وجو فقط بین همین پنج اندازه است.</p><p>قیمت‌ها تا {displayDate(plan.validUntil)} معتبرند؛ بازبینی در {displayDate(plan.reviewOn)} یا زودتر با تغییر ورودی. نقطهٔ سودگیری و حد ضرر قیمتی توسط این روش پیش‌بینی نمی‌شود؛ حدود نمایش‌داده‌شده، سقف ورود و کف خروجِ مجازند.</p><p>بازه‌های ۳۰ و ۱۸۰ روز و سهم اولیهٔ ۵۰/۵۰ فرض طراحیِ قابل‌تغییر این میز هستند. عوامل روند موجود همچنان از ۲۰ و ۶۰ مشاهدهٔ ساختگی استفاده می‌کنند.</p><code>{plan.schemaVersion} · {plan.methodologyId}</code></details>
     </>}
+    {sharedInput && <p className="action-source-note">مقایسهٔ هفت روش در پایین، آزمایش مرجعِ ثابت و جداگانه است؛ نتیجهٔ آن، برنامه یا بودجهٔ سبد مشترک شما نیست.</p>}
     <ActionSizingComparisonPanel />
   </section>;
 }

@@ -24,7 +24,7 @@ duplicate information across files — link instead.
 |---|---|
 | "Where is the project right now?" | `docs/10-project-state/CURRENT_STATE.md` |
 | "What should be worked on next?" | `docs/10-project-state/NEXT_TASK.md` |
-| "What is the owner's simple progress coordinate?" | `docs/10-project-state/PRE_API_READINESS_AUDIT_FA.md` |
+| "What is the owner's simple progress coordinate?" | Latest dated review linked from `docs/10-project-state/CURRENT_STATE.md`; historical audits are not current percentages |
 | "What are the rules for how we work?" | `docs/00-governance/` |
 | "What is the product supposed to do?" | `docs/01-product/PRODUCT_SPECIFICATION.md` |
 | "How is the system built?" | `docs/02-architecture/` |
@@ -98,12 +98,12 @@ A phase with unresolved critical issues does not unblock the next phase.
 
 ## 8. Token-Efficiency Rules
 
-- Read only the docs relevant to the current task. Use the table in § 2 to jump
-  directly to the right file instead of scanning the repo.
-- Prefer `docs/10-project-state/CURRENT_STATE.md` + `NEXT_TASK.md` over re-reading
-  completed-phase history.
-- Do not re-summarize unchanged documents; link to them.
-- Keep new documentation as short as it can be while staying complete — no filler.
+تا پایان این پروژه، در تمام نوبت‌ها و چت‌های مرتبط، مصرف توکن را بدون افت کیفیت، دقت، پوشش نیازها یا راندمان بهینه کن. ابتدا وضعیت ثبت‌شده و تغییرات پس از آن را بخوان؛ تاریخچه را فقط برای رفع ابهام بررسی کن. جستجوها و خواندن‌های مستقل را دسته‌بندی کن و خروجی‌های مرتبط و کوتاه بگیر. فایل بدون تغییر، لاگ کامل، برنامهٔ تکراری و بررسی وضعیت بدون تغییر را دوباره مصرف نکن. تست‌های متناسب و همهٔ کنترل‌های ضروری را کامل انجام بده؛ فقط با تغییر تازه، شکست یا ابهام موجه آن‌ها را تکرار کن. برای صرفه‌جویی، اعتبارسنجی داده و منطق تصمیم‌گیری یا سایر بررسی‌های ضروری را حذف نکن و کار را ناقص تحویل نده. در نقاط عطف و پیش از انتقال به چت بعدی، وضعیت، شواهد، موانع و قدم بعدی را کوتاه ثبت کن. از کاربر نخواه این قاعده را دوباره تکرار کند.
+
+Use § 2 to select relevant sources, starting with `CURRENT_STATE.md` and
+`NEXT_TASK.md`; link to unchanged evidence rather than re-summarizing it. Keep
+documentation concise without losing requirements. Read mandatory instructions
+fully; this efficiency rule never relaxes the quality or authorization gates.
 
 ## 9. Stop and Ask the Owner When
 

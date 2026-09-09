@@ -1,0 +1,24 @@
+.shared-workspace { min-width: 0; }
+.shared-workspace h2 { margin: 8px 0; }
+.shared-workspace p { line-height: 1.9; }
+.shared-workspace .shared-toolbar { display: flex; flex-wrap: wrap; gap: 16px; justify-content: space-between; align-items: end; }
+.shared-toolbar .action-field { min-width: 230px; }
+.shared-workspace select { font: inherit; padding: 11px 13px; border-radius: 12px; color: var(--ink); background: var(--surface); border: 1px solid var(--line); max-width: 100%; }
+.shared-summary { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+.shared-summary article { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 20px; min-width: 0; }
+.shared-summary span, .shared-summary strong { display: block; }
+.shared-summary span { font-size: 12px; color: var(--muted); }
+.shared-summary strong { font-size: 18px; margin-top: 12px; overflow-wrap: anywhere; }
+.shared-table-panel .table-scroll { overflow-x: auto; margin: 20px 0; }
+.shared-table { width: 100%; border-collapse: collapse; min-width: 660px; font-size: 13px; }
+.shared-table th, .shared-table td { padding: 16px 10px; text-align: right; border-bottom: 1px solid var(--line); }
+.shared-table th { color: var(--muted); font-weight: 500; }
+.shared-table tr[aria-selected="true"] { background: #f0eafa; }
+.shared-editor { border: 1px solid var(--line); border-radius: 16px; padding: 18px; margin: 24px 0; min-width: 0; }
+.shared-editor legend { font-weight: 700; padding: 0 8px; }
+.shared-editor p { font-size: 12px; color: var(--muted); }
+.shared-analysis { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; margin: 22px 0; }
+.shared-workspace code { overflow-wrap: anywhere; display: block; font-size: 11px; }
+.shared-workspace button:focus-visible, .shared-workspace select:focus-visible { outline: 3px solid #9775bf; outline-offset: 3px; }
+@media (max-width: 1100px) { .shared-summary { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 600px) { .shared-summary, .shared-analysis { grid-template-columns: minmax(0, 1fr); } .shared-toolbar .action-field { min-width: 0; width: 100%; } .shared-editor { padding: 12px; } }

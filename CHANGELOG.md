@@ -7,6 +7,14 @@ state is recorded in `docs/10-project-state/CURRENT_STATE.md`.
 
 ## [Unreleased]
 
+- Integrated the main synthetic portfolio, asset center, analysis, decision and risk
+  views through one versioned input; reused exact physical sizing and the existing
+  seven-method comparison. Added fail-closed unsupported assets and canonical
+  browser replay without importing or overwriting personal/legacy drafts.
+- Added eight integration/security-contract tests (169 web total), shared input
+  documentation and the updated owner test route. Preserved the 2026-09-09 audit
+  and durable token-efficiency guidance. No server, live feed, database or main change.
+
 - Added the exact Python-to-web synthetic sizing bridge and a same-cost/lot
   two-fold comparison for seven existing methods. The shared solver sizes trades
   before future-path evaluation; costs count once and no financial rank is produced.

@@ -25,10 +25,12 @@
    account synchronization is still absent. Iran-specific
    history, methodology approval, backtesting, and walk-forward validation are also
    incomplete.
-6. **The demo portfolio is synthetic and session-local.** It opens by default in a
-   fresh browser so the whole product can be tested, remains visibly labelled, and
-   must never be interpreted as owner or market data. Demo holdings are excluded from
-   database save; personal holdings move only through explicit save/restore controls.
+6. **The shared portfolio is synthetic and browser-local.** R1 now joins six views
+   and saves/replays a versioned three-metal/cash input in its own browser namespace.
+   Unsupported instrument classes block the whole decision. Old session demos and
+   personal database storage are not migrated or mixed. Hosted synchronized storage,
+   complete specialized analysis and real-data validation remain separate roadmap
+   steps; see `SHARED_PORTFOLIO_DELIVERY_AUDIT.md`.
 7. **The public review link has no shared-account backend.** Local owner persistence
    does not alter the public deployment. A visitor's entered
    holdings stay in that browser session and cannot be reviewed by the owner. Because

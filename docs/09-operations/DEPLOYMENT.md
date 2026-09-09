@@ -25,9 +25,45 @@ the protected runtime boundary and starts the web application only on
 `127.0.0.1:4174`. It runs in the foreground and does not make deployment or DNS
 changes.
 
-## Owner-hosted server preflight
+## Owner domain: current read-only review, 2026-09-09
 
-`STATUS: NOT READY` for a Cloudflare access gateway. A read-only SSH preflight was
+The owner conditionally permitted a private evaluation deployment on 2026-09-06.
+The 2026-09-09 request is inspection/documentation-only and does not authorize a
+deployment or repair in this turn. No server file, service or setting was changed.
+
+Observed at approximately 17:07–17:09 UTC (20:37–20:39 Asia/Tehran):
+
+- SSH to `wealthos_dev@62.204.61.18:2490` succeeded with existing host-key checking.
+- `/home/wealthos/goldsilver.wealthos.ir` now grants the account effective `rwx`;
+  its ACL mask is `rwx` and the read-only `test -w` check returned yes. The earlier
+  `r-x`/no-write blocker is resolved as observed; no test file was written.
+- The domain's `.htaccess` preserves `.well-known/` and proxies other paths to
+  `http://127.0.0.1:3012/`. Its recorded mtime is
+  `2026-09-07 18:42:54 +03:30`. This is file-metadata evidence, not proof of who
+  changed it or when the separate ACL changed.
+- `ss -lntH sport = :3012` returned no listener. An HTTP request from the server
+  itself to `127.0.0.1:3012/api/health` was refused. Node `v22.23.2` exists.
+- Certificate-verified public HTTPS to `https://goldsilver.wealthos.ir/` returned
+  `503 Service Unavailable`. It did not display a working Gold/Silver application.
+- No Gold/Silver release appeared in the accessible account's `apps/` listing.
+  Other accounts, protected host-wide configuration and inaccessible paths were
+  not inventoried; absence of deployment everywhere on the host is not claimed.
+
+Current diagnosis: the configured backend is not running/listening on its target
+port, consistent with the observed 503. Restored filesystem permission is not
+successful deployment. Proxy semantics, production build/runtime compatibility,
+private owner access, restart supervision, scoped backup and rollback must still
+be tested before a future release. Do not bypass loopback-only portfolio/operator
+controls or copy local databases, backups, API keys or runtime secrets to publish
+the synthetic preview. Any temporary access design must respect ADR 0008; a shared
+PIN/password must not be used as a substitute for the required owner identity gate.
+
+The older Sites URL above is a separate historical review deployment, not evidence
+that this commit is deployed at the owner's domain; it was not reverified here.
+
+## Historical Cloudflare gateway preflight, 2026-08-31
+
+At that date, `STATUS: NOT READY` for a Cloudflare access gateway. A read-only SSH preflight was
 run on `2026-08-31` against the owner-provided server; it changed no file, service,
 DNS record, deployment or account.
 
