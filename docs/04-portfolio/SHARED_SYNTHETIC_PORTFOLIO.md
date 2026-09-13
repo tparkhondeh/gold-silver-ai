@@ -1,4 +1,4 @@
-# Shared synthetic portfolio v1
+# Shared synthetic portfolio v2
 
 Status: implemented for owner-local evaluation on the working branch. This is R1,
 not completion of the financial product. The owner explicitly authorized this
@@ -7,14 +7,16 @@ production identity or deployment decision is added.
 
 ## One source of input
 
-`apps/web/app/shared-portfolio.ts` defines `asha.synthetic.shared_portfolio.v1`:
+`apps/web/app/shared-portfolio.ts` defines `asha.synthetic.shared_portfolio.v2`:
 portfolio identity, revision, `TOMAN`, quantity scale 1000, selected asset, the existing
-`asha.synthetic.action_input.v1` input and an explicit unsupported-holdings list.
+`asha.synthetic.action_input.v1` input, an explicit unsupported-holdings list and
+`asha.synthetic.metal_references.v1` diagnostic input. Missing references are null,
+not a loaded example. The action input/method itself is unchanged.
 The input snapshot is retained in each computed plan. No quote, value, quantity,
 constraint or target is copied into an independently editable view model.
 
 `SharedPortfolioWorkspace` stays mounted in the existing page shell across navigation.
-Overview, holdings, asset center, analysis, decision and risk views share this state.
+Overview, holdings, asset center, analysis, decision, risk, market and quality views share this state.
 Personal mode remains separate. Old session drafts, the previous independent desk
 snapshot, protected environment and database are not imported, migrated or rewritten.
 The reference starts with the desk's existing three instruments and cash, not the
@@ -61,19 +63,63 @@ including when the unsupported row's quantity is zero. There is no subset plan
 mislabelled as a whole-portfolio result. This adapter does not claim financial
 support or validate instrument-specific market rules for these classes.
 
-The seven-method/two-fold sizing comparison and market/data-quality reference
-screens remain labelled independent fixtures. Their existing data/method is not
+The seven-method/two-fold sizing comparison remains a labelled independent fixture.
+Its existing data/method is not
 silently replaced with the owner's shared input and their results are not its budget.
 
 ## Storage and boundary
 
-`asha.synthetic.shared_document.v1` contains the full shared portfolio and computed
-result. Browser storage key: `asha-shared-synthetic-portfolio-v1`; an explicit save
+`asha.synthetic.shared_document.v2` contains the full shared portfolio, computed
+result and replayed raw-metal diagnostic. Browser storage key remains
+`asha-shared-synthetic-portfolio-v1`; an explicit save
 also retains the previous document at the `-previous` key. Refresh/restore uses only
 this namespace. It validates keys/types/units/identity and size (1,000,000 characters),
 requires canonical JSON (including duplicate-key rejection), recomputes the result
 and rejects any mismatch. Invalid recovery preserves both current state and stored
 bytes. An unreadable initial save is explicitly distinguished from a new reference.
+
+## V2 impact, compatibility and rollback (2026-09-13)
+
+The only changed consumers are the shared workspace/diagnostic panel and its local
+document codec; there is no server, API, database or financial method migration.
+Newly written V2 documents are not readable by old V1 code. The reader retains V1:
+first validate exact old keys/version and replay the old result, then migrate in
+memory with empty reference slots. No old data is guessed, deleted or written on
+load. The first explicit V2 save keeps the original bytes in the previous slot.
+To roll back, restore that V1 slot alongside the previous code, retaining the V2
+document separately. Later saves retain one previous version, not unlimited history.
+Tests cover canonical legacy migration, forged versions/results, V2 reference
+tampering, exact replay, existing method outputs and failed-save preservation.
+This is a bounded Tier B engineering extension of the already implemented raw
+metal diagnostic, not selection of a new financial method or provider.
+
+## Raw metal diagnostic contract
+
+`shared-metal-reference.ts` reuses the Phase 1 formula defined in
+`../03-market/BUBBLE_MODEL.md` and the existing troy-ounce constant. It belongs to
+shared metals infrastructure; only shared diagnostics depend on it, never sizing.
+
+- Exactly three source-tagged synthetic slots: USD_TOMAN in integer toman/USD,
+  XAU_USD and XAG_USD in integer US cents/troy ounce. The UI shows dollar inputs to
+  two decimals. Values are null or positive safe integers at most 1,000,000,000 in
+  the declared storage unit; mismatched currency/unit/source/precision is rejected.
+- Dated quotes must be valid at the portfolio's asOf and on the same publication
+  date as that metal's domestic reference. This date-level fixture contract is not
+  a real-market timestamp synchronization policy. Missing/expired/future/misaligned
+  quotes suppress the dependent result. Gold-only gaps do not suppress silver.
+- Raw value per gram = ounceUSD / 31.1034768 × tomanPerUSD × purityPermille / 1000.
+  Exact integer form: numerator = ounceCents × FX × purityPermille × 100;
+  denominator = 311034768. Difference = domesticReference − rawValue;
+  premiumPercent = difference / rawValue × 100. BigInt fractions preserve every
+  digit. Four-decimal display truncates toward zero, including negative values.
+- Applicable to gram gold/silver, not coins without approved fine-weight specs.
+  Domestic reference price is not a bid/ask execution quote. Manufacturing,
+  tax, fees and transport are not included in raw metal value; the result is
+  neither historical bubble rank, full fair value, entry/exit signal nor forecast.
+- `asha.synthetic.raw_metal_premium.v1` retains source, date, purity, exact fractions,
+  formula and missing reasons. `affectsDecision=false`; changing references must
+  leave the existing eight-factor targets, plan, costs and cash byte-equivalent.
+  Historical calibration/regime and cost-factor mapping remain separate gaps.
 
 This is local synthetic storage, not authentication, encryption, signed evidence,
 cross-device synchronization or an append-only audit log. A user with local storage

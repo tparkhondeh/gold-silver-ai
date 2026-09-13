@@ -103,8 +103,9 @@ export function calculatePortfolioScenario(holdings: ScenarioHoldingInput[], sho
   };
 }
 
+export const TROY_OUNCE_GRAMS = 31.1034768;
 export function calculatePremiumPercent(marketValueToman: number, referenceUsdPerOunce: number, usdToman: number, pureGrams: number) {
   if (![marketValueToman, referenceUsdPerOunce, usdToman, pureGrams].every((value) => Number.isFinite(value) && value > 0)) return null;
-  const theoreticalValueToman = (referenceUsdPerOunce / 31.1034768) * usdToman * pureGrams;
+  const theoreticalValueToman = (referenceUsdPerOunce / TROY_OUNCE_GRAMS) * usdToman * pureGrams;
   return ((marketValueToman / theoreticalValueToman) - 1) * 100;
 }

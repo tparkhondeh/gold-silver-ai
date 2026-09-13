@@ -1,8 +1,9 @@
 import { analyzeActionHorizon } from "./decision-action-plan.ts";
 import { sandboxIntelligenceMethodology } from "./sandbox-intelligence-engine.ts";
 import { evaluateSharedPortfolio, validateSharedPortfolio, type SharedPortfolio } from "./shared-portfolio.ts";
+import { buildRawMetalDiagnostics } from "./shared-metal-reference.ts";
 
-export const SHARED_ANALYSIS_VERSION = "asha.synthetic.shared_analysis.v1";
+export const SHARED_ANALYSIS_VERSION = "asha.synthetic.shared_analysis.v2";
 
 // Exact fractions are kept alongside display values: no rounded display feeds decisions.
 function fraction(numerator: bigint, denominator: bigint) {
@@ -63,9 +64,9 @@ export function buildSharedAnalysis(draft: SharedPortfolio) {
     planState: evaluation.state, quotes, metalRatio,
     metalRatioFormula: "(gold_toman_per_gram / gold_purity) / (silver_toman_per_gram / silver_purity)",
     metalRatioMissing: ratioReady ? null : "قیمت معتبر هم‌تاریخِ طلا و نقره لازم است.",
-    concentration, horizons,
+    concentration, horizons, rawMetal: buildRawMetalDiagnostics(input, portfolio.metalReferences),
     gaps: [
-      { id: "intrinsic_bubble", state: "missing" as const, reason: "ارزش ذاتی و اجزای آن در ورودی مشترک نیست؛ حباب سکه یا فلز محاسبه نشده است." },
+      { id: "intrinsic_bubble", state: "partial" as const, reason: "اختلاف قیمت با ارزش فلز خام برای گرم طلا و نقره، تنها با مراجع کامل و هم‌تاریخ محاسبه می‌شود. حباب تاریخی، هزینهٔ ساخت و حباب سکه پوشش داده نمی‌شوند؛ این تشخیص وارد وزن‌ها یا سفارش‌ها نشده است." },
       { id: "market_regime", state: "missing" as const, reason: "روش مصوب تشخیص وضعیت بازار در این قرارداد وجود ندارد؛ از نسبت طلا/نقره سیگنال ساخته نمی‌شود." },
       { id: "empirical_history", state: "fixture_only" as const, reason: "روند، نوسان، افت، ارزش‌گذاری نسبی و بحران از تاریخچه و پروفایل ساختگی نسخه‌دارِ موتور موجود می‌آیند، نه قیمت‌های ویرایش‌شده یا بازار." },
       { id: "liquidity_and_cost", state: "fixture_only" as const, reason: "امتیاز نقدشوندگی و هزینهٔ عامل تحلیل از پروفایل مرجع است؛ ظرفیت و هزینهٔ سفارش نهایی جداگانه از ورودی همین سبد محاسبه می‌شوند." },

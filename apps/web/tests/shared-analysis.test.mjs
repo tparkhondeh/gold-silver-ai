@@ -9,7 +9,7 @@ test("shared diagnostics reuse exact horizon factors without creating a second b
   const p = createSharedPortfolio(), before = structuredClone(p);
   const report = buildSharedAnalysis(p), plan = buildActionPlan(p.input);
   assert.deepEqual(p, before);
-  assert.equal(report.schemaVersion, "asha.synthetic.shared_analysis.v1");
+  assert.equal(report.schemaVersion, "asha.synthetic.shared_analysis.v2");
   assert.equal(report.financialUseAllowed, false);
   assert.equal(report.executionAllowed, false);
   assert.deepEqual(report.source.inputSnapshot, p.input);
@@ -78,7 +78,7 @@ test("unsupported positions block the whole plan, invalid units reject diagnosti
   p.unsupported = [{id:"SYNTH_FX", quantityMilli:1000, referencePriceToman:null}];
   const report = buildSharedAnalysis(p);
   assert.equal(report.planState, "undecidable"); assert.equal(report.concentration, null);
-  assert.equal(report.gaps.find(g => g.id === "intrinsic_bubble").state, "missing");
+  assert.equal(report.gaps.find(g => g.id === "intrinsic_bubble").state, "partial");
   assert.equal(report.gaps.find(g => g.id === "market_regime").state, "missing");
   p.input.assets[0].unit = "piece";
   assert.throws(() => buildSharedAnalysis(p));

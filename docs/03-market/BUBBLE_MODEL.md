@@ -11,6 +11,12 @@ only when the domestic quote, USD/IRR quote, and global ounce quote are all vali
 This diagnostic is not the historical bubble model described below, excludes coins
 until their exact reference specification is approved, and cannot issue a decision.
 
+On 2026-09-13 this same limited diagnostic was connected to the versioned shared
+synthetic portfolio, using exact fractions and explicit optional reference slots.
+Contract, units and migration are specified once in
+[`SHARED_SYNTHETIC_PORTFOLIO.md`](../04-portfolio/SHARED_SYNTHETIC_PORTFOLIO.md#raw-metal-diagnostic-contract).
+This does not complete or select the historical methodology below.
+
 ## Target Question
 
 The system must eventually be able to answer, for a given instrument (gold, silver,

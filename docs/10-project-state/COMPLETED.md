@@ -6,6 +6,11 @@ what's ahead.
 
 ## Bounded shared-analysis adapter (2026-09-13; partial R2)
 
+Follow-up: current raw-metal diagnostic and optional reference inputs connected;
+V2 exact save/replay and verified V1 migration, 193 web tests and browser checks.
+[Evidence and limits](SHARED_METAL_REVIEW_2026-09-13.md). Not historical bubble,
+method recalibration or domain delivery.
+
 Eight shared views, pure-metal ratio, per-asset quote quality and source-linked
 existing factor/history/scenario evidence implemented and tested. No financial
 method change or domain release. Scope, browser checks and remaining blockers:

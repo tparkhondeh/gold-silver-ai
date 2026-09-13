@@ -4,6 +4,16 @@
 
 ## Immediate Next Step
 
+Continue from the [shared-metal follow-up](SHARED_METAL_REVIEW_2026-09-13.md).
+Do not rebuild current raw-metal diagnostics or migrate saved inputs with guessed
+references. Investigate local Worker outbound transport without keyed requests or
+relaxed TLS; validate any alternate local runtime against existing security gates.
+Hosted identity/provider selection still requires owner decision, not another generic
+permission to continue. Historical/regime model selection is a separate method gate.
+
+Previous checkpoint instructions (publication of c049411 passed all three jobs in
+run 34749340220; new changes still need their own exact-SHA CI):
+
 Continue from [2026-09-13 evidence](R2_DOMAIN_REVIEW_2026-09-13.md).
 Do not rebuild the eight-view diagnostic adapter. First verify publication and
 three GitHub jobs for the exact final SHA. Close owner usability findings using

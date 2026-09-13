@@ -1,7 +1,10 @@
 import { buildActionFixture, buildActionPlan, validateActionInput, type ActionInput, type ActionPlan } from "./decision-action-plan.ts";
+import { buildRawMetalDiagnostics, emptyMetalReferences, validateMetalReferences, type MetalReferences } from "./shared-metal-reference.ts";
 
-export const SHARED_PORTFOLIO_VERSION = "asha.synthetic.shared_portfolio.v1";
-export const SHARED_DOCUMENT_VERSION = "asha.synthetic.shared_document.v1";
+export const SHARED_PORTFOLIO_VERSION = "asha.synthetic.shared_portfolio.v2";
+export const SHARED_DOCUMENT_VERSION = "asha.synthetic.shared_document.v2";
+// Retain the original storage slot and its previous-copy behavior. V1 loads read-only;
+// only an explicit Save writes V2, preserving the old document in the previous slot.
 export const SHARED_STORAGE_KEY = "asha-shared-synthetic-portfolio-v1";
 export const sharedViews = ["overview", "portfolio", "asset-center", "analysis", "decisions", "risk", "market", "data"] as const;
 export const unsupportedCatalog = {
@@ -21,6 +24,7 @@ export type SharedPortfolio = {
   currency: "TOMAN"; quantityScale: 1000; revision: number;
   selectedAssetId: string;
   input: ActionInput;
+  metalReferences: MetalReferences;
   unsupported: UnsupportedHolding[];
 };
 export type SharedEvaluation = {
@@ -34,7 +38,7 @@ export function createSharedPortfolio(): SharedPortfolio {
   return {
     schemaVersion: SHARED_PORTFOLIO_VERSION, portfolioId: "ASHA_SYNTHETIC_SHARED_PORTFOLIO_V1",
     currency: "TOMAN", quantityScale: 1000, revision: 1, selectedAssetId: "SYNTH_GOLD",
-    input: buildActionFixture(), unsupported: [],
+    input: buildActionFixture(), metalReferences: emptyMetalReferences(), unsupported: [],
   };
 }
 
@@ -43,11 +47,12 @@ function keys(value: unknown, expected: string) {
 }
 
 export function validateSharedPortfolio(value: unknown): SharedPortfolio {
-  keys(value, "schemaVersion portfolioId currency quantityScale revision selectedAssetId input unsupported");
+  keys(value, "schemaVersion portfolioId currency quantityScale revision selectedAssetId input metalReferences unsupported");
   const portfolio = value as SharedPortfolio;
   if (portfolio.schemaVersion !== SHARED_PORTFOLIO_VERSION || portfolio.portfolioId !== "ASHA_SYNTHETIC_SHARED_PORTFOLIO_V1" || portfolio.currency !== "TOMAN" || portfolio.quantityScale !== 1000) throw new Error("نسخه، واحد پول یا مقیاس مقدار سبد ناسازگار است؛ تبدیل خودکار انجام نمی‌شود.");
   if (!Number.isSafeInteger(portfolio.revision) || portfolio.revision < 1 || portfolio.revision >= Number.MAX_SAFE_INTEGER) throw new Error("شمارهٔ بازبینی سبد معتبر نیست.");
   const input = validateActionInput(portfolio.input);
+  validateMetalReferences(portfolio.metalReferences);
   // This adapter has deliberately narrower instrument support than the general lab engine.
   const reference = buildActionFixture().assets;
   if (input.assets.length !== reference.length) throw new Error("این نسخه به سه ابزار تعریف‌شدهٔ طلا، سکه و نقره نیاز دارد؛ مقدار صفر مجاز است.");
@@ -100,16 +105,22 @@ function canonical(value: unknown): string {
 
 export function encodeSharedPortfolio(portfolio: SharedPortfolio): string {
   const input = validateSharedPortfolio(portfolio);
-  return canonical({ schemaVersion: SHARED_DOCUMENT_VERSION, portfolio: input, result: evaluateSharedPortfolio(input) });
+  return canonical({ schemaVersion: SHARED_DOCUMENT_VERSION, portfolio: input, result: evaluateSharedPortfolio(input), metalDiagnostics: buildRawMetalDiagnostics(input.input, input.metalReferences) });
 }
 
 export function decodeSharedPortfolio(document: string): SharedPortfolio {
   if (document.length > 1_000_000) throw new Error("اندازهٔ نسخهٔ ذخیره‌شده بیش از حد مجاز است.");
   const payload = JSON.parse(document);
-  keys(payload, "schemaVersion portfolio result");
+  const legacy = payload?.schemaVersion === "asha.synthetic.shared_document.v1";
+  keys(payload, legacy ? "schemaVersion portfolio result" : "schemaVersion portfolio result metalDiagnostics");
   if (document !== canonical(payload)) throw new Error("سند باید دقیقاً در قالب ذخیرهٔ استاندارد باشد؛ کلید تکراری یا قالب مبهم پذیرفته نیست.");
-  if (payload.schemaVersion !== SHARED_DOCUMENT_VERSION) throw new Error("نسخهٔ سند ذخیره‌شده پشتیبانی نمی‌شود.");
-  const portfolio = validateSharedPortfolio(payload.portfolio);
+  if (!legacy && payload.schemaVersion !== SHARED_DOCUMENT_VERSION) throw new Error("نسخهٔ سند ذخیره‌شده پشتیبانی نمی‌شود.");
+  if (legacy) {
+    keys(payload.portfolio, "schemaVersion portfolioId currency quantityScale revision selectedAssetId input unsupported");
+    if (payload.portfolio.schemaVersion !== "asha.synthetic.shared_portfolio.v1") throw new Error("نسخهٔ سبد قدیمی ناسازگار است.");
+  }
+  const portfolio = validateSharedPortfolio(legacy ? { ...payload.portfolio, schemaVersion: SHARED_PORTFOLIO_VERSION, metalReferences: emptyMetalReferences() } : payload.portfolio);
   if (canonical(payload.result) !== canonical(evaluateSharedPortfolio(portfolio))) throw new Error("نتیجهٔ ذخیره‌شده با محاسبهٔ دوباره تطبیق ندارد؛ نسخهٔ فعلی حفظ شد.");
+  if (!legacy && canonical(payload.metalDiagnostics) !== canonical(buildRawMetalDiagnostics(portfolio.input, portfolio.metalReferences))) throw new Error("محاسبهٔ مرجع فلز با نسخهٔ ذخیره‌شده تطبیق ندارد.");
   return portfolio;
 }

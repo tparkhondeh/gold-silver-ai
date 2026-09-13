@@ -6,6 +6,15 @@ _Last reviewed: 2026-09-13, Asia/Tehran (bounded R2 and actual domain inspection
 
 ## Latest R2/domain checkpoint
 
+Follow-up: the existing raw-metal premium diagnostic is now connected to the shared
+synthetic portfolio with explicit FX/ounce inputs, exact fractions and V2 save/replay
+with read-only V1 migration. All eight views and the existing plan remain consistent.
+193 web tests and browser checks pass; see [current follow-up](SHARED_METAL_REVIEW_2026-09-13.md).
+Historical bubble/regime methodology, actual market evidence, private domain identity
+and cross-device storage remain incomplete. No server change is claimed.
+
+Earlier checkpoint (same day):
+
 Eight shared synthetic views now include price quality, pure-metal ratio and
 source-linked existing horizon/factor/scenario diagnostics. Exact single-budget
 orders and saved v1 portfolios are preserved. Browser, numeric, persistence and
