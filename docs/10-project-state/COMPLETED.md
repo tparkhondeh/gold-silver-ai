@@ -4,6 +4,13 @@
 merged to `main`. This is a log, not a plan — see `docs/01-product/ROADMAP.md` for
 what's ahead.
 
+## Bounded shared-analysis adapter (2026-09-13; partial R2)
+
+Eight shared views, pure-metal ratio, per-asset quote quality and source-linked
+existing factor/history/scenario evidence implemented and tested. No financial
+method change or domain release. Scope, browser checks and remaining blockers:
+[current audit](R2_DOMAIN_REVIEW_2026-09-13.md). Owner acceptance pending.
+
 ## Isolated market-test implementation (2026-09-10; partial acceptance)
 
 Versioned separate real-price/fictitious-position contract, exact valuation,

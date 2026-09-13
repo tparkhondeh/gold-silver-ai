@@ -3,7 +3,7 @@ import { buildActionFixture, buildActionPlan, validateActionInput, type ActionIn
 export const SHARED_PORTFOLIO_VERSION = "asha.synthetic.shared_portfolio.v1";
 export const SHARED_DOCUMENT_VERSION = "asha.synthetic.shared_document.v1";
 export const SHARED_STORAGE_KEY = "asha-shared-synthetic-portfolio-v1";
-export const sharedViews = ["overview", "portfolio", "asset-center", "analysis", "decisions", "risk"] as const;
+export const sharedViews = ["overview", "portfolio", "asset-center", "analysis", "decisions", "risk", "market", "data"] as const;
 export const unsupportedCatalog = {
   SYNTH_STOCKS: { name: "[ساختگی] سهام", assetClass: "equity", unit: "سهم" },
   SYNTH_FX: { name: "[ساختگی] ارز", assetClass: "currency", unit: "واحد ارز" },

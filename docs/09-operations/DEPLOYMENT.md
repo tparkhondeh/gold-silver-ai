@@ -4,6 +4,29 @@
 
 ## Status
 
+Latest owner-domain observations and current scope (2026-09-13) are in
+[`R2_DOMAIN_REVIEW_2026-09-13.md`](../10-project-state/R2_DOMAIN_REVIEW_2026-09-13.md).
+The owner now permits a private deployment, but it has not occurred: public HTTPS
+503, no backend listener on 3012, and no production identity gate. Write access is
+available. The historical review URLs below are not proof of a working release.
+
+### Permanent independent-access acceptance criteria
+
+Publication is accepted only when the exact deployed commit is identifiable,
+valid HTTPS works independently of the developer computer/conversation/local
+process, and the owner can use ordinary supported browsers. Test actual login,
+non-owner/anonymous denial, logout and session expiry, save/replay and the stated
+scope of storage. Same-browser persistence must never be called cross-device sync.
+Record which browsers/devices were actually tested; OS HTTP and an in-app browser
+are not substitutes for all independent-browser tests. No login bypass, shared
+PIN, temporary tunnel or exposure of loopback-only operators is acceptable.
+Runtime supervision after administrative disconnect, safe restart/recovery,
+scoped backups/rollback and preservation of other hosted services are mandatory.
+Secret/private-data transfer and production identity selection retain their
+separate authorization gates. Domain publication alone is not project completion.
+
+### Historical Sites review
+
 `STATUS: PARTIAL`. The Phase 1 working branch has an owner-authorized public Sites
 deployment for interface review at
 `https://asha-gold-silver-ai.taha-p.chatgpt.site`. It is not a stable release and is

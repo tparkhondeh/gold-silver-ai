@@ -157,10 +157,13 @@ function normalizeTargets(targets: Record<string, number>, ids: string[]) {
   return out;
 }
 
-function horizon(input: ActionInput, id: "short" | "medium"): HorizonPlan {
+// The diagnostic views and target planner share this exact engine adapter.
+// Never display the sandbox's independent amount suggestions as executable orders.
+export function analyzeActionHorizon(payload: ActionInput, id: "short" | "medium") {
+  const input = validateActionInput(payload);
   const values = input.assets.map((asset) => Number(valueOf(asset)));
   const total = values.reduce((sum, value) => sum + value, input.cashToman);
-  const analysis = calculateSandboxIntelligence([
+  return calculateSandboxIntelligence([
     ...input.assets.map((asset, index) => ({
       id: asset.id, name: asset.name.replace("[ساختگی] ", ""), assetClassId: asset.assetClass,
       assetClassLabel: asset.assetClass === "gold" ? "طلا" : "نقره", valueToman: values[index],
@@ -169,6 +172,12 @@ function horizon(input: ActionInput, id: "short" | "medium"): HorizonPlan {
     })),
     { id: CASH, name: "وجه نقد و سپرده بانکی", assetClassId: "cash", assetClassLabel: "نقد", valueToman: input.cashToman, costToman: null, allocationPercent: input.cashToman / total * 100, returnPercent: null, riskScore: 1, riskLabel: "ساختگی", premium: { applicable: false, current: null, minimum: null, average: null, maximum: null } },
   ], { liquidityReservePercent: input.minimumCashBps / 100, maxSingleAssetPercent: input.maximumAssetBps / 100, maxAcceptableDrawdownPercent: input.maximumDrawdownPercent }, id === "short" ? "short" : "long");
+}
+
+function horizon(input: ActionInput, id: "short" | "medium"): HorizonPlan {
+  const values = input.assets.map((asset) => Number(valueOf(asset)));
+  const total = values.reduce((sum, value) => sum + value, input.cashToman);
+  const analysis = analyzeActionHorizon(input, id);
   let targets = Object.fromEntries(analysis.assets.map((row) => [row.id, row.targetWeightPercent * 100]));
   if (input.scenario !== "method") {
     const ids = input.assets.map((asset) => asset.id);

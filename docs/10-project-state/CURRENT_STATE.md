@@ -2,9 +2,23 @@
 
 **Source of truth for:** where the project stands right now.
 
-_Last reviewed: 2026-09-10, Asia/Tehran (isolated market-data technical test)_
+_Last reviewed: 2026-09-13, Asia/Tehran (bounded R2 and actual domain inspection)_
 
-## Current review and execution scope
+## Latest R2/domain checkpoint
+
+Eight shared synthetic views now include price quality, pure-metal ratio and
+source-linked existing horizon/factor/scenario diagnostics. Exact single-budget
+orders and saved v1 portfolios are preserved. Browser, numeric, persistence and
+security checks are recorded in [the current audit](R2_DOMAIN_REVIEW_2026-09-13.md).
+R2 remains partial: intrinsic/bubble and market-regime inputs/method mapping are
+not complete. Private hosted identity and cross-device storage are also absent.
+The domain returned 503 with no configured backend listener; write access exists.
+No server change or successful deployment is claimed. One permitted local Navasan
+request timed out; the quota reservation is retained. These fresh observations
+supersede older connectivity and publication-blocker statements below.
+Owner acceptance and financial use remain separate gates.
+
+## Prior 2026-09-10 review and execution scope
 
 The owner now explicitly permits licensed real market observations for **local
 software testing only**, under [ADR 0011](../08-decisions/ADR/0011-isolated-authorized-market-software-test.md).

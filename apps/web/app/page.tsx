@@ -882,7 +882,7 @@ export default function Home() {
 
         <div className="workspace-mode-switch" aria-label="محیط کار"><button className={marketTestActive ? "active" : ""} aria-pressed={marketTestActive} onClick={() => chooseWorkspace("market")}>آزمون با قیمت بازار</button><button className={!marketTestActive && portfolioMode === "demo" ? "active" : ""} aria-pressed={!marketTestActive && portfolioMode === "demo"} onClick={() => chooseWorkspace("demo")}>آزمایشگاه ساختگی</button><button className={!marketTestActive && portfolioMode === "personal" ? "active" : ""} aria-pressed={!marketTestActive && portfolioMode === "personal"} onClick={() => chooseWorkspace("personal")}>سبد شخصی جداگانه</button></div>
         {!marketTestActive && legacyStorageIssue && <p className="action-error" role="alert">یکی از نسخه‌های قبلی مرورگر خوانده نشد؛ اصل آن حفظ شده و ذخیرهٔ خودکار آن محیط خاموش است. آزمون بازار فضای جداگانه دارد.</p>}
-        {!marketTestActive && portfolioMode === "demo" && <section className="simulation-banner" role="status"><div><b>داده و تصمیم ساختگی</b><span>دیده‌بان و مقایسهٔ روش‌ها، آزمون مرجع جداگانه‌اند.</span></div></section>}
+        {!marketTestActive && portfolioMode === "demo" && <section className="simulation-banner" role="status"><div><b>داده و تصمیم ساختگی</b><span>کیفیت و رابطهٔ فلزات از سبد مشترک؛ مقایسهٔ روش‌ها، آزمون مرجع جداگانه است.</span></div></section>}
 
         <div className="page-content">
           <SharedPortfolioWorkspace active={sharedPortfolioActive} view={view} onNavigate={setView} />

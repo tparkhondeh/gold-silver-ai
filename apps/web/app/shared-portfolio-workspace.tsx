@@ -9,6 +9,8 @@ import {
   type SharedPortfolio, type UnsupportedId,
 } from "./shared-portfolio";
 import type { View } from "./workspace-navigation";
+import { buildSharedAnalysis } from "./shared-analysis";
+import { SharedAnalysisPanel } from "./shared-analysis-panel";
 
 const money = (value: string | null | undefined) => value == null ? "قابل محاسبه نیست" : `${BigInt(value).toLocaleString("fa-IR")} تومان`;
 const percent = (bps: number | null | undefined) => bps == null ? "نامشخص" : `${(bps / 100).toLocaleString("fa-IR")}٪`;
@@ -59,6 +61,9 @@ export function SharedPortfolioWorkspace({ active, view, onNavigate }: { active:
     return () => window.clearTimeout(timer);
   }, []);
   const evaluation = useMemo(() => evaluateSharedPortfolio(portfolio), [portfolio]);
+  const analysis = useMemo(() => {
+    try { return buildSharedAnalysis(portfolio); } catch { return null; }
+  }, [portfolio]);
   const plan = evaluation.plan;
   const selected = portfolio.input.assets.find((asset) => asset.id === portfolio.selectedAssetId);
   const selectedRow = plan?.rows.find((row) => row.assetId === portfolio.selectedAssetId);
@@ -90,7 +95,7 @@ export function SharedPortfolioWorkspace({ active, view, onNavigate }: { active:
 
   if (!active) return null;
   if (!loaded) return <p role="status">در حال بررسی نسخهٔ ذخیره‌شدهٔ سبد مشترک…</p>;
-  const titles: Partial<Record<View, string>> = { overview: "نمای کلی سبد مشترک", portfolio: "فهرست و ورودی سبد مشترک", "asset-center": "مرکز داراییِ سبد مشترک", analysis: "تحلیل سبد مشترک", decisions: "تصمیم برای سبد مشترک", risk: "ریسک همین برنامهٔ مشترک" };
+  const titles: Partial<Record<View, string>> = { overview: "نمای کلی سبد مشترک", portfolio: "فهرست و ورودی سبد مشترک", "asset-center": "مرکز داراییِ سبد مشترک", analysis: "تحلیل سبد مشترک", decisions: "تصمیم برای سبد مشترک", risk: "ریسک همین برنامهٔ مشترک", market: "رابطهٔ فلزات همین سبد", data: "کیفیت دادهٔ همین سبد" };
   return <section className="view-stack shared-workspace" data-testid="shared-portfolio" data-revision={portfolio.revision}>
     <div className="view-hero"><div><span className="action-eyebrow">یک سبد · یک ورودی · یک بودجه</span><h2>{titles[view]}</h2><p>طلا، سکه، نقره و نقد از یک قرارداد مشترک می‌آیند؛ مقدار صفر یعنی فعلاً آن دارایی را نداری.</p></div><span className="status-chip warning">دادهٔ کاملاً ساختگی</span></div>
     <div className="shared-toolbar">
@@ -126,11 +131,12 @@ export function SharedPortfolioWorkspace({ active, view, onNavigate }: { active:
     {(view === "asset-center" || view === "analysis") && <section className="panel"><h3>{selected ? assetName(selected.name) : "دارایی فاقد پشتیبانی"}</h3>{selected ? <p data-testid="shared-selected-summary">موجودی {quantity(selected.quantityMilli)} {selected.unit === "gram" ? "گرم" : "عدد"} · ارزش {money(evaluation.values[selected.id])} · وزن {percent(evaluation.weightsBps[selected.id])} از کل سبد با نقد</p> : <p>برای این دارایی تحلیل یا تصمیم جایگزین ساخته نشده است.</p>}
       {view === "asset-center" && selected && <AssetEditor asset={selected} update={(key, value) => updateAsset(selected.id, key, value)} />}
       {plan && selectedRow && view === "asset-center" && <AssetDecisionCard plan={plan} row={selectedRow} />}
-      {plan && selected && view === "analysis" && <div className="shared-analysis">{plan.horizons.map((horizon) => <article key={horizon.id} className="action-card" data-testid={`shared-analysis-${horizon.id}`}><h3>{horizon.id === "short" ? "کوتاه‌مدت" : "میان‌مدت"} — {horizon.days.toLocaleString("fa-IR")} روز</h3><p>وزن هدف {assetName(selected.name)}: <b>{percent(horizon.targetsBps[selected.id])}</b> از کل سبد؛ وزن هدف نقد: {percent(horizon.targetsBps.SYNTH_CASH)}.</p><p>سناریوی فعال: {portfolio.input.scenario === "method" ? "موتور تحلیل هشت‌عاملی" : "وزن هدف ثابتِ آزمون؛ نه انتخاب موتور تحلیل"}. این افق به‌تنهایی بودجهٔ جداگانه‌ای خرج نمی‌کند.</p><details><summary>عامل‌ها و دلیل عددی</summary>{horizon.factors[selected.id].map((factor) => <p key={factor.id}>{factor.label}: امتیاز {factor.points.toLocaleString("fa-IR")} × وزن {percent(factor.weight * 10_000)} = سهم {factor.weightedContribution.toLocaleString("fa-IR")}</p>)}<p>افت در بدترین سناریوی ساختگی: {horizon.worstStressPercent[selected.id].toLocaleString("fa-IR")}٪؛ احتمال یا پیش‌بینی افت بازار نیست.</p></details></article>)}</div>}
+      {plan && selected && view === "analysis" && <div className="shared-analysis">{plan.horizons.map((horizon) => <article key={horizon.id} className="action-card" data-testid={`shared-analysis-${horizon.id}`}><h3>{horizon.id === "short" ? "کوتاه‌مدت" : "میان‌مدت"} — {horizon.days.toLocaleString("fa-IR")} روز</h3><p>وزن هدف {assetName(selected.name)}: <b>{percent(horizon.targetsBps[selected.id])}</b> از کل سبد؛ وزن هدف نقد: {percent(horizon.targetsBps.SYNTH_CASH)}.</p><p>سناریوی فعال: {portfolio.input.scenario === "method" ? "موتور تحلیل هشت‌عاملی" : "وزن هدف ثابتِ آزمون؛ نه انتخاب موتور تحلیل"}. این افق به‌تنهایی بودجهٔ جداگانه‌ای خرج نمی‌کند.</p><p>عامل‌ها، ورودی عددی و سناریوها در بخش «شواهد تحلیل همین سبد» قابل بازکردن‌اند.</p></article>)}</div>}
       <div className="market-actions"><button className="ghost-button" onClick={() => onNavigate("analysis")}>تحلیل دو افق</button><button className="primary-button" onClick={() => onNavigate("decisions")}>مقدار، هزینه و برنامهٔ نهایی</button></div>
     </section>}
     {view === "risk" && <section className="panel"><h3>ریسک و محدودیت‌های همان برنامه</h3>{plan ? <><p>حد فشار سناریویی قبل: {money(plan.portfolio.stressLossBeforeToman)}؛ بعد: {money(plan.portfolio.stressLossAfterToman)}.</p><p>ذخیرهٔ نقد: {money(plan.portfolio.cashReserveToman)}؛ گردش نهایی: {percent(plan.portfolio.turnoverBps)}. تحمل افت ثبت‌شده: {portfolio.input.maximumDrawdownPercent.toLocaleString("fa-IR")}٪.</p></> : <p>به‌علت ورودی ناقص یا فاقد پشتیبانی، ریسک برنامه قابل‌محاسبه نیست.</p>}<button className="primary-button" onClick={() => onNavigate("decisions")}>دیدن برنامه و محدودیت‌ها</button></section>}
     {view === "decisions" && <DecisionActionWorkbench input={portfolio.input} onInputChange={updateInput} blockedReason={evaluation.errors.join(" ")} onSave={save} onRestore={restore} />}
-    <details className="action-detail"><summary>ردپای مشترک و محدودهٔ ذخیره</summary><p>بازبینی ورودی: {portfolio.revision.toLocaleString("fa-IR")}؛ روش عددی تغییر نکرده است. ذخیره فقط در این مرورگر است و شامل ورودی و نتیجهٔ بازتولیدشده می‌شود؛ ذخیرهٔ شخصیِ سرور و نمونهٔ مستقل قبلی استفاده یا بازنویسی نمی‌شوند.</p><code dir="ltr">{portfolio.schemaVersion} · {portfolio.input.fixtureId} · {plan?.methodologyId ?? "NO_PLAN"}</code><p>نمای دیده‌بان بازار، آزمون‌های کیفیت و مقایسهٔ هفت روش، نمونه‌های مرجع جداگانه‌اند؛ داده یا بودجهٔ این سبد محسوب نمی‌شوند.</p></details>
+    {analysis && ["analysis", "risk", "market", "data"].includes(view) && <SharedAnalysisPanel report={analysis} selectedAssetId={portfolio.selectedAssetId} view={view} />}
+    <details className="action-detail"><summary>ردپای مشترک و محدودهٔ ذخیره</summary><p>بازبینی ورودی: {portfolio.revision.toLocaleString("fa-IR")}؛ روش عددی تغییر نکرده است. ذخیره فقط در این مرورگر است و شامل ورودی و نتیجهٔ بازتولیدشده می‌شود؛ ذخیرهٔ شخصیِ سرور و نمونهٔ مستقل قبلی استفاده یا بازنویسی نمی‌شوند.</p><code dir="ltr">{portfolio.schemaVersion} · {portfolio.input.fixtureId} · {plan?.methodologyId ?? "NO_PLAN"}</code><p>کیفیت قیمت و رابطهٔ فلزات به همین سبد متصل‌اند؛ تاریخچه و پروفایل عوامل، مرجع ساختگی موتور هستند. مقایسهٔ هفت روش و هیئت بررسی، نمونه‌های مرجع جداگانه‌اند؛ بودجهٔ این سبد محسوب نمی‌شوند.</p></details>
   </section>;
 }

@@ -4,6 +4,14 @@
 
 ## Phase 1 Limitations
 
+Current 2026-09-13 observations supersede older connectivity claims: GitHub remote
+read and npm audit now succeed. Domain 503 is consistent with an absent 3012
+backend, not missing write permission; production identity remains unresolved.
+Navasan times out in Worker transport while OS root HTTPS succeeds. Exact quota,
+partial R2 coverage and untested hosted paths: [current audit](R2_DOMAIN_REVIEW_2026-09-13.md).
+
+Historical checkpoint:
+
 Current 2026-09-10 blockers supersede older connectivity statements below:
 no usable new real snapshot yet (corrected Navasan transport awaits the retained
 cooldown), Rahavard transfer permission absent, and fresh GitHub/npm audit TLS

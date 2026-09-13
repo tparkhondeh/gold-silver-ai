@@ -4,8 +4,8 @@ import { readFile } from "node:fs/promises";
 import { actionScenarios, buildActionFixture, buildActionPlan } from "../app/decision-action-plan.ts";
 import { createSharedPortfolio, decodeSharedPortfolio, encodeSharedPortfolio, evaluateSharedPortfolio, replaceSharedInput, validateSharedPortfolio, sharedViews, unsupportedCatalog } from "../app/shared-portfolio.ts";
 
-test("one versioned input supplies all six portfolio views and the unchanged engine", () => {
-  assert.deepEqual(sharedViews, ["overview", "portfolio", "asset-center", "analysis", "decisions", "risk"]);
+test("one versioned input supplies all eight portfolio views and the unchanged engine", () => {
+  assert.deepEqual(sharedViews, ["overview", "portfolio", "asset-center", "analysis", "decisions", "risk", "market", "data"]);
   const portfolio = createSharedPortfolio();
   const original = structuredClone(portfolio);
   const result = evaluateSharedPortfolio(portfolio);

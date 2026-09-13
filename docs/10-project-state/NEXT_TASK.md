@@ -4,6 +4,27 @@
 
 ## Immediate Next Step
 
+Continue from [2026-09-13 evidence](R2_DOMAIN_REVIEW_2026-09-13.md).
+Do not rebuild the eight-view diagnostic adapter. First verify publication and
+three GitHub jobs for the exact final SHA. Close owner usability findings using
+[the R2 guide](../09-operations/OWNER_R2_TEST_FA.md).
+
+Private domain deployment requires the unresolved owner identity/provider decision
+under ADR 0008; do not substitute a shared password or expose local routes. Backend
+3012 is absent, not write-protected. No server change has occurred in this unit.
+After the identity gate: scoped server backup, production runtime compatibility,
+owner authorization/session tests, service supervision and independent browser
+acceptance; see the permanent criteria in `../09-operations/DEPLOYMENT.md`.
+
+Navasan: one request on 2026-09-13 timed out in Worker transport; no usable quote.
+Do not request again before `2026-09-13T15:50:41.921Z` and a fresh durable quota
+check. No-key root HEAD succeeded via OS HTTPS but timed out in Worker; investigate
+that transport without extra keyed requests, paid acquisition or relaxed TLS.
+Remaining R2 intrinsic/bubble inputs and market-regime methodology are explicit
+gaps, not permission to guess formulas or recalibrate the approved method.
+
+## Historical 2026-09-10 next step (superseded by the checkpoint above)
+
 Continue the bounded market technical test from
 [`MARKET_TECHNICAL_TEST_2026-09-10.md`](MARKET_TECHNICAL_TEST_2026-09-10.md), not a
 rebuild of R1. After `2026-09-10T05:59:13.867Z`, recheck durable quota and make **one**
