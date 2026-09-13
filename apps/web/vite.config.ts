@@ -2,6 +2,7 @@ import vinext from "vinext";
 import { defineConfig } from "vite";
 import hostingConfig from "./.openai/hosting.json" with { type: "json" };
 import { sites } from "./build/sites-vite-plugin.ts";
+import { localNodeDev, localNodeDevEnabled } from "./build/local-node-dev.ts";
 
 const SITE_CREATOR_PLACEHOLDER_DATABASE_ID =
   "00000000-0000-4000-8000-000000000000";
@@ -33,7 +34,7 @@ const localBindingConfig = {
     : [],
 };
 
-export default defineConfig(async () => {
+export default defineConfig(async ({ command }) => {
   // Keep Wrangler and Miniflare state project-local. These are non-secret tool
   // settings; application environment belongs in ignored `.env*` files.
   process.env.WRANGLER_WRITE_LOGS ??= "false";
@@ -41,19 +42,22 @@ export default defineConfig(async () => {
   process.env.MINIFLARE_REGISTRY_PATH ??= ".wrangler/registry";
 
   // Wrangler snapshots its log path while the Cloudflare plugin is imported.
-  const { cloudflare } = await import("@cloudflare/vite-plugin");
+  const nodeDev = localNodeDevEnabled(command, process.env);
+  const runtimePlugin = nodeDev ? localNodeDev() : (await import("@cloudflare/vite-plugin")).cloudflare({
+    viteEnvironment: { name: "rsc", childEnvironments: ["ssr"] },
+    config: localBindingConfig,
+  });
 
   return {
-    server: isCodexSeatbeltSandbox
+    // Isolate optimizer output: Node and Worker dependency bundles differ.
+    cacheDir: nodeDev ? "node_modules/.vite-asha-node" : undefined,
+    server: nodeDev ? { host: "127.0.0.1", port: 4174, strictPort: true } : isCodexSeatbeltSandbox
       ? { watch: { useFsEvents: false, usePolling: true } }
       : undefined,
     plugins: [
       vinext(),
       sites(),
-      cloudflare({
-        viteEnvironment: { name: "rsc", childEnvironments: ["ssr"] },
-        config: localBindingConfig,
-      }),
+      runtimePlugin,
     ],
   };
 });

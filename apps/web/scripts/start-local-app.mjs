@@ -54,6 +54,7 @@ try {
       env: {
         ...process.env,
         ...runtimeEnvironment,
+        ASHA_LOCAL_NODE_DEV: "true",
         ASHA_MARKET_NETWORK_ENABLED: "false",
         ASHA_LOCAL_MARKET_TEST_ENABLED: "true",
         NAVASAN_HISTORY_EXECUTION_ENABLED: "false",

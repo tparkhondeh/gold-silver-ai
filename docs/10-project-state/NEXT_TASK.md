@@ -4,6 +4,17 @@
 
 ## Immediate Next Step
 
+Latest: [local Node compatibility](LOCAL_NODE_REVIEW_2026-09-13.md) is implemented
+and locally tested. Verify the final follow-up SHA's three CI jobs. Do not repeat
+no-key probes or rebuild the adapter. After `2026-09-13T15:50:41.921Z`, check the
+durable quota and, within existing permission, make one local Navasan latest test
+from the Node runtime. A valid snapshot is required before real-price acceptance.
+Private hosted identity/provider choice and owner account setup remain unresolved;
+request that specific decision rather than a generic continuation prompt. No
+scheduled retry, credential transfer, public deployment or invented history.
+
+Earlier instructions below are superseded where the evidence above closes them:
+
 Continue from the [shared-metal follow-up](SHARED_METAL_REVIEW_2026-09-13.md).
 Do not rebuild current raw-metal diagnostics or migrate saved inputs with guessed
 references. Investigate local Worker outbound transport without keyed requests or

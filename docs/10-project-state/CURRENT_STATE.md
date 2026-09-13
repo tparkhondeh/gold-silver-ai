@@ -6,6 +6,13 @@ _Last reviewed: 2026-09-13, Asia/Tehran (bounded R2 and actual domain inspection
 
 ## Latest R2/domain checkpoint
 
+Latest local-runtime follow-up: Windows launcher now uses an explicit, loopback-only
+Node development alternative. Root/health/UI and unchanged quota guard were tested;
+197 web tests pass. Builds retain Worker. No new quote or domain deployment.
+[Evidence, recovery and next gate](LOCAL_NODE_REVIEW_2026-09-13.md).
+Raw-metal commit `b9d3109` passed all three GitHub jobs in run 34752898053;
+the runtime follow-up requires its own final-SHA checks.
+
 Follow-up: the existing raw-metal premium diagnostic is now connected to the shared
 synthetic portfolio with explicit FX/ounce inputs, exact fractions and V2 save/replay
 with read-only V1 migration. All eight views and the existing plan remain consistent.

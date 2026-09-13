@@ -4,6 +4,14 @@
 merged to `main`. This is a log, not a plan — see `docs/01-product/ROADMAP.md` for
 what's ahead.
 
+## Local Node development compatibility (2026-09-13)
+
+Loopback-only local launcher alternative, existing response headers/market locks,
+isolated dependency cache and unchanged production build target tested. 197 web
+tests; eight-view browser replay and no-consumption cooldown verified.
+[Evidence and remaining gates](LOCAL_NODE_REVIEW_2026-09-13.md). No real quote or
+private deployment is implied.
+
 ## Bounded shared-analysis adapter (2026-09-13; partial R2)
 
 Follow-up: current raw-metal diagnostic and optional reference inputs connected;

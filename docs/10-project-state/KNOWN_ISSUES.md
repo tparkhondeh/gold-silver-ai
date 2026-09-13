@@ -4,6 +4,12 @@
 
 ## Phase 1 Limitations
 
+2026-09-13 follow-up: [Node local compatibility](LOCAL_NODE_REVIEW_2026-09-13.md)
+provides a tested alternate dev runtime with the same headers/loopback/market gates.
+This avoids dependence on the failing Worker transport for the next local test;
+authenticated Navasan quote success is still unverified. No added quota consumption.
+Raw-metal shared diagnostics are connected, but historical bubble/regime are not.
+
 Current 2026-09-13 observations supersede older connectivity claims: GitHub remote
 read and npm audit now succeed. Domain 503 is consistent with an absent 3012
 backend, not missing write permission; production identity remains unresolved.
