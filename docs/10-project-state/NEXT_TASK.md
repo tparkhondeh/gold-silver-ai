@@ -4,6 +4,20 @@
 
 ## Immediate Next Step
 
+Latest, 2026-09-14: continue the [official Rahavard file route](RAHAVARD_FILE_REVIEW_2026-09-14.md).
+Its independent synthetic TXT intake and shared valuation workspace are implemented;
+do not rebuild them or call their fixture a vendor export. Owner-operated fresh login
+is needed to verify actual export entitlement. Clarify the export-specific permission,
+retention and minimal selection where necessary; the short support question is
+prepared but must not be sent without separate instruction. Only an authorized
+minimal sample can establish the real encoding/columns/symbol/unit/time profile.
+Real intake remains disabled until that reviewed profile and separate real storage
+adapter exist. Check final source SHA's three GitHub jobs; no main/server/financial
+method change, account extraction, automatic retry, subscription purchase or history.
+
+Earlier independent Navasan/runtime guidance follows; no Navasan request was made
+as a side effect of the Rahavard/file task:
+
 Latest: [local Node compatibility](LOCAL_NODE_REVIEW_2026-09-13.md) is implemented
 and locally tested. Verify the final follow-up SHA's three CI jobs. Do not repeat
 no-key probes or rebuild the adapter. After `2026-09-13T15:50:41.921Z`, check the

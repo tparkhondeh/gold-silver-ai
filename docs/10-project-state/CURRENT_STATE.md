@@ -2,7 +2,42 @@
 
 **Source of truth for:** where the project stands right now.
 
-_Last reviewed: 2026-09-13, Asia/Tehran (bounded R2 and actual domain inspection)_
+_Last reviewed: 2026-09-14, Asia/Tehran (official file route and isolated synthetic intake)_
+
+## Latest file-intake checkpoint
+
+The owner authorized the official Rahavard file route, conditional on actual access
+and permission. Fresh reload required login; the old tab's Gold badge is not current
+entitlement evidence. Official TXT availability is confirmed, but its actual layout,
+units/times and licensed retention remain unresolved. No real quote was received.
+Independent file-intake contracts and all nine test views are implemented using
+explicit synthetic TXT, separate storage and the existing exact valuation math;
+real import remains closed, not replaced with guessed vendor fields.
+[Evidence, owner test and next gate](RAHAVARD_FILE_REVIEW_2026-09-14.md).
+The scope correction below is preserved; no tia work belongs to this checkpoint.
+
+## Conversation scope correction — 2026-09-14
+
+The owner clarified that the Personal Agent / tia store-readiness request was
+pasted into this Gold/Silver conversation by mistake. That request, its permissions,
+test counts, APK/store work and readiness report are **not Gold/Silver requirements
+or progress**. Do not continue tia work from this conversation on that basis.
+
+Read-only reconciliation found this checkout clean on
+`codex/phase-2-decision-engine` at `eb4f390b85eb3eabb1f3a4fc3a2a88f459c77eb8`;
+fresh `git ls-remote` confirmed the same GitHub branch SHA. The last Gold/Silver
+commit/reflog entry was 2026-09-13 14:28:21 +03:30. No tia implementation had been
+written into this repository. The separate `personal agent` repository retains
+the published tia code commit `56978d4` and evidence commit `ec9ab6c`; neither was
+reverted or transferred here. Reversing those published changes requires explicit
+scope from the owner rather than a history rewrite or an inferred deletion.
+
+Only this clarification was added locally, after a hash-verified copy of this
+file under `.cache/checkpoints/scope-correction-20260914T161145/`. No product code,
+data, server, branch, commit history or runtime was changed in this correction.
+The product checkpoint below and [NEXT_TASK.md](NEXT_TASK.md) remain the basis for
+Gold/Silver continuation; their older tests and runtime observations were not rerun
+or promoted to fresh evidence by this scope-only review.
 
 ## Latest R2/domain checkpoint
 

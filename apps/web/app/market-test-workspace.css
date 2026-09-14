@@ -7,4 +7,6 @@
 .market-test-workspace .shared-table th,.market-test-workspace .shared-table td{font-size:12px;white-space:normal;min-width:110px}
 .market-provenance{display:block;max-width:230px;font-size:11px;line-height:1.8;color:var(--muted)}
 .market-test-workspace .action-detail{overflow-wrap:anywhere}
+.market-test-workspace .table-scroll{max-width:100%;min-width:0;overflow-x:auto}
+.market-test-workspace .action-field textarea{box-sizing:border-box;width:100%;max-width:100%;min-width:0;resize:vertical;font:12px/1.7 monospace;padding:10px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink)}
 @media(max-width:700px){.market-test-workspace .shared-summary{grid-template-columns:1fr}.workspace-mode-switch{padding-inline:12px}.workspace-mode-switch button{flex:1}}

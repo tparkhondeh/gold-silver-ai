@@ -111,11 +111,19 @@ export function validateMarketTestPortfolio(value: unknown, nowMs: number): asse
 
 export function evaluateMarketTest(portfolio: MarketTestPortfolio, nowMs: number) {
   validateMarketTestPortfolio(portfolio, nowMs);
+  return evaluateQuotedTestPositions(portfolio, portfolio.snapshot?.observations ?? [], nowMs);
+}
+
+// Shared arithmetic only. Each source must validate its own contract before calling;
+// no source or dataset label is changed to reuse portfolio valuation.
+export function evaluateQuotedTestPositions<T extends { instrumentCode: string; priceRial: string; publishedAt: string | null }>(
+  portfolio: MarketTestPortfolio, observations: T[], nowMs: number,
+) {
   let complete = true; let fresh = true; let total = BigInt(portfolio.cashRial);
   const rows = marketTestAssets.map((asset) => {
-    const observation = portfolio.snapshot?.observations.find((q) => q.instrumentCode === asset.id) ?? null;
+    const observation = observations.find((q) => q.instrumentCode === asset.id) ?? null;
     const qty = portfolio.quantitiesMilli[asset.id];
-    const state: "missing" | "future" | "stale" | "fresh" = !observation ? "missing" : Date.parse(observation.publishedAt) > nowMs ? "future" : nowMs - Date.parse(observation.publishedAt) > MARKET_TTL_MS ? "stale" : "fresh";
+    const state: "missing" | "unknown_time" | "future" | "stale" | "fresh" = !observation ? "missing" : observation.publishedAt === null ? "unknown_time" : Date.parse(observation.publishedAt) > nowMs ? "future" : nowMs - Date.parse(observation.publishedAt) > MARKET_TTL_MS ? "stale" : "fresh";
     const valueRial = observation ? (BigInt(observation.priceRial) * BigInt(qty) / 1000n).toString() : qty === 0 ? "0" : null;
     if (qty > 0 && !observation) complete = false;
     if (qty > 0 && state !== "fresh") fresh = false;

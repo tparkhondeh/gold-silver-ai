@@ -4,8 +4,9 @@ import { useEffect, useMemo, useState } from "react";
 import { createMarketTestPortfolio, displayRialAsToman as money, evaluateMarketTest, marketTestAssets, validateMarketSnapshot, tomanInputToRial, rialToTomanInput, type MarketTestPortfolio } from "./market-test-contract";
 import { restoreMarketTest, saveMarketTest } from "./market-test-storage";
 import type { View } from "./workspace-navigation";
+import { FileMarketWorkspace } from "./file-market-workspace";
 
-const labels = { fresh: "تازه", stale: "منقضی — فقط ارزش ثبت‌شده", future: "زمان انتشار در آینده", missing: "قیمت موجود نیست" };
+const labels = { fresh: "تازه", stale: "منقضی — فقط ارزش ثبت‌شده", future: "زمان انتشار در آینده", missing: "قیمت موجود نیست", unknown_time: "زمان قیمت نامشخص" };
 const percent = (value: number | null) => value === null ? "نامشخص" : `${(value / 100).toLocaleString("fa-IR")}٪`;
 const date = (value: string) => new Date(value).toLocaleString("fa-IR");
 const stageLabels: Record<string, string> = { network: "ارتباط با منبع", http: "پاسخ سرویس", payload: "خواندن پاسخ", validation: "اعتبارسنجی داده", outcome_recording: "ثبت نتیجه در دفتر سهمیه" };
@@ -29,6 +30,7 @@ export function MarketTestWorkspace({ active, view, onNavigate }: { active: bool
   const [notice, setNotice] = useState("");
   const [busy, setBusy] = useState(false);
   const [quota, setQuota] = useState("");
+  const [fileMode, setFileMode] = useState(false);
   useEffect(() => {
     const timer = window.setTimeout(() => {
       const time = Date.now(); setNow(time);
@@ -67,11 +69,13 @@ export function MarketTestWorkspace({ active, view, onNavigate }: { active: bool
     catch { setNotice("بازیابی ناموفق؛ نسخهٔ ذخیره و ورودی فعلی حفظ شدند."); }
   };
   if (!active) return null;
+  if (fileMode) return <><button className="ghost-button" onClick={() => setFileMode(false)}>بازگشت به آزمون نوسان</button><FileMarketWorkspace view={view} onNavigate={onNavigate}/></>;
   if (now === null) return <p role="status">در حال بررسی نسخهٔ آزمون…</p>;
   const result = computed.result;
   const selected = result?.rows.find((r) => r.asset.id === portfolio.selectedAsset);
   const editor = (asset: (typeof marketTestAssets)[number]) => <label className="action-field" key={asset.id}><span>{asset.name} — {asset.unit === "gram" ? "گرم" : "عدد"} (موجودی فرضی)</span><input data-testid={`market-quantity-${asset.id}`} type="number" min="0" step={asset.unit === "unit" ? 1 : 0.001} value={Number.isFinite(portfolio.quantitiesMilli[asset.id]) ? portfolio.quantitiesMilli[asset.id] / 1000 : ""} onChange={(event) => change({ quantitiesMilli: { ...portfolio.quantitiesMilli, [asset.id]: Number((event.target.valueAsNumber * 1000).toFixed(6)) } })}/></label>;
   return <section className="view-stack market-test-workspace" data-testid="market-test-workspace" data-revision={portfolio.revision}>
+    <button className="ghost-button" onClick={() => setFileMode(true)}>اتصال فایل TXT رهاورد / آزمون ساختگی</button>
     <div className="market-test-boundary"><b>{portfolio.snapshot ? "قیمت واقعی بازار" : "قیمت بازار هنوز دریافت نشده"} · موجودی و نقد فرضیِ آزمون</b><span>منبع: نوسان · بدون اتصال به سبد شخصی یا موتور سفارش</span></div>
     <div className="shared-toolbar"><label className="action-field"><span>دارایی مشترک</span><select data-testid="market-selection" value={portfolio.selectedAsset} onChange={(event) => change({ selectedAsset: event.target.value })}>{marketTestAssets.map((a) => <option key={a.id} value={a.id}>{a.name}</option>)}</select></label><div className="market-actions"><button className="primary-button" disabled={busy} onClick={receive}>{busy ? "در حال دریافت…" : "دریافت یک‌باره از نوسان"}</button><button className="ghost-button" onClick={save}>ذخیرهٔ آزمون بازار</button><button className="ghost-button" onClick={restore}>بازیابی آزمون بازار</button></div></div>
     {notice && <p role="status" className="action-notice">{notice}</p>}
