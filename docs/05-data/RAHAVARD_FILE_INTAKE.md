@@ -113,9 +113,56 @@ use stayed blocked, history stayed locked, and the quota remained at eight consu
 requests: no provider request was made. This was startup/health/browser smoke
 verification, **not** a repeat of all fixture paths or a real-data end-to-end test.
 
-## Short support question — prepared, NOT sent
+## September 15 export safety and support handoff
 
-سلام. آیا استفاده از خروجی TXT ابزار رسمی انتقال داده، با اشتراک فعلی من، در نرم‌افزار شخصی Gold/Silver AI فقط روی کامپیوتر خودم و بدون بازنشر مجاز است و تحت مجوز بند ۲.۱ قرار می‌گیرد؟ برای طلای ۱۸ عیار، سکه امامی و نقره ۹۹۹، آیا می‌توان فقط آخرین رکورد را گرفت؟ لطفاً قالب ستون‌ها، واحد/ضریب قیمت، عیار، نوع قیمت، زمان/منطقه زمانی و حدود دریافت و نگهداری را اعلام کنید. فعلاً درخواست خرید یا دریافت تاریخچه ندارم.
+This supersedes the earlier request to enable draft symbol selection. The owner's
+14:31 screenshot showed Active checked, daily selected, a 15-minute interval and
+a next execution time of 14:37:06. The configured folder was
+`.cache/rahavard-export/`. Therefore merely using Apply can leave scheduled export
+enabled; do not treat it as a guaranteed non-executing draft operation.
+
+The owner was asked to uncheck Active and save with plain Apply, not Apply-and-run.
+The subsequent 14:34 screenshot shows Active unchecked, the settings disabled and
+no next-execution label. Keep export **off** until a permitted minimal acquisition
+route is established. Daily is a bar period, not a latest-only/history limit.
+A metadata-only recursive check at `2026-09-15T14:43:50+03:30` found zero files in
+the configured ignored output folder. This does not attest to other client caches.
+No real-file receipt, symbol coverage or successful vendor export is claimed.
+
+The owner then authorized asking official support about the minimal export and
+personal-use permission. This supersedes the earlier do-not-send-without-instruction
+gate for this bounded question only, not purchases, new terms or private-data sharing.
+
+The [official support page](https://rahavard365.com/support), reviewed September 15,
+links ticket submission via [support redirect](https://rahavard365.com/support-redirect)
+to [Mabna customer services](https://my.mabnadp.com/). That destination returned
+`ERR_TIMED_OUT`; a fresh direct-tab attempt also timed out before a ticket form
+could be inspected. No message was submitted and no ticket number exists. Network,
+TLS and security settings were not changed. Portal authentication remains untested;
+do not infer that the previously verified Rahavard login or subscription failed.
+The owner was asked whether the same portal opens in their ordinary browser.
+
+The support page also links the [official export tutorial](https://rahavard365.com/wiki/8822).
+Its page and embedded-video entry were inspected, not the full video. No verified
+latest-only control, current schema or retention permission was established by that
+page. Do not substitute a public tutorial comment for the private support inquiry.
+
+Hash-verified pre-edit copies of the three affected documents are in ignored
+`.cache/checkpoints/rahavard-support-20260915T144350/`. Changes are documentation
+only: corrected the unsafe/stale next instruction and retained all intake gates.
+No product, financial, data-store or server change; product test reruns are not
+applicable to this unit. Diff/link/scope review and the exact commit's three CI
+jobs are required; previous source tests above are not real-file acceptance.
+
+## Short support question — authorized, NOT sent
+
+موضوع: خروجی محدود TXT و مجوز استفادهٔ شخصی
+
+سلام. از ابزار رسمی انتقال داده رهاورد نسخهٔ ۱.۸.۴ استفاده می‌کنم. آیا خروجی TXT اشتراک فعلی را می‌توان فقط روی کامپیوتر شخصی، در نرم‌افزار Gold/Silver AI برای آزمون فنی و بدون بازنشر استفاده کرد؟ لطفاً محدودهٔ مجوز بند ۲.۱ و مدت مجاز نگهداری را روشن کنید.
+
+برای طلای ۱۸ عیار، سکه امامی و نقره ۹۹۹، در صورت پوشش این نمادها، چگونه فقط یک خروجی حداقلی یا آخرین رکورد را بدون دریافت تاریخچه و اجرای خودکار بگیرم؟ در پنجرهٔ فعلی دورهٔ روزانه و اجرای خودکار ۱۵ دقیقه‌ای دیده می‌شود، ولی محدودیت تاریخ/آخرین رکورد مشخص نیست؛ فعلاً «فعال» را خاموش کرده‌ام.
+
+لطفاً مسیر دقیق تنظیمات، نمادهای قابل‌دریافت، قالب ستون‌ها و کدگذاری TXT، واحد و ضریب قیمت، عیار، نوع قیمت و تعدیل، زمان و منطقهٔ زمانی و حدود دریافت و نگهداری را اعلام کنید. فعلاً درخواست خرید، ارتقای پلن یا دریافت تاریخچه ندارم.
 
 ## Implemented independent connection
 
@@ -159,12 +206,15 @@ blank portfolio. This is not multi-device or database-transactional persistence.
 
 1. Browser Gold, installation and owner-operated native login are verified for
    September 15; do not repeat installation/login without fresh failure evidence.
-   Continue from the transfer-settings window. The owner was asked to enable only
-   draft settings and open symbol selection, not Apply or Apply-and-run. Inspect
-   that selection after confirmation; do not assume an export or sync has run.
+   Continue from the [export-off checkpoint](#september-15-export-safety-and-support-handoff).
+   Do not re-enable Active or schedule export to inspect draft settings. The configured
+   output folder is empty at the recorded check; a real sample is still absent.
    Native authentication/new terms remain owner-operated if encountered again.
-2. Review export-specific license/retention and exact minimal selection; send the above
-   support question only after separate authorization if clarification remains necessary.
+2. The bounded support question above is now owner-authorized but unsent because the
+   official portal could not be reached. After access is restored, submit it once
+   through official private support and verify receipt; do not claim delivery from an
+   attempted navigation. Native login/new terms remain owner-operated. Record the
+   provider's actual permission, retention and minimal-export instructions before receipt.
 3. Obtain an authorized minimal file into ignored local storage, inspect actual encoding,
    fields, source codes, price kind, units and times, then create its reviewed profile.
    Do not ask the owner to prepend a synthetic marker to a real file.

@@ -8,12 +8,13 @@ Latest, 2026-09-15: continue the [official Rahavard file route](../05-data/RAHAV
 Its independent synthetic TXT intake and shared valuation workspace are implemented;
 do not rebuild them or call their fixture a vendor export. Browser login and Gold
 entitlement are verified; do not repeat that request without fresh failure evidence.
-Owner-operated installation/native login are verified; transfer settings are open.
-Read the [observed controls and interaction limit](../05-data/RAHAVARD_FILE_INTAKE.md#september-15-native-login-and-transfer-settings).
-Continue after the owner opens draft symbol selection, without Apply/Apply-and-run.
-Do not repeat installation/login or start automatic history sync. Clarify the export-specific permission,
-retention and minimal selection where necessary; the short support question is
-prepared but must not be sent without separate instruction. Only an authorized
+Owner-operated installation/native login are verified; keep export **off**.
+Read the [latest safety correction and support handoff](../05-data/RAHAVARD_FILE_INTAKE.md#september-15-export-safety-and-support-handoff).
+Do not re-enable a schedule to inspect draft settings or repeat installation/login.
+The bounded support question is owner-authorized but **not sent**: the official
+customer portal timed out. After access is restored, submit once and verify receipt;
+no purchase, new terms, credentials or private portfolio may accompany the question.
+Clarify export-specific permission, retention and minimal selection. Only an authorized
 minimal sample can establish the real encoding/columns/symbol/unit/time profile.
 Real intake remains disabled until that reviewed profile and separate real storage
 adapter exist. Check final source SHA's three GitHub jobs; no main/server/financial

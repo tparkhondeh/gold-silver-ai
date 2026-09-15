@@ -2,15 +2,17 @@
 
 **Source of truth for:** where the project stands right now.
 
-_Last reviewed: 2026-09-15, Asia/Tehran (native login completed; export scope under review)_
+_Last reviewed: 2026-09-15, Asia/Tehran (export off; authorized support inquiry blocked by portal access)_
 
 ## Latest Rahavard access checkpoint
 
 Owner-operated browser/native login, browser Gold and desktop installation are now
-verified. Transfer settings are readable, but safe symbol-selection interaction,
-minimal export scope and the actual file remain pending. No real quote,
-history or private account data was acquired; no product/server/main change.
-[Fresh client evidence and next gate](../05-data/RAHAVARD_FILE_INTAKE.md#september-15-native-login-and-transfer-settings).
+verified. The latest owner screenshot shows export off after an automatic schedule
+was noticed; the configured output folder is empty. The owner authorized a bounded
+support inquiry, but the official portal timed out before submission. Minimal
+licensed scope and the actual file remain pending; no real-file acceptance or
+product/server/main change is claimed.
+[Fresh safety evidence and next gate](../05-data/RAHAVARD_FILE_INTAKE.md#september-15-export-safety-and-support-handoff).
 The completed synthetic intake below is unchanged; do not rebuild it or repeat the
 resolved browser-login request without new evidence of a failure.
 
