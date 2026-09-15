@@ -137,7 +137,7 @@ The [official support page](https://rahavard365.com/support), reviewed September
 links ticket submission via [support redirect](https://rahavard365.com/support-redirect)
 to [Mabna customer services](https://my.mabnadp.com/). That destination returned
 `ERR_TIMED_OUT`; a fresh direct-tab attempt also timed out before a ticket form
-could be inspected. No message was submitted and no ticket number exists. Network,
+could be inspected. No portal message was submitted and no ticket number exists. Network,
 TLS and security settings were not changed. Portal authentication remains untested;
 do not infer that the previously verified Rahavard login or subscription failed.
 The owner was asked whether the same portal opens in their ordinary browser.
@@ -154,7 +154,35 @@ No product, financial, data-store or server change; product test reruns are not
 applicable to this unit. Diff/link/scope review and the exact commit's three CI
 jobs are required; previous source tests above are not real-file acceptance.
 
-## Short support question — authorized, NOT sent
+## September 15 support email sent
+
+The owner confirmed the portal also failed for them, then explicitly authorized
+emailing the same bounded question to `info@mabnadp.com`, including disclosure of
+their sender address. This address is listed in the
+[official Mabna site footer](https://mabnadp.com/products/vasam).
+The Gmail connector rejected the attempt with `USER_NOT_LOGGED_IN`; it did not send.
+Gmail web was already authenticated, so the existing browser session was used
+without a new connection, credential extraction or permission change.
+
+Exactly one matching message was verified in Gmail Sent, addressed to the official
+mailbox, with the subject **رهاورد ۳۶۵ — خروجی محدود TXT و مجوز استفادهٔ شخصی** and
+displayed send time September 15, 2026, 23:22 (local clock +03:30). Its sent body
+contains the question below, a request for written clarification and routing to
+Rahavard support because the portal was inaccessible. No attachments, CC/BCC,
+private portfolio, credentials, purchase or acceptance of terms accompanied it.
+This confirms sending, not delivery/read receipt, a provider reply or a data license.
+No actual export sample was acquired by this email follow-up. **Do not resend**
+merely because the portal remains unavailable or the connector remains disconnected.
+
+On the next active follow-up, inspect only the relevant reply/bounce and record the
+actual permission and export instructions before acquisition. No scheduled polling
+or background follow-up was created. Hash-verified document backups are under
+`.cache/checkpoints/rahavard-email-20260915T232535/`. This is a documentation-only
+checkpoint; the existing synthetic implementation and all financial locks remain
+unchanged. Review the diff/local links and this commit's three CI jobs, not a rerun
+of unchanged local product tests. Sending is not real-data acceptance.
+
+## Support question — substance sent by email
 
 موضوع: خروجی محدود TXT و مجوز استفادهٔ شخصی
 
@@ -210,11 +238,11 @@ blank portfolio. This is not multi-device or database-transactional persistence.
    Do not re-enable Active or schedule export to inspect draft settings. The configured
    output folder is empty at the recorded check; a real sample is still absent.
    Native authentication/new terms remain owner-operated if encountered again.
-2. The bounded support question above is now owner-authorized but unsent because the
-   official portal could not be reached. After access is restored, submit it once
-   through official private support and verify receipt; do not claim delivery from an
-   attempted navigation. Native login/new terms remain owner-operated. Record the
-   provider's actual permission, retention and minimal-export instructions before receipt.
+2. The bounded question was [sent by email](#september-15-support-email-sent); do not
+   send a duplicate or require portal access to repeat it. Review the relevant reply
+   or bounce when available in an active turn. Record the provider's actual permission,
+   retention and minimal-export instructions before acquisition. A sent email is not
+   permission. Native login/new terms remain owner-operated.
 3. Obtain an authorized minimal file into ignored local storage, inspect actual encoding,
    fields, source codes, price kind, units and times, then create its reviewed profile.
    Do not ask the owner to prepend a synthetic marker to a real file.

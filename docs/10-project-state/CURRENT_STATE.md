@@ -2,17 +2,18 @@
 
 **Source of truth for:** where the project stands right now.
 
-_Last reviewed: 2026-09-15, Asia/Tehran (export off; authorized support inquiry blocked by portal access)_
+_Last reviewed: 2026-09-15, Asia/Tehran (support email sent; provider clarification pending)_
 
 ## Latest Rahavard access checkpoint
 
 Owner-operated browser/native login, browser Gold and desktop installation are now
 verified. The latest owner screenshot shows export off after an automatic schedule
-was noticed; the configured output folder is empty. The owner authorized a bounded
-support inquiry, but the official portal timed out before submission. Minimal
+was noticed; the configured output folder was empty at its recorded check. The
+authorized support inquiry is now verified in Gmail Sent via the official email
+alternative; a provider reply/permission is still pending. Minimal
 licensed scope and the actual file remain pending; no real-file acceptance or
 product/server/main change is claimed.
-[Fresh safety evidence and next gate](../05-data/RAHAVARD_FILE_INTAKE.md#september-15-export-safety-and-support-handoff).
+[Sending evidence and next gate](../05-data/RAHAVARD_FILE_INTAKE.md#september-15-support-email-sent).
 The completed synthetic intake below is unchanged; do not rebuild it or repeat the
 resolved browser-login request without new evidence of a failure.
 

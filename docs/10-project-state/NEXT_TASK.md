@@ -11,9 +11,10 @@ entitlement are verified; do not repeat that request without fresh failure evide
 Owner-operated installation/native login are verified; keep export **off**.
 Read the [latest safety correction and support handoff](../05-data/RAHAVARD_FILE_INTAKE.md#september-15-export-safety-and-support-handoff).
 Do not re-enable a schedule to inspect draft settings or repeat installation/login.
-The bounded support question is owner-authorized but **not sent**: the official
-customer portal timed out. After access is restored, submit once and verify receipt;
-no purchase, new terms, credentials or private portfolio may accompany the question.
+The bounded support question is now [verified in Gmail Sent](../05-data/RAHAVARD_FILE_INTAKE.md#september-15-support-email-sent).
+Do not resend it or require another portal/login retry merely to repeat the question.
+In the next active follow-up, review the relevant reply/bounce when available;
+no scheduled/background polling was created. A sent message is not permission.
 Clarify export-specific permission, retention and minimal selection. Only an authorized
 minimal sample can establish the real encoding/columns/symbol/unit/time profile.
 Real intake remains disabled until that reviewed profile and separate real storage
