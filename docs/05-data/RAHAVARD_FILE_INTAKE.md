@@ -1,6 +1,6 @@
 # Rahavard official file intake — bounded preparation
 
-Reviewed 2026-09-14, Asia/Tehran. Owner scope: official licensed file acquisition and
+Reviewed 2026-09-15, Asia/Tehran. Owner scope: official licensed file acquisition and
 local technical testing; no scraping, history accumulation, purchase, server/main
 change or financial-method promotion. ADR 0011 remains binding.
 
@@ -9,8 +9,8 @@ change or financial-method promotion. ADR 0011 remains binding.
 | Item | Fresh evidence / limitation |
 |---|---|
 | Official route | [Data export](https://rahavard365.com/dataexport) describes a desktop export tool and use of exported data in other analysis software. Lack of API is not itself a blocker. |
-| Required entitlement | The official FAQ says Gold subscription. An old open tab showed a Gold badge, but after reload it displayed Sign in; current entitlement is **unverified**, not confirmed active or expired. |
-| File container | FAQ explicitly says TXT. Official download links show Windows tool 1.8.4, x86/x64; nothing installed or terms accepted in this task. No matching installed program/process was found in the bounded registry/process check; portable copies were not searched across personal files. |
+| Required entitlement | Following owner-operated login on September 15, the current account menu shows one active subscription and the Gold badge. This closes the browser-login/Gold-entitlement uncertainty from September 14; desktop authentication and successful export are still unverified. No account-details or portfolio page was opened. |
+| File container | FAQ explicitly says TXT. Official download links show Windows tool 1.8.4, x86/x64. The x64 installer was downloaded and opened after owner approval; installation is not confirmed. See the security checkpoint below. The pre-install September 15 Windows app inventory returned no Rahavard match, consistent with the earlier bounded registry/process check; absence from these inventories does not rule out a portable copy. |
 | Product coverage | Page lists coins, global commodities, exchange rates, funds and other markets. Exact gold18/silver999/coin provider codes and their availability in the owner's licensed export are **TBD**. No gold fund is mapped to a gram of physical gold. |
 | Actual file schema | Columns, delimiter, encoding, price kind (last/close/OHLC), adjustment policy and sample are **TBD**. TXT alone does not establish these. |
 | Denomination/quantity/purity | Actual IRR/TOMAN, scale, gram/unit, purity and nullable source fields are **TBD**; never infer from a filename, price size or a similar instrument. |
@@ -19,7 +19,58 @@ change or financial-method promotion. ADR 0011 remains binding.
 | Permission | [Current terms, article 2.1](https://rahavard365.com/terms-and-conditions) require express permission for copying/transferring information. The export page advertises transfer for analysis; reconcile the scope of that specific entitlement with article 2.1 and retention before acquisition. No blanket prohibition or blanket grant is inferred. |
 
 No real price, account secret, private portfolio or licensed history was acquired in
-this unit. New login is owner-operated; no cookie extraction or backend-session reuse.
+either checkpoint. Login is owner-operated; no cookie extraction or backend-session reuse.
+
+## September 15 access and installer checkpoint
+
+The owner reported successful login; the fresh browser menu confirms Gold active.
+The export FAQ separately requires desktop sign-in and an explicit adjustment mode
+(including unadjusted where applicable). Browser login is not desktop login, and
+neither establishes the actual TXT schema or permission to accumulate history.
+
+The [official x64 download](https://rahavard365.com/downloads/rahavard365-v1.8.4-x64-setup.exe)
+completed over normal verified HTTPS: 71,024,836 bytes; SHA-256
+`2c4276a66945b83f9150fe2b27b69e08afbafd35ccdad88ecbb67628000aa67f`.
+Windows Authenticode reports **NotSigned**, with no signer certificate. A source URL
+and checksum do not prove publisher identity or software safety. The unsigned status
+was disclosed; the owner explicitly approved installing the official version. The
+installer was then opened through the Windows control skill, with no protection
+changed or terms accepted by the agent. Its visible window title is the Rahavard
+installer, but screenshot capture failed with `SetIsBorderRequired: No such interface
+supported (0x80004002)`. A fresh-window text-only recovery returned only the dialog
+and title bar, without installer controls. No guessed clicks or alternative Windows
+automation were attempted. The installer was brought forward for the owner to finish
+manually; native sign-in and any new terms also remain owner-operated. Installation
+completion and client export settings are **unverified**, not failed installation.
+Do not start data receipt or automatic sync before inspecting the selected scope.
+
+The executable and hash-verified pre-edit copies of the three affected documents are
+only in ignored `.cache/checkpoints/rahavard-access-20260915T133037/`; no binary or
+market file is staged. Recovery is to compare/copy those document backups deliberately,
+not reset Git or delete the current state.
+
+This checkpoint changes documentation only. Product code, calculations, data stores,
+main, server and financial lock are unchanged. No new product test run is warranted
+by this documentation-only change; the source checkpoint `22c9325` retains its
+210 passing web tests and all three successful jobs in
+[run 34848037566](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/34848037566).
+Those are prior source evidence, not fresh real-file acceptance. This documentation
+commit must have its own three CI results checked after push. Self-review: fresh
+entitlement evidence recorded without account secrets; original data/history limits
+retained; documentation links/diff checked before commit; installer launched only
+after explicit consent and no unobservable installer controls activated.
+Implementation/data/financial regression gates are not applicable to this docs-only
+unit; real-file functional completeness and owner acceptance remain blocked.
+
+Local availability was checked separately: the initial connection was refused
+because no application listener was present. The existing `start-local-app.mjs`
+launcher was started without source/configuration edits; PostgreSQL and the
+loopback-only Node app became ready after startup. Root and `/api/health` then
+returned HTTP 200 (health generated `2026-09-15T10:06:19.23Z`), and reloading the
+existing local browser tab displayed the overview in market-test mode. Financial
+use stayed blocked, history stayed locked, and the quota remained at eight consumed
+requests: no provider request was made. This was startup/health/browser smoke
+verification, **not** a repeat of all fixture paths or a real-data end-to-end test.
 
 ## Short support question — prepared, NOT sent
 
@@ -65,7 +116,13 @@ blank portfolio. This is not multi-device or database-transactional persistence.
 
 ## Next real-data gate
 
-1. Owner logs in again; verify current export entitlement without account/portfolio extraction.
+1. Browser login and Gold are verified for September 15; do not request that login
+   again without fresh failure evidence. Owner approved the unsigned official
+   installer and it is open; manual installation is needed because Windows control
+   cannot inspect its contents. Native login and any new terms are owner-operated;
+   no automatic download/sync is allowed before inspecting its scope. Recheck the
+   actual client window after the owner reports completion; do not relaunch installers
+   or assume the browser session authenticates the desktop client.
 2. Review export-specific license/retention and exact minimal selection; send the above
    support question only after separate authorization if clarification remains necessary.
 3. Obtain an authorized minimal file into ignored local storage, inspect actual encoding,
@@ -74,4 +131,5 @@ blank portfolio. This is not multi-device or database-transactional persistence.
 4. Implement the separate real snapshot/storage adapter for that verified profile and
    exercise the actual-file path. No real-file acceptance is claimed by synthetic tests.
 
-Current execution evidence: [2026-09-14 review](../10-project-state/RAHAVARD_FILE_REVIEW_2026-09-14.md).
+Implemented fixture evidence: [2026-09-14 review](../10-project-state/RAHAVARD_FILE_REVIEW_2026-09-14.md).
+Its then-pending browser login is superseded by the September 15 checkpoint above.

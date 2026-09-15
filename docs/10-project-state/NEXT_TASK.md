@@ -4,10 +4,14 @@
 
 ## Immediate Next Step
 
-Latest, 2026-09-14: continue the [official Rahavard file route](RAHAVARD_FILE_REVIEW_2026-09-14.md).
+Latest, 2026-09-15: continue the [official Rahavard file route](../05-data/RAHAVARD_FILE_INTAKE.md#next-real-data-gate).
 Its independent synthetic TXT intake and shared valuation workspace are implemented;
-do not rebuild them or call their fixture a vendor export. Owner-operated fresh login
-is needed to verify actual export entitlement. Clarify the export-specific permission,
+do not rebuild them or call their fixture a vendor export. Browser login and Gold
+entitlement are verified; do not repeat that request without fresh failure evidence.
+The unsigned official x64 installer was opened after explicit installation consent;
+Windows control cannot read its contents. Owner-operated installation completion
+and native login/new terms remain pending. Check the client after the owner finishes;
+do not relaunch the installer or start automatic history sync. Clarify the export-specific permission,
 retention and minimal selection where necessary; the short support question is
 prepared but must not be sent without separate instruction. Only an authorized
 minimal sample can establish the real encoding/columns/symbol/unit/time profile.

@@ -2,13 +2,24 @@
 
 **Source of truth for:** where the project stands right now.
 
-_Last reviewed: 2026-09-14, Asia/Tehran (official file route and isolated synthetic intake)_
+_Last reviewed: 2026-09-15, Asia/Tehran (Rahavard login verified; installer boundary)_
+
+## Latest Rahavard access checkpoint
+
+Owner-operated browser login and Gold entitlement are now verified. The official
+desktop installer is unsigned; the owner approved installation and it was opened.
+Windows control cannot inspect its installer controls, so manual completion, native
+login, export scope and the actual file remain pending. No real quote,
+history or private account data was acquired; no product/server/main change.
+[Fresh evidence, security check and next gate](../05-data/RAHAVARD_FILE_INTAKE.md#september-15-access-and-installer-checkpoint).
+The completed synthetic intake below is unchanged; do not rebuild it or repeat the
+resolved browser-login request without new evidence of a failure.
 
 ## Latest file-intake checkpoint
 
 The owner authorized the official Rahavard file route, conditional on actual access
-and permission. Fresh reload required login; the old tab's Gold badge is not current
-entitlement evidence. Official TXT availability is confirmed, but its actual layout,
+and permission. On September 14, fresh reload required login; that access uncertainty
+is superseded above. Official TXT availability is confirmed, but its actual layout,
 units/times and licensed retention remain unresolved. No real quote was received.
 Independent file-intake contracts and all nine test views are implemented using
 explicit synthetic TXT, separate storage and the existing exact valuation math;
