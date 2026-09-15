@@ -9,8 +9,8 @@ change or financial-method promotion. ADR 0011 remains binding.
 | Item | Fresh evidence / limitation |
 |---|---|
 | Official route | [Data export](https://rahavard365.com/dataexport) describes a desktop export tool and use of exported data in other analysis software. Lack of API is not itself a blocker. |
-| Required entitlement | Following owner-operated login on September 15, the current account menu shows one active subscription and the Gold badge. This closes the browser-login/Gold-entitlement uncertainty from September 14; desktop authentication and successful export are still unverified. No account-details or portfolio page was opened. |
-| File container | FAQ explicitly says TXT. Official download links show Windows tool 1.8.4, x86/x64. Following owner-operated installation, the Windows installation registry confirms version 1.8.4 and the installed client opens its sign-in page. Native authentication and an actual export remain unverified. See the security checkpoint below. |
+| Required entitlement | Following owner-operated login on September 15, the browser menu showed one active Gold subscription. The owner subsequently completed native login; the client's transfer-settings window is now visible instead of sign-in. Successful export/license execution is still unverified. No account-details, private watchlist or portfolio page was read. |
+| File container | FAQ explicitly says TXT. Windows installation registry confirms official client version 1.8.4. Its transfer settings are readable, but no export file has been produced or received. See the client-settings checkpoint below. |
 | Product coverage | Page lists coins, global commodities, exchange rates, funds and other markets. Exact gold18/silver999/coin provider codes and their availability in the owner's licensed export are **TBD**. No gold fund is mapped to a gram of physical gold. |
 | Actual file schema | Columns, delimiter, encoding, price kind (last/close/OHLC), adjustment policy and sample are **TBD**. TXT alone does not establish these. |
 | Denomination/quantity/purity | Actual IRR/TOMAN, scale, gram/unit, purity and nullable source fields are **TBD**; never infer from a filename, price size or a similar instrument. |
@@ -55,6 +55,35 @@ does not establish a blocker for the client after login. Export controls, limits
 license-specific retention and the real file still require inspection after login.
 The follow-up pre-edit document copies were hash-verified under ignored
 `.cache/checkpoints/rahavard-installed-20260915T134447/`.
+
+## September 15 native login and transfer settings
+
+After the owner reported native login, the client exposed separate watchlist and
+transfer-settings windows. Only transfer settings were inspected; the private
+watchlist was not opened/read. This supersedes the native-login handoff above.
+
+Observed transfer controls: inactive form, disabled path/browser and filename
+controls; price choices last/closing; adjustment choices including unadjusted;
+daily/weekly/monthly/yearly periods; symbol selection; automatic execution every
+15/30/45/60 minutes; rebuild-files option; separate Apply, Apply-and-run and Cancel
+buttons. No latest-row-only or start/end-date control was visible. This does not
+prove the client has no such option elsewhere, and period selection is not a
+history-depth limit. Exact symbols, selected values and the TXT schema remain TBD.
+
+A click intended only to enable draft settings failed with
+`coordinate input geometry is unavailable`. Fresh text-only observation still
+showed disabled controls. One Tab navigation attempt left focus on the document.
+No Apply/Apply-and-run, export, history or synchronization was invoked. The owner
+was asked to open draft symbol selection manually, without confirming or executing.
+Do not substitute blind clicks, guessed hotkeys or hidden provider endpoints.
+Once selection is visible, inspect only relevant public instrument metadata and
+minimal export controls; confirm scope before any acquisition. The bounded official
+web search did not locate an additional indexed date-limit guide; that absence is
+not proof of unsupported functionality.
+
+Pre-edit copies for this follow-up were hash-verified under ignored
+`.cache/checkpoints/rahavard-export-review-20260915T135042/`. This is documentation
+and read-only client inspection, not new product code or a real-file acceptance test.
 
 The executable and hash-verified pre-edit copies of the three affected documents are
 only in ignored `.cache/checkpoints/rahavard-access-20260915T133037/`; no binary or
@@ -128,12 +157,12 @@ blank portfolio. This is not multi-device or database-transactional persistence.
 
 ## Next real-data gate
 
-1. Browser login and Gold are verified for September 15; do not request that login
-   again without fresh failure evidence. Installation is now verified and the
-   installed client's sign-in page is open. Native login and any new terms are
-   owner-operated; no automatic download/sync is allowed before inspecting its
-   scope. Recheck the client after the owner reports login, without reading secrets.
-   Do not relaunch installers or assume browser login authenticates this client.
+1. Browser Gold, installation and owner-operated native login are verified for
+   September 15; do not repeat installation/login without fresh failure evidence.
+   Continue from the transfer-settings window. The owner was asked to enable only
+   draft settings and open symbol selection, not Apply or Apply-and-run. Inspect
+   that selection after confirmation; do not assume an export or sync has run.
+   Native authentication/new terms remain owner-operated if encountered again.
 2. Review export-specific license/retention and exact minimal selection; send the above
    support question only after separate authorization if clarification remains necessary.
 3. Obtain an authorized minimal file into ignored local storage, inspect actual encoding,

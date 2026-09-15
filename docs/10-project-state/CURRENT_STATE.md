@@ -2,16 +2,15 @@
 
 **Source of truth for:** where the project stands right now.
 
-_Last reviewed: 2026-09-15, Asia/Tehran (Rahavard installation verified; native login needed)_
+_Last reviewed: 2026-09-15, Asia/Tehran (native login completed; export scope under review)_
 
 ## Latest Rahavard access checkpoint
 
-Owner-operated browser login, Gold entitlement and desktop installation are now
-verified. The installed client's native sign-in controls are readable; the installer
-capture limitation is no longer the immediate gate. Owner-operated native login,
-export scope and the actual file remain pending. No real quote,
+Owner-operated browser/native login, browser Gold and desktop installation are now
+verified. Transfer settings are readable, but safe symbol-selection interaction,
+minimal export scope and the actual file remain pending. No real quote,
 history or private account data was acquired; no product/server/main change.
-[Fresh evidence, security check and next gate](../05-data/RAHAVARD_FILE_INTAKE.md#september-15-access-and-installer-checkpoint).
+[Fresh client evidence and next gate](../05-data/RAHAVARD_FILE_INTAKE.md#september-15-native-login-and-transfer-settings).
 The completed synthetic intake below is unchanged; do not rebuild it or repeat the
 resolved browser-login request without new evidence of a failure.
 
