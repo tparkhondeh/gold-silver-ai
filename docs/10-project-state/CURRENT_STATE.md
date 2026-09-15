@@ -2,14 +2,14 @@
 
 **Source of truth for:** where the project stands right now.
 
-_Last reviewed: 2026-09-15, Asia/Tehran (Rahavard login verified; installer boundary)_
+_Last reviewed: 2026-09-15, Asia/Tehran (Rahavard installation verified; native login needed)_
 
 ## Latest Rahavard access checkpoint
 
-Owner-operated browser login and Gold entitlement are now verified. The official
-desktop installer is unsigned; the owner approved installation and it was opened.
-Windows control cannot inspect its installer controls, so manual completion, native
-login, export scope and the actual file remain pending. No real quote,
+Owner-operated browser login, Gold entitlement and desktop installation are now
+verified. The installed client's native sign-in controls are readable; the installer
+capture limitation is no longer the immediate gate. Owner-operated native login,
+export scope and the actual file remain pending. No real quote,
 history or private account data was acquired; no product/server/main change.
 [Fresh evidence, security check and next gate](../05-data/RAHAVARD_FILE_INTAKE.md#september-15-access-and-installer-checkpoint).
 The completed synthetic intake below is unchanged; do not rebuild it or repeat the

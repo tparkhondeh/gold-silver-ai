@@ -8,10 +8,10 @@ Latest, 2026-09-15: continue the [official Rahavard file route](../05-data/RAHAV
 Its independent synthetic TXT intake and shared valuation workspace are implemented;
 do not rebuild them or call their fixture a vendor export. Browser login and Gold
 entitlement are verified; do not repeat that request without fresh failure evidence.
-The unsigned official x64 installer was opened after explicit installation consent;
-Windows control cannot read its contents. Owner-operated installation completion
-and native login/new terms remain pending. Check the client after the owner finishes;
-do not relaunch the installer or start automatic history sync. Clarify the export-specific permission,
+Owner-operated installation of version 1.8.4 is verified and the installed client's
+native sign-in page is open with readable controls. Owner-operated native login/new
+terms remain pending. Check the client after login; do not relaunch the installer,
+repeat the browser login request or start automatic history sync. Clarify the export-specific permission,
 retention and minimal selection where necessary; the short support question is
 prepared but must not be sent without separate instruction. Only an authorized
 minimal sample can establish the real encoding/columns/symbol/unit/time profile.

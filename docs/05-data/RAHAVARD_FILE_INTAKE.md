@@ -10,7 +10,7 @@ change or financial-method promotion. ADR 0011 remains binding.
 |---|---|
 | Official route | [Data export](https://rahavard365.com/dataexport) describes a desktop export tool and use of exported data in other analysis software. Lack of API is not itself a blocker. |
 | Required entitlement | Following owner-operated login on September 15, the current account menu shows one active subscription and the Gold badge. This closes the browser-login/Gold-entitlement uncertainty from September 14; desktop authentication and successful export are still unverified. No account-details or portfolio page was opened. |
-| File container | FAQ explicitly says TXT. Official download links show Windows tool 1.8.4, x86/x64. The x64 installer was downloaded and opened after owner approval; installation is not confirmed. See the security checkpoint below. The pre-install September 15 Windows app inventory returned no Rahavard match, consistent with the earlier bounded registry/process check; absence from these inventories does not rule out a portable copy. |
+| File container | FAQ explicitly says TXT. Official download links show Windows tool 1.8.4, x86/x64. Following owner-operated installation, the Windows installation registry confirms version 1.8.4 and the installed client opens its sign-in page. Native authentication and an actual export remain unverified. See the security checkpoint below. |
 | Product coverage | Page lists coins, global commodities, exchange rates, funds and other markets. Exact gold18/silver999/coin provider codes and their availability in the owner's licensed export are **TBD**. No gold fund is mapped to a gram of physical gold. |
 | Actual file schema | Columns, delimiter, encoding, price kind (last/close/OHLC), adjustment policy and sample are **TBD**. TXT alone does not establish these. |
 | Denomination/quantity/purity | Actual IRR/TOMAN, scale, gram/unit, purity and nullable source fields are **TBD**; never infer from a filename, price size or a similar instrument. |
@@ -40,9 +40,21 @@ installer, but screenshot capture failed with `SetIsBorderRequired: No such inte
 supported (0x80004002)`. A fresh-window text-only recovery returned only the dialog
 and title bar, without installer controls. No guessed clicks or alternative Windows
 automation were attempted. The installer was brought forward for the owner to finish
-manually; native sign-in and any new terms also remain owner-operated. Installation
-completion and client export settings are **unverified**, not failed installation.
+manually; native sign-in and any new terms also remain owner-operated. At that
+checkpoint installation completion and export settings were unverified.
 Do not start data receipt or automatic sync before inspecting the selected scope.
+
+Installation follow-up: the owner reported completion. A bounded read-only Windows
+installation registry check confirms Rahavard 365 version 1.8.4 in
+`C:\Program Files\Mabna\Rahavard 365`. The registered installed executable was
+launched (not the installer). Its native sign-in page exposes the email/phone field
+and disabled sign-in button through accessibility, unlike the unreadable installer.
+No authentication field was read/filled and no login action was automated; the
+owner must complete that separate sign-in. The earlier installer-control blocker
+does not establish a blocker for the client after login. Export controls, limits,
+license-specific retention and the real file still require inspection after login.
+The follow-up pre-edit document copies were hash-verified under ignored
+`.cache/checkpoints/rahavard-installed-20260915T134447/`.
 
 The executable and hash-verified pre-edit copies of the three affected documents are
 only in ignored `.cache/checkpoints/rahavard-access-20260915T133037/`; no binary or
@@ -117,12 +129,11 @@ blank portfolio. This is not multi-device or database-transactional persistence.
 ## Next real-data gate
 
 1. Browser login and Gold are verified for September 15; do not request that login
-   again without fresh failure evidence. Owner approved the unsigned official
-   installer and it is open; manual installation is needed because Windows control
-   cannot inspect its contents. Native login and any new terms are owner-operated;
-   no automatic download/sync is allowed before inspecting its scope. Recheck the
-   actual client window after the owner reports completion; do not relaunch installers
-   or assume the browser session authenticates the desktop client.
+   again without fresh failure evidence. Installation is now verified and the
+   installed client's sign-in page is open. Native login and any new terms are
+   owner-operated; no automatic download/sync is allowed before inspecting its
+   scope. Recheck the client after the owner reports login, without reading secrets.
+   Do not relaunch installers or assume browser login authenticates this client.
 2. Review export-specific license/retention and exact minimal selection; send the above
    support question only after separate authorization if clarification remains necessary.
 3. Obtain an authorized minimal file into ignored local storage, inspect actual encoding,
