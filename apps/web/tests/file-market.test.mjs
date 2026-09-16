@@ -141,19 +141,21 @@ test("canonical save/replay verifies original text, SHA and reproduced result, n
 });
 
 test("storage isolation and failed writes/reads preserve previous versions without clearing them", async () => {
+  const { createTestLocks } = await import("./helpers/snapshot-locks.mjs");
+  const locks = createTestLocks();
   const data = new Map([["asha-real-market-test-v1", "old-real"], ["personal-portfolio", "old-personal"]]);
   const storage = { getItem: key => data.get(key) ?? null, setItem: (key, value) => data.set(key, value) };
   assert.deepEqual(await restoreFileTest(storage, now), { raw: null, portfolio: null });
-  const p = await portfolio(); const saved = await saveFileTest(storage, p, now, null);
+  const p = await portfolio(); const saved = await saveFileTest(storage, p, now, null, locks);
   assert.deepEqual((await restoreFileTest(storage, now)).portfolio, p);
   assert.equal(data.get("asha-real-market-test-v1"), "old-real"); assert.equal(data.get("personal-portfolio"), "old-personal");
   p.inputs.cashRial = "99";
-  await assert.rejects(() => saveFileTest(storage, p, now, null), /بازنویسی/);
-  await assert.rejects(() => saveFileTest({ ...storage, setItem: () => { throw Error("quota"); } }, p, now, saved), /quota/);
+  await assert.rejects(() => saveFileTest(storage, p, now, null, locks), /بازنویسی/);
+  await assert.rejects(() => saveFileTest({ ...storage, setItem: () => { throw Error("quota"); } }, p, now, saved, locks), /quota/);
   assert.equal(data.get(FILE_TEST_STORAGE), saved);
   data.set(FILE_TEST_STORAGE, "corrupt");
   await assert.rejects(() => restoreFileTest(storage, now));
-  await assert.rejects(() => saveFileTest(storage, p, now, saved));
+  await assert.rejects(() => saveFileTest(storage, p, now, saved, locks));
   assert.equal(data.get(FILE_TEST_STORAGE), "corrupt");
   await assert.rejects(() => restoreFileTest({ getItem: () => { throw Error("denied"); } }, now), /denied/);
 });

@@ -2,7 +2,23 @@
 
 **Source of truth for:** where the project stands right now.
 
-_Last reviewed: 2026-09-15, Asia/Tehran (support email sent; provider clarification pending)_
+_Last reviewed: 2026-09-16, Asia/Tehran (independent browser-storage hardening)_
+
+## Latest independent-work checkpoint
+
+While provider clarification remains pending, a real local persistence gap was
+closed: shared-portfolio and market-test saves now reject stale-tab overwrites and
+unread/corrupt stored documents. All three test workspaces use exclusive browser
+locks; repeated unchanged shared saves preserve the useful previous copy. No
+financial formula, input schema, source access, main or server changed.
+220 web tests, coverage gates, typecheck, lint, build, dependency audit and 15 local
+readiness checks pass. Edge verified eight shared views, numeric consistency,
+invalid-input recovery and two-tab conflicts before its tool disconnected. In-app
+browser completed file/market conflict checks and reload/replay, including shared
+horizons/selection. Exact scope, limitations, recovery and next dependencies:
+[September 16 audit](BROWSER_STORAGE_REVIEW_2026-09-16.md).
+Final-SHA publication and all three CI jobs are verified separately at delivery;
+older CI does not attest this change. Owner acceptance is still pending.
 
 ## Latest Rahavard access checkpoint
 

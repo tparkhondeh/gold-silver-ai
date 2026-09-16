@@ -4,14 +4,16 @@ import { useEffect, useMemo, useState } from "react";
 import { AssetDecisionCard, DecisionActionWorkbench } from "./decision-action-workbench";
 import type { ActionAsset, ActionInput } from "./decision-action-plan";
 import {
-  createSharedPortfolio, decodeSharedPortfolio, encodeSharedPortfolio, evaluateSharedPortfolio,
-  replaceSharedInput, SHARED_STORAGE_KEY, unsupportedCatalog,
+  createSharedPortfolio, evaluateSharedPortfolio,
+  replaceSharedInput, unsupportedCatalog,
   type SharedPortfolio, type UnsupportedId,
 } from "./shared-portfolio";
 import type { View } from "./workspace-navigation";
 import { buildSharedAnalysis } from "./shared-analysis";
 import { SharedAnalysisPanel } from "./shared-analysis-panel";
 import { MetalReferenceEditor } from "./shared-metal-panel";
+import { restoreSharedPortfolio, saveSharedPortfolio } from "./shared-portfolio-storage";
+import { snapshotFailure } from "./browser-snapshot-storage";
 
 const money = (value: string | null | undefined) => value == null ? "قابل محاسبه نیست" : `${BigInt(value).toLocaleString("fa-IR")} تومان`;
 const percent = (bps: number | null | undefined) => bps == null ? "نامشخص" : `${(bps / 100).toLocaleString("fa-IR")}٪`;
@@ -45,18 +47,21 @@ function AssetEditor({ asset, update }: { asset: ActionAsset; update: (key: keyo
 export function SharedPortfolioWorkspace({ active, view, onNavigate }: { active: boolean; view: View; onNavigate: (view: View) => void }) {
   const [portfolio, setPortfolio] = useState<SharedPortfolio>(createSharedPortfolio);
   const [loaded, setLoaded] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [storedRaw, setStoredRaw] = useState<string | null | undefined>(undefined);
   const [notice, setNotice] = useState("");
   const [unsupportedChoice, setUnsupportedChoice] = useState<UnsupportedId>("SYNTH_STOCKS");
   useEffect(() => { if (active) window.scrollTo(0, 0); }, [active, view]);
   useEffect(() => {
     const timer = window.setTimeout(() => {
       try {
-        const saved = localStorage.getItem(SHARED_STORAGE_KEY);
-        if (saved) {
-          setPortfolio(decodeSharedPortfolio(saved));
+        const saved = restoreSharedPortfolio(localStorage);
+        setStoredRaw(saved.raw);
+        if (saved.portfolio) {
+          setPortfolio(saved.portfolio);
           setNotice("سبد ذخیره‌شده بازیابی شد؛ ورودی و نتیجه دوباره تطبیق داده شدند.");
         } else setNotice("سبد مشترکِ ساختگی از نمونهٔ مرجع آغاز شد. نمونه‌ها و اطلاعات قدیمی جدا و دست‌نخورده‌اند؛ بدون نگاشت معتبر، به این سبد منتقل نشده‌اند.");
-      } catch { setNotice("بازیابی خودکار انجام نشد؛ نسخهٔ قبلی حذف نشده است. اکنون نمونهٔ مرجع جدید نمایش داده می‌شود، نه نسخهٔ ذخیره‌شده."); }
+      } catch { setNotice("بازیابی خودکار انجام نشد؛ نسخهٔ قبلی حذف نشده و ذخیره غیرفعال است. اکنون نمونهٔ مرجع نمایش داده می‌شود، نه نسخهٔ ذخیره‌شده."); }
       setLoaded(true);
     }, 0);
     return () => window.clearTimeout(timer);
@@ -71,21 +76,21 @@ export function SharedPortfolioWorkspace({ active, view, onNavigate }: { active:
   const updateInput = (input: ActionInput) => { setPortfolio((previous) => replaceSharedInput(previous, input)); setNotice("ورودی مشترک تغییر کرد؛ نتیجه دوباره محاسبه شد. برای نگهداری پس از بستن مرورگر، ذخیره کن."); };
   const updateAsset = (id: string, key: keyof ActionAsset, value: number | string | null) => updateInput({ ...portfolio.input, assets: portfolio.input.assets.map((asset) => asset.id === id ? { ...asset, [key]: value } : asset) });
   const select = (id: string) => setPortfolio((previous) => ({ ...previous, selectedAssetId: id, revision: previous.revision + 1 }));
-  const save = () => {
+  const save = async () => {
+    if (busy || storedRaw === undefined) return;
+    setBusy(true);
     try {
-      const document = encodeSharedPortfolio(portfolio);
-      const previous = localStorage.getItem(SHARED_STORAGE_KEY);
-      if (previous) localStorage.setItem(`${SHARED_STORAGE_KEY}-previous`, previous);
-      localStorage.setItem(SHARED_STORAGE_KEY, document);
+      setStoredRaw(await saveSharedPortfolio(localStorage, portfolio, storedRaw));
       setNotice("همین سبد، انتخاب دارایی و نتیجه در این مرورگر ذخیره شد؛ نسخهٔ قبلی نیز نگه داشته شد. این ذخیره هنوز بین دستگاه‌ها همگام نمی‌شود.");
-    } catch { setNotice("ذخیره انجام نشد؛ ورودی نامعتبر یا فضای ذخیره غیرقابل دسترس است. نسخهٔ قبلی حفظ شد."); }
+    } catch (error) { setNotice(snapshotFailure(error, "ذخیره انجام نشد؛ ورودی نامعتبر یا فضای ذخیره غیرقابل دسترس است. نسخهٔ قبلی حفظ شد.")); }
+    finally { setBusy(false); }
   };
   const restore = () => {
     try {
-      const document = localStorage.getItem(SHARED_STORAGE_KEY);
-      if (!document) { setNotice("نسخهٔ مشترک ذخیره‌شده‌ای وجود ندارد؛ ورودی فعلی حفظ شد."); return; }
-      const restored = decodeSharedPortfolio(document);
-      setPortfolio(restored); setNotice("سبد و انتخاب دارایی بازیابی شدند؛ محاسبات با نسخهٔ ذخیره‌شده دقیقاً تطبیق دارند.");
+      const saved = restoreSharedPortfolio(localStorage);
+      setStoredRaw(saved.raw);
+      if (!saved.portfolio) { setNotice("نسخهٔ مشترک ذخیره‌شده‌ای وجود ندارد؛ ورودی فعلی حفظ شد."); return; }
+      setPortfolio(saved.portfolio); setNotice("سبد و انتخاب دارایی بازیابی شدند؛ محاسبات با نسخهٔ ذخیره‌شده دقیقاً تطبیق دارند.");
     } catch { setNotice("نسخهٔ ذخیره‌شده ناسازگار یا تغییرکرده است؛ سبد فعلی و نسخهٔ ذخیره‌شده حفظ شدند."); }
   };
   const addUnsupported = () => {
@@ -98,10 +103,11 @@ export function SharedPortfolioWorkspace({ active, view, onNavigate }: { active:
   if (!loaded) return <p role="status">در حال بررسی نسخهٔ ذخیره‌شدهٔ سبد مشترک…</p>;
   const titles: Partial<Record<View, string>> = { overview: "نمای کلی سبد مشترک", portfolio: "فهرست و ورودی سبد مشترک", "asset-center": "مرکز داراییِ سبد مشترک", analysis: "تحلیل سبد مشترک", decisions: "تصمیم برای سبد مشترک", risk: "ریسک همین برنامهٔ مشترک", market: "رابطهٔ فلزات همین سبد", data: "کیفیت دادهٔ همین سبد" };
   return <section className="view-stack shared-workspace" data-testid="shared-portfolio" data-revision={portfolio.revision}>
+    <fieldset disabled={busy} style={{ display: "contents" }}>
     <div className="view-hero"><div><span className="action-eyebrow">یک سبد · یک ورودی · یک بودجه</span><h2>{titles[view]}</h2><p>طلا، سکه، نقره و نقد از یک قرارداد مشترک می‌آیند؛ مقدار صفر یعنی فعلاً آن دارایی را نداری.</p></div><span className="status-chip warning">دادهٔ کاملاً ساختگی</span></div>
     <div className="shared-toolbar">
       <label className="action-field"><span>دارایی انتخاب‌شده در همهٔ نماها</span><select data-testid="shared-selection" value={portfolio.selectedAssetId} onChange={(event) => select(event.target.value)}>{portfolio.input.assets.map((asset) => <option key={asset.id} value={asset.id}>{assetName(asset.name)}</option>)}{portfolio.unsupported.map((holding) => <option key={holding.id} value={holding.id}>{assetName(unsupportedCatalog[holding.id].name)} — فاقد پشتیبانی</option>)}</select></label>
-      <div className="market-actions"><button className="ghost-button" onClick={save}>ذخیرهٔ سبد مشترک</button><button className="ghost-button" onClick={restore}>بازیابی سبد مشترک</button>{view !== "portfolio" && <button className="primary-button" onClick={() => onNavigate("portfolio")}>ویرایش ورودی سبد</button>}</div>
+      <div className="market-actions"><button className="ghost-button" disabled={storedRaw === undefined} onClick={save}>ذخیرهٔ سبد مشترک</button><button className="ghost-button" onClick={restore}>بازیابی سبد مشترک</button>{view !== "portfolio" && <button className="primary-button" onClick={() => onNavigate("portfolio")}>ویرایش ورودی سبد</button>}</div>
     </div>
     {notice && <p className="action-notice" role="status">{notice}</p>}
     <div className="shared-summary">
@@ -140,5 +146,6 @@ export function SharedPortfolioWorkspace({ active, view, onNavigate }: { active:
     {view === "decisions" && <DecisionActionWorkbench input={portfolio.input} onInputChange={updateInput} blockedReason={evaluation.errors.join(" ")} onSave={save} onRestore={restore} />}
     {analysis && ["analysis", "risk", "market", "data"].includes(view) && <SharedAnalysisPanel report={analysis} selectedAssetId={portfolio.selectedAssetId} view={view} />}
     <details className="action-detail"><summary>ردپای مشترک و محدودهٔ ذخیره</summary><p>بازبینی ورودی: {portfolio.revision.toLocaleString("fa-IR")}؛ روش عددی تغییر نکرده است. ذخیره فقط در این مرورگر است و شامل ورودی و نتیجهٔ بازتولیدشده می‌شود؛ ذخیرهٔ شخصیِ سرور و نمونهٔ مستقل قبلی استفاده یا بازنویسی نمی‌شوند.</p><code dir="ltr">{portfolio.schemaVersion} · {portfolio.input.fixtureId} · {plan?.methodologyId ?? "NO_PLAN"}</code><p>کیفیت قیمت و رابطهٔ فلزات به همین سبد متصل‌اند؛ تاریخچه و پروفایل عوامل، مرجع ساختگی موتور هستند. مقایسهٔ هفت روش و هیئت بررسی، نمونه‌های مرجع جداگانه‌اند؛ بودجهٔ این سبد محسوب نمی‌شوند.</p></details>
+    </fieldset>
   </section>;
 }

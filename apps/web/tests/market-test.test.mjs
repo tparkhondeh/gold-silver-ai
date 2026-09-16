@@ -3,6 +3,7 @@ import test from "node:test";
 import { readFileSync } from "node:fs";
 import { makeNavasanSnapshot, validateMarketSnapshot, createMarketTestPortfolio, evaluateMarketTest, encodeMarketTest, decodeMarketTest, navasanRawRial, displayRialAsToman, tomanInputToRial, rialToTomanInput, MARKET_TEST_STORAGE } from "../app/market-test-contract.ts";
 import { saveMarketTest, restoreMarketTest } from "../app/market-test-storage.ts";
+import { createTestLocks } from "./helpers/snapshot-locks.mjs";
 import { handleMarketTest } from "../app/api/market-test/route.ts";
 
 // Entirely synthetic transport fixtures. Never copied from a provider or labelled as live evidence.
@@ -77,14 +78,15 @@ test("reject mismatched source, units, purity, dates, raw price, unknown fields 
   for (const edit of [p => { p.quantitiesMilli.EMAMI_COIN_IRR = 500; }, p => { p.cashRial = "1.1"; }, p => { p.mediumDays = p.shortDays; }, p => { p.minimumCashBps = NaN; }, p => { p.selectedAsset = "UNKNOWN"; }, p => { p.holdingsKind = "real_personal"; }, p => { p.quantitiesMilli.GOLD_18K_IRR = -1; }, p => { p.maximumAssetBps = 0; }, p => { p.quantitiesMilli.UNKNOWN = 1; }]) { const p = portfolio(); edit(p); assert.throws(() => evaluateMarketTest(p, now)); }
 });
 
-test("save/recover stays isolated, deterministic, fail-closed and rechecks freshness", () => {
+test("save/recover stays isolated, deterministic, fail-closed and rechecks freshness", async () => {
   const data = new Map([["personal-portfolio", "do-not-touch"], ["asha-shared-synthetic-portfolio-v1", "synthetic-existing"]]);
   const storage = { getItem: key => data.get(key) ?? null, setItem: (key, value) => data.set(key, value) };
-  assert.equal(restoreMarketTest(storage, now), null);
-  const p = portfolio(); saveMarketTest(storage, p, now); const before = data.get(MARKET_TEST_STORAGE);
-  assert.deepEqual(restoreMarketTest(storage, now), p);
-  assert.equal(evaluateMarketTest(restoreMarketTest(storage, now + 7200000), now + 7200000).currentTotalRial, null);
-  assert.throws(() => saveMarketTest({ ...storage, setItem() { throw new Error("quota exceeded"); } }, p, now));
+  const locks = createTestLocks();
+  assert.deepEqual(restoreMarketTest(storage, now), { raw: null, portfolio: null });
+  const p = portfolio(); await saveMarketTest(storage, p, now, null, locks); const before = data.get(MARKET_TEST_STORAGE);
+  assert.deepEqual(restoreMarketTest(storage, now).portfolio, p);
+  assert.equal(evaluateMarketTest(restoreMarketTest(storage, now + 7200000).portfolio, now + 7200000).currentTotalRial, null);
+  await assert.rejects(() => saveMarketTest({ ...storage, setItem() { throw new Error("quota exceeded"); } }, p, now + 1, before, locks));
   assert.throws(() => restoreMarketTest({ ...storage, getItem() { throw new Error("denied"); } }, now));
   assert.equal(data.get(MARKET_TEST_STORAGE), before); assert.equal(data.get("personal-portfolio"), "do-not-touch"); assert.equal(data.size, 3);
   assert.throws(() => decodeMarketTest(before.replace('"state":"undecidable"', '"state":"hold"'), now));

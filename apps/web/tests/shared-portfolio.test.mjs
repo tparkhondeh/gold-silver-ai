@@ -154,7 +154,8 @@ test("UI wiring isolates browser-only synthetic persistence and keeps the existi
   assert.match(ui, /<DecisionActionWorkbench input=\{portfolio.input\} onInputChange=\{updateInput\}/);
   assert.match(ui, /blockedReason=\{evaluation.errors.join/);
   assert.doesNotMatch(ui, /fetch\(|\/api\/|sessionStorage|dangerouslySetInnerHTML/);
-  assert.match(ui, /localStorage.setItem\(`\$\{SHARED_STORAGE_KEY\}-previous`, previous\)/);
+  assert.match(ui, /saveSharedPortfolio\(localStorage, portfolio, storedRaw\)/);
+  assert.match(ui, /disabled=\{storedRaw === undefined\}/);
   assert.match(desk, /<ActionSizingComparisonPanel/);
   assert.match(desk, /if \(blockedReason\) throw new Error/);
   assert.match(desk, /key === "referencePriceToman" && !sharedInput/);

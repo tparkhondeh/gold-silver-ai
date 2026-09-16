@@ -4,6 +4,17 @@
 
 ## Immediate Next Step
 
+Latest independent unit, 2026-09-16: browser save/conflict hardening is implemented
+and locally verified; see [evidence and bounded completion](BROWSER_STORAGE_REVIEW_2026-09-16.md).
+Do not rebuild file intake, shared diagnostics or the new storage protection.
+Verify final-SHA publication/three CI jobs and use the updated R2 owner guide.
+The remaining registered transitions require evidence/decisions: actual licensed
+Rahavard profile, market observations/calibration, missing historical/regime method,
+and hosted identity/storage. Do not invent a vendor format, select a new method or
+provider, or add filler features while waiting. No automatic export, vendor message,
+mailbox polling, new data request, server change or scheduled continuation occurred
+in this independent unit. The existing provider next gate follows unchanged.
+
 Latest, 2026-09-15: continue the [official Rahavard file route](../05-data/RAHAVARD_FILE_INTAKE.md#next-real-data-gate).
 Its independent synthetic TXT intake and shared valuation workspace are implemented;
 do not rebuild them or call their fixture a vendor export. Browser login and Gold

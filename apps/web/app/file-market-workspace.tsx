@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { createFileTestPortfolio, evaluateFileTest, FILE_PROFILE_VERSION, MAX_FILE_BYTES, readFileSnapshot, restoreFileTest, saveFileTest, SYNTHETIC_FILE, type FileTestPortfolio } from "./file-market-contract";
 import { displayRialAsToman as money, marketTestAssets, tomanInputToRial, rialToTomanInput } from "./market-test-contract";
 import type { View } from "./workspace-navigation";
+import { snapshotFailure } from "./browser-snapshot-storage";
 
 const states = { missing: "قیمت موجود نیست", unknown_time: "زمان قیمت نامشخص", future: "زمان قیمت در آینده", stale: "منقضی — فقط ارزش ثبت‌شده", fresh: "در بازه تازگی آزمون" };
 const percent = (bps: number | null | undefined) => bps == null ? "نامشخص" : `${(bps / 100).toLocaleString("fa-IR")}٪`;
@@ -50,7 +51,7 @@ export function FileMarketWorkspace({ view, onNavigate }: { view: View; onNaviga
     if (storedRaw === undefined) return;
     setBusy(true);
     try { setStoredRaw(await saveFileTest(localStorage, portfolio, Date.now(), storedRaw)); setNotice("همین نسخه ساختگی ذخیره شد؛ فقط در این مرورگر و جدا از بازار واقعی و سبد شخصی."); }
-    catch (e) { setNotice(e instanceof Error ? e.message : "ذخیره ناموفق؛ نسخه قبلی حفظ شد."); }
+    catch (e) { setNotice(snapshotFailure(e, "ذخیره ناموفق؛ ورودی و دسترسی فضای مرورگر را بررسی کن. نسخه قبلی حفظ شد.")); }
     finally { setBusy(false); }
   };
   const restore = async () => {

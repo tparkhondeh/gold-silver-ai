@@ -1,4 +1,5 @@
 import { createMarketTestPortfolio, evaluateQuotedTestPositions, navasanRawRial, validateMarketTestPortfolio, type MarketTestPortfolio } from "./market-test-contract.ts";
+import { withSnapshotLock, writeReviewedSnapshot, type SnapshotLocks } from "./browser-snapshot-storage.ts";
 
 // The vendor confirms TXT, not its column layout/encoding or this sample schema.
 // No checkbox, caller-supplied license string or file name can open this gate.
@@ -125,11 +126,13 @@ export async function decodeFileTest(text: string, nowMs: number): Promise<FileT
   if (await encodeFileTest(portfolio, instant(document.evaluatedAt)) !== text) fail("نتیجه ذخیره با محاسبه برابر نیست.");
   evaluateFileTest(portfolio, nowMs); return portfolio;
 }
-export async function saveFileTest(storage: LocalStorage, portfolio: FileTestPortfolio, nowMs: number, expectedRaw: string | null) {
+export async function saveFileTest(storage: LocalStorage, portfolio: FileTestPortfolio, nowMs: number, expectedRaw: string | null, locks?: SnapshotLocks) {
   // Validate before the sole write. Detect intervening writes; never clear corrupt storage.
   const text = await encodeFileTest(portfolio, nowMs);
-  if (storage.getItem(FILE_TEST_STORAGE) !== expectedRaw) fail("نسخه مرورگر تغییر کرده؛ ابتدا بازیابی کنید. نسخه دیگر بازنویسی نشد.");
-  storage.setItem(FILE_TEST_STORAGE, text); return text;
+  return withSnapshotLock(FILE_TEST_STORAGE, async () => {
+    if (expectedRaw !== null) await decodeFileTest(expectedRaw, nowMs);
+    return writeReviewedSnapshot(storage, FILE_TEST_STORAGE, text, expectedRaw, () => { /* Validated above inside the lock. */ });
+  }, locks);
 }
 export async function restoreFileTest(storage: LocalStorage, nowMs: number) {
   const raw = storage.getItem(FILE_TEST_STORAGE);

@@ -7,6 +7,12 @@ state is recorded in `docs/10-project-state/CURRENT_STATE.md`.
 
 ## [Unreleased]
 
+- Prevented stale-tab and unread/corrupt snapshot overwrites in shared and market
+  workspaces; all three browser test stores now use exclusive Web Locks. Unchanged
+  shared saves preserve the previous copy. Document formats and financial methods
+  are unchanged; 10 new grouped regression tests (220 web total) and browser checks
+  cover conflict/recovery behavior without acquiring market data or changing servers.
+
 - Integrated the main synthetic portfolio, asset center, analysis, decision and risk
   views through one versioned input; reused exact physical sizing and the existing
   seven-method comparison. Added fail-closed unsupported assets and canonical

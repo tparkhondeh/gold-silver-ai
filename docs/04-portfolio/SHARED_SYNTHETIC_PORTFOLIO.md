@@ -78,6 +78,29 @@ requires canonical JSON (including duplicate-key rejection), recomputes the resu
 and rejects any mismatch. Invalid recovery preserves both current state and stored
 bytes. An unreadable initial save is explicitly distinguished from a new reference.
 
+### Browser save protection (2026-09-16)
+
+The shared, market-test and synthetic-file workspaces now compare the exact bytes
+last successfully read/saved with the current storage slot before writing. Unknown
+initial storage, corruption and intervening writes/removals fail closed; recovering
+updates the baseline only after validation. A conflict keeps the draft in memory
+and explicitly warns that Restore replaces unsaved edits, never silently merges.
+Shared unchanged saves are no-ops and do not rotate the `-previous` slot. Failure
+to write that backup aborts the primary write; failure of the primary write leaves
+the prior current bytes intact (the backup can already contain the same bytes).
+Market/file storage still retains one snapshot only, not new market history.
+
+All three writers cooperate through the same origin/key-scoped exclusive
+[Web Locks API](https://developer.mozilla.org/en-US/docs/Web/API/LockManager/request)
+(reviewed September 16). A busy/unavailable lock rejects the write, with no unsafe
+fallback; read-only recovery and calculations remain usable. There is no new
+dependency, storage namespace or document version. UI edits are disabled during
+the short save operation. This is not protection against old application tabs,
+extensions or other code that ignores locks; reload old tabs before testing.
+It is not hosted synchronization, an atomic multi-key transaction, immutable audit
+history, or backup against browser/profile deletion. Test evidence and unresolved
+dependencies: [September 16 audit](../10-project-state/BROWSER_STORAGE_REVIEW_2026-09-16.md).
+
 ## V2 impact, compatibility and rollback (2026-09-13)
 
 The only changed consumers are the shared workspace/diagnostic panel and its local
