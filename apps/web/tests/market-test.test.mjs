@@ -17,7 +17,7 @@ const request = (headers = {}, url = "http://127.0.0.1:4174/api/market-test", op
 const allowed = { allowed: true, used: 7, remaining: 108, reservationId: "test-reservation", retryAfterSeconds: null };
 function dependencies(overrides = {}) {
   const calls = { reserve: 0, fetch: 0, outcomes: [] };
-  const ledger = { async reserve(endpoint, hash, interval) { calls.reserve++; assert.equal(endpoint, "latest"); assert.match(hash, /^[a-f0-9]{64}$/); assert.equal(interval, 24000); return overrides.reservation ?? allowed; }, async recordLatestOutcome(value) { calls.outcomes.push(value); if (overrides.recordFailure) throw new Error("test"); } };
+  const ledger = { async reserve(endpoint, hash, interval) { calls.reserve++; assert.equal(endpoint, "latest"); assert.match(hash, /^[a-f0-9]{64}$/); assert.equal(interval, overrides.expectedInterval ?? 24000); return overrides.reservation ?? allowed; }, async recordLatestOutcome(value) { calls.outcomes.push(value); if (overrides.recordFailure) throw new Error("test"); } };
   return { calls, resolve: async () => ({ available: true, ledger }), fetcher: async (url, options) => { calls.fetch++; assert.equal(url.hostname, "api.navasan.tech"); assert.equal(url.pathname, "/latest/"); assert.equal(options.redirect, "manual"); assert.equal(options.cache, "no-store"); if (overrides.throwFetch) throw new Error("synthetic-test-not-a-credential"); return overrides.response ?? Response.json(payload()); } };
 }
 
@@ -115,6 +115,39 @@ test("one explicit latest request shares durable free quota and returns only app
 test("cooldown, exhausted and unavailable ledger make zero upstream requests", async () => {
   for (const remaining of [0, 50]) { const d = dependencies({ reservation: { ...allowed, allowed: false, remaining, reservationId: null, retryAfterSeconds: 24000 } }); const response = await handleMarketTest(request(), environment, d.resolve, d.fetcher, () => now); assert.equal(response.status, 429); assert.equal(d.calls.fetch, 0); }
   for (const resolve of [async () => ({ available: false }), async () => { throw new Error("database down"); }, async () => ({ available: true, ledger: { async reserve() { throw new Error("database down"); } } })]) { const d = dependencies(); assert.equal((await handleMarketTest(request(), environment, resolve, d.fetcher, () => now)).status, 503); assert.equal(d.calls.fetch, 0); }
+});
+
+test("latest test route preserves slower free cadence while retaining the default and minimum", async () => {
+  for (const [configured, expectedInterval] of [[undefined, 24000], ["60", 24000], ["0", 24000], ["invalid", 24000], ["24000", 24000], ["86400", 86400], ["86400.9", 86400]]) {
+    const d = dependencies({ expectedInterval });
+    const response = await handleMarketTest(request(), { ...environment, NAVASAN_REFRESH_SECONDS: configured }, d.resolve, d.fetcher, () => now);
+    assert.equal(response.status, 200); assert.equal(d.calls.reserve, 1); assert.equal(d.calls.fetch, 1);
+  }
+  const d = dependencies();
+  assert.equal((await handleMarketTest(request(), { ...environment, NAVASAN_PLAN: undefined }, d.resolve, d.fetcher, () => now)).status, 200);
+});
+
+test("slower configured cooldown cannot be shortened through request inputs or paid-plan settings", async () => {
+  const env = { ...environment, NAVASAN_REFRESH_SECONDS: "86400" };
+  let reservations = 0, upstream = 0;
+  const resolve = async () => ({ available: true, ledger: {
+    async reserve(_endpoint, _hash, interval) {
+      reservations++;
+      const elapsed = 25000; // Past the old 24,000-second limit, inside one day.
+      return interval > elapsed
+        ? { allowed: false, used: 1, remaining: 114, reservationId: null, retryAfterSeconds: interval - elapsed }
+        : allowed;
+    },
+    async recordLatestOutcome() {},
+  } });
+  const fetcher = async () => { upstream++; return Response.json(payload()); };
+  const response = await handleMarketTest(request({ "x-asha-refresh-seconds": "0" }), env, resolve, fetcher, () => now);
+  assert.equal(response.status, 429);
+  assert.equal((await response.json()).retryAfterSeconds, 61400);
+  assert.equal(reservations, 1); assert.equal(upstream, 0);
+  for (const req of [request({}, "http://127.0.0.1:4174/api/market-test?refreshSeconds=0"), request({}, undefined, { body: '{"refreshSeconds":0}' })]) assert.ok((await handleMarketTest(req, env, resolve, fetcher, () => now)).status >= 400);
+  for (const plan of ["standard", "gold"]) assert.equal((await handleMarketTest(request(), { ...env, NAVASAN_PLAN: plan }, resolve, fetcher, () => now)).status, 403);
+  assert.equal(reservations, 1); assert.equal(upstream, 0);
 });
 
 test("outage, malformed, oversized response and recording failure never retry or leak key", async () => {

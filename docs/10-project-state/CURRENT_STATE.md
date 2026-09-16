@@ -2,7 +2,20 @@
 
 **Source of truth for:** where the project stands right now.
 
-_Last reviewed: 2026-09-16, Asia/Tehran (specialist review and recovery correctness)_
+_Last reviewed: 2026-09-16, Asia/Tehran (actual latest-price acceptance)_
+
+## Latest actual-market checkpoint
+
+One permitted Navasan latest request now succeeded with eight approved observations.
+Gold/coin prices reached the existing isolated portfolio path; nine views, exact
+valuation edits, missing inputs, risk, latest-only save and reload were tested in
+the browser. The previous "authenticated receipt unverified" checkpoint is superseded.
+No licensed Rahavard file or silver price was received. Same-method concentration
+warnings and configured request cadence were corrected; 252 web tests and local
+build/typecheck/lint/audit pass. Actual-source versus controlled-fixture evidence,
+quota/next eligibility, source research and remaining gates:
+[September 16 actual-market review](REAL_MARKET_REVIEW_2026-09-16.md).
+No main/server change, financial unlock or owner acceptance is implied.
 
 ## Latest specialist-team checkpoint
 

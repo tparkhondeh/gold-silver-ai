@@ -2,6 +2,15 @@
 
 **Source of truth for:** known limitations and gaps in the current state.
 
+## Latest actual-market status — September 16, 2026
+
+The former authenticated Navasan acquisition blocker is closed by one successful
+latest request and browser valuation/replay acceptance. See
+[actual evidence and remaining limits](REAL_MARKET_REVIEW_2026-09-16.md).
+Rahavard permission/file profile, Iran-silver coverage and full analytical inputs
+remain missing; global reference prices do not substitute for them. Free-feed
+cadence and the 60-minute freshness rule remain distinct from successful receipt.
+
 ## Latest specialist review — September 16, 2026
 
 See [the current review](SPECIALIST_REVIEW_2026-09-16.md) for corrected no-trade and

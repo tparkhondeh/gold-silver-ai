@@ -4,6 +4,14 @@
 
 ## Immediate Next Step
 
+The owner reprioritized actual licensed data. Follow the
+[successful September 16 real-price acceptance](REAL_MARKET_REVIEW_2026-09-16.md)
+instead of repeating the earlier pending Navasan probe. Use current quota and
+freshness before another explicit request; no polling/history. Rahavard reply,
+permission and minimal real sample remain absent. Keep its export off. The next
+independent engineering gap remains isolated hydrated browser regression testing;
+do not rebuild the now-verified real-price valuation path or corrected risk/cadence.
+
 Latest September 16 specialist-team review supersedes the earlier bounded
 "no independent gap identified" conclusion: use the
 [current findings, delivery gates and next test task](SPECIALIST_REVIEW_2026-09-16.md).

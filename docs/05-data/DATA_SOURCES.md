@@ -5,6 +5,11 @@ and permitted product use. Source-selection rationale is recorded in ADR 0003.
 
 ## Integration Set and Current Readiness
 
+Current authorized acquisition is the isolated one-shot Navasan technical-test path;
+generic multi-provider networking remains off. The capability rows below are not
+claims that every feed is currently running. Historical quota/status entries are
+superseded by the [September 16 actual-price evidence](../10-project-state/REAL_MARKET_REVIEW_2026-09-16.md).
+
 | ID | Provider | Coverage | Access and cadence | Timestamp / unit contract | Product use | Status |
 |---|---|---|---|---|---|---|
 | `navasan` | [Navasan](https://www.navasan.tech/api/) | Iranian 18k gold, mesghal, Emami, Azadi, half, quarter and gram coins, and USD sell | Keyed HTTPS `latest`, `dailyCurrency`, and `ohlcSearch` APIs. Free plan: 120 requests/month and three-month validity. The free cadence is at least 24,000 seconds (6h40m), at most 112 scheduled calls in 31 days; PostgreSQL separately enforces a 115-call rolling ceiling and five-call provider reserve. | Unix `timestamp`; decimal strings. The tested mapping uses direct toman values for 18k/USD and a thousand-toman scale for mesghal/coins; current, intraday, and OHLC paths share strict unit/range checks. | Intended primary Iranian display feed; history is local-operator-only and remains excluded from financial decisions until licensed backfill and validation pass. | ACTIVE LOCALLY: the replacement key remains outside chat/Git. On ۱۴۰۵/۰۶/۱۰ one owner-authorized live check returned all eight approved valid quotes. A development reload later revealed and consumed one extra reservation before the durable cooldown fix; the counter is now 4 used and 111 remaining. Historical adapters stay locked and no historical request or write was made. |

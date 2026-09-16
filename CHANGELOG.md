@@ -7,6 +7,12 @@ state is recorded in `docs/10-project-state/CURRENT_STATE.md`.
 
 ## [Unreleased]
 
+- Accepted one real, permitted Navasan latest snapshot through the existing local
+  technical workspace, with actual browser valuation/navigation/save/reload checks.
+  Corrected exact concentration warnings and one-shot configured-cadence mismatch;
+  clarified the free delayed feed and retained missing-data/financial-use gates.
+  252 web regressions pass; no quote files, keys, server or main changes.
+
 - Established owner-authorized specialist delegation with disjoint ownership,
   independent review and persistent handoffs. Corrected the existing index-level
   no-trade comparator to preserve initial holdings, without changing six other

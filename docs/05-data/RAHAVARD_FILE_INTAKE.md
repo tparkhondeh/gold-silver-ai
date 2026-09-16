@@ -1,8 +1,13 @@
 # Rahavard official file intake — bounded preparation
 
-Reviewed 2026-09-15, Asia/Tehran. Owner scope: official licensed file acquisition and
+Reviewed 2026-09-16, Asia/Tehran. Owner scope: official licensed file acquisition and
 local technical testing; no scraping, history accumulation, purchase, server/main
 change or financial-method promotion. ADR 0011 remains binding.
+
+September 16 follow-up: the scoped authenticated-mail search found only the sent
+inquiry, not a relevant reply/bounce. No duplicate was sent or export activated.
+Permission and actual profile remain unresolved; see the
+[actual-market checkpoint](../10-project-state/REAL_MARKET_REVIEW_2026-09-16.md).
 
 ## What is actually known
 

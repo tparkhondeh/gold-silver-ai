@@ -2,6 +2,7 @@ import { inspectNavasanConfiguration } from "../../navasan-adapter.ts";
 import { makeNavasanSnapshot } from "../../market-test-contract.ts";
 import { resolveNavasanQuotaLedger } from "../../../db/postgres-runtime.ts";
 import { fingerprintNavasanRequest, type PostgresNavasanQuotaLedger } from "../../../data/navasan-quota-ledger.ts";
+import { resolveNavasanRefreshPolicy } from "../../../data/navasan-refresh-policy.ts";
 
 type Environment = Record<string, string | undefined>;
 type Resolution = { available: false; reason: string } | { available: true; ledger: Pick<PostgresNavasanQuotaLedger, "reserve" | "recordLatestOutcome"> };
@@ -20,7 +21,9 @@ export async function handleMarketTest(request: Request, environment: Environmen
   try { ledger = await resolve(); } catch { return json({ state: "blocked", reason: "quota_unavailable" }, 503); }
   if (!ledger.available) return json({ state: "blocked", reason: "quota_unavailable" }, 503);
   let reservation;
-  try { reservation = await ledger.ledger.reserve("latest", fingerprintNavasanRequest("latest", { item: "approved-phase-1-set" }), 24_000); }
+  // Match health's nextEligibleAt and preserve any slower configured free cadence.
+  const refreshSeconds = resolveNavasanRefreshPolicy(environment).effectiveRefreshSeconds;
+  try { reservation = await ledger.ledger.reserve("latest", fingerprintNavasanRequest("latest", { item: "approved-phase-1-set" }), refreshSeconds); }
   catch { return json({ state: "blocked", reason: "quota_unavailable" }, 503); }
   if (!reservation.allowed || !reservation.reservationId) return json({ state: "blocked", reason: reservation.remaining === 0 ? "quota_exhausted" : "refresh_cooldown", used: reservation.used, remaining: reservation.remaining, retryAfterSeconds: reservation.retryAfterSeconds }, 429);
   const started = clock();
