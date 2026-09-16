@@ -40,7 +40,27 @@ test("invalid and unbounded display data is explicit, not coerced to zero or HTM
   for (const value of [NaN, Infinity, -Infinity, "", " ", "0x10", "<script>", "1e9999", "9".repeat(351)]) {
     assert.equal(formatNumber(value), "نامعتبر");
   }
-  for (const divisor of [0, -1, "bad"]) assert.equal(formatNumber(1, divisor), "نامعتبر");
+  for (const divisor of [0, -1, "bad", null]) assert.equal(formatNumber(1, divisor), "نامعتبر");
+  assert.equal(presentNumber("9".repeat(351)).compact, "نامعتبر");
+  assert.equal(presentNumber(`${"9".repeat(350)}.1`, 3).compact, "نامعتبر");
+  assert.equal(presentNumber(1, `${"9".repeat(350)}.1`).compact, "نامعتبر");
+  assert.equal(presentNumber(`${"9".repeat(350)}e1`, 3).compact, "نامعتبر");
+});
+
+test("computed purchase fractions retain exact large integers with independent finite bounds", () => {
+  // A 500-lot maximum-precision FX stress produces a 13,777-digit denominator.
+  // Use a deterministic coprime rational of that size, never a fabricated quote.
+  const denominator = `1${"0".repeat(13776)}`;
+  const numerator = (BigInt(denominator) - 1n).toString();
+  const shown = presentNumber(numerator, denominator);
+  assert.equal(shown.compact, "≈ ۱"); assert.equal(shown.approximate, true);
+  const fromPersian = value => value.replaceAll("٬", "").replace(/[۰-۹]/g, digit => String("۰۱۲۳۴۵۶۷۸۹".indexOf(digit)));
+  assert.deepEqual(shown.exact.split(" / ").map(fromPersian), [numerator, denominator]);
+  assert.equal(formatNumber("9".repeat(351), "9".repeat(351)), "۱");
+  assert.equal(presentNumber("9".repeat(32000), "9".repeat(32000)).exact, "۱");
+  assert.equal(presentNumber("9".repeat(32001), "3").compact, "نامعتبر");
+  assert.equal(presentNumber("1", "9".repeat(32001)).compact, "نامعتبر");
+  assert.equal(presentNumber("1", `-${"9".repeat(13777)}`).compact, "نامعتبر");
 });
 
 test("displaying every plan value cannot alter quantities, price limits, budget or canonical replay", () => {

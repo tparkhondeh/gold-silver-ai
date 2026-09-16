@@ -73,14 +73,22 @@ connections failing. Exact evidence and retry boundary:
    holdings stay in that browser session and cannot be reviewed by the owner. Because
    the link is public and unauthenticated, testers must not enter real sensitive
    financial information.
-8. **One moderate development-only audit finding remains under `drizzle-kit`.**
-   A live-registry re-audit on ۱۴۰۵/۰۶/۱۰ found the production tree clean. The exact
-   full lock resolves `drizzle-kit@0.31.10` through the deprecated esbuild loader to
-   vulnerable `esbuild@0.18.20` ([GHSA-67mh-4wv8-2f99](https://github.com/evanw/esbuild/security/advisories/GHSA-67mh-4wv8-2f99)).
-   Upstream marks replacement work as beta-only
-   ([issue 4852](https://github.com/drizzle-team/drizzle-orm/issues/4852)); no stable,
-   compatibility-proven upgrade exists yet. The generator remains a development-only
-   tool for trusted local schema input and is absent from production installs.
+8. **Development-dependency audit findings remain; production audit is clean.**
+   A fresh registry audit on 2026-09-16 reports 11 affected development packages
+   (5 high, 6 moderate), superseding the earlier single-finding count. These are
+   pre-existing packages, not the new purchase importer dependencies. Advisory groups:
+   [sharp/libheif](https://github.com/advisories/GHSA-rgj7-g3m4-5g8c),
+   [Browserslist](https://github.com/advisories/GHSA-c83g-rgw3-j3cx),
+   [Browserslist query complexity](https://github.com/advisories/GHSA-73wf-gq98-2v4g),
+   [baseline-browser-mapping](https://github.com/advisories/GHSA-w5vr-8v7q-w6rv),
+   [fflate ZIP64](https://github.com/advisories/GHSA-px8p-9vwx-vf98), and the existing
+   [drizzle-kit/esbuild chain](https://github.com/evanw/esbuild/security/advisories/GHSA-67mh-4wv8-2f99).
+   The XLSX reader uses neither sharp nor fflate; local Node mode excludes the
+   Cloudflare runtime plugin. This is not a blanket claim that every development
+   dependency is unreachable in builds. Next bounded maintenance task: review and
+   test compatible patched Cloudflare/miniflare/sharp, Browserslist, baseline and
+   fflate versions; retain the separately tracked drizzle-kit issue. Do not force
+   an audit fix that downgrades or changes the stack without compatibility review.
 9. **Navasan backfill is not authorized.** Durable append-only accounting now
    serializes workers and caps application calls at 115 per rolling 31 days;
    `dailyCurrency` and `ohlcSearch` are normalized behind a local-only route. No

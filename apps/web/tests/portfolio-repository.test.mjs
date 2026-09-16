@@ -47,7 +47,7 @@ test("portfolio repository returns an explicit empty owner snapshot", async () =
 test("portfolio repository restores exact holdings and compact owner preferences", async () => {
   const { runner, calls } = createRunner((sql) => {
     if (sql.includes("set_config")) return { rows: [] };
-    if (sql.includes("SELECT id, version FROM user_portfolios")) {
+    if (sql.includes("SELECT id, version, purchase_book FROM user_portfolios")) {
       return { rows: [{ id: "portfolio-a", version: 7 }] };
     }
     if (sql.includes("FROM portfolio_holdings")) {

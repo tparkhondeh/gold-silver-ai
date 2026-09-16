@@ -4,6 +4,25 @@
 
 ## Immediate Next Step
 
+The latest owner-authorized purchase-lot/Excel stage is implemented; follow the
+[purchase-book review and test guide](PURCHASE_LOTS_REVIEW_2026-09-16.md), not the
+older prompt priority below. Complete exact-delivery-SHA publication/three CI jobs
+at handoff; do not rebuild the purchase book, weighted calculations or importer.
+Owner acceptance remains outstanding. New browser regression must preserve the
+JSONB-key-order round trip and the four actual personal-view IDs.
+
+Next independent engineering priorities: bounded compatible fixes for the freshly
+documented development-dependency advisories ([KNOWN_ISSUES item 8](KNOWN_ISSUES.md)),
+then isolated hydrated-browser regression automation for the tested purchase and
+portfolio paths. Historical FX automation still requires a licensed exact-date
+source; do not use current/nearest-day prices. Personal holdings, actual-price
+test workspace and synthetic laboratory remain separate until a specifically
+designed/authenticated data connection is authorized. Hosted identity/storage,
+method validation and owner acceptance remain external gates. Do not fetch new
+provider data, enable Rahavard export or change the server under this task.
+
+### Earlier checkpoint context (retained)
+
 The owner reprioritized actual licensed data. Follow the
 [successful September 16 real-price acceptance](REAL_MARKET_REVIEW_2026-09-16.md)
 instead of repeating the earlier pending Navasan probe. Use current quota and

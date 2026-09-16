@@ -9,8 +9,9 @@ import { createPgTransactionRunner, inspectOperatorDatabaseEnvironment } from ".
 import { ingestManualCsv, manualCsvHeaders } from "../../data/csv-ingestion.ts";
 import { validateObservation } from "../../data/validation.ts";
 import { PostgresObservationRepository } from "../../data/postgres-observation-repository.ts";
-import { PortfolioVersionConflictError, PostgresPortfolioRepository } from "../../data/postgres-portfolio-repository.ts";
+import { PortfolioVersionConflictError, PurchaseBookConflictError, PostgresPortfolioRepository, emptyPortfolioPreferences } from "../../data/postgres-portfolio-repository.ts";
 import { createPortfolioPut } from "../../app/api/portfolio/route.ts";
+import { emptyPurchaseBook } from "../../app/purchase-book.ts";
 import { PostgresProvenanceRepository, buildArtifactVersion } from "../../data/provenance-registry.ts";
 import { PostgresSourceReconciliationRepository } from "../../data/source-reconciliation.ts";
 import { PostgresPortfolioLedgerRepository } from "../../data/portfolio-ledger.ts";
@@ -28,6 +29,12 @@ const registry = {
   sources: new Map([["test-only", { schemaVersion: 1, id: "test-only", displayName: "Synthetic test source", quality: "test_only", accessMode: "test", active: true }]]),
 };
 const raw = { instrumentCode: "TEST_ONLY", sourceId: "test-only", value: "1.00", currency: "TOMAN", unit: "gram", observedAt: "2026-08-20T10:00:00Z", publishedAt: null, collectedAt: "2026-08-20T10:01:00Z", effectiveFrom: "2026-08-20T10:00:00Z", effectiveTo: null, correctionOf: null, correctionReason: null, rawPayload: { synthetic: true } };
+const purchaseLot = { id: "synthetic-integration-purchase", assetId: "GOLD_18K_IRR", assetClass: "gold", unit: "gram", purityPermille: 750,
+  quantity: "1.123456789012", purchaseDate: "2000-01-01", purchaseTime: null, paymentCurrency: "TOMAN",
+  unitPrice: "999999999999999999.123456789012", fees: "0.123456789012", note: "Synthetic only",
+  source: { kind: "xlsx", reference: "a".repeat(64) },
+  fx: { tomanPerUsd: "123.123456789012", rateDate: "2000-01-01", rateType: "synthetic manual", source: "test fixture", receivedAt: "2000-01-02T00:00:00.000Z", validity: "user_entered_unverified" } };
+const purchaseBook = { ...emptyPurchaseBook(), lots: [purchaseLot], imports: [{ fileSha256: "a".repeat(64), importedAt: "2000-01-02T00:00:00.000Z", lotIds: [purchaseLot.id] }] };
 
 test("real PostgreSQL migration, isolation, persistence and restore", async (t) => {
   const admin = new Client({ connectionString, connectionTimeoutMillis: 3000 });
@@ -51,7 +58,16 @@ test("real PostgreSQL migration, isolation, persistence and restore", async (t) 
   await admin.query(`SET search_path TO "${schema}"`);
   const migrations = await readMigrations();
   await t.test("applies migrations once, detects drift and rolls back failure", async () => {
-    assert.equal((await applyMigrations(admin, migrations)).length, migrations.length);
+    const purchaseMigration = migrations.findIndex(migration => migration.id === "0012_purchase_book.sql");
+    assert.ok(purchaseMigration > 0);
+    assert.equal((await applyMigrations(admin, migrations.slice(0, purchaseMigration))).length, purchaseMigration);
+    const legacyId = `portfolio_${"9".repeat(32)}`;
+    await admin.query("INSERT INTO user_portfolios (id,subject_id,version) VALUES ($1,'synthetic-before-purchase-migration',9)", [legacyId]);
+    await admin.query("INSERT INTO portfolio_holdings (id,portfolio_id,asset_name,amount,unit,cost_toman,purchase_date,note) VALUES ('synthetic-pre-migration',$1,'Legacy synthetic',2.5,'gram',NULL,NULL,'preserve exactly')", [legacyId]);
+    const beforeMigration = (await admin.query("SELECT * FROM portfolio_holdings WHERE portfolio_id=$1", [legacyId])).rows;
+    assert.equal((await applyMigrations(admin, migrations)).length, migrations.length - purchaseMigration);
+    assert.deepEqual((await admin.query("SELECT * FROM portfolio_holdings WHERE portfolio_id=$1", [legacyId])).rows, beforeMigration);
+    assert.deepEqual((await admin.query("SELECT version,purchase_book FROM user_portfolios WHERE id=$1", [legacyId])).rows, [{ version: 9, purchase_book: null }]);
     assert.deepEqual(await applyMigrations(admin, migrations), []);
     await assert.rejects(applyMigrations(admin, [{ ...migrations[0], checksum: "0".repeat(64) }, ...migrations.slice(1)]), /checksum/);
     await assert.rejects(applyMigrations(admin, [...migrations, { id: "9999_failure.sql", checksum: "f".repeat(64), sql: "CREATE TABLE rollback_probe(id integer); SELECT * FROM no_such_table_for_test" }]));
@@ -227,11 +243,41 @@ test("real PostgreSQL migration, isolation, persistence and restore", async (t) 
     assert.equal(resolutions, 1);
     assert.deepEqual(await portfolioRepository.load("local-owner-v1"), saved);
   });
+  await t.test("purchase books round-trip exact strings with legacy preservation, RLS and atomic failure recovery", async () => {
+    const subject = "synthetic-purchase-owner";
+    const legacy = { id: "synthetic-purchase-legacy", name: "طلای ۱۸ عیار", amount: 2.5, unit: "گرم", costToman: null, purchaseDate: null, note: "Synthetic opening balance" };
+    const first = await portfolioRepository.save(subject, 0, [legacy], emptyPortfolioPreferences, purchaseBook);
+    assert.deepEqual(await portfolioRepository.load(subject), first);
+    const stored = (await admin.query("SELECT purchase_book FROM user_portfolios WHERE subject_id=$1", [subject])).rows[0].purchase_book;
+    assert.deepEqual(stored, purchaseBook);
+    assert.equal(stored.lots[0].unitPrice, "999999999999999999.123456789012");
+    const oldClient = await portfolioRepository.save(subject, 1, [legacy], { ...emptyPortfolioPreferences, liquidityReservePercent: "10" });
+    assert.deepEqual(oldClient.purchaseBook, purchaseBook);
+    assert.deepEqual(oldClient.holdings, [legacy]);
+    await assert.rejects(portfolioRepository.save(subject, 2, [], emptyPortfolioPreferences, emptyPurchaseBook()), PurchaseBookConflictError);
+    await assert.rejects(portfolioRepository.save(subject, 2, [], emptyPortfolioPreferences, { ...purchaseBook, imports: [] }), PurchaseBookConflictError);
+    const changed = { ...purchaseBook, lots: [{ ...purchaseLot, quantity: "2.5" }] };
+    await assert.rejects(portfolioRepository.save(subject, 2, [{ ...legacy, amount: -1 }], emptyPortfolioPreferences, changed), /check constraint/);
+    assert.deepEqual(await portfolioRepository.load(subject), oldClient);
+    await assert.rejects(portfolioRepository.save(subject, 1, [legacy], emptyPortfolioPreferences, changed), PortfolioVersionConflictError);
+    const edited = await portfolioRepository.save(subject, 2, [legacy], emptyPortfolioPreferences, changed);
+    assert.deepEqual(await portfolioRepository.load(subject), edited);
+    assert.deepEqual(edited.purchaseBook.imports, purchaseBook.imports);
+    const client = await runtimePool.connect();
+    try {
+      await client.query("BEGIN");
+      await client.query("SELECT set_config('asha.subject_id','synthetic-unrelated-owner',true)");
+      assert.equal((await client.query("SELECT purchase_book FROM user_portfolios WHERE subject_id=$1", [subject])).rowCount, 0);
+      assert.equal((await client.query("UPDATE user_portfolios SET purchase_book=NULL WHERE subject_id=$1", [subject])).rowCount, 0);
+    } finally { await client.query("ROLLBACK"); client.release(); }
+    assert.deepEqual(await portfolioRepository.load(subject), edited);
+    await assert.rejects(admin.query("UPDATE user_portfolios SET purchase_book='{}'::jsonb WHERE subject_id=$1", [subject]), /purchase_book_shape/);
+  });
   await t.test("portfolio restore holds one complete version while a concurrent save waits", async () => {
     const subject = "integration-snapshot-owner";
     const first = await portfolioRepository.save(subject, 0, [{ id: "snapshot-holding", name: "Synthetic snapshot", amount: 1, unit: "test", costToman: null, purchaseDate: null, note: "" }], {
       liquidityReservePercent: "10", maxSingleAssetPercent: "", maxAcceptableDrawdownPercent: "", shortTermMonths: "", longTermYears: "", analysisHorizon: "short", decisionHorizon: "short",
-    });
+    }, purchaseBook);
     const runner = createPgTransactionRunner(runtimePool);
     let notifyRead, releaseRead;
     const parentRead = new Promise(resolve => { notifyRead = resolve; });
@@ -239,7 +285,7 @@ test("real PostgreSQL migration, isolation, persistence and restore", async (t) 
     const reader = new PostgresPortfolioRepository({ transaction: work => runner.transaction(executor => work({
       async query(sql, parameters) {
         const result = await executor.query(sql, parameters);
-        if (sql.includes("SELECT id, version FROM user_portfolios")) { notifyRead(); await continueRead; }
+        if (sql.includes("SELECT id, version, purchase_book FROM user_portfolios")) { notifyRead(); await continueRead; }
         return result;
       },
     })) });
@@ -250,12 +296,13 @@ test("real PostgreSQL migration, isolation, persistence and restore", async (t) 
     const pendingRead = reader.load(subject);
     const changedHoldings = [{ ...first.holdings[0], amount: 2 }];
     const changedPreferences = { ...first.preferences, liquidityReservePercent: "20" };
+    const changedBook = { ...purchaseBook, lots: [{ ...purchaseLot, quantity: "2.5" }] };
     try {
       await Promise.race([parentRead, pendingRead]);
-      await assert.rejects(writer.save(subject, first.version, changedHoldings, changedPreferences), /lock timeout/);
+      await assert.rejects(writer.save(subject, first.version, changedHoldings, changedPreferences, changedBook), /lock timeout/);
     } finally { releaseRead(); }
     assert.deepEqual(await pendingRead, first);
-    const second = await writer.save(subject, first.version, changedHoldings, changedPreferences);
+    const second = await writer.save(subject, first.version, changedHoldings, changedPreferences, changedBook);
     assert.equal(second.version, first.version + 1);
     assert.deepEqual(await portfolioRepository.load(subject), second);
   });

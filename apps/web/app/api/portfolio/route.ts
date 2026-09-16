@@ -1,10 +1,11 @@
 import type { PortfolioHolding, PortfolioPreferences, PortfolioSnapshot, PostgresPortfolioRepository } from "../../../data/postgres-portfolio-repository.ts";
-import { PortfolioVersionConflictError } from "../../../data/postgres-portfolio-repository.ts";
+import { PortfolioVersionConflictError, PurchaseBookConflictError } from "../../../data/postgres-portfolio-repository.ts";
 import { resolveLocalPortfolioRepository } from "../../../db/postgres-runtime.ts";
 import { portfolioPreferenceLimits, validPortfolioAmount, validPortfolioCost, validPortfolioPreference } from "../../../data/portfolio-numeric-contract.ts";
+import { validatePurchaseBook, type PurchaseBook } from "../../purchase-book.ts";
 
 const LOCAL_SUBJECT = "local-owner-v1";
-const MAX_REQUEST_BYTES = 262_144;
+const MAX_REQUEST_BYTES = 2_097_152;
 const MAX_HOLDINGS = 500;
 const SAFE_ID = /^[\p{L}\p{N}_.:-]{1,100}$/u;
 const DATE = /^\d{4}-\d{2}-\d{2}$/;
@@ -98,19 +99,25 @@ export function createPortfolioPut(resolveRepository: ResolveRepository = resolv
     let payload: unknown;
     try { payload = JSON.parse(body); } catch { return json({ ok: false, code: "invalid_json", message: "request body is not valid JSON" }, 400); }
     if (!payload || typeof payload !== "object" || Array.isArray(payload)) return json({ ok: false, code: "invalid_portfolio", message: "portfolio request must be an object" }, 422);
-    const input = payload as { expectedVersion?: unknown; holdings?: unknown; preferences?: unknown };
+    const input = payload as { expectedVersion?: unknown; holdings?: unknown; preferences?: unknown; purchaseBook?: unknown };
     if (!Number.isSafeInteger(input.expectedVersion) || (input.expectedVersion as number) < 0 || !Array.isArray(input.holdings) || input.holdings.length > MAX_HOLDINGS) return json({ ok: false, code: "invalid_portfolio", message: "portfolio version or holdings are invalid" }, 422);
     const holdings = input.holdings.map(validatedHolding);
     if (holdings.some((holding) => holding === null) || new Set(holdings.map((holding) => holding?.id)).size !== holdings.length) return json({ ok: false, code: "invalid_holding", message: "one or more holdings are invalid or duplicated" }, 422);
     const preferences = validatedPreferences(input.preferences);
     if (!preferences) return json({ ok: false, code: "invalid_preferences", message: "portfolio preferences are invalid" }, 422);
+    let purchaseBook: PurchaseBook | undefined;
+    if (Object.hasOwn(input, "purchaseBook")) {
+      try { purchaseBook = validatePurchaseBook(input.purchaseBook); }
+      catch { return json({ ok: false, code: "invalid_purchase_book", message: "اطلاعات خریدها معتبر نیست؛ مقدار، واحد، تاریخ و نرخ‌های واردشده را بررسی کنید. اطلاعات قبلی تغییر نکرده است." }, 422); }
+    }
     const resolution = await repositoryOrResponse(resolveRepository);
     if (resolution instanceof Response) return resolution;
     try {
-      const snapshot: PortfolioSnapshot = await resolution.repository.save(LOCAL_SUBJECT, input.expectedVersion as number, holdings as PortfolioHolding[], preferences);
+      const snapshot: PortfolioSnapshot = await resolution.repository.save(LOCAL_SUBJECT, input.expectedVersion as number, holdings as PortfolioHolding[], preferences, purchaseBook);
       return json({ ok: true, snapshot });
     } catch (error) {
       if (error instanceof PortfolioVersionConflictError) return json({ ok: false, code: "version_conflict", message: "Portfolio changed in another browser; reload before saving" }, 409);
+      if (error instanceof PurchaseBookConflictError) return json({ ok: false, code: "purchase_book_conflict", message: "خریدهای قبلی یا سابقهٔ ورود فایل نباید حذف شوند. ابتدا نسخهٔ ذخیره‌شده را بازیابی کنید." }, 409);
       return json({ ok: false, code: "database_unavailable", message: "Portfolio save outcome is unconfirmed" }, 503);
     }
   };

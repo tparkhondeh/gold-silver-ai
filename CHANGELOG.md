@@ -7,6 +7,14 @@ state is recorded in `docs/10-project-state/CURRENT_STATE.md`.
 
 ## [Unreleased]
 
+- Added independent dated purchase lots, exact weighted acquisition/landed costs
+  and per-lot historical USD equivalents, with explicit missing-data coverage.
+  Integrated personal views and additive atomic PostgreSQL persistence without
+  rewriting legacy balances. Added a four-sheet downloadable XLSX template,
+  browser-only bounded importer, explicit preview and duplicate/conflict guards.
+  Corrected JSONB key-order recovery, numerical projection and UI integration
+  findings; see the September 16 purchase-book review for evidence and limits.
+
 - Accepted one real, permitted Navasan latest snapshot through the existing local
   technical workspace, with actual browser valuation/navigation/save/reload checks.
   Corrected exact concentration warnings and one-shot configured-cadence mismatch;

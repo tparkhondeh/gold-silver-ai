@@ -135,6 +135,7 @@ export const userPortfolios = pgTable("user_portfolios", {
   schemaVersion: smallint("schema_version").notNull().default(1),
   subjectId: text("subject_id").notNull().unique(),
   version: integer("version").notNull().default(0),
+  purchaseBook: jsonb("purchase_book"),
   createdAt: utcTimestamp("created_at").notNull().defaultNow(),
   updatedAt: utcTimestamp("updated_at").notNull().defaultNow(),
 });

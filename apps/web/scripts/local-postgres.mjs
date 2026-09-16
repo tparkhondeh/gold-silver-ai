@@ -11,7 +11,7 @@ import { Client } from "pg";
 import { applyMigrations, readMigrations } from "../db/migrations.ts";
 import { probeObservationDatabase } from "../db/postgres-runtime.ts";
 import { phase1Instruments, phase1Sources } from "../data/phase1-registry.ts";
-import { createLocalBackupPlan, localBackupTables, quoteVerificationDatabase } from "./local-backup.ts";
+import { createLocalBackupPlan, localBackupTables, migrationJournalMatches, quoteVerificationDatabase } from "./local-backup.ts";
 
 const root = fileURLToPath(new URL("../../../", import.meta.url));
 const webRoot = fileURLToPath(new URL("../", import.meta.url));
@@ -45,7 +45,7 @@ async function privateDirectory() {
 }
 
 async function sourceFingerprint() {
-  const files = ["scripts/local-postgres.mjs", "package-lock.json"];
+  const files = ["scripts/local-postgres.mjs", "scripts/local-backup.ts", "package-lock.json", "app/purchase-book.ts", "app/api/portfolio/route.ts"];
   for (const folder of ["db", "data", "tests/integration"]) {
     for (const file of await readdir(join(webRoot, folder), { recursive: true, withFileTypes: true })) {
       if (file.isFile() && /\.(ts|mjs|sql)$/.test(file.name)) files.push(join(file.parentPath, file.name));
@@ -62,10 +62,10 @@ async function fileFingerprint(path) {
   return hash.digest("hex");
 }
 
-async function verifyActivation(client) {
+async function verifyActivation(client, { allowPendingMigrations = false } = {}) {
   const expected = await readMigrations();
   const stored = (await client.query("SELECT id,checksum FROM asha_schema_migrations ORDER BY id")).rows;
-  if (stored.length !== expected.length || stored.some((row, index) => row.id !== expected[index].id || row.checksum !== expected[index].checksum)) throw new Error("Migration journal does not match reviewed SQL");
+  if (!migrationJournalMatches(stored, expected, allowPendingMigrations)) throw new Error("Migration journal does not match reviewed SQL");
   const grants = await client.query(`SELECT bool_and(
     has_table_privilege(current_user,c.oid,'SELECT')
     AND NOT pg_has_role(current_user,c.relowner,'MEMBER')
@@ -93,6 +93,10 @@ async function verifyActivation(client) {
   const triggerNames = ["observations_are_immutable", "quarantine_records_are_immutable", "validation_results_are_immutable", "quarantine_resolutions_are_immutable", "ingestion_batches_are_immutable", "observation_contract_before_insert", "observations_cannot_be_truncated", "batches_cannot_be_truncated", "quarantine_cannot_be_truncated", "validations_cannot_be_truncated", "resolutions_cannot_be_truncated", "source_contract_versions_are_immutable", "artifact_versions_are_immutable", "dataset_observations_are_immutable", "decision_records_are_immutable", "decision_assumptions_are_immutable", "decision_features_are_immutable", "source_contract_versions_cannot_be_truncated", "artifact_versions_cannot_be_truncated", "dataset_observations_cannot_be_truncated", "decision_records_cannot_be_truncated", "decision_assumptions_cannot_be_truncated", "decision_features_cannot_be_truncated", "source_reconciliations_are_immutable", "source_reconciliation_candidates_are_immutable", "source_reconciliations_cannot_be_truncated", "source_reconciliation_candidates_cannot_be_truncated", "portfolio_transaction_correction_before_insert", "portfolio_transactions_are_immutable", "portfolio_valuations_are_immutable", "portfolio_valuation_positions_are_immutable", "portfolio_valuation_transactions_are_immutable", "portfolio_transactions_cannot_be_truncated", "portfolio_valuations_cannot_be_truncated", "portfolio_valuation_positions_cannot_be_truncated", "portfolio_valuation_transactions_cannot_be_truncated", "portfolio_valuation_parent_before_insert", "portfolio_valuation_position_lineage_before_insert", "portfolio_valuation_transaction_owner_before_insert", "provider_request_reservations_are_immutable", "provider_request_reservations_cannot_be_truncated"];
   const triggers = (await client.query("SELECT t.tgname FROM pg_trigger t JOIN pg_class c ON c.oid=t.tgrelid JOIN pg_namespace n ON n.oid=c.relnamespace WHERE n.nspname='public' AND NOT t.tgisinternal AND t.tgenabled IN ('O','A')")).rows.map((row) => row.tgname);
   if (triggerNames.some((name) => !triggers.includes(name))) throw new Error("Required integrity trigger missing or disabled");
+  // Backup validates the installed schema and restores the dump; it does not
+  // activate changed code. Requiring new-code test evidence here would prevent
+  // taking the mandatory backup before a pending migration or code change.
+  if (allowPendingMigrations) return;
   const evidence = JSON.parse(await readFile(evidenceFile, "utf8"));
   const age = Date.now() - Date.parse(evidence.completedAt);
   if (evidence.fingerprint !== await sourceFingerprint() || !Number.isFinite(age) || age < 0 || age > 86_400_000) throw new Error("Successful current-source integration evidence is required before activation");
@@ -216,7 +220,7 @@ async function verifiedBackup(secret) {
   let completedBackup = null;
   try {
     const runtimeClient = await connect(url("asha_runtime", secret.runtime, "asha_local"));
-    try { await verifyActivation(runtimeClient); }
+    try { await verifyActivation(runtimeClient, { allowPendingMigrations: true }); }
     finally { await runtimeClient.end(); }
 
     runWithPassword("pg_dump", [

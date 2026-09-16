@@ -28,6 +28,15 @@ export const localBackupTables = [
   "provider_runtime_status",
 ] as const;
 
+type MigrationIdentity = { id: string; checksum: string };
+
+// A pre-migration backup may contain an exact reviewed prefix, never an unknown,
+// reordered or edited migration. Activation still requires the complete journal.
+export function migrationJournalMatches(stored: readonly MigrationIdentity[], expected: readonly MigrationIdentity[], allowPendingMigrations = false) {
+  if (stored.length === 0 || stored.length > expected.length || (!allowPendingMigrations && stored.length !== expected.length)) return false;
+  return stored.every((row, index) => row.id === expected[index].id && row.checksum === expected[index].checksum);
+}
+
 function assertInside(parent: string, child: string) {
   const result = relative(resolve(parent), resolve(child));
   if (!result || result === ".." || result.startsWith(`..${sep}`) || resolve(result) === result) {

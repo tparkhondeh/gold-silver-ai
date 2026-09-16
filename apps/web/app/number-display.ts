@@ -4,9 +4,9 @@ export type NumberPresentation = { compact: string; exact: string; approximate: 
 const fa = (value: string) => value.replace(/\d/g, digit => "۰۱۲۳۴۵۶۷۸۹"[Number(digit)]);
 const integer = (value: bigint) => fa(value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "٬"));
 
-function fraction(value: NumericValue): [bigint, bigint] {
+function fraction(value: NumericValue, computedIntegerFraction = false): [bigint, bigint] {
   const text = String(value);
-  if (text.length > 350) throw new Error("Invalid display value");
+  if (text.length > (computedIntegerFraction ? 32000 : 350)) throw new Error("Invalid display value");
   const match = /^(-?)(\d+)(?:\.(\d+))?(?:e([+-]?\d+))?$/i.exec(text);
   if (!match) throw new Error("Invalid display value");
   const exponent = Number(match[4] ?? 0) - (match[3]?.length ?? 0);
@@ -35,9 +35,14 @@ function exactFraction(n: bigint, d: bigint): string {
   return `${sign}${integer(magnitude / d)}${digits ? `٫${fa(digits)}` : ""}`;
 }
 
-export function presentNumber(value: NumericValue, denominator: NumericValue = 1): NumberPresentation {
+export function presentNumber(value: NumericValue, denominator?: NumericValue): NumberPresentation {
   try {
-    const [a, b] = fraction(value), [c, d] = fraction(denominator);
+    // Only an explicit pair of integers is the computed-rational path. A book
+    // may sum 500 distinct historical FX denominators (30 decimal digits each),
+    // plus bounded decimal scales. Ordinary decimal/scientific inputs retain
+    // their original limit; neither path truncates financial digits.
+    const computedIntegerFraction = denominator !== undefined && /^-?\d+$/.test(String(value)) && /^\d+$/.test(String(denominator));
+    const [a, b] = fraction(value, computedIntegerFraction), [c, d] = fraction(denominator === undefined ? 1 : denominator, computedIntegerFraction);
     if (c <= 0n) throw new Error("Invalid display denominator");
     const n = a * d, divisor = b * c, magnitude = n < 0n ? -n : n;
     const exact = exactFraction(n, divisor);
@@ -54,4 +59,4 @@ export function presentNumber(value: NumericValue, denominator: NumericValue = 1
   }
 }
 
-export const formatNumber = (value: NumericValue, denominator: NumericValue = 1) => presentNumber(value, denominator).compact;
+export const formatNumber = (value: NumericValue, denominator?: NumericValue) => presentNumber(value, denominator).compact;

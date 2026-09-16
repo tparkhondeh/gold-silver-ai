@@ -1,5 +1,6 @@
 import { createHash } from "node:crypto";
 
+import { validatePurchaseBook, type PurchaseBook } from "../app/purchase-book.ts";
 import type { SqlExecutor, TransactionRunner } from "./postgres-observation-repository.ts";
 
 export type PortfolioHolding = {
@@ -32,7 +33,7 @@ export const emptyPortfolioPreferences: PortfolioPreferences = {
   decisionHorizon: "short",
 };
 
-export type PortfolioSnapshot = { version: number; holdings: PortfolioHolding[]; preferences: PortfolioPreferences };
+export type PortfolioSnapshot = { version: number; holdings: PortfolioHolding[]; preferences: PortfolioPreferences; purchaseBook?: PurchaseBook };
 
 export class PortfolioVersionConflictError extends Error {
   constructor() {
@@ -41,7 +42,29 @@ export class PortfolioVersionConflictError extends Error {
   }
 }
 
-type PortfolioRow = { id: string; version: number };
+export class PurchaseBookConflictError extends Error {
+  constructor() {
+    super("existing purchases and import receipts must be preserved");
+    this.name = "PurchaseBookConflictError";
+  }
+}
+
+// This stage supports adding/editing purchases, not deleting them or forgetting
+// imported files. A dedicated future clear/delete workflow needs explicit intent.
+function assertPurchaseBookPreserved(previous: PurchaseBook | undefined, next: PurchaseBook) {
+  if (!previous) return;
+  const ids = new Set(next.lots.map((lot) => lot.id));
+  if (previous.lots.some((lot) => !ids.has(lot.id))) throw new PurchaseBookConflictError();
+  const receipts = new Map(next.imports.map((receipt) => [receipt.fileSha256, receipt]));
+  for (const receipt of previous.imports) {
+    const candidate = receipts.get(receipt.fileSha256);
+    if (!candidate || candidate.importedAt !== receipt.importedAt
+      || candidate.lotIds.length !== receipt.lotIds.length
+      || candidate.lotIds.some((id, index) => id !== receipt.lotIds[index])) throw new PurchaseBookConflictError();
+  }
+}
+
+type PortfolioRow = { id: string; version: number; purchase_book?: unknown };
 type HoldingRow = { id: string; asset_name: string; amount: string; unit: string; cost_toman: string | null; purchase_date: string | null; note: string };
 type PreferenceRow = {
   liquidity_reserve_percent: string | null;
@@ -98,8 +121,8 @@ export class PostgresPortfolioRepository {
     return this.runner.transaction(async (executor) => {
       await setSubject(executor, subjectId);
       // Saves update this parent before replacing its children. Hold a shared lock
-      // until all reads finish, so holdings/preferences belong to the same version.
-      const portfolio = await executor.query<PortfolioRow>("SELECT id, version FROM user_portfolios WHERE subject_id=$1 FOR SHARE", [subjectId]);
+      // until all reads finish, so holdings/preferences/book belong to one version.
+      const portfolio = await executor.query<PortfolioRow>("SELECT id, version, purchase_book FROM user_portfolios WHERE subject_id=$1 FOR SHARE", [subjectId]);
       const row = portfolio.rows?.[0];
       if (!row) return { version: 0, holdings: [], preferences: { ...emptyPortfolioPreferences } };
       const holdings = await executor.query<HoldingRow>(`
@@ -112,21 +135,30 @@ export class PostgresPortfolioRepository {
           analysis_horizon, decision_horizon
         FROM portfolio_preferences WHERE portfolio_id=$1
       `, [row.id]);
-      return { version: row.version, holdings: (holdings.rows ?? []).map(toHolding), preferences: toPreferences(preferences.rows?.[0]) };
+      return { version: row.version, holdings: (holdings.rows ?? []).map(toHolding), preferences: toPreferences(preferences.rows?.[0]),
+        ...(row.purchase_book == null ? {} : { purchaseBook: validatePurchaseBook(row.purchase_book) }) };
     });
   }
 
-  async save(subjectId: string, expectedVersion: number, holdings: readonly PortfolioHolding[], preferences: PortfolioPreferences): Promise<PortfolioSnapshot> {
+  async save(subjectId: string, expectedVersion: number, holdings: readonly PortfolioHolding[], preferences: PortfolioPreferences, purchaseBook?: PurchaseBook): Promise<PortfolioSnapshot> {
+    // Clone and validate before yielding, so caller edits cannot race persistence.
+    const candidateBook = purchaseBook === undefined ? undefined : validatePurchaseBook(purchaseBook);
     return this.runner.transaction(async (executor) => {
       await setSubject(executor, subjectId);
       const id = portfolioId(subjectId);
       await executor.query("INSERT INTO user_portfolios (id, subject_id) VALUES ($1,$2) ON CONFLICT (subject_id) DO NOTHING", [id, subjectId]);
       const updated = await executor.query<PortfolioRow>(`
         UPDATE user_portfolios SET version=version+1, updated_at=clock_timestamp()
-        WHERE subject_id=$1 AND version=$2 RETURNING id, version
+        WHERE subject_id=$1 AND version=$2 RETURNING id, version, purchase_book
       `, [subjectId, expectedVersion]);
       const portfolio = updated.rows?.[0];
       if (!portfolio) throw new PortfolioVersionConflictError();
+      const previousBook = portfolio.purchase_book == null ? undefined : validatePurchaseBook(portfolio.purchase_book);
+      const savedBook = candidateBook ?? previousBook;
+      if (candidateBook) {
+        assertPurchaseBookPreserved(previousBook, candidateBook);
+        await executor.query("UPDATE user_portfolios SET purchase_book=$2::jsonb WHERE id=$1", [portfolio.id, JSON.stringify(candidateBook)]);
+      }
       await executor.query("DELETE FROM portfolio_holdings WHERE portfolio_id=$1", [portfolio.id]);
       for (const holding of holdings) {
         await executor.query(`
@@ -151,7 +183,7 @@ export class PostgresPortfolioRepository {
           decision_horizon=EXCLUDED.decision_horizon,
           updated_at=clock_timestamp()
       `, [portfolio.id, optionalNumber(preferences.liquidityReservePercent), optionalNumber(preferences.maxSingleAssetPercent), optionalNumber(preferences.maxAcceptableDrawdownPercent), optionalNumber(preferences.shortTermMonths), optionalNumber(preferences.longTermYears), preferences.analysisHorizon, preferences.decisionHorizon]);
-      return { version: portfolio.version, holdings: [...holdings], preferences: { ...preferences } };
+      return { version: portfolio.version, holdings: [...holdings], preferences: { ...preferences }, ...(savedBook ? { purchaseBook: savedBook } : {}) };
     });
   }
 }

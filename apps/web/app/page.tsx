@@ -37,6 +37,8 @@ import { MarketTestWorkspace } from "./market-test-workspace";
 import { sharedViews } from "./shared-portfolio";
 import { browserMarketFallbackAllowed } from "./market-network-policy";
 import { decodePortfolioSnapshot, fetchPortfolioSnapshot } from "./portfolio-persistence";
+import { emptyPurchaseBook, evaluatePurchaseBook, validatePurchaseBook, type PurchaseBook } from "./purchase-book";
+import { PurchaseBookPanel, PurchaseBasisSummary } from "./purchase-book-panel";
 import { assetCategories, assetOptions, getAssetCategoryForAsset, getAssetOptionsForCategory } from "./asset-catalog";
 import { currentJalaliDate, currentJalaliParts, formatJalaliDate, toPersianDigits } from "./jalali-calendar";
 import { PersianDatePicker } from "./persian-date-picker";
@@ -67,6 +69,7 @@ type Holding = {
 type PortfolioSnapshot = {
   version: number;
   holdings: Holding[];
+  purchaseBook?: PurchaseBook;
   preferences: OwnerDecisionConstraints & {
     analysisHorizon: "short" | "long";
     decisionHorizon: "short" | "long";
@@ -333,8 +336,19 @@ function EmptyLock({ title, text }: { title: string; text: string }) {
 export default function Home() {
   const [view, setView] = useState<View>("overview");
   const [menuOpen, setMenuOpen] = useState(false);
-  const [holdings, setHoldings] = useState<Holding[]>([]);
+  const [legacyHoldings, setHoldings] = useState<Holding[]>([]);
+  const [purchaseBook, setPurchaseBook] = useState<PurchaseBook>(emptyPurchaseBook);
+  const [purchaseStorageIssue, setPurchaseStorageIssue] = useState(false);
   const [portfolioMode, setPortfolioMode] = useState<"personal" | "demo">("personal");
+  const purchaseEvaluation = useMemo(() => {
+    try { return evaluatePurchaseBook(purchaseBook, legacyHoldings); }
+    catch { return { ...evaluatePurchaseBook(emptyPurchaseBook()), holdings: legacyHoldings, projectionIssues: ["ورودی قدیمی نیازمند اصلاح است؛ اصل آن حفظ شد و تجمیع متوقف است."] }; }
+  }, [purchaseBook, legacyHoldings]);
+  const holdings = portfolioMode === "personal" ? purchaseEvaluation.holdings : legacyHoldings;
+  function holdingPurchaseDate(holding: Holding) {
+    const aggregate = purchaseEvaluation.assets.find((asset) => asset.id === holding.id);
+    return aggregate ? `${formatNumber(aggregate.lotIds.length)} خرید با تاریخ جدا در دفتر${aggregate.sourceLegacyIds.length ? "؛ به‌علاوهٔ موجودی قبلی" : ""}` : formatPurchaseDate(holding.purchaseDate);
+  }
   const [marketTestActive, setMarketTestActive] = useState(true);
   const sharedPortfolioActive = !marketTestActive && portfolioMode === "demo" && sharedViews.some((id) => id === view);
   const [holdingsLoaded, setHoldingsLoaded] = useState(false);
@@ -407,6 +421,10 @@ export default function Home() {
   useEffect(() => {
     if (marketTestActive || holdingsLoaded) return;
     const timer = window.setTimeout(() => {
+      try {
+        const savedBook = sessionStorage.getItem("asha-purchase-book-v1");
+        if (savedBook) setPurchaseBook(validatePurchaseBook(JSON.parse(savedBook)));
+      } catch { setPurchaseStorageIssue(true); }
       const saved = sessionStorage.getItem("gold-silver-holdings");
       let restoredHoldings: Holding[] = [];
       if (saved) {
@@ -456,9 +474,9 @@ export default function Home() {
 
   useEffect(() => {
     if (legacyStorageIssue || marketTestActive || !holdingsLoaded || portfolioMode === "demo") return;
-    sessionStorage.setItem("gold-silver-holdings", JSON.stringify(holdings));
+    sessionStorage.setItem("gold-silver-holdings", JSON.stringify(legacyHoldings));
     sessionStorage.setItem("gold-silver-portfolio-mode", portfolioMode);
-  }, [holdings, holdingsLoaded, portfolioMode, marketTestActive, legacyStorageIssue]);
+  }, [legacyHoldings, holdingsLoaded, portfolioMode, marketTestActive, legacyStorageIssue]);
 
   useEffect(() => {
     if (marketTestActive || !holdingsLoaded || portfolioMode !== "personal") return;
@@ -567,7 +585,7 @@ export default function Home() {
   const marketRateStatus = !isUsableUsdTomanRate(marketUsdTomanRate) ? "نرخ دلار ناموجود" : `۱ دلار = ${formatToman(marketUsdTomanRate)} (${usdTomanQuote?.status === "valid" ? "تازه" : "منقضی"})`;
   const portfolioRateStatus = portfolioMode === "demo" ? `۱ دلار = ${formatToman(demoUsdTomanRate)} (نرخ ساختگی سبد نمایشی)` : marketRateStatus;
   const formatPortfolioMoney = (valueToman: number) => formatTomanAndUsd(valueToman, portfolioUsdTomanRate);
-  const holdingValues = useMemo(() => new Map(holdings.map((holding) => [holding.id, portfolioMode === "demo" ? (demoCurrentValuesToman[holding.id] ?? null) : calculateHoldingValue(holding, quoteMap)])), [holdings, portfolioMode, quoteMap]);
+  const holdingValues = useMemo(() => new Map(holdings.map((holding) => [holding.id, portfolioMode === "demo" ? (demoCurrentValuesToman[holding.id] ?? null) : purchaseEvaluation.projectionIssues.length ? null : calculateHoldingValue(holding, quoteMap)])), [holdings, portfolioMode, quoteMap, purchaseEvaluation.projectionIssues]);
   const sortedHoldings = useMemo(() => [...holdings].sort((left, right) => {
     const leftCurrent = holdingValues.get(left.id) ?? null;
     const rightCurrent = holdingValues.get(right.id) ?? null;
@@ -593,10 +611,10 @@ export default function Home() {
   }), [analysisQuoteMap, holdings, portfolioMode]);
   const bubbleAvailableCount = bubbleRows.filter((row) => row.current !== null).length;
   const valuedHoldingCount = Array.from(holdingValues.values()).filter((value) => value !== null).length;
-  const portfolioMarketValue = holdings.length > 0 && valuedHoldingCount === holdings.length
+  const portfolioMarketValue = (portfolioMode !== "personal" || purchaseEvaluation.projectionIssues.length === 0) && holdings.length > 0 && valuedHoldingCount === holdings.length
     ? Array.from(holdingValues.values()).reduce<number>((sum, value) => sum + (value ?? 0), 0)
     : null;
-  const portfolioProfitLoss = portfolioMarketValue !== null && costCoverage === 100 ? portfolioMarketValue - knownCost : null;
+  const portfolioProfitLoss = portfolioMarketValue !== null && holdings.every((item) => item.costToman !== null) ? portfolioMarketValue - knownCost : null;
   const portfolioProfitPercent = portfolioProfitLoss !== null && knownCost > 0 ? (portfolioProfitLoss / knownCost) * 100 : null;
   const allocationRows = holdings.map((holding) => ({ holding, value: holdingValues.get(holding.id) ?? null }));
   const largestAllocation = portfolioMarketValue === null ? null : allocationRows.reduce<{ holding: Holding; value: number } | null>((largest, row) => row.value === null || (largest && largest.value >= row.value) ? largest : { holding: row.holding, value: row.value }, null);
@@ -622,8 +640,8 @@ export default function Home() {
   const selectedAnalysisContent = selectedAnalysis;
   const decisionAssets = holdings.map((holding) => ({ id: holding.id, name: holding.name, priced: holdingValues.get(holding.id) !== null, bubble: bubbleRows.find((row) => row.holding.id === holding.id)?.current ?? null }));
   const selectedHolding = holdings.find((holding) => holding.id === selectedHoldingId) ?? holdings[0] ?? null;
-  const editingHolding = editingHoldingId ? holdings.find((holding) => holding.id === editingHoldingId) ?? null : null;
-  const pendingDeleteHolding = pendingDeleteHoldingId ? holdings.find((holding) => holding.id === pendingDeleteHoldingId) ?? null : null;
+  const editingHolding = editingHoldingId ? legacyHoldings.find((holding) => holding.id === editingHoldingId) ?? null : null;
+  const pendingDeleteHolding = pendingDeleteHoldingId ? legacyHoldings.find((holding) => holding.id === pendingDeleteHoldingId) ?? null : null;
   const selectedHoldingValue = selectedHolding ? (holdingValues.get(selectedHolding.id) ?? null) : null;
   const selectedHoldingProfit = selectedHolding && selectedHoldingValue !== null && selectedHolding.costToman !== null ? selectedHoldingValue - selectedHolding.costToman : null;
   const selectedHoldingProfitPercent = selectedHoldingProfit !== null && selectedHolding?.costToman && selectedHolding.costToman > 0 ? (selectedHoldingProfit / selectedHolding.costToman) * 100 : null;
@@ -646,7 +664,7 @@ export default function Home() {
   const ownerConstraintReadiness = evaluateOwnerDecisionConstraints(ownerConstraints);
   const decisionReadiness = evaluateDecisionGates({
     hasPortfolio: holdings.length > 0,
-    portfolioFullyValued: holdings.length > 0 && valuedHoldingCount === holdings.length,
+    portfolioFullyValued: (portfolioMode !== "personal" || purchaseEvaluation.projectionIssues.length === 0) && holdings.length > 0 && valuedHoldingCount === holdings.length,
     hasFreshIranData: freshIranQuoteCount > 0,
     ownerConstraintsDefined: ownerConstraintReadiness.complete,
     methodologyApproved: false,
@@ -736,6 +754,7 @@ export default function Home() {
 
   function openEditHolding(holding: Holding) {
     if (portfolioRequestRef.current) return;
+    if (!legacyHoldings.some((item) => item.id === holding.id)) { setView("portfolio"); return; }
     setEditingHoldingId(holding.id);
     setSelectedAssetCategory(getAssetCategoryForAsset(holding.name).id);
     setSelectedAssetName(holding.name);
@@ -791,6 +810,10 @@ export default function Home() {
     if (portfolioMode !== "personal" || marketTestActive || modalOpen || pendingDeleteHoldingId || portfolioRequestRef.current || portfolioPersistence.state === "checking" || portfolioPersistence.state === "unavailable") return;
     const preferences = { ...ownerConstraints, analysisHorizon, decisionHorizon };
     const snapshot = portfolioPersistence.snapshot ?? { version: 0, holdings: [], preferences };
+    if (purchaseStorageIssue || JSON.stringify(purchaseBook) !== JSON.stringify(snapshot.purchaseBook ?? emptyPurchaseBook())) {
+      setPortfolioPersistence({ state: "error", snapshot, message: "دفتر خرید با نسخهٔ دیتابیس یکسان نیست؛ پیش از ذخیره، نسخهٔ دیتابیس را بازیابی کن. اطلاعات فعلی حذف نشد." });
+      return;
+    }
     const controller = new AbortController();
     portfolioRequestRef.current = controller;
     setPortfolioPersistence({ state: "saving", snapshot, message: "در حال ذخیرهٔ نسخهٔ فعلی در دیتابیس…" });
@@ -798,7 +821,7 @@ export default function Home() {
       const response = await fetch("/api/portfolio", {
         method: "PUT",
         headers: { "Content-Type": "application/json", "X-Asha-Portfolio-Request": "save" },
-        body: JSON.stringify({ expectedVersion: snapshot.version, holdings, preferences }),
+        body: JSON.stringify({ expectedVersion: snapshot.version, holdings: legacyHoldings, preferences, purchaseBook }),
         signal: AbortSignal.any([controller.signal, AbortSignal.timeout(10_000)]),
       });
       const payload = await response.json() as { ok?: boolean; snapshot?: PortfolioSnapshot; code?: string };
@@ -829,6 +852,10 @@ export default function Home() {
       const snapshot = await fetchPortfolioSnapshot(controller.signal);
       if (controller.signal.aborted) return;
       setHoldings(snapshot.holdings);
+      const restoredBook = snapshot.purchaseBook ?? emptyPurchaseBook();
+      setPurchaseBook(restoredBook);
+      try { sessionStorage.setItem("asha-purchase-book-v1", JSON.stringify(restoredBook)); setPurchaseStorageIssue(false); }
+      catch { setPurchaseStorageIssue(true); }
       const { analysisHorizon: savedAnalysis, decisionHorizon: savedDecision, ...constraints } = snapshot.preferences;
       setOwnerConstraints(constraints);
       setAnalysisHorizon(savedAnalysis);
@@ -843,12 +870,52 @@ export default function Home() {
     }
   }
 
+  async function commitPurchaseBook(next: PurchaseBook) {
+    if (portfolioMode !== "personal" || marketTestActive || portfolioRequestRef.current || purchaseStorageIssue
+      || portfolioPersistence.state === "checking" || portfolioPersistence.state === "unavailable") {
+      throw new Error("ثبت خرید به اتصال دیتابیس محلی و بازیابی سالم سبد نیاز دارد؛ هیچ ردیفی اضافه نشد.");
+    }
+    const snapshot = portfolioPersistence.snapshot;
+    if (JSON.stringify(purchaseBook) !== JSON.stringify(snapshot.purchaseBook ?? emptyPurchaseBook())) {
+      throw new Error("دفتر خرید با نسخهٔ ذخیره‌شده یکسان نیست؛ ابتدا «بازیابی نسخهٔ دیتابیس» را بزن.");
+    }
+    const validated = validatePurchaseBook(next);
+    const preferences = { ...ownerConstraints, analysisHorizon, decisionHorizon };
+    const controller = new AbortController();
+    portfolioRequestRef.current = controller;
+    setPortfolioPersistence({ state: "saving", snapshot, message: "در حال ثبت یکپارچهٔ خریدها؛ نتیجه هنوز تأیید نشده…" });
+    let failureMessage = "نتیجهٔ ثبت نامشخص است؛ ورودی و پیش‌نمایش حفظ شدند. پیش از تکرار، نسخهٔ دیتابیس را بازیابی کن.";
+    try {
+      const response = await fetch("/api/portfolio", {
+        method: "PUT", headers: { "Content-Type": "application/json", "X-Asha-Portfolio-Request": "save" },
+        body: JSON.stringify({ expectedVersion: snapshot.version, holdings: legacyHoldings, preferences, purchaseBook: validated }),
+        signal: AbortSignal.any([controller.signal, AbortSignal.timeout(10_000)]),
+      });
+      const payload = await response.json();
+      if (controller.signal.aborted) throw new Error("نتیجهٔ ثبت نامشخص است؛ پیش از تکرار، نسخهٔ دیتابیس را بازیابی کن.");
+      if (!response.ok || payload.ok !== true) {
+        failureMessage = response.status === 409 ? "نسخهٔ ذخیره‌شده تغییر کرده است؛ ابتدا بازیابی کن. هیچ ردیفی به این نما اضافه نشد."
+          : response.status === 422 ? "ورودی خرید یا موجودی قدیمی معتبر نیست؛ ثبت انجام نشد. خطا را اصلاح و دوباره پیش‌نمایش کن." : failureMessage;
+        throw new Error(failureMessage);
+      }
+      const saved = decodePortfolioSnapshot(payload.snapshot);
+      if (JSON.stringify(saved.purchaseBook) !== JSON.stringify(validated)) throw new Error("پاسخ ذخیره با درخواست برابر نیست؛ پیش از ادامه بازیابی کن.");
+      setPurchaseBook(validated);
+      try { sessionStorage.setItem("asha-purchase-book-v1", JSON.stringify(validated)); }
+      catch { setPurchaseStorageIssue(true); }
+      setPortfolioPersistence({ state: "ready", snapshot: saved, message: "خریدها و سبد یک‌جا در دیتابیس محلی ثبت شدند؛ میانگین‌ها از ردیف‌های اصلی محاسبه می‌شوند." });
+    } catch {
+      if (!controller.signal.aborted) setPortfolioPersistence({ state: "error", snapshot, message: failureMessage });
+      throw new Error(failureMessage);
+    } finally { if (portfolioRequestRef.current === controller) portfolioRequestRef.current = null; }
+  }
+
   function loadDemoPortfolio() {
     activateDemoPortfolio("portfolio");
   }
 
   function activateDemoPortfolio(destination: View) {
-    if (holdingsLoaded && !legacyStorageIssue && portfolioMode !== "demo" && !sessionStorage.getItem("asha-personal-holdings-backup-v1")) sessionStorage.setItem("asha-personal-holdings-backup-v1", JSON.stringify(holdings));
+    if (holdingsLoaded && !legacyStorageIssue && portfolioMode !== "demo" && !sessionStorage.getItem("asha-personal-holdings-backup-v1")) sessionStorage.setItem("asha-personal-holdings-backup-v1", JSON.stringify(legacyHoldings));
     sessionStorage.setItem(portfolioPreferenceKey, "demo");
     setHoldings(demoHoldings.map((holding) => ({ ...holding })));
     setSelectedHoldingId(demoHoldings[0]?.id ?? null);
@@ -916,12 +983,16 @@ export default function Home() {
 
         <div className="workspace-mode-switch" aria-label="محیط کار"><button className={marketTestActive ? "active" : ""} aria-pressed={marketTestActive} onClick={() => chooseWorkspace("market")}>آزمون با قیمت بازار</button><button className={!marketTestActive && portfolioMode === "demo" ? "active" : ""} aria-pressed={!marketTestActive && portfolioMode === "demo"} onClick={() => chooseWorkspace("demo")}>آزمایشگاه ساختگی</button><button className={!marketTestActive && portfolioMode === "personal" ? "active" : ""} aria-pressed={!marketTestActive && portfolioMode === "personal"} onClick={() => chooseWorkspace("personal")}>سبد شخصی جداگانه</button></div>
         {!marketTestActive && legacyStorageIssue && <p className="action-error" role="alert">یکی از نسخه‌های قبلی مرورگر خوانده نشد؛ اصل آن حفظ شده و ذخیرهٔ خودکار آن محیط خاموش است. آزمون بازار فضای جداگانه دارد.</p>}
+        {!marketTestActive && portfolioMode === "personal" && purchaseStorageIssue && <p className="action-error" role="alert">نسخهٔ مرورگر دفتر خرید قابل اتکا نیست؛ اصل آن حفظ شد. برای ادامه از بخش دارایی‌ها، نسخهٔ دیتابیس را بازیابی کن.</p>}
         {!marketTestActive && portfolioMode === "demo" && <section className="simulation-banner" role="status"><div><b>داده و تصمیم ساختگی</b><span>کیفیت و رابطهٔ فلزات از سبد مشترک؛ مقایسهٔ روش‌ها، آزمون مرجع جداگانه است.</span></div></section>}
 
         <div className="page-content">
           <SharedPortfolioWorkspace active={sharedPortfolioActive} view={view} onNavigate={setView} />
           <MarketTestWorkspace active={marketTestActive} view={view} onNavigate={setView} />
           {!sharedPortfolioActive && !marketTestActive && <>
+          {portfolioMode === "personal" && purchaseEvaluation.projectionIssues.length > 0 && <p className="action-error" role="alert">بخشی از دفتر خرید در محاسبات قدیمی قابل نمایش دقیق نیست؛ جزئیات در دفتر خرید حفظ شده است. ارزش کل و تصمیم کامل در دسترس نیست: {purchaseEvaluation.projectionIssues.join(" · ")}</p>}
+          {portfolioMode === "personal" && view === "portfolio" && <PurchaseBookPanel book={purchaseBook} legacyHoldings={legacyHoldings} onCommit={commitPurchaseBook} busy={portfolioBusy} onEditLegacy={openEditHolding} />}
+          {portfolioMode === "personal" && ["overview", "asset-center", "analysis", "decisions"].includes(view) && purchaseBook.lots.length > 0 && <PurchaseBasisSummary evaluation={purchaseEvaluation} selectedHoldingId={view === "asset-center" ? selectedHolding?.id : undefined} />}
           {view === "overview" && <>
             <section className="overview-toolbar">
               <div><span>داشبورد ثروت شخصی</span><strong>{holdings.length ? `${formatNumber(holdings.length)} موقعیت · آمادگی ${formatNumber(readinessScore)} از ۴` : "برای شروع، دارایی ثبت یا سبد نمایشی را فعال کن"}</strong><small>{portfolioRateStatus}</small></div>
@@ -930,14 +1001,14 @@ export default function Home() {
 
             <section className="metric-grid">
               <article><div><small>ارزش روز سبد</small><strong>{portfolioMarketValue === null ? (holdings.length ? "پوشش ناقص" : "دارایی ثبت نشده") : <MoneyValue value={portfolioMarketValue} usdTomanRate={portfolioUsdTomanRate} />}</strong><p>{holdings.length ? `${formatNumber(valuedHoldingCount)} از ${formatNumber(holdings.length)} دارایی قیمت‌گذاری شده` : "پس از ثبت دارایی محاسبه می‌شود"}</p></div></article>
-              <article><div><small>موقعیت‌های ثبت‌شده</small><strong>{<NumberValue value={holdings.length} />}</strong><p>{portfolioMode === "demo" ? "سبد ساختگی برای آزمون تجربهٔ کاربری" : "فقط در نشست فعلی این مرورگر"}</p></div></article>
-              <article><div><small>بهای خرید ثبت‌شده</small><strong>{knownCost ? <MoneyValue value={knownCost} usdTomanRate={portfolioUsdTomanRate} /> : "ثبت نشده"}</strong><p>پوشش اطلاعات: {<NumberValue value={costCoverage} />}٪</p></div></article>
+              <article><div><small>موقعیت‌های ثبت‌شده</small><strong>{<NumberValue value={holdings.length} />}</strong><p>{portfolioMode === "demo" ? "سبد ساختگی برای آزمون تجربهٔ کاربری" : "دفتر خرید در دیتابیس محلی؛ موجودی قدیمی پس از ذخیرهٔ سبد"}</p></div></article>
+              <article><div><small>بهای خرید ثبت‌شده</small><strong>{knownCost ? <MoneyValue value={knownCost} /> : "ثبت نشده"}</strong><p>پوشش اطلاعات: {<NumberValue value={costCoverage} />}٪</p></div></article>
               <article><div><small>آمادگی تصمیم</small><strong>{portfolioMode === "demo" ? "۶ از ۶ آزمایشی" : `${formatNumber(decisionReadiness.passedCount)} از ۶`}</strong><p>{portfolioMode === "demo" ? "موتور شبیه‌سازی فعال است" : decisionReadiness.operational ? "همهٔ دروازه‌ها عبور کرده‌اند" : "موتور تصمیم مالی واقعی قفل است"}</p></div></article>
             </section>
 
             <section className="home-primary-grid">
               <article className="panel portfolio-panel home-portfolio"><div className="panel-head"><SectionTitle eyebrow="MY PORTFOLIO" title="سبد دارایی‌های من" text="نمای اصلی روی دارایی‌های خودت متمرکز است؛ دیده‌بان بازار در تب مستقل قرار دارد."/><button className="text-button" onClick={() => setView("portfolio")}>مدیریت کامل ←</button></div>
-                {holdings.length === 0 ? <EmptyLock title="سبد شما هنوز خالی است" text="دارایی‌های خودت را ثبت کن یا برای بررسی رابط، سبد نمایشی را فعال کن."/> : <><div className="home-portfolio-summary"><span><small>ارزش روز</small><b>{portfolioMarketValue === null ? "پوشش ناقص" : <MoneyValue value={portfolioMarketValue} usdTomanRate={portfolioUsdTomanRate} />}</b></span><span><small>سود و زیان</small><b className={portfolioProfitLoss === null ? "muted-value" : portfolioProfitLoss < 0 ? "negative" : "positive"}>{portfolioProfitLoss === null ? "محاسبه نشده" : <MoneyValue value={portfolioProfitLoss} usdTomanRate={portfolioUsdTomanRate} />}</b></span></div><div className="home-asset-groups">{homeAssetGroups.map((group) => { const expanded = expandedHomeCategoryId === group.id; const panelId = `home-assets-${group.id}`; return <article className={`home-asset-group${expanded ? " expanded" : ""}`} key={group.id}><button type="button" className="home-asset-group-trigger" aria-expanded={expanded} aria-controls={panelId} onClick={() => setExpandedHomeCategoryId(expanded ? null : group.id)}><span><strong>{group.label}</strong><small>{<NumberValue value={group.holdings.length} />} زیرشاخه در سبد</small></span><b>{group.value === null ? "پوشش قیمت ناقص" : <MoneyValue value={group.value} usdTomanRate={portfolioUsdTomanRate} />}</b><i aria-hidden="true">⌄</i></button>{expanded && <div className="home-asset-children" id={panelId} role="region" aria-label={`زیرشاخه‌های ${group.label}`}>{group.holdings.map((item) => { const currentValue = holdingValues.get(item.id); return <button type="button" key={item.id} onClick={() => openAssetWorkspace(item.id, "asset-center")}><span><strong>{item.name}</strong><small>{<NumberValue value={item.amount} />} {item.unit}</small></span><b>{currentValue === null || currentValue === undefined ? "بدون قیمت تازه" : <MoneyValue value={currentValue} usdTomanRate={portfolioUsdTomanRate} />}</b><i aria-hidden="true">←</i></button>; })}</div>}</article>; })}</div></>}
+                {holdings.length === 0 ? <EmptyLock title="سبد شما هنوز خالی است" text="دارایی‌های خودت را ثبت کن یا برای بررسی رابط، سبد نمایشی را فعال کن."/> : <><div className="home-portfolio-summary"><span><small>ارزش روز</small><b>{portfolioMarketValue === null ? "پوشش ناقص" : <MoneyValue value={portfolioMarketValue} usdTomanRate={portfolioUsdTomanRate} />}</b></span><span><small>سود و زیان</small><b className={portfolioProfitLoss === null ? "muted-value" : portfolioProfitLoss < 0 ? "negative" : "positive"}>{portfolioProfitLoss === null ? "محاسبه نشده" : <MoneyValue value={portfolioProfitLoss} usdTomanRate={portfolioMode === "demo" ? portfolioUsdTomanRate : undefined} />}</b></span></div><div className="home-asset-groups">{homeAssetGroups.map((group) => { const expanded = expandedHomeCategoryId === group.id; const panelId = `home-assets-${group.id}`; return <article className={`home-asset-group${expanded ? " expanded" : ""}`} key={group.id}><button type="button" className="home-asset-group-trigger" aria-expanded={expanded} aria-controls={panelId} onClick={() => setExpandedHomeCategoryId(expanded ? null : group.id)}><span><strong>{group.label}</strong><small>{<NumberValue value={group.holdings.length} />} زیرشاخه در سبد</small></span><b>{group.value === null ? "پوشش قیمت ناقص" : <MoneyValue value={group.value} usdTomanRate={portfolioUsdTomanRate} />}</b><i aria-hidden="true">⌄</i></button>{expanded && <div className="home-asset-children" id={panelId} role="region" aria-label={`زیرشاخه‌های ${group.label}`}>{group.holdings.map((item) => { const currentValue = holdingValues.get(item.id); return <button type="button" key={item.id} onClick={() => openAssetWorkspace(item.id, "asset-center")}><span><strong>{item.name}</strong><small>{<NumberValue value={item.amount} />} {item.unit}</small></span><b>{currentValue === null || currentValue === undefined ? "بدون قیمت تازه" : <MoneyValue value={currentValue} usdTomanRate={portfolioUsdTomanRate} />}</b><i aria-hidden="true">←</i></button>; })}</div>}</article>; })}</div></>}
               </article>
               <aside className="panel opportunity-radar"><div className="panel-head"><SectionTitle eyebrow="HIGH-CONVICTION WATCH" title="فرصت‌های خیلی جذاب" text="فقط فرصت‌هایی که تمام دروازه‌های داده و روش را عبور کنند؛ موارد آزمایشی با برچسب جدا نمایش داده می‌شوند."/><span className={excitingOpportunities.length ? "status-chip warning" : "status-chip safe"}>{<NumberValue value={excitingOpportunities.length} />} مورد</span></div>
                 {excitingOpportunities.length ? <div className="opportunity-list">{excitingOpportunities.map((opportunity) => <article key={opportunity.id}><div><b>{opportunity.demo ? "نمایشی" : "تأییدشده"}</b></div><strong>{opportunity.title}</strong><p>{opportunity.message}</p><time>{formatNotificationTime(opportunity.createdAt)}</time></article>)}</div> : <div className="opportunity-empty"><strong>فرصت خیلی جذابِ تأییدشده‌ای وجود ندارد</strong><p>وقتی دادهٔ تازه، روش مصوب و اعتبارسنجی تاریخی هم‌زمان آماده باشند، موارد با اهمیت بالا اینجا ظاهر می‌شوند.</p></div>}
@@ -954,10 +1025,10 @@ export default function Home() {
 
           {view === "portfolio" && <section className="view-stack"><div className="view-hero"><SectionTitle eyebrow="MY ASSETS" title="فهرست دارایی‌های من" text="هر ردیف، اطلاعات مالی همان دارایی و مسیر مستقیم به نمای ترکیبی، تحلیل و تصمیم را در اختیار می‌گذارد."/><div className="market-actions">{portfolioMode === "demo" && <span className="status-chip warning">آزمایشگاه فعال</span>}{portfolioMode === "personal" && <button className="ghost-button" data-testid="load-demo-portfolio" onClick={loadDemoPortfolio}>فعال‌کردن تجربهٔ کامل</button>}{portfolioMode === "demo" && <button className="ghost-button" onClick={clearDemoPortfolio}>بازگشت به داده‌های شخصی</button>}<button className="primary-button" onClick={openNewHolding}>＋ ثبت دارایی</button></div></div>
             {portfolioMode === "demo" && <section className="guardrail"><span>i</span><div><b>سبد و قیمت‌های این حالت کاملاً ساختگی‌اند</b><p>مقدار، بهای خرید و قیمت روز فقط برای تجربهٔ کامل محصول ساخته شده‌اند. هیچ خروجی این حالت پیشنهاد خرید، فروش یا تبدیل واقعی نیست.</p></div></section>}
-            {portfolioMode === "personal" && <section className="guardrail" data-testid="portfolio-persistence"><span>✓</span><div><b>نسخهٔ امن سبد و تنظیمات روی PostgreSQL محلی</b><p>{portfolioPersistence.state === "checking" ? "در حال بررسی اتصال دیتابیس…" : portfolioPersistence.message}</p>{portfolioPersistence.state !== "checking" && portfolioPersistence.state !== "unavailable" && <small>نسخهٔ دیتابیس: {<NumberValue value={portfolioPersistence.snapshot.version} />} · {<NumberValue value={portfolioPersistence.snapshot.holdings.length} />} دارایی · همراه محدودیت‌ها و افق‌های تحلیل</small>}<small>بازیابی، آخرین نسخهٔ دیتابیس را می‌خواند و ورودی ذخیره‌نشده را جایگزین می‌کند.</small></div><div className="market-actions">{portfolioPersistence.state !== "checking" && portfolioPersistence.state !== "unavailable" && <><button className="primary-button" data-testid="save-portfolio-database" disabled={portfolioBusy} onClick={() => void savePersonalPortfolioToDatabase()}>{portfolioPersistence.state === "saving" ? "در حال ذخیره…" : "ذخیره سبد و تنظیمات"}</button><button className="ghost-button" data-testid="restore-portfolio-database" disabled={portfolioBusy} onClick={() => void restorePersonalPortfolioFromDatabase()}>{portfolioPersistence.state === "restoring" ? "در حال بازیابی…" : "بازیابی نسخهٔ دیتابیس"}</button></>}</div></section>}
+            {portfolioMode === "personal" && <section className="guardrail" data-testid="portfolio-persistence"><span>✓</span><div><b>نسخهٔ امن سبد و تنظیمات روی PostgreSQL محلی</b><p>{portfolioPersistence.state === "checking" ? "در حال بررسی اتصال دیتابیس…" : portfolioPersistence.message}</p>{portfolioPersistence.state !== "checking" && portfolioPersistence.state !== "unavailable" && <small>نسخهٔ دیتابیس: {<NumberValue value={portfolioPersistence.snapshot.version} />} · {<NumberValue value={portfolioPersistence.snapshot.holdings.length} />} موجودی قدیمی · {<NumberValue value={portfolioPersistence.snapshot.purchaseBook?.lots.length ?? 0} />} خرید مستقل · همراه تنظیمات</small>}<small>بازیابی، آخرین نسخهٔ دیتابیس را می‌خواند و ورودی ذخیره‌نشده را جایگزین می‌کند.</small></div><div className="market-actions">{portfolioPersistence.state !== "checking" && portfolioPersistence.state !== "unavailable" && <><button className="primary-button" data-testid="save-portfolio-database" disabled={portfolioBusy} onClick={() => void savePersonalPortfolioToDatabase()}>{portfolioPersistence.state === "saving" ? "در حال ذخیره…" : "ذخیره سبد و تنظیمات"}</button><button className="ghost-button" data-testid="restore-portfolio-database" disabled={portfolioBusy} onClick={() => void restorePersonalPortfolioFromDatabase()}>{portfolioPersistence.state === "restoring" ? "در حال بازیابی…" : "بازیابی نسخهٔ دیتابیس"}</button></>}</div></section>}
             <section className="conversion-strip"><b>مبنای نمایش دوارزی</b><span>{portfolioRateStatus}</span></section>
-            <section className="panel"><div className="portfolio-summary"><div><small>تعداد موقعیت‌ها</small><strong>{<NumberValue value={holdings.length} />}</strong></div><div><small>جمع بهای خرید ثبت‌شده</small><strong>{knownCost ? <MoneyValue value={knownCost} usdTomanRate={portfolioUsdTomanRate} /> : "—"}</strong></div><div><small>ارزش روز</small><strong className={portfolioMarketValue === null ? "muted-value" : ""}>{portfolioMarketValue === null ? "پوشش ناقص" : <MoneyValue value={portfolioMarketValue} usdTomanRate={portfolioUsdTomanRate} />}</strong></div><div><small>سود و زیان</small><strong className={portfolioProfitLoss === null ? "muted-value" : portfolioProfitLoss < 0 ? "negative" : "positive"}>{portfolioProfitLoss === null ? "محاسبه نشده" : <MoneyValue value={portfolioProfitLoss} usdTomanRate={portfolioUsdTomanRate} />}</strong></div></div>
-              {holdings.length === 0 ? <EmptyLock title="هنوز دارایی ثبت نشده است" text="افزودن دارایی به معنی پیشنهاد خرید نیست؛ فقط اطلاعاتی است که خودتان وارد می‌کنید."/> : <div className="holdings-table"><div className="table-row table-head"><SortButton label="دارایی" active={holdingSort.key === "name"} direction={holdingSort.direction} onClick={() => toggleHoldingSort("name")}/><SortButton label="مقدار" active={holdingSort.key === "amount"} direction={holdingSort.direction} onClick={() => toggleHoldingSort("amount")}/><SortButton label="بهای خرید (تومان · دلار)" active={holdingSort.key === "cost"} direction={holdingSort.direction} onClick={() => toggleHoldingSort("cost")}/><SortButton label="ارزش فعلی (تومان · دلار)" active={holdingSort.key === "current"} direction={holdingSort.direction} onClick={() => toggleHoldingSort("current")}/><SortButton label="سود/زیان (تومان · دلار)" active={holdingSort.key === "profit"} direction={holdingSort.direction} onClick={() => toggleHoldingSort("profit")}/><span>عملیات</span></div>{sortedHoldings.map((item) => { const currentValue = holdingValues.get(item.id); const holdingProfitLoss = typeof currentValue === "number" && item.costToman !== null ? currentValue - item.costToman : null; const holdingProfitPercent = holdingProfitLoss !== null && item.costToman !== null && item.costToman > 0 ? (holdingProfitLoss / item.costToman) * 100 : null; return <div className="table-row" key={item.id}><span><b>{item.name}</b><small>{formatPurchaseDate(item.purchaseDate)} · {item.note || "ثبت‌شده توسط شما"}</small></span><span>{<NumberValue value={item.amount} />} {item.unit}</span><span>{item.costToman !== null ? <MoneyValue value={item.costToman} usdTomanRate={portfolioUsdTomanRate} /> : "—"}</span><span className={currentValue === null || currentValue === undefined ? "no-data" : "positive"}>{currentValue === null || currentValue === undefined ? "—" : <MoneyValue value={currentValue} usdTomanRate={portfolioUsdTomanRate} />}</span><span className={`holding-profit ${holdingProfitLoss === null ? "muted-value" : holdingProfitLoss < 0 ? "negative" : "positive"}`}><b>{holdingProfitLoss === null ? "نامشخص" : <MoneyValue value={holdingProfitLoss} usdTomanRate={portfolioUsdTomanRate} />}</b><small>{holdingProfitPercent === null ? "—" : `${holdingProfitPercent > 0 ? "+" : ""}${formatNumber(holdingProfitPercent)}٪`}</small></span><span className="row-actions"><button className="asset-open-button" onClick={() => openAssetWorkspace(item.id, "asset-center")}>بازکردن</button><button className="edit-button" onClick={() => openEditHolding(item)} aria-label={`ویرایش ${item.name}`}>ویرایش</button><button className="remove-button" onClick={() => setPendingDeleteHoldingId(item.id)} aria-label={`حذف ${item.name}`}>حذف</button></span></div>; })}</div>}
+            <section className="panel"><div className="portfolio-summary"><div><small>تعداد موقعیت‌ها</small><strong>{<NumberValue value={holdings.length} />}</strong></div><div><small>جمع بهای خرید ثبت‌شده</small><strong>{knownCost ? <MoneyValue value={knownCost} /> : "—"}</strong></div><div><small>ارزش روز</small><strong className={portfolioMarketValue === null ? "muted-value" : ""}>{portfolioMarketValue === null ? "پوشش ناقص" : <MoneyValue value={portfolioMarketValue} usdTomanRate={portfolioUsdTomanRate} />}</strong></div><div><small>سود و زیان</small><strong className={portfolioProfitLoss === null ? "muted-value" : portfolioProfitLoss < 0 ? "negative" : "positive"}>{portfolioProfitLoss === null ? "محاسبه نشده" : <MoneyValue value={portfolioProfitLoss} usdTomanRate={portfolioMode === "demo" ? portfolioUsdTomanRate : undefined} />}</strong></div></div>
+              {holdings.length === 0 ? <EmptyLock title="هنوز دارایی ثبت نشده است" text="افزودن دارایی به معنی پیشنهاد خرید نیست؛ فقط اطلاعاتی است که خودتان وارد می‌کنید."/> : <div className="holdings-table"><div className="table-row table-head"><SortButton label="دارایی" active={holdingSort.key === "name"} direction={holdingSort.direction} onClick={() => toggleHoldingSort("name")}/><SortButton label="مقدار" active={holdingSort.key === "amount"} direction={holdingSort.direction} onClick={() => toggleHoldingSort("amount")}/><SortButton label="بهای خرید (تومان)" active={holdingSort.key === "cost"} direction={holdingSort.direction} onClick={() => toggleHoldingSort("cost")}/><SortButton label="ارزش فعلی (تومان · دلار)" active={holdingSort.key === "current"} direction={holdingSort.direction} onClick={() => toggleHoldingSort("current")}/><SortButton label="سود/زیان (تومان)" active={holdingSort.key === "profit"} direction={holdingSort.direction} onClick={() => toggleHoldingSort("profit")}/><span>عملیات</span></div>{sortedHoldings.map((item) => { const currentValue = holdingValues.get(item.id); const holdingProfitLoss = typeof currentValue === "number" && item.costToman !== null ? currentValue - item.costToman : null; const holdingProfitPercent = holdingProfitLoss !== null && item.costToman !== null && item.costToman > 0 ? (holdingProfitLoss / item.costToman) * 100 : null; return <div className="table-row" key={item.id}><span><b>{item.name}</b><small>{holdingPurchaseDate(item)} · {item.note || "ثبت‌شده توسط شما"}</small></span><span>{<NumberValue value={item.amount} />} {item.unit}</span><span>{item.costToman !== null ? <MoneyValue value={item.costToman} /> : "—"}</span><span className={currentValue === null || currentValue === undefined ? "no-data" : "positive"}>{currentValue === null || currentValue === undefined ? "—" : <MoneyValue value={currentValue} usdTomanRate={portfolioUsdTomanRate} />}</span><span className={`holding-profit ${holdingProfitLoss === null ? "muted-value" : holdingProfitLoss < 0 ? "negative" : "positive"}`}><b>{holdingProfitLoss === null ? "نامشخص" : <MoneyValue value={holdingProfitLoss} usdTomanRate={portfolioMode === "demo" ? portfolioUsdTomanRate : undefined} />}</b><small>{holdingProfitPercent === null ? "—" : `${holdingProfitPercent > 0 ? "+" : ""}${formatNumber(holdingProfitPercent)}٪`}</small></span><span className="row-actions"><button className="asset-open-button" onClick={() => openAssetWorkspace(item.id, "asset-center")}>بازکردن</button><button className="edit-button" disabled={!legacyHoldings.some((row) => row.id === item.id)} onClick={() => openEditHolding(item)} aria-label={`ویرایش ${item.name}`}>ویرایش</button><button className="remove-button" disabled={!legacyHoldings.some((row) => row.id === item.id)} onClick={() => setPendingDeleteHoldingId(item.id)} aria-label={`حذف ${item.name}`}>حذف</button></span></div>; })}</div>}
             </section>
             <section className="panel bubble-monitor">
               <div className="panel-head"><SectionTitle eyebrow="PREMIUM MONITOR" title="حباب و پریمیوم دارایی‌ها" text={portfolioMode === "demo" ? `حباب جاری و دامنهٔ ${sandboxPremiumMethodology.windowLabel} برای دارایی‌های مرتبط، کاملاً ساختگی و فعال است.` : "حباب جاری نسبت به ارزش خام فلز محاسبه می‌شود؛ آمار تاریخی فقط پس از ورود تاریخچهٔ معتبر نمایش داده خواهد شد."}/><span className={bubbleAvailableCount ? "status-chip safe" : "status-chip warning"}>{<NumberValue value={bubbleAvailableCount} />} محاسبهٔ معتبر</span></div>
@@ -973,7 +1044,7 @@ export default function Home() {
             {selectedHolding ? <>
               <section className="asset-context-bar" aria-label="انتخاب دارایی"><div><small>دارایی در حال بررسی</small><strong>{selectedHolding.name}</strong></div><div className="asset-context-list">{holdings.map((holding) => <button key={holding.id} className={holding.id === selectedHolding.id ? "active" : ""} onClick={() => setSelectedHoldingId(holding.id)}>{holding.name}</button>)}</div></section>
               <section className="asset-center-grid">
-                <article className="panel asset-center-card asset-profile-card"><div className="asset-card-head"><div><small>اطلاعات دارایی</small><h3>{selectedHolding.name}</h3></div><b>{getAssetClass(selectedHolding.name).label}</b></div><dl className="asset-facts"><div><dt>مقدار</dt><dd>{<NumberValue value={selectedHolding.amount} />} {selectedHolding.unit}</dd></div><div><dt>تاریخ خرید</dt><dd>{formatPurchaseDate(selectedHolding.purchaseDate)}</dd></div><div><dt>بهای خرید</dt><dd>{selectedHolding.costToman === null ? "ثبت نشده" : <MoneyValue value={selectedHolding.costToman} usdTomanRate={portfolioUsdTomanRate} />}</dd></div><div><dt>ارزش فعلی</dt><dd>{selectedHoldingValue === null ? "بدون قیمت قابل استفاده" : <MoneyValue value={selectedHoldingValue} usdTomanRate={portfolioUsdTomanRate} />}</dd></div><div><dt>سود/زیان</dt><dd className={selectedHoldingProfit === null ? "muted-value" : selectedHoldingProfit < 0 ? "negative" : "positive"}>{selectedHoldingProfit === null ? "محاسبه نشده" : `${formatPortfolioMoney(selectedHoldingProfit)} · ${selectedHoldingProfitPercent === null ? "—" : formatPercent(selectedHoldingProfitPercent)}`}</dd></div></dl><button className="text-button" onClick={() => openEditHolding(selectedHolding)}>ویرایش این دارایی</button></article>
+                <article className="panel asset-center-card asset-profile-card"><div className="asset-card-head"><div><small>اطلاعات دارایی</small><h3>{selectedHolding.name}</h3></div><b>{getAssetClass(selectedHolding.name).label}</b></div><dl className="asset-facts"><div><dt>مقدار</dt><dd>{<NumberValue value={selectedHolding.amount} />} {selectedHolding.unit}</dd></div><div><dt>تاریخ خرید</dt><dd>{holdingPurchaseDate(selectedHolding)}</dd></div><div><dt>بهای خرید</dt><dd>{selectedHolding.costToman === null ? "ثبت نشده" : <MoneyValue value={selectedHolding.costToman} />}</dd></div><div><dt>ارزش فعلی</dt><dd>{selectedHoldingValue === null ? "بدون قیمت قابل استفاده" : <MoneyValue value={selectedHoldingValue} usdTomanRate={portfolioUsdTomanRate} />}</dd></div><div><dt>سود/زیان</dt><dd className={selectedHoldingProfit === null ? "muted-value" : selectedHoldingProfit < 0 ? "negative" : "positive"}>{selectedHoldingProfit === null ? "محاسبه نشده" : `${(portfolioMode === "demo" ? formatPortfolioMoney(selectedHoldingProfit) : formatToman(selectedHoldingProfit))} · ${selectedHoldingProfitPercent === null ? "—" : formatPercent(selectedHoldingProfitPercent)}`}</dd></div></dl><button className="text-button" onClick={() => openEditHolding(selectedHolding)}>ویرایش این دارایی</button></article>
                 <article className="panel asset-center-card asset-analysis-card"><div className="asset-card-head"><div><small>تحلیل دارایی</small><h3>شواهد موجود</h3></div><b>{portfolioMode === "demo" ? "تحلیل ساختگی فعال" : selectedHoldingValue === null ? "پوشش ناقص" : "قیمت‌گذاری‌شده"}</b></div><div className="asset-signal-list"><div><span>قیمت و ارزش روز</span><strong>{selectedHoldingValue === null ? "نیازمند قیمت تازه" : portfolioMode === "demo" ? "ساختگی · قابل محاسبه" : "قابل محاسبه"}</strong></div><div><span>حباب خام جاری</span><strong>{selectedHoldingBubble === null ? portfolioMode === "demo" ? "برای این کلاس کاربرد ندارد" : "دادهٔ کافی نیست" : <NumberValue value={selectedHoldingBubble} unit="٪" />}</strong></div><div><span>تحلیل تاریخی</span><strong>{portfolioMode === "demo" ? selectedHoldingPremium?.applicable ? sandboxPremiumMethodology.windowLabel : "تحلیل ساختگی کلاس دارایی فعال" : "در انتظار تاریخچهٔ معتبر ایران"}</strong></div><div><span>سناریوی کوتاه/بلند</span><strong>آمادهٔ بررسی فرضیه</strong></div></div><button className="primary-button" onClick={() => openAssetWorkspace(selectedHolding.id, "analysis")}>تحلیل کامل این دارایی</button></article>
                 <article className="panel asset-center-card asset-decision-card">
                   <div className="asset-card-head"><div><small>تصمیم دارایی</small><h3>{portfolioMode === "demo" ? "سه تصمیم آزمایشگاهی" : "دروازهٔ اقدام"}</h3></div><b>{portfolioMode === "demo" ? "غیرعملیاتی" : `${formatNumber(decisionReadiness.passedCount)} / ۶`}</b></div>

@@ -2,7 +2,24 @@
 
 **Source of truth for:** where the project stands right now.
 
-_Last reviewed: 2026-09-16, Asia/Tehran (actual latest-price acceptance)_
+_Last reviewed: 2026-09-16, Asia/Tehran (purchase lots and Excel intake)_
+
+## Latest purchase-book checkpoint
+
+Owner-requested independent purchase rows, exact weighted raw/landed costs,
+per-purchase dated USD and atomic browser-local Excel intake are implemented in
+the separate personal portfolio. All four personal views use the same projected
+holdings and retained purchase basis. Legacy data is preserved; historical FX is
+manual/unverified when available, otherwise explicitly missing. Actual download,
+fill, preview, save, edit, duplicate/corrupt-file rejection and database restore
+were exercised locally. The browser found a JSONB key-order recovery defect and
+a missing decision-view summary; both were corrected and regression-tested.
+See [scope, verification and owner test guide](PURCHASE_LOTS_REVIEW_2026-09-16.md)
+and the [implemented contract](../04-portfolio/PURCHASE_LOTS.md).
+Three explicitly synthetic purchases remain in the previously empty local test
+portfolio. No new market/history request or server/main change occurred. Local
+implementation, exact-commit GitHub verification, hosted readiness and owner
+acceptance remain separate gates.
 
 ## Latest actual-market checkpoint
 

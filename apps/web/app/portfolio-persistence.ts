@@ -1,5 +1,6 @@
 import type { PortfolioSnapshot } from "../data/postgres-portfolio-repository.ts";
 import { portfolioPreferenceLimits, validPortfolioAmount, validPortfolioCost, validPortfolioPreference } from "../data/portfolio-numeric-contract.ts";
+import { validatePurchaseBook } from "./purchase-book.ts";
 
 function record(value: unknown): value is Record<string, unknown> {
   return value !== null && typeof value === "object" && !Array.isArray(value);
@@ -23,7 +24,8 @@ export function decodePortfolioSnapshot(value: unknown): PortfolioSnapshot {
     if (!validPortfolioPreference(key, value.preferences[key])) throw new Error("invalid portfolio preferences");
   }
   if (!["short", "long"].includes(value.preferences.analysisHorizon as string) || !["short", "long"].includes(value.preferences.decisionHorizon as string)) throw new Error("invalid portfolio horizons");
-  return structuredClone(value) as PortfolioSnapshot;
+  const purchaseBook = Object.hasOwn(value, "purchaseBook") ? validatePurchaseBook(value.purchaseBook) : undefined;
+  return { ...structuredClone(value), ...(purchaseBook ? { purchaseBook } : {}) } as PortfolioSnapshot;
 }
 
 export async function fetchPortfolioSnapshot(signal?: AbortSignal, request: typeof fetch = fetch): Promise<PortfolioSnapshot> {

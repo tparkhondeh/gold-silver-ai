@@ -245,6 +245,7 @@ export async function inspectLocalPortfolioDatabaseHealth(environment: RuntimeEn
     const result = await getRuntimePool(configuration.connectionString).query<{ ready: boolean }>(`SELECT
       count(*) = 3
       AND bool_and(c.relrowsecurity AND c.relforcerowsecurity)
+      AND EXISTS (SELECT 1 FROM information_schema.columns WHERE table_schema='public' AND table_name='user_portfolios' AND column_name='purchase_book' AND udt_name='jsonb')
       AND bool_and(has_table_privilege(current_user, c.oid, 'SELECT,INSERT,UPDATE,DELETE')) AS ready
       FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace
       WHERE n.nspname = 'public' AND c.relname IN ('user_portfolios', 'portfolio_holdings', 'portfolio_preferences')`);

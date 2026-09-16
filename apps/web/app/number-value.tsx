@@ -3,7 +3,7 @@
 import { useId, useState } from "react";
 import { presentNumber, type NumericValue } from "./number-display";
 
-export function NumberValue({ value, denominator = 1, unit = "" }: { value: NumericValue; denominator?: NumericValue; unit?: string }) {
+export function NumberValue({ value, denominator, unit = "" }: { value: NumericValue; denominator?: NumericValue; unit?: string }) {
   const [open, setOpen] = useState(false);
   const id = useId();
   const shown = presentNumber(value, denominator);

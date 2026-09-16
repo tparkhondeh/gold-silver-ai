@@ -4,6 +4,16 @@
 merged to `main`. This is a log, not a plan — see `docs/01-product/ROADMAP.md` for
 what's ahead.
 
+## Purchase-book local implementation (2026-09-16; acceptance pending)
+
+Independent purchase lots, exact weighted raw/landed/dated-USD basis, compatible
+personal-view projection and guarded atomic XLSX intake are implemented and
+locally exercised. Existing balances were preserved. Evidence, specialist review,
+template guidance and remaining gates are in the
+[purchase-book review](PURCHASE_LOTS_REVIEW_2026-09-16.md).
+This records a development-branch implementation, not an owner-approved phase,
+licensed history connection, domain deployment or whole-project completion.
+
 ## Local Node development compatibility (2026-09-13)
 
 Loopback-only local launcher alternative, existing response headers/market locks,
