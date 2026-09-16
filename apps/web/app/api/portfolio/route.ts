@@ -1,6 +1,7 @@
 import type { PortfolioHolding, PortfolioPreferences, PortfolioSnapshot, PostgresPortfolioRepository } from "../../../data/postgres-portfolio-repository.ts";
 import { PortfolioVersionConflictError } from "../../../data/postgres-portfolio-repository.ts";
 import { resolveLocalPortfolioRepository } from "../../../db/postgres-runtime.ts";
+import { portfolioPreferenceLimits, validPortfolioAmount, validPortfolioCost, validPortfolioPreference } from "../../../data/portfolio-numeric-contract.ts";
 
 const LOCAL_SUBJECT = "local-owner-v1";
 const MAX_REQUEST_BYTES = 262_144;
@@ -46,9 +47,9 @@ function validatedHolding(value: unknown): PortfolioHolding | null {
   const row = value as Record<string, unknown>;
   if (typeof row.id !== "string" || !SAFE_ID.test(row.id)) return null;
   if (typeof row.name !== "string" || row.name.length < 1 || row.name.length > 120) return null;
-  if (typeof row.amount !== "number" || !Number.isFinite(row.amount) || row.amount <= 0) return null;
+  if (!validPortfolioAmount(row.amount)) return null;
   if (typeof row.unit !== "string" || row.unit.length < 1 || row.unit.length > 60) return null;
-  if (row.costToman !== null && (typeof row.costToman !== "number" || !Number.isFinite(row.costToman) || row.costToman < 0)) return null;
+  if (!validPortfolioCost(row.costToman)) return null;
   if (row.purchaseDate !== null && (typeof row.purchaseDate !== "string" || !DATE.test(row.purchaseDate))) return null;
   if (typeof row.note !== "string" || row.note.length > 1000) return null;
   return { id: row.id, name: row.name, amount: row.amount, unit: row.unit, costToman: row.costToman as number | null, purchaseDate: row.purchaseDate as string | null, note: row.note };
@@ -57,19 +58,8 @@ function validatedHolding(value: unknown): PortfolioHolding | null {
 function validatedPreferences(value: unknown): PortfolioPreferences | null {
   if (!value || typeof value !== "object") return null;
   const row = value as Record<string, unknown>;
-  const ranges: Array<[keyof PortfolioPreferences, number, number]> = [
-    ["liquidityReservePercent", 0, 100],
-    ["maxSingleAssetPercent", 1, 100],
-    ["maxAcceptableDrawdownPercent", 1, 100],
-    ["shortTermMonths", 1, 24],
-    ["longTermYears", 1, 20],
-  ];
-  for (const [key, minimum, maximum] of ranges) {
-    const raw = row[key];
-    if (typeof raw !== "string") return null;
-    if (raw === "") continue;
-    const number = Number(raw);
-    if (!Number.isFinite(number) || number < minimum || number > maximum) return null;
+  for (const key of Object.keys(portfolioPreferenceLimits) as Array<keyof typeof portfolioPreferenceLimits>) {
+    if (!validPortfolioPreference(key, row[key])) return null;
   }
   if (row.analysisHorizon !== "short" && row.analysisHorizon !== "long") return null;
   if (row.decisionHorizon !== "short" && row.decisionHorizon !== "long") return null;
@@ -101,19 +91,23 @@ export function createPortfolioPut(resolveRepository: ResolveRepository = resolv
     const boundary = localWriteBoundary(request, environment);
     if (boundary) return json({ ok: false, code: "portfolio_boundary", message: boundary }, 403);
     if (!request.headers.get("content-type")?.toLowerCase().startsWith("application/json")) return json({ ok: false, code: "unsupported_media_type", message: "application/json is required" }, 415);
-    const body = await request.text();
+    let body: string;
+    try { body = await request.text(); }
+    catch { return json({ ok: false, code: "invalid_body", message: "request body could not be read" }, 400); }
     if (new TextEncoder().encode(body).byteLength > MAX_REQUEST_BYTES) return json({ ok: false, code: "request_too_large", message: "portfolio request is too large" }, 413);
-    let payload: { expectedVersion?: unknown; holdings?: unknown; preferences?: unknown };
+    let payload: unknown;
     try { payload = JSON.parse(body); } catch { return json({ ok: false, code: "invalid_json", message: "request body is not valid JSON" }, 400); }
-    if (!Number.isInteger(payload.expectedVersion) || (payload.expectedVersion as number) < 0 || !Array.isArray(payload.holdings) || payload.holdings.length > MAX_HOLDINGS) return json({ ok: false, code: "invalid_portfolio", message: "portfolio version or holdings are invalid" }, 422);
-    const holdings = payload.holdings.map(validatedHolding);
+    if (!payload || typeof payload !== "object" || Array.isArray(payload)) return json({ ok: false, code: "invalid_portfolio", message: "portfolio request must be an object" }, 422);
+    const input = payload as { expectedVersion?: unknown; holdings?: unknown; preferences?: unknown };
+    if (!Number.isSafeInteger(input.expectedVersion) || (input.expectedVersion as number) < 0 || !Array.isArray(input.holdings) || input.holdings.length > MAX_HOLDINGS) return json({ ok: false, code: "invalid_portfolio", message: "portfolio version or holdings are invalid" }, 422);
+    const holdings = input.holdings.map(validatedHolding);
     if (holdings.some((holding) => holding === null) || new Set(holdings.map((holding) => holding?.id)).size !== holdings.length) return json({ ok: false, code: "invalid_holding", message: "one or more holdings are invalid or duplicated" }, 422);
-    const preferences = validatedPreferences(payload.preferences);
+    const preferences = validatedPreferences(input.preferences);
     if (!preferences) return json({ ok: false, code: "invalid_preferences", message: "portfolio preferences are invalid" }, 422);
     const resolution = await repositoryOrResponse(resolveRepository);
     if (resolution instanceof Response) return resolution;
     try {
-      const snapshot: PortfolioSnapshot = await resolution.repository.save(LOCAL_SUBJECT, payload.expectedVersion as number, holdings as PortfolioHolding[], preferences);
+      const snapshot: PortfolioSnapshot = await resolution.repository.save(LOCAL_SUBJECT, input.expectedVersion as number, holdings as PortfolioHolding[], preferences);
       return json({ ok: true, snapshot });
     } catch (error) {
       if (error instanceof PortfolioVersionConflictError) return json({ ok: false, code: "version_conflict", message: "Portfolio changed in another browser; reload before saving" }, 409);

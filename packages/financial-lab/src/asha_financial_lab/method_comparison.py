@@ -12,6 +12,7 @@ from typing import Any
 from .cluster_order import build_train_only_cluster_leaf_order
 from .comparison_weights import build_inverse_volatility_control_weights
 from .contracts import ContractViolation, canonical_json, fingerprint
+from .controls import NO_TRADE_CONTROL_ID, known_levels
 from .correlation import build_train_only_correlation
 from .correlation_distance import build_train_only_correlation_distance
 from .covariance import build_train_only_covariance
@@ -128,6 +129,30 @@ def _evaluate_weights(
         maximum_drawdown = max(maximum_drawdown, (peak - wealth) / peak)
     return {
         "periodCount": len(rows),
+        "cumulativeChangePercent": _decimal_string((wealth - Decimal("1")) * Decimal("100")),
+        "maximumDrawdownPercent": _decimal_string(maximum_drawdown * Decimal("100")),
+    }
+
+
+def _evaluate_no_trade(
+    dataset: dict[str, Any], fold: dict[str, Any], weights: dict[str, Decimal]
+) -> dict[str, Any]:
+    """Keep the initial holdings fixed, as the existing no-trade control declares."""
+    starting, _ = known_levels(dataset, fold["testStartIndex"] - 1)
+    if set(weights) != set(starting) or sum(weights.values()) != Decimal("1"):
+        raise ContractViolation("comparison weights must cover all instruments and sum to one")
+    wealth = Decimal("1")
+    peak = wealth
+    maximum_drawdown = Decimal("0")
+    for period in range(fold["testStartIndex"], fold["testEndIndex"] + 1):
+        current, _ = known_levels(dataset, period)
+        # Reusing initial quantities lets weights drift with the known price levels.
+        # A fixed weighted return each period would silently rebalance this control.
+        wealth = sum(weights[item] * current[item] / starting[item] for item in weights)
+        peak = max(peak, wealth)
+        maximum_drawdown = max(maximum_drawdown, (peak - wealth) / peak)
+    return {
+        "periodCount": fold["testEndIndex"] - fold["testStartIndex"] + 1,
         "cumulativeChangePercent": _decimal_string((wealth - Decimal("1")) * Decimal("100")),
         "maximumDrawdownPercent": _decimal_string(maximum_drawdown * Decimal("100")),
     }
@@ -259,7 +284,8 @@ def _build_unsigned() -> dict[str, Any]:
                     {"instrumentId": item, "weight": _decimal_string(weights[item])}
                     for item in matrix["instrumentIds"]
                 ],
-                "metrics": _evaluate_weights(matrix, fold, weights),
+                "metrics": _evaluate_no_trade(dataset, fold, weights)
+                if method_id == NO_TRADE_CONTROL_ID else _evaluate_weights(matrix, fold, weights),
             })
         fold_results.append({
             "foldIndex": fold["foldIndex"],

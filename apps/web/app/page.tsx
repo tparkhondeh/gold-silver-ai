@@ -36,6 +36,7 @@ import { SharedPortfolioWorkspace } from "./shared-portfolio-workspace";
 import { MarketTestWorkspace } from "./market-test-workspace";
 import { sharedViews } from "./shared-portfolio";
 import { browserMarketFallbackAllowed } from "./market-network-policy";
+import { decodePortfolioSnapshot, fetchPortfolioSnapshot } from "./portfolio-persistence";
 import { assetCategories, assetOptions, getAssetCategoryForAsset, getAssetOptionsForCategory } from "./asset-catalog";
 import { currentJalaliDate, currentJalaliParts, formatJalaliDate, toPersianDigits } from "./jalali-calendar";
 import { PersianDatePicker } from "./persian-date-picker";
@@ -77,6 +78,7 @@ type PortfolioPersistenceState =
   | { state: "unavailable"; message: string }
   | { state: "ready"; snapshot: PortfolioSnapshot; message: string }
   | { state: "saving"; snapshot: PortfolioSnapshot; message: string }
+  | { state: "restoring"; snapshot: PortfolioSnapshot; message: string }
   | { state: "error"; snapshot: PortfolioSnapshot; message: string };
 
 type Instrument = {
@@ -338,6 +340,8 @@ export default function Home() {
   const [holdingsLoaded, setHoldingsLoaded] = useState(false);
   const [legacyStorageIssue, setLegacyStorageIssue] = useState(false);
   const [portfolioPersistence, setPortfolioPersistence] = useState<PortfolioPersistenceState>({ state: "checking" });
+  const portfolioRequestRef = useRef<AbortController | null>(null);
+  const portfolioBusy = portfolioPersistence.state === "saving" || portfolioPersistence.state === "restoring";
   const [modalOpen, setModalOpen] = useState(false);
   const [editingHoldingId, setEditingHoldingId] = useState<string | null>(null);
   const [pendingDeleteHoldingId, setPendingDeleteHoldingId] = useState<string | null>(null);
@@ -459,21 +463,28 @@ export default function Home() {
   useEffect(() => {
     if (marketTestActive || !holdingsLoaded || portfolioMode !== "personal") return;
     let active = true;
-    void fetch("/api/portfolio", { cache: "no-store" })
-      .then(async (response) => {
-        const payload = await response.json() as { ok?: boolean; snapshot?: PortfolioSnapshot };
-        if (!active) return;
-        if (!response.ok || !payload.ok || !payload.snapshot) {
-          setPortfolioPersistence({ state: "unavailable", message: "ذخیره‌سازی دیتابیس روی این اجرا فعال نیست." });
-          return;
-        }
-        setPortfolioPersistence({ state: "ready", snapshot: payload.snapshot, message: payload.snapshot.holdings.length ? "یک نسخهٔ ذخیره‌شده در دیتابیس پیدا شد." : "دیتابیس آماده است و هنوز سبدی در آن ذخیره نشده." });
+    const controller = new AbortController();
+    portfolioRequestRef.current = controller;
+    void Promise.resolve().then(() => {
+      if (active) setPortfolioPersistence({ state: "checking" });
+      return fetchPortfolioSnapshot(controller.signal);
+    })
+      .then((snapshot) => {
+        if (!active || portfolioRequestRef.current !== controller) return;
+        setPortfolioPersistence({ state: "ready", snapshot, message: snapshot.version > 0 ? "یک نسخهٔ ذخیره‌شده در دیتابیس پیدا شد." : "دیتابیس آماده است و هنوز سبدی در آن ذخیره نشده." });
       })
       .catch(() => {
-        if (active) setPortfolioPersistence({ state: "unavailable", message: "ارتباط با دیتابیس برقرار نشد؛ داده‌های مرورگر دست‌نخورده ماند." });
+        if (active && portfolioRequestRef.current === controller) setPortfolioPersistence({ state: "unavailable", message: "ارتباط با دیتابیس برقرار نشد؛ داده‌های مرورگر دست‌نخورده ماند." });
+      }).finally(() => {
+        if (portfolioRequestRef.current === controller) portfolioRequestRef.current = null;
       });
-    return () => { active = false; };
+    return () => { active = false; controller.abort(); };
   }, [holdingsLoaded, portfolioMode, marketTestActive]);
+
+  useEffect(() => () => {
+    portfolioRequestRef.current?.abort();
+    portfolioRequestRef.current = null;
+  }, [portfolioMode, marketTestActive]);
 
   useEffect(() => {
     if (legacyStorageIssue || marketTestActive || !holdingsLoaded) return;
@@ -716,6 +727,7 @@ export default function Home() {
   }
 
   function openNewHolding() {
+    if (portfolioRequestRef.current) return;
     setEditingHoldingId(null);
     setSelectedAssetCategory("");
     setSelectedAssetName("");
@@ -723,6 +735,7 @@ export default function Home() {
   }
 
   function openEditHolding(holding: Holding) {
+    if (portfolioRequestRef.current) return;
     setEditingHoldingId(holding.id);
     setSelectedAssetCategory(getAssetCategoryForAsset(holding.name).id);
     setSelectedAssetName(holding.name);
@@ -738,6 +751,7 @@ export default function Home() {
 
   function saveHolding(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (portfolioRequestRef.current) return;
     const data = new FormData(event.currentTarget);
     const amount = Number(data.get("amount"));
     const rawCost = String(data.get("cost") ?? "").trim();
@@ -766,6 +780,7 @@ export default function Home() {
   }
 
   function confirmDeleteHolding() {
+    if (portfolioRequestRef.current) return;
     if (!pendingDeleteHoldingId) return;
     setHoldings((current) => current.filter((holding) => holding.id !== pendingDeleteHoldingId));
     if (selectedHoldingId === pendingDeleteHoldingId) setSelectedHoldingId(null);
@@ -773,42 +788,59 @@ export default function Home() {
   }
 
   async function savePersonalPortfolioToDatabase() {
-    if (portfolioMode !== "personal" || portfolioPersistence.state === "checking" || portfolioPersistence.state === "unavailable") return;
+    if (portfolioMode !== "personal" || marketTestActive || modalOpen || pendingDeleteHoldingId || portfolioRequestRef.current || portfolioPersistence.state === "checking" || portfolioPersistence.state === "unavailable") return;
     const preferences = { ...ownerConstraints, analysisHorizon, decisionHorizon };
     const snapshot = portfolioPersistence.snapshot ?? { version: 0, holdings: [], preferences };
+    const controller = new AbortController();
+    portfolioRequestRef.current = controller;
     setPortfolioPersistence({ state: "saving", snapshot, message: "در حال ذخیرهٔ نسخهٔ فعلی در دیتابیس…" });
     try {
       const response = await fetch("/api/portfolio", {
         method: "PUT",
         headers: { "Content-Type": "application/json", "X-Asha-Portfolio-Request": "save" },
         body: JSON.stringify({ expectedVersion: snapshot.version, holdings, preferences }),
+        signal: AbortSignal.any([controller.signal, AbortSignal.timeout(10_000)]),
       });
       const payload = await response.json() as { ok?: boolean; snapshot?: PortfolioSnapshot; code?: string };
+      if (controller.signal.aborted) return;
       if (response.ok && payload.ok && payload.snapshot) {
-        setPortfolioPersistence({ state: "ready", snapshot: payload.snapshot, message: "نسخهٔ فعلی سبد با موفقیت در دیتابیس ذخیره شد." });
+        setPortfolioPersistence({ state: "ready", snapshot: decodePortfolioSnapshot(payload.snapshot), message: "نسخهٔ فعلی سبد با موفقیت در دیتابیس ذخیره شد." });
         return;
       }
-      setPortfolioPersistence({ state: "error", snapshot, message: payload.code === "version_conflict" ? "نسخهٔ دیتابیس در مرورگر دیگری تغییر کرده؛ ابتدا آن را بازیابی کن." : "ذخیره تأیید نشد؛ داده‌های مرورگر دست‌نخورده ماند." });
+      const message = payload.code === "version_conflict" ? "نسخهٔ دیتابیس در مرورگر دیگری تغییر کرده؛ ابتدا آن را بازیابی کن."
+        : payload.code === "invalid_holding" || payload.code === "invalid_preferences" ? "ذخیره انجام نشد؛ مشخصات و بازهٔ مجاز ورودی را بررسی کن. مقدار دارایی حداکثر ۱۲ رقم اعشار، بهای خرید و درصدها حداکثر ۲ رقم اعشار، و افق‌ها عدد صحیح می‌پذیرند. عدد بیش از ظرفیت ذخیره پذیرفته نمی‌شود؛ ورودی‌ها گرد یا جایگزین نشدند."
+        : "ذخیره تأیید نشد؛ داده‌های مرورگر دست‌نخورده ماند.";
+      setPortfolioPersistence({ state: "error", snapshot, message });
     } catch {
+      if (controller.signal.aborted) return;
       setPortfolioPersistence({ state: "error", snapshot, message: "ارتباط هنگام ذخیره قطع شد؛ نتیجه نامشخص است و داده‌های مرورگر حذف نشد." });
+    } finally {
+      if (portfolioRequestRef.current === controller) portfolioRequestRef.current = null;
     }
   }
 
-  function restorePersonalPortfolioFromDatabase() {
-    if (portfolioMode !== "personal" || portfolioPersistence.state === "checking" || portfolioPersistence.state === "unavailable" || !portfolioPersistence.snapshot) return;
-    const restored = portfolioPersistence.snapshot.holdings.map((holding) => ({ ...holding }));
-    setHoldings(restored);
-    setOwnerConstraints({
-      liquidityReservePercent: portfolioPersistence.snapshot.preferences.liquidityReservePercent,
-      maxSingleAssetPercent: portfolioPersistence.snapshot.preferences.maxSingleAssetPercent,
-      maxAcceptableDrawdownPercent: portfolioPersistence.snapshot.preferences.maxAcceptableDrawdownPercent,
-      shortTermMonths: portfolioPersistence.snapshot.preferences.shortTermMonths,
-      longTermYears: portfolioPersistence.snapshot.preferences.longTermYears,
-    });
-    setAnalysisHorizon(portfolioPersistence.snapshot.preferences.analysisHorizon);
-    setDecisionHorizon(portfolioPersistence.snapshot.preferences.decisionHorizon);
-    setSelectedHoldingId(restored[0]?.id ?? null);
-    setPortfolioPersistence({ state: "ready", snapshot: portfolioPersistence.snapshot, message: "سبد، محدودیت‌های مالک و افق‌های تحلیل از دیتابیس بازیابی شدند." });
+  async function restorePersonalPortfolioFromDatabase() {
+    if (portfolioMode !== "personal" || marketTestActive || modalOpen || pendingDeleteHoldingId || portfolioRequestRef.current || portfolioPersistence.state === "checking" || portfolioPersistence.state === "unavailable") return;
+    const previous = portfolioPersistence.snapshot;
+    const controller = new AbortController();
+    portfolioRequestRef.current = controller;
+    setPortfolioPersistence({ state: "restoring", snapshot: previous, message: "در حال خواندن آخرین نسخهٔ دیتابیس؛ ورودی فعلی تا تأیید پاسخ حفظ می‌شود…" });
+    try {
+      const snapshot = await fetchPortfolioSnapshot(controller.signal);
+      if (controller.signal.aborted) return;
+      setHoldings(snapshot.holdings);
+      const { analysisHorizon: savedAnalysis, decisionHorizon: savedDecision, ...constraints } = snapshot.preferences;
+      setOwnerConstraints(constraints);
+      setAnalysisHorizon(savedAnalysis);
+      setDecisionHorizon(savedDecision);
+      setSelectedHoldingId(snapshot.holdings[0]?.id ?? null);
+      setPortfolioPersistence({ state: "ready", snapshot, message: "آخرین نسخهٔ سبد، محدودیت‌ها و افق‌های تحلیل از دیتابیس بازیابی شدند؛ ورودی ذخیره‌نشده جایگزین شد." });
+    } catch {
+      if (controller.signal.aborted) return;
+      setPortfolioPersistence({ state: "error", snapshot: previous, message: "بازیابی تأیید نشد؛ ورودی فعلی و نسخهٔ قبلی حفظ شدند. دوباره بازیابی را امتحان کن." });
+    } finally {
+      if (portfolioRequestRef.current === controller) portfolioRequestRef.current = null;
+    }
   }
 
   function loadDemoPortfolio() {
@@ -876,6 +908,7 @@ export default function Home() {
       </aside>
 
       <main className="workspace" id="top">
+        <fieldset disabled={portfolioBusy} style={{ display: "contents" }}>
         <header className="topbar">
           <div className="top-title"><button className="menu-button" onClick={() => setMenuOpen((value) => !value)} aria-label={menuOpen ? "بستن منو" : "باز کردن منو"} aria-expanded={menuOpen} aria-controls="asha-sidebar">☰</button><div><h1>{headerTitle}</h1><p>اشا؛ سبد، تصمیم و کیفیت داده در یک نمای قابل‌ردیابی</p></div></div>
           {!marketTestActive && <div className="top-actions"><span className={effectiveDisplayQuoteCount ? "offline-state online" : "offline-state"}><i /><span><strong>{portfolioMode === "demo" ? "سبد مشترکِ ساختگی" : feedLoading ? "در حال دریافت قیمت" : displayQuoteCount ? `${formatNumber(liveQuoteCount)} قیمت تازه از ${formatNumber(displayQuoteCount)}` : "منبع قابل نمایش نیست"}</strong><small>{portfolioMode === "demo" ? "ورودی مشترک · بدون خوراک بازار واقعی" : feedError ? `${feedError} · ${marketRateStatus}` : marketRateStatus}</small></span></span><button className="notification-trigger" data-testid="notification-center" onClick={() => setNotificationOpen(true)} aria-label={`اعلان‌ها؛ ${formatNumber(unreadNotificationCount)} خوانده‌نشده`} aria-expanded={notificationOpen}><span>اعلان‌ها</span>{unreadNotificationCount > 0 && <b>{<NumberValue value={unreadNotificationCount} />}</b>}</button><button className="primary-button" onClick={portfolioMode === "demo" ? () => setView("portfolio") : openNewHolding}>{portfolioMode === "demo" ? "ویرایش سبد مشترک" : "＋ افزودن دارایی"}</button></div>}
@@ -921,7 +954,7 @@ export default function Home() {
 
           {view === "portfolio" && <section className="view-stack"><div className="view-hero"><SectionTitle eyebrow="MY ASSETS" title="فهرست دارایی‌های من" text="هر ردیف، اطلاعات مالی همان دارایی و مسیر مستقیم به نمای ترکیبی، تحلیل و تصمیم را در اختیار می‌گذارد."/><div className="market-actions">{portfolioMode === "demo" && <span className="status-chip warning">آزمایشگاه فعال</span>}{portfolioMode === "personal" && <button className="ghost-button" data-testid="load-demo-portfolio" onClick={loadDemoPortfolio}>فعال‌کردن تجربهٔ کامل</button>}{portfolioMode === "demo" && <button className="ghost-button" onClick={clearDemoPortfolio}>بازگشت به داده‌های شخصی</button>}<button className="primary-button" onClick={openNewHolding}>＋ ثبت دارایی</button></div></div>
             {portfolioMode === "demo" && <section className="guardrail"><span>i</span><div><b>سبد و قیمت‌های این حالت کاملاً ساختگی‌اند</b><p>مقدار، بهای خرید و قیمت روز فقط برای تجربهٔ کامل محصول ساخته شده‌اند. هیچ خروجی این حالت پیشنهاد خرید، فروش یا تبدیل واقعی نیست.</p></div></section>}
-            {portfolioMode === "personal" && <section className="guardrail" data-testid="portfolio-persistence"><span>✓</span><div><b>نسخهٔ امن سبد و تنظیمات روی PostgreSQL محلی</b><p>{portfolioPersistence.state === "checking" ? "در حال بررسی اتصال دیتابیس…" : portfolioPersistence.message}</p>{portfolioPersistence.state !== "checking" && portfolioPersistence.state !== "unavailable" && <small>نسخهٔ دیتابیس: {<NumberValue value={portfolioPersistence.snapshot.version} />} · {<NumberValue value={portfolioPersistence.snapshot.holdings.length} />} دارایی · همراه محدودیت‌ها و افق‌های تحلیل</small>}</div><div className="market-actions">{portfolioPersistence.state !== "checking" && portfolioPersistence.state !== "unavailable" && <><button className="primary-button" data-testid="save-portfolio-database" disabled={portfolioPersistence.state === "saving"} onClick={() => void savePersonalPortfolioToDatabase()}>{portfolioPersistence.state === "saving" ? "در حال ذخیره…" : "ذخیره سبد و تنظیمات"}</button>{portfolioPersistence.snapshot.holdings.length > 0 && <button className="ghost-button" data-testid="restore-portfolio-database" disabled={portfolioPersistence.state === "saving"} onClick={restorePersonalPortfolioFromDatabase}>بازیابی نسخهٔ دیتابیس</button>}</>}</div></section>}
+            {portfolioMode === "personal" && <section className="guardrail" data-testid="portfolio-persistence"><span>✓</span><div><b>نسخهٔ امن سبد و تنظیمات روی PostgreSQL محلی</b><p>{portfolioPersistence.state === "checking" ? "در حال بررسی اتصال دیتابیس…" : portfolioPersistence.message}</p>{portfolioPersistence.state !== "checking" && portfolioPersistence.state !== "unavailable" && <small>نسخهٔ دیتابیس: {<NumberValue value={portfolioPersistence.snapshot.version} />} · {<NumberValue value={portfolioPersistence.snapshot.holdings.length} />} دارایی · همراه محدودیت‌ها و افق‌های تحلیل</small>}<small>بازیابی، آخرین نسخهٔ دیتابیس را می‌خواند و ورودی ذخیره‌نشده را جایگزین می‌کند.</small></div><div className="market-actions">{portfolioPersistence.state !== "checking" && portfolioPersistence.state !== "unavailable" && <><button className="primary-button" data-testid="save-portfolio-database" disabled={portfolioBusy} onClick={() => void savePersonalPortfolioToDatabase()}>{portfolioPersistence.state === "saving" ? "در حال ذخیره…" : "ذخیره سبد و تنظیمات"}</button><button className="ghost-button" data-testid="restore-portfolio-database" disabled={portfolioBusy} onClick={() => void restorePersonalPortfolioFromDatabase()}>{portfolioPersistence.state === "restoring" ? "در حال بازیابی…" : "بازیابی نسخهٔ دیتابیس"}</button></>}</div></section>}
             <section className="conversion-strip"><b>مبنای نمایش دوارزی</b><span>{portfolioRateStatus}</span></section>
             <section className="panel"><div className="portfolio-summary"><div><small>تعداد موقعیت‌ها</small><strong>{<NumberValue value={holdings.length} />}</strong></div><div><small>جمع بهای خرید ثبت‌شده</small><strong>{knownCost ? <MoneyValue value={knownCost} usdTomanRate={portfolioUsdTomanRate} /> : "—"}</strong></div><div><small>ارزش روز</small><strong className={portfolioMarketValue === null ? "muted-value" : ""}>{portfolioMarketValue === null ? "پوشش ناقص" : <MoneyValue value={portfolioMarketValue} usdTomanRate={portfolioUsdTomanRate} />}</strong></div><div><small>سود و زیان</small><strong className={portfolioProfitLoss === null ? "muted-value" : portfolioProfitLoss < 0 ? "negative" : "positive"}>{portfolioProfitLoss === null ? "محاسبه نشده" : <MoneyValue value={portfolioProfitLoss} usdTomanRate={portfolioUsdTomanRate} />}</strong></div></div>
               {holdings.length === 0 ? <EmptyLock title="هنوز دارایی ثبت نشده است" text="افزودن دارایی به معنی پیشنهاد خرید نیست؛ فقط اطلاعاتی است که خودتان وارد می‌کنید."/> : <div className="holdings-table"><div className="table-row table-head"><SortButton label="دارایی" active={holdingSort.key === "name"} direction={holdingSort.direction} onClick={() => toggleHoldingSort("name")}/><SortButton label="مقدار" active={holdingSort.key === "amount"} direction={holdingSort.direction} onClick={() => toggleHoldingSort("amount")}/><SortButton label="بهای خرید (تومان · دلار)" active={holdingSort.key === "cost"} direction={holdingSort.direction} onClick={() => toggleHoldingSort("cost")}/><SortButton label="ارزش فعلی (تومان · دلار)" active={holdingSort.key === "current"} direction={holdingSort.direction} onClick={() => toggleHoldingSort("current")}/><SortButton label="سود/زیان (تومان · دلار)" active={holdingSort.key === "profit"} direction={holdingSort.direction} onClick={() => toggleHoldingSort("profit")}/><span>عملیات</span></div>{sortedHoldings.map((item) => { const currentValue = holdingValues.get(item.id); const holdingProfitLoss = typeof currentValue === "number" && item.costToman !== null ? currentValue - item.costToman : null; const holdingProfitPercent = holdingProfitLoss !== null && item.costToman !== null && item.costToman > 0 ? (holdingProfitLoss / item.costToman) * 100 : null; return <div className="table-row" key={item.id}><span><b>{item.name}</b><small>{formatPurchaseDate(item.purchaseDate)} · {item.note || "ثبت‌شده توسط شما"}</small></span><span>{<NumberValue value={item.amount} />} {item.unit}</span><span>{item.costToman !== null ? <MoneyValue value={item.costToman} usdTomanRate={portfolioUsdTomanRate} /> : "—"}</span><span className={currentValue === null || currentValue === undefined ? "no-data" : "positive"}>{currentValue === null || currentValue === undefined ? "—" : <MoneyValue value={currentValue} usdTomanRate={portfolioUsdTomanRate} />}</span><span className={`holding-profit ${holdingProfitLoss === null ? "muted-value" : holdingProfitLoss < 0 ? "negative" : "positive"}`}><b>{holdingProfitLoss === null ? "نامشخص" : <MoneyValue value={holdingProfitLoss} usdTomanRate={portfolioUsdTomanRate} />}</b><small>{holdingProfitPercent === null ? "—" : `${holdingProfitPercent > 0 ? "+" : ""}${formatNumber(holdingProfitPercent)}٪`}</small></span><span className="row-actions"><button className="asset-open-button" onClick={() => openAssetWorkspace(item.id, "asset-center")}>بازکردن</button><button className="edit-button" onClick={() => openEditHolding(item)} aria-label={`ویرایش ${item.name}`}>ویرایش</button><button className="remove-button" onClick={() => setPendingDeleteHoldingId(item.id)} aria-label={`حذف ${item.name}`}>حذف</button></span></div>; })}</div>}
@@ -1084,6 +1117,7 @@ export default function Home() {
           </>}
         </div>
         <footer><span>اشا · دستیار تصمیم زر و سیم · {marketTestActive ? "آزمون فنی اتصال داده" : portfolioMode === "demo" ? "مرحلهٔ ۲: آزمایشگاه تحلیل و تصمیم" : "مرحلهٔ ۱: ارزیابی زیرساخت داده"}</span><span>{marketTestActive ? "نوع و منبع داده در نمای فعال مشخص است · موجودی فرضی · بدون سفارش" : portfolioMode === "demo" ? "آزمایشگاه فعال · همهٔ داده‌ها ساختگی · بدون اجرای معامله" : "ذخیرهٔ سبد مطابق وضعیت اتصال محلی · بدون قیمت ساختگی · بدون معاملهٔ خودکار"} · <b>حالت امن</b></span></footer>
+        </fieldset>
       </main>
 
       {notificationOpen && <div className="notification-backdrop" role="presentation" onMouseDown={(event) => { if (event.currentTarget === event.target) setNotificationOpen(false); }}>

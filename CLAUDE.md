@@ -122,3 +122,12 @@ fully; this efficiency rule never relaxes the quality or authorization gates.
 
 When in doubt, present: what is being decided, why it matters, the options,
 pros/cons, a recommendation, and the consequence of choosing wrong — then wait.
+
+## 10. Coordinated Specialist Agents
+
+The owner explicitly authorizes subagent delegation and parallel independent work
+through project completion. Use applicable specialist roles, bounded ownership and
+independent review according to `docs/00-governance/SPECIALIST_TEAM.md`; retain all
+existing quality/authorization gates. Persist handoffs in project-state documents,
+not promises of permanent agent sessions or background work. `AGENTS.md` remains
+the pointer to this guide. If delegation is unavailable, disclose that limitation.

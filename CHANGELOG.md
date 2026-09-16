@@ -7,6 +7,17 @@ state is recorded in `docs/10-project-state/CURRENT_STATE.md`.
 
 ## [Unreleased]
 
+- Established owner-authorized specialist delegation with disjoint ownership,
+  independent review and persistent handoffs. Corrected the existing index-level
+  no-trade comparator to preserve initial holdings, without changing six other
+  controls or physical sizing. Hardened personal database restore/version recovery,
+  empty snapshot restoration, consistent reads and invalid API payload handling.
+  Reject inputs exceeding existing database precision before storage instead of
+  silently rounding; preserve drafts and explain the limits in Persian.
+  Added presentation-only shared holdings sorting and local freshness refresh on
+  navigation. Evidence and verification boundaries are recorded in the September 16
+  specialist review; hosted readiness and owner acceptance remain separate.
+
 - Unified compact Persian numbers at one decimal with exact-value disclosure and
   signed nonzero-under-0.1 handling; calculations, editable precision and stored
   documents remain unchanged. Fixed file-test draft loss on source/workspace

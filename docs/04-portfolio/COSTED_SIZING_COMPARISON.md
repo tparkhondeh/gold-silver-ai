@@ -71,7 +71,11 @@ suite is 161 tests; the previous 254 Python tests plus these three total 257.
 The owner-facing panel was opened locally and both seven-row tables inspected.
 
 The panel is a fixed reference experiment, independent of editable workbench inputs.
-It is not a custom-portfolio backtest service. The original daily-fixed-weight
-comparison remains distinct; its results cannot be substituted for this one.
+It is not a custom-portfolio backtest service. The original index-level comparison
+remains distinct; its results cannot be substituted for this one. Its no-trade
+control holds initial quantities without periodic rebalancing; the other six rows
+retain their frozen-weight period evaluation. The September 16 correction and
+provenance changes are recorded in the
+[specialist review](../10-project-state/SPECIALIST_REVIEW_2026-09-16.md).
 Iran calibration, settlement, depth, genuine cost/fee schedules, execution delays,
 history rights and real out-of-sample/shadow validation remain release dependencies.

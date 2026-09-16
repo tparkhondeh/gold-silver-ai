@@ -15,6 +15,7 @@ import { MetalReferenceEditor } from "./shared-metal-panel";
 import { restoreSharedPortfolio, saveSharedPortfolio } from "./shared-portfolio-storage";
 import { snapshotFailure } from "./browser-snapshot-storage";
 import { NumberValue } from "./number-value";
+import { orderHoldingRows, type HoldingDisplaySort } from "./holding-display-order";
 
 const money = (value: string | null | undefined) => value == null ? "قابل محاسبه نیست" : `${BigInt(value).toLocaleString("fa-IR")} تومان`;
 const percent = (bps: number | null | undefined) => bps == null ? "نامشخص" : <NumberValue value={bps} denominator={100} unit="٪" />;
@@ -52,6 +53,7 @@ export function SharedPortfolioWorkspace({ active, view, onNavigate }: { active:
   const [storedRaw, setStoredRaw] = useState<string | null | undefined>(undefined);
   const [notice, setNotice] = useState("");
   const [unsupportedChoice, setUnsupportedChoice] = useState<UnsupportedId>("SYNTH_STOCKS");
+  const [holdingSort, setHoldingSort] = useState<HoldingDisplaySort | null>(null);
   useEffect(() => { if (active) window.scrollTo(0, 0); }, [active, view]);
   useEffect(() => {
     const timer = window.setTimeout(() => {
@@ -74,6 +76,11 @@ export function SharedPortfolioWorkspace({ active, view, onNavigate }: { active:
   const plan = evaluation.plan;
   const selected = portfolio.input.assets.find((asset) => asset.id === portfolio.selectedAssetId);
   const selectedRow = plan?.rows.find((row) => row.assetId === portfolio.selectedAssetId);
+  const displayedHoldings = orderHoldingRows([
+    ...portfolio.input.assets.map(asset => ({ id: asset.id, name: assetName(asset.name), quantityMilli: asset.quantityMilli, unit: asset.unit === "gram" ? "گرم" : "عدد", classLabel: asset.assetClass === "gold" ? "طلا" : "نقره", purity: asset.purityPermille.toLocaleString("fa-IR"), unsupported: false, value: evaluation.values[asset.id] ?? null, weight: evaluation.weightsBps[asset.id] ?? null })),
+    ...portfolio.unsupported.map(holding => ({ id: holding.id, name: assetName(unsupportedCatalog[holding.id].name), quantityMilli: holding.quantityMilli, unit: unsupportedCatalog[holding.id].unit, classLabel: unsupportedCatalog[holding.id].assetClass, purity: "عیار کاربرد ندارد", unsupported: true, value: evaluation.values[holding.id] ?? null, weight: evaluation.weightsBps[holding.id] ?? null })),
+  ], holdingSort);
+  const sortHeader = (key: HoldingDisplaySort["key"], label: string) => <th aria-sort={holdingSort?.key === key ? holdingSort.direction === "asc" ? "ascending" : "descending" : "none"}><button type="button" className="text-button" onClick={() => setHoldingSort(previous => ({ key, direction: previous?.key === key && previous.direction === "asc" ? "desc" : "asc" }))}>{label}{holdingSort?.key === key ? holdingSort.direction === "asc" ? " ↑" : " ↓" : " ↕"}</button></th>;
   const updateInput = (input: ActionInput) => { setPortfolio((previous) => replaceSharedInput(previous, input)); setNotice("ورودی مشترک تغییر کرد؛ نتیجه دوباره محاسبه شد. برای نگهداری پس از بستن مرورگر، ذخیره کن."); };
   const updateAsset = (id: string, key: keyof ActionAsset, value: number | string | null) => updateInput({ ...portfolio.input, assets: portfolio.input.assets.map((asset) => asset.id === id ? { ...asset, [key]: value } : asset) });
   const select = (id: string) => setPortfolio((previous) => ({ ...previous, selectedAssetId: id, revision: previous.revision + 1 }));
@@ -120,9 +127,8 @@ export function SharedPortfolioWorkspace({ active, view, onNavigate }: { active:
     {evaluation.errors.length > 0 && <div className="action-error" role="alert"><b>تصمیم‌ناپذیر — سبد ناقص یا پشتیبانی‌نشده</b><ul>{evaluation.errors.map((error) => <li key={error}>{error}</li>)}</ul></div>}
     {plan?.state === "undecidable" && <p className="action-error" role="alert">قیمت ناقص، منقضی یا مربوط به آینده است؛ هیچ اقدام یا مصرف بودجه‌ای صادر نشده است. ارزش مبنا، قیمت معتبر امروز نیست.</p>}
 
-    {(view === "overview" || view === "portfolio") && <section className="panel shared-table-panel"><h3>موجودی همین سبد</h3><p>وزن‌ها نسبت به ارزش کلِ قبل، شامل نقد هستند. نمایش حداکثر یک اعشار است؛ روی عددهای گرد‌شده بزن تا مقدار دقیق باز شود. جمع نمایش‌های گرد‌شده ممکن است دقیقاً ۱۰۰٪ نباشد.</p><div className="table-scroll"><table className="shared-table"><thead><tr><th>دارایی</th><th>مقدار / واحد</th><th>کلاس / عیار</th><th>ارزش مبنا</th><th>وزن از کل</th><th>مسیر بررسی</th></tr></thead><tbody>
-      {portfolio.input.assets.map((asset) => <tr key={asset.id} data-testid={`shared-holding-${asset.id}`} aria-selected={portfolio.selectedAssetId === asset.id}><td>{assetName(asset.name)}</td><td>{quantity(asset.quantityMilli)} {asset.unit === "gram" ? "گرم" : "عدد"}</td><td>{asset.assetClass === "gold" ? "طلا" : "نقره"} / {asset.purityPermille.toLocaleString("fa-IR")}</td><td>{money(evaluation.values[asset.id])}</td><td>{percent(evaluation.weightsBps[asset.id])}</td><td><button className="text-button" onClick={() => { select(asset.id); onNavigate("asset-center"); }}>بررسی {assetName(asset.name)}</button></td></tr>)}
-      {portfolio.unsupported.map((holding) => <tr key={holding.id}><td>{assetName(unsupportedCatalog[holding.id].name)} — فاقد پشتیبانی</td><td>{quantity(holding.quantityMilli)} {unsupportedCatalog[holding.id].unit}</td><td>{unsupportedCatalog[holding.id].assetClass} / عیار کاربرد ندارد</td><td>{money(evaluation.values[holding.id])}</td><td>{percent(evaluation.weightsBps[holding.id])}</td><td>تصمیم‌ناپذیر</td></tr>)}
+    {(view === "overview" || view === "portfolio") && <section className="panel shared-table-panel"><h3>موجودی همین سبد</h3><p>وزن‌ها نسبت به ارزش کلِ قبل، شامل نقد هستند. نمایش حداکثر یک اعشار است؛ روی عددهای گرد‌شده بزن تا مقدار دقیق باز شود. جمع نمایش‌های گرد‌شده ممکن است دقیقاً ۱۰۰٪ نباشد.</p><p>با عنوان ستون، دارایی‌ها مرتب می‌شوند؛ نقد همیشه ردیف آخر است و ترتیب، محاسبات یا انتخاب دارایی را تغییر نمی‌دهد.</p><div className="table-scroll"><table className="shared-table"><thead><tr>{sortHeader("name", "دارایی")}<th>مقدار / واحد</th><th>کلاس / عیار</th>{sortHeader("value", "ارزش مبنا")}{sortHeader("weight", "وزن از کل")}<th>مسیر بررسی</th></tr></thead><tbody>
+      {displayedHoldings.map((row) => <tr key={row.id} data-testid={`shared-holding-${row.id}`} aria-selected={portfolio.selectedAssetId === row.id}><td>{row.name}{row.unsupported && " — فاقد پشتیبانی"}</td><td>{quantity(row.quantityMilli)} {row.unit}</td><td>{row.classLabel} / {row.purity}</td><td>{money(row.value)}</td><td>{percent(row.weight)}</td><td>{row.unsupported ? "تصمیم‌ناپذیر" : <button className="text-button" onClick={() => { select(row.id); onNavigate("asset-center"); }}>بررسی {row.name}</button>}</td></tr>)}
       <tr><td>نقد آزاد</td><td>تومان</td><td>نقد / عیار کاربرد ندارد</td><td>{money(evaluation.cashToman)}</td><td>{percent(evaluation.weightsBps.SYNTH_CASH)}</td><td>یک بودجهٔ مشترک</td></tr>
     </tbody></table></div><div className="market-actions"><button className="ghost-button" onClick={() => onNavigate("analysis")}>تحلیل کوتاه‌مدت و میان‌مدت</button><button className="primary-button" onClick={() => onNavigate("decisions")}>مشاهدهٔ برنامهٔ نهایی</button></div></section>}
 

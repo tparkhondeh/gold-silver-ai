@@ -45,7 +45,7 @@ test("portfolio repository returns an explicit empty owner snapshot", async () =
 });
 
 test("portfolio repository restores exact holdings and compact owner preferences", async () => {
-  const { runner } = createRunner((sql) => {
+  const { runner, calls } = createRunner((sql) => {
     if (sql.includes("set_config")) return { rows: [] };
     if (sql.includes("SELECT id, version FROM user_portfolios")) {
       return { rows: [{ id: "portfolio-a", version: 7 }] };
@@ -73,6 +73,7 @@ test("portfolio repository restores exact holdings and compact owner preferences
       decisionHorizon: "short",
     },
   });
+  assert.match(calls.find(call => call.sql.includes("SELECT id, version")).sql, /FOR SHARE$/);
 });
 
 test("portfolio repository saves holdings and preferences in one versioned transaction", async () => {

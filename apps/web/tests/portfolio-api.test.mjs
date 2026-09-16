@@ -95,3 +95,35 @@ test("portfolio PUT rejects invalid owner preferences", async () => {
   assert.equal((await response.json()).code, "invalid_preferences");
   assert.equal(called, false);
 });
+
+test("portfolio PUT rejects null, primitive and unreadable bodies before accessing storage", async () => {
+  let called = false;
+  const handler = createPortfolioPut(async () => { called = true; throw Error("must not access storage"); }, enabled);
+  const headers = { "content-type": "application/json", origin: "http://localhost:4174", "sec-fetch-site": "same-origin", "x-asha-portfolio-request": "save" };
+  for (const body of ["null", "false", "0", '"text"', "[]"]) {
+    const response = await handler(new Request("http://localhost:4174/api/portfolio", { method: "PUT", headers, body }));
+    assert.equal(response.status, 422);
+    assert.equal((await response.json()).code, "invalid_portfolio");
+  }
+  const unreadable = new Request("http://localhost:4174/api/portfolio", { method: "PUT", headers, body: "{}" });
+  unreadable.text = async () => { throw Error("private request detail"); };
+  const response = await handler(unreadable);
+  assert.equal(response.status, 400);
+  assert.doesNotMatch(await response.text(), /private request detail/);
+  assert.equal(called, false);
+});
+
+test("portfolio PUT rejects numeric rounding, overflow and invalid horizon text before database access", async () => {
+  let calls = 0;
+  const handler = createPortfolioPut(async () => { calls++; throw Error("must not resolve storage"); }, enabled);
+  const holding = { id: "synthetic-precision", name: "Synthetic", amount: 1, unit: "test", costToman: null, purchaseDate: null, note: "" };
+  for (const values of [{ amount: 1.1234567890123 }, { amount: 1e-13 }, { amount: 1e26 }, { costToman: 1.005 }, { costToman: 1e36 }]) {
+    const response = await handler(saveRequest({ expectedVersion: 0, holdings: [{ ...holding, ...values }] }));
+    assert.equal(response.status, 422); assert.equal((await response.json()).code, "invalid_holding");
+  }
+  for (const values of [{ liquidityReservePercent: "12.345" }, { maxSingleAssetPercent: "10.0000000000000001" }, { maxAcceptableDrawdownPercent: "2e-3" }, { shortTermMonths: "1.5" }, { longTermYears: "1e0" }]) {
+    const response = await handler(saveRequest({ expectedVersion: 0, holdings: [], preferences: { ...preferences, ...values } }));
+    assert.equal(response.status, 422); assert.equal((await response.json()).code, "invalid_preferences");
+  }
+  assert.equal(calls, 0);
+});

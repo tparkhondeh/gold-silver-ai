@@ -11,8 +11,11 @@ from asha_financial_lab.artifacts import (
     encode_method_comparison_report,
 )
 from asha_financial_lab.contracts import ContractViolation, fingerprint
+from asha_financial_lab.controls import NO_TRADE_CONTROL_ID
 from asha_financial_lab.method_comparison import (
     METHOD_COMPARISON_SCHEMA_VERSION,
+    _evaluate_no_trade,
+    _evaluate_weights,
     build_method_comparison_report,
     validate_method_comparison_report,
 )
@@ -41,6 +44,74 @@ class MethodComparisonTests(unittest.TestCase):
                     Decimal("1.000000000000"),
                 )
                 self.assertEqual(method["metrics"]["periodCount"], 20)
+
+    def test_no_trade_does_not_rebalance_after_a_price_move(self) -> None:
+        # Half cash / half A: A doubles then returns to its initial price.
+        # Fixed holdings return to initial NAV; rebalancing earns 12.5% instead.
+        ids = ["SYNTH_A", "SYNTH_CASH"]
+        dataset = {
+            "instruments": [{"instrumentId": item} for item in ids],
+            "observations": [
+                {"instrumentId": item, "periodIndex": period, "availableAtIndex": period,
+                 "value": str(level if item == "SYNTH_A" else 100)}
+                for period, level in enumerate([100, 200, 100]) for item in ids
+            ],
+        }
+        matrix = {
+            "instrumentIds": ids,
+            "rows": [
+                {"periodIndex": period, "returns": [
+                    {"instrumentId": "SYNTH_A", "value": value},
+                    {"instrumentId": "SYNTH_CASH", "value": "0"},
+                ]} for period, value in [(1, "1"), (2, "-0.5")]
+            ],
+        }
+        fold = {"testStartIndex": 1, "testEndIndex": 2}
+        weights = {item: Decimal("0.5") for item in ids}
+        no_trade = _evaluate_no_trade(dataset, fold, weights)
+        rebalanced = _evaluate_weights(matrix, fold, weights)
+        self.assertEqual(no_trade, {"periodCount": 2, "cumulativeChangePercent": "0.000000000000",
+                                    "maximumDrawdownPercent": "33.333333333333"})
+        self.assertEqual(rebalanced, {"periodCount": 2, "cumulativeChangePercent": "12.500000000000",
+                                     "maximumDrawdownPercent": "25.000000000000"})
+
+    def test_no_trade_preserves_unequal_weights_and_delayed_availability(self) -> None:
+        ids = ["SYNTH_A", "SYNTH_CASH"]
+        dataset = {
+            "instruments": [{"instrumentId": item} for item in ids],
+            "observations": [
+                {"instrumentId": item, "periodIndex": period,
+                 "availableAtIndex": period + (1 if item == "SYNTH_A" and period else 0),
+                 "value": str(level if item == "SYNTH_A" else 100)}
+                for period, level in enumerate([100, 200, 50]) for item in ids
+            ],
+        }
+        weights = {"SYNTH_A": Decimal("0.25"), "SYNTH_CASH": Decimal("0.75")}
+        self.assertEqual(_evaluate_no_trade(dataset, {"testStartIndex": 1, "testEndIndex": 1}, weights),
+                         {"periodCount": 1, "cumulativeChangePercent": "0.000000000000",
+                          "maximumDrawdownPercent": "0.000000000000"})
+        self.assertEqual(_evaluate_no_trade(dataset, {"testStartIndex": 1, "testEndIndex": 2}, weights),
+                         {"periodCount": 2, "cumulativeChangePercent": "25.000000000000",
+                          "maximumDrawdownPercent": "0.000000000000"})
+
+    def test_reference_no_trade_is_corrected_and_other_six_methods_are_unchanged(self) -> None:
+        # The six unaffected methods were replayed from the pre-correction source.
+        # Pin their exact metrics rather than widening a financial tolerance.
+        expected = {
+            "ASHA_BENCHMARK_CASH_CONTROL_V1": [("0.000000000000", "0.000000000000"), ("0.000000000000", "0.000000000000")],
+            "ASHA_BENCHMARK_EQUAL_WEIGHT_CONTROL_V1": [("2.104041634872", "1.197921745725"), ("2.429005290106", "1.173535671675")],
+            "ASHA_BENCHMARK_HRP_CONTROL_V1": [("4.347548926549", "0.000000000000"), ("4.166447348523", "0.000000000000")],
+            "ASHA_BENCHMARK_INVERSE_VOLATILITY_CONTROL_V1": [("4.316415412733", "0.000000000000"), ("4.143001172654", "0.000000000000")],
+            "ASHA_BENCHMARK_MINIMUM_CVAR_CONTROL_V1": [("4.347826086972", "0.000000000000"), ("4.166666666731", "0.000000000000")],
+            TRANSPARENT_DECISION_METHOD_ID: [("2.231801805500", "0.586006745886"), ("2.301945988496", "0.550824310681")],
+            NO_TRADE_CONTROL_ID: [("2.554857193934", "0.650536736205"), ("2.705915380296", "0.643213360246")],
+        }
+        for index, fold in enumerate(self.report["foldResults"]):
+            self.assertEqual({method["methodId"] for method in fold["methodResults"]}, set(expected))
+            for method in fold["methodResults"]:
+                change, drawdown = expected[method["methodId"]][index]
+                self.assertEqual(method["metrics"], {"periodCount": 20,
+                    "cumulativeChangePercent": change, "maximumDrawdownPercent": drawdown})
 
     def test_synthetic_metrics_cannot_rank_or_select(self) -> None:
         self.assertEqual(

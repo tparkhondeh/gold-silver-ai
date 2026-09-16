@@ -2,6 +2,14 @@
 
 **Source of truth for:** known limitations and gaps in the current state.
 
+## Latest specialist review — September 16, 2026
+
+See [the current review](SPECIALIST_REVIEW_2026-09-16.md) for corrected no-trade and
+local persistence defects, evidence and retained gates. A hydrated browser
+interaction regression lane is still absent from CI; imported TypeScript coverage,
+handler tests and manual browser passes must not be represented as full automated
+UI coverage. This is the next independent engineering task, not a data dependency.
+
 ## Phase 1 Limitations
 
 2026-09-13 follow-up: [Node local compatibility](LOCAL_NODE_REVIEW_2026-09-13.md)

@@ -2,7 +2,23 @@
 
 **Source of truth for:** where the project stands right now.
 
-_Last reviewed: 2026-09-16, Asia/Tehran (numeric display and file-draft continuity)_
+_Last reviewed: 2026-09-16, Asia/Tehran (specialist review and recovery correctness)_
+
+## Latest specialist-team checkpoint
+
+Owner-authorized specialist delegation is now a persistent development rule linked
+from `CLAUDE.md`; `AGENTS.md` remains its pointer. Three real subagents covered
+financial/data, security/storage and architecture/QA alongside coordinator UI work.
+The review identified and corrected existing no-trade comparison and personal
+save/restore consistency defects; shared sorting and local freshness navigation
+were also addressed. Inputs incompatible with existing database precision now
+fail explicitly before writes instead of silently rounding. Final local gates:
+246 web tests and 18 isolated PostgreSQL integration tests pass, alongside
+typecheck, lint, build and production dependency audit. Exact scope, numerical provenance, verification evidence,
+review limits and the next independent test gap live in the
+[September 16 specialist review](SPECIALIST_REVIEW_2026-09-16.md).
+No new financial method, licensed data, hosted identity, main/server change or
+owner acceptance is implied. Final-SHA publication/CI is a separate delivery check.
 
 ## Latest presentation and continuity checkpoint
 

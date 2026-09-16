@@ -10,6 +10,7 @@ import { ingestManualCsv, manualCsvHeaders } from "../../data/csv-ingestion.ts";
 import { validateObservation } from "../../data/validation.ts";
 import { PostgresObservationRepository } from "../../data/postgres-observation-repository.ts";
 import { PortfolioVersionConflictError, PostgresPortfolioRepository } from "../../data/postgres-portfolio-repository.ts";
+import { createPortfolioPut } from "../../app/api/portfolio/route.ts";
 import { PostgresProvenanceRepository, buildArtifactVersion } from "../../data/provenance-registry.ts";
 import { PostgresSourceReconciliationRepository } from "../../data/source-reconciliation.ts";
 import { PostgresPortfolioLedgerRepository } from "../../data/portfolio-ledger.ts";
@@ -208,6 +209,55 @@ test("real PostgreSQL migration, isolation, persistence and restore", async (t) 
     assert.equal(second.version, 1);
     assert.equal((await portfolioRepository.load(ownerA)).holdings[0].id, "owner-a-gold");
     assert.equal((await portfolioRepository.load(ownerB)).holdings[0].id, "owner-b-silver");
+  });
+  await t.test("portfolio API preserves exact stored numeric inputs and rejects lossy values before writes", async () => {
+    const cast = await admin.query("SELECT '1.005'::numeric(38,2)::text AS cost, '1.1234567890123'::numeric(38,12)::text AS amount, '12.345'::numeric(5,2)::text AS percent");
+    assert.deepEqual(cast.rows[0], { cost: "1.01", amount: "1.123456789012", percent: "12.35" });
+    await assert.rejects(admin.query("SELECT '1.5'::smallint"), /invalid input syntax/);
+    await assert.rejects(admin.query("SELECT '1e0'::smallint"), /invalid input syntax/);
+    let resolutions = 0;
+    const handler = createPortfolioPut(async () => { resolutions++; return { available: true, repository: portfolioRepository }; }, { ASHA_LOCAL_PORTFOLIO_ENABLED: "true" });
+    const holding = { id: "precision-roundtrip", name: "Synthetic precision", amount: 1e-12, unit: "test", costToman: 1.01, purchaseDate: null, note: "" };
+    const preferences = { liquidityReservePercent: "10.01", maxSingleAssetPercent: "40", maxAcceptableDrawdownPercent: "20", shortTermMonths: "6", longTermYears: "5", analysisHorizon: "short", decisionHorizon: "long" };
+    const send = payload => handler(new Request("http://localhost:4174/api/portfolio", { method: "PUT", headers: { "content-type": "application/json", origin: "http://localhost:4174", "sec-fetch-site": "same-origin", "x-asha-portfolio-request": "save" }, body: JSON.stringify({ expectedVersion: 0, holdings: [holding], preferences, ...payload }) }));
+    const accepted = await send({}); assert.equal(accepted.status, 200);
+    const saved = (await accepted.json()).snapshot;
+    assert.deepEqual(await portfolioRepository.load("local-owner-v1"), saved);
+    for (const values of [{ holdings: [{ ...holding, costToman: 1.005 }] }, { holdings: [{ ...holding, amount: 1.1234567890123 }] }, { holdings: [{ ...holding, amount: 1e26 }] }, { preferences: { ...preferences, liquidityReservePercent: "12.345" } }, { preferences: { ...preferences, shortTermMonths: "1.5" } }]) assert.equal((await send({ expectedVersion: 1, ...values })).status, 422);
+    assert.equal(resolutions, 1);
+    assert.deepEqual(await portfolioRepository.load("local-owner-v1"), saved);
+  });
+  await t.test("portfolio restore holds one complete version while a concurrent save waits", async () => {
+    const subject = "integration-snapshot-owner";
+    const first = await portfolioRepository.save(subject, 0, [{ id: "snapshot-holding", name: "Synthetic snapshot", amount: 1, unit: "test", costToman: null, purchaseDate: null, note: "" }], {
+      liquidityReservePercent: "10", maxSingleAssetPercent: "", maxAcceptableDrawdownPercent: "", shortTermMonths: "", longTermYears: "", analysisHorizon: "short", decisionHorizon: "short",
+    });
+    const runner = createPgTransactionRunner(runtimePool);
+    let notifyRead, releaseRead;
+    const parentRead = new Promise(resolve => { notifyRead = resolve; });
+    const continueRead = new Promise(resolve => { releaseRead = resolve; });
+    const reader = new PostgresPortfolioRepository({ transaction: work => runner.transaction(executor => work({
+      async query(sql, parameters) {
+        const result = await executor.query(sql, parameters);
+        if (sql.includes("SELECT id, version FROM user_portfolios")) { notifyRead(); await continueRead; }
+        return result;
+      },
+    })) });
+    const writer = new PostgresPortfolioRepository({ transaction: work => runner.transaction(async executor => {
+      await executor.query("SET LOCAL lock_timeout = '200ms'");
+      return work(executor);
+    }) });
+    const pendingRead = reader.load(subject);
+    const changedHoldings = [{ ...first.holdings[0], amount: 2 }];
+    const changedPreferences = { ...first.preferences, liquidityReservePercent: "20" };
+    try {
+      await Promise.race([parentRead, pendingRead]);
+      await assert.rejects(writer.save(subject, first.version, changedHoldings, changedPreferences), /lock timeout/);
+    } finally { releaseRead(); }
+    assert.deepEqual(await pendingRead, first);
+    const second = await writer.save(subject, first.version, changedHoldings, changedPreferences);
+    assert.equal(second.version, first.version + 1);
+    assert.deepEqual(await portfolioRepository.load(subject), second);
   });
   await t.test("provenance chain is versioned, point-in-time bounded and immutable", async () => {
     const artifacts = [

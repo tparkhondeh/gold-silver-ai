@@ -97,7 +97,9 @@ export class PostgresPortfolioRepository {
   async load(subjectId: string): Promise<PortfolioSnapshot> {
     return this.runner.transaction(async (executor) => {
       await setSubject(executor, subjectId);
-      const portfolio = await executor.query<PortfolioRow>("SELECT id, version FROM user_portfolios WHERE subject_id=$1", [subjectId]);
+      // Saves update this parent before replacing its children. Hold a shared lock
+      // until all reads finish, so holdings/preferences belong to the same version.
+      const portfolio = await executor.query<PortfolioRow>("SELECT id, version FROM user_portfolios WHERE subject_id=$1 FOR SHARE", [subjectId]);
       const row = portfolio.rows?.[0];
       if (!row) return { version: 0, holdings: [], preferences: { ...emptyPortfolioPreferences } };
       const holdings = await executor.query<HoldingRow>(`

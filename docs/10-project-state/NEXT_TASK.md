@@ -4,6 +4,17 @@
 
 ## Immediate Next Step
 
+Latest September 16 specialist-team review supersedes the earlier bounded
+"no independent gap identified" conclusion: use the
+[current findings, delivery gates and next test task](SPECIALIST_REVIEW_2026-09-16.md).
+Do not rebuild the corrected comparator, snapshot recovery or shared sorting.
+After final-SHA verification, the next independent gap is a bounded hydrated
+browser regression lane with isolated synthetic fixtures; unit/handler tests and
+manual browser checks do not constitute that automation. Reuse specialist roles
+under `../00-governance/SPECIALIST_TEAM.md` with separate ownership and independent
+review of sensitive changes. No new provider, history, identity or method authority
+is granted; the existing external gates below remain unchanged.
+
 Latest September 16 follow-up: the owner's display feedback and file-draft loss on
 workspace switching are implemented and tested. Use the
 [presentation/continuity evidence](NUMBER_DISPLAY_REVIEW_2026-09-16.md) and updated

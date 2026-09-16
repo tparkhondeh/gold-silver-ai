@@ -44,7 +44,12 @@ export function MarketTestWorkspace({ active, view, onNavigate }: { active: bool
     const interval = window.setInterval(() => setNow(Date.now()), 60_000);
     return () => { window.clearTimeout(timer); window.clearInterval(interval); };
   }, []);
-  useEffect(() => { if (active) window.scrollTo(0, 0); }, [active, view]);
+  useEffect(() => {
+    if (!active) return;
+    window.scrollTo(0, 0);
+    const timer = window.setTimeout(() => setNow(Date.now()), 0);
+    return () => window.clearTimeout(timer);
+  }, [active, view, fileMode]);
   const computed = useMemo(() => {
     if (now === null) return { result: null, error: "" };
     try { return { result: evaluateMarketTest(portfolio, now), error: "" }; }
