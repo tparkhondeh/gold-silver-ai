@@ -4,6 +4,14 @@
 
 ## Immediate Next Step
 
+Latest September 16 follow-up: the owner's display feedback and file-draft loss on
+workspace switching are implemented and tested. Use the
+[presentation/continuity evidence](NUMBER_DISPLAY_REVIEW_2026-09-16.md) and updated
+R2 guide; do not rebuild numeric display, shared integration or browser save guards.
+Verify the final SHA's three CI jobs at delivery. No further necessary independent
+gap was identified in this bounded review. Await concrete owner test findings or
+the already-registered data/method/identity gates below, not a filler feature.
+
 Latest independent unit, 2026-09-16: browser save/conflict hardening is implemented
 and locally verified; see [evidence and bounded completion](BROWSER_STORAGE_REVIEW_2026-09-16.md).
 Do not rebuild file intake, shared diagnostics or the new storage protection.

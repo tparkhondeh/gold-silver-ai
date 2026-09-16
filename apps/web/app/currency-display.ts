@@ -1,13 +1,11 @@
+import { formatNumber } from "./number-display.ts";
+
 export function formatToman(value: number) {
-  return `${Math.round(value).toLocaleString("fa-IR")} تومان`;
+  return `${formatNumber(value)} تومان`;
 }
 
 export function formatUsd(value: number) {
-  return new Intl.NumberFormat("fa-IR", {
-    style: "currency",
-    currency: "USD",
-    maximumFractionDigits: 2,
-  }).format(value);
+  return `${formatNumber(value)} دلار`;
 }
 
 export function isUsableUsdTomanRate(value: number | null | undefined): value is number {

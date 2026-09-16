@@ -7,6 +7,12 @@ state is recorded in `docs/10-project-state/CURRENT_STATE.md`.
 
 ## [Unreleased]
 
+- Unified compact Persian numbers at one decimal with exact-value disclosure and
+  signed nonzero-under-0.1 handling; calculations, editable precision and stored
+  documents remain unchanged. Fixed file-test draft loss on source/workspace
+  navigation without autosave or provider calls. Eight new grouped regressions,
+  228 web tests total, browser budget/replay and seven-method checks pass locally.
+
 - Prevented stale-tab and unread/corrupt snapshot overwrites in shared and market
   workspaces; all three browser test stores now use exclusive Web Locks. Unchanged
   shared saves preserve the previous copy. Document formats and financial methods

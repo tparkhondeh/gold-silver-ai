@@ -6,6 +6,7 @@ import "./asha-theme.css";
 import "./decision-action-workbench.css";
 import "./shared-portfolio.css";
 import "./market-test-workspace.css";
+import "./number-value.css";
 
 export const metadata: Metadata = {
   title: "اشا | دستیار تصمیم زر و سیم",

@@ -1,0 +1,5 @@
+.number-value { font-variant-numeric: tabular-nums; }
+.number-value .number-exact[hidden], [data-testid="retained-file-workspace"][hidden] { display: none !important; }
+.number-value .number-disclosure { color: inherit; font: inherit; border: 0; border-bottom: 1px dotted currentColor; padding: 0; background: none; cursor: pointer; }
+.number-value .number-disclosure:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
+.number-value .number-exact:not([hidden]) { display: block; font-size: .8rem; font-weight: 400; line-height: 1.8; overflow-wrap: anywhere; padding: 4px 0; }

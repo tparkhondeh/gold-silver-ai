@@ -2,7 +2,20 @@
 
 **Source of truth for:** where the project stands right now.
 
-_Last reviewed: 2026-09-16, Asia/Tehran (independent browser-storage hardening)_
+_Last reviewed: 2026-09-16, Asia/Tehran (numeric display and file-draft continuity)_
+
+## Latest presentation and continuity checkpoint
+
+Owner-requested one-decimal display is implemented with exact-value disclosure;
+editable inputs, saved contracts, financial calculations and price limits retain
+their precision. The next independently reproduced defect is fixed: unsaved file
+test input survives source/workspace navigation instead of silently reverting.
+228 web tests, build/typecheck/lint/audit and local readiness pass. Eight-view
+budget consistency, exact display, saved replay, two horizons and seven-method
+comparison were exercised in the available local browser. Evidence, backup,
+limitations, final-SHA verification policy and remaining gates:
+[September 16 presentation review](NUMBER_DISPLAY_REVIEW_2026-09-16.md).
+No provider request, server/main change, real-file acceptance or owner approval.
 
 ## Latest independent-work checkpoint
 

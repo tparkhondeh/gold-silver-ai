@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { ActionSizingComparisonPanel } from "./action-sizing-comparison-panel";
+import { NumberValue } from "./number-value";
 import {
   actionScenarios, buildActionFixture, buildActionPlan, decodeActionPlan, encodeActionPlan,
   type ActionAsset, type ActionInput, type ActionPlan, type ActionScenario, type PlanRow,
@@ -29,8 +30,8 @@ const reasons: Record<string, string> = {
   LOT_CAPACITY_COST_OR_BUDGET_LIMIT: "مقدار قابل‌خرید یا فروش این دارایی با گام معامله، ظرفیت، هزینه یا بودجهٔ برنامه سازگار نشده است.",
 };
 const money = (value: string | number) => `${BigInt(value).toLocaleString("fa-IR")} تومان`;
-const percent = (bps: number) => `${(bps / 100).toLocaleString("fa-IR", { maximumFractionDigits: 2 })}٪`;
-const units = (quantity: string | number, asset: ActionAsset) => `${(Number(quantity) / 1000).toLocaleString("fa-IR", { maximumFractionDigits: 3 })} ${asset.unit === "gram" ? "گرم" : "عدد"}`;
+const percent = (bps: number) => <NumberValue value={bps} denominator={100} unit="٪" />;
+const units = (quantity: string | number, asset: ActionAsset) => <NumberValue value={quantity} denominator={1000} unit={asset.unit === "gram" ? "گرم" : "عدد"} />;
 const name = (asset: ActionAsset) => asset.name.replace("[ساختگی] ", "");
 const displayDate = (value: string) => new Date(value).toLocaleDateString("fa-IR", { timeZone: "UTC" });
 const issueLabels = { missing_bid: "قیمت فروش موجود نیست", missing_ask: "قیمت خرید موجود نیست", future_quote: "قیمت متعلق به آیندهٔ زمان بررسی است", expired_quote: "اعتبار قیمت گذشته است" };
@@ -60,7 +61,7 @@ export function AssetDecisionCard({ plan, row }: { plan: ActionPlan; row: PlanRo
       <p>سقف ورود {money(row.entryLimitToman)}؛ کف خروج {money(row.exitLimitToman)}. این‌ها حد مجاز قیمت با فاصلهٔ {percent(plan.inputSnapshot.priceToleranceBps)} از مبنا هستند.</p>
       {orders.map((order) => <div key={order.id} className="action-costs"><p>فاصلهٔ خریدوفروش {money(order.spreadToman)} + لغزش {money(order.slippageToman)} + کارمزد {money(order.feeToman)} + مالیات {money(order.taxToman)} + تعدیل گردکردن {money(order.roundingToman)} = <b>{money(order.totalCostToman)}</b></p>{order.side === "buy" && <ul>{order.funding.map((fund) => <li key={fund.sourceId}>تأمین از {sourceName(fund.sourceId)}: {money(fund.amountToman)}</li>)}</ul>}</div>)}
       <p>{reasons[row.reasonCode]}</p>
-      {plan.horizons.map((horizon) => <details className="action-factor-detail" key={horizon.id}><summary>۸ عامل {horizon.id === "short" ? "کوتاه‌مدت" : "میان‌مدت"}</summary><div className="action-factors">{horizon.factors[row.assetId]?.map((factor) => <div key={factor.id}><span>{factor.label}</span><b>{factor.points.toLocaleString("fa-IR")} × {percent(factor.weight * 10_000)}</b><small>ورودی: {factor.id === "TREND" ? `${factor.input.toLocaleString("fa-IR", { maximumFractionDigits: 6 })} برابر` : factor.id === "LIQUIDITY" ? `${factor.input.toLocaleString("fa-IR")} از ۵` : percent(factor.input * 10_000)}؛ سهم در امتیاز: {factor.weightedContribution.toLocaleString("fa-IR")}</small></div>)}</div><p>بدترین فشار این دارایی در سناریوهای موجود: {horizon.worstStressPercent[row.assetId].toLocaleString("fa-IR")}٪. این مقدار افت سناریو است، نه حد ضرر قیمتی تضمین‌شده.</p></details>)}
+      {plan.horizons.map((horizon) => <details className="action-factor-detail" key={horizon.id}><summary>۸ عامل {horizon.id === "short" ? "کوتاه‌مدت" : "میان‌مدت"}</summary><div className="action-factors">{horizon.factors[row.assetId]?.map((factor) => <div key={factor.id}><span>{factor.label}</span><b>{<NumberValue value={factor.points} />} × {percent(factor.weight * 10_000)}</b><small>ورودی: {factor.id === "TREND" ? <NumberValue value={factor.input} unit="برابر" /> : factor.id === "LIQUIDITY" ? <><NumberValue value={factor.input} /> از ۵</> : percent(factor.input * 10_000)}؛ سهم در امتیاز: {<NumberValue value={factor.weightedContribution} />}</small></div>)}</div><p>بدترین فشار این دارایی در سناریوهای موجود: {<NumberValue value={horizon.worstStressPercent[row.assetId]} />}٪. این مقدار افت سناریو است، نه حد ضرر قیمتی تضمین‌شده.</p></details>)}
       <p>با تغییر ورودی، عبور عامل از آستانه، پایان اعتبار قیمت یا رسیدن زمان بازبینی، این تصمیم باید دوباره محاسبه شود.</p>
     </details>
   </article>;

@@ -14,11 +14,12 @@ import { SharedAnalysisPanel } from "./shared-analysis-panel";
 import { MetalReferenceEditor } from "./shared-metal-panel";
 import { restoreSharedPortfolio, saveSharedPortfolio } from "./shared-portfolio-storage";
 import { snapshotFailure } from "./browser-snapshot-storage";
+import { NumberValue } from "./number-value";
 
 const money = (value: string | null | undefined) => value == null ? "قابل محاسبه نیست" : `${BigInt(value).toLocaleString("fa-IR")} تومان`;
-const percent = (bps: number | null | undefined) => bps == null ? "نامشخص" : `${(bps / 100).toLocaleString("fa-IR")}٪`;
+const percent = (bps: number | null | undefined) => bps == null ? "نامشخص" : <NumberValue value={bps} denominator={100} unit="٪" />;
 const assetName = (name: string) => name.replace("[ساختگی] ", "");
-const quantity = (value: number) => Number.isFinite(value) ? (value / 1000).toLocaleString("fa-IR", { maximumFractionDigits: 3 }) : "نامعتبر";
+const quantity = (value: number) => <NumberValue value={value} denominator={1000} />;
 // Remove binary floating-point noise, but do not round a fourth decimal to an allowed lot.
 const scaled = (value: number, scale: number) => Number((value * scale).toFixed(6));
 
@@ -119,7 +120,7 @@ export function SharedPortfolioWorkspace({ active, view, onNavigate }: { active:
     {evaluation.errors.length > 0 && <div className="action-error" role="alert"><b>تصمیم‌ناپذیر — سبد ناقص یا پشتیبانی‌نشده</b><ul>{evaluation.errors.map((error) => <li key={error}>{error}</li>)}</ul></div>}
     {plan?.state === "undecidable" && <p className="action-error" role="alert">قیمت ناقص، منقضی یا مربوط به آینده است؛ هیچ اقدام یا مصرف بودجه‌ای صادر نشده است. ارزش مبنا، قیمت معتبر امروز نیست.</p>}
 
-    {(view === "overview" || view === "portfolio") && <section className="panel shared-table-panel"><h3>موجودی همین سبد</h3><p>وزن‌ها نسبت به ارزش کلِ قبل، شامل نقد هستند؛ نمایش تا دو رقم اعشار، رو به پایین است.</p><div className="table-scroll"><table className="shared-table"><thead><tr><th>دارایی</th><th>مقدار / واحد</th><th>کلاس / عیار</th><th>ارزش مبنا</th><th>وزن از کل</th><th>مسیر بررسی</th></tr></thead><tbody>
+    {(view === "overview" || view === "portfolio") && <section className="panel shared-table-panel"><h3>موجودی همین سبد</h3><p>وزن‌ها نسبت به ارزش کلِ قبل، شامل نقد هستند. نمایش حداکثر یک اعشار است؛ روی عددهای گرد‌شده بزن تا مقدار دقیق باز شود. جمع نمایش‌های گرد‌شده ممکن است دقیقاً ۱۰۰٪ نباشد.</p><div className="table-scroll"><table className="shared-table"><thead><tr><th>دارایی</th><th>مقدار / واحد</th><th>کلاس / عیار</th><th>ارزش مبنا</th><th>وزن از کل</th><th>مسیر بررسی</th></tr></thead><tbody>
       {portfolio.input.assets.map((asset) => <tr key={asset.id} data-testid={`shared-holding-${asset.id}`} aria-selected={portfolio.selectedAssetId === asset.id}><td>{assetName(asset.name)}</td><td>{quantity(asset.quantityMilli)} {asset.unit === "gram" ? "گرم" : "عدد"}</td><td>{asset.assetClass === "gold" ? "طلا" : "نقره"} / {asset.purityPermille.toLocaleString("fa-IR")}</td><td>{money(evaluation.values[asset.id])}</td><td>{percent(evaluation.weightsBps[asset.id])}</td><td><button className="text-button" onClick={() => { select(asset.id); onNavigate("asset-center"); }}>بررسی {assetName(asset.name)}</button></td></tr>)}
       {portfolio.unsupported.map((holding) => <tr key={holding.id}><td>{assetName(unsupportedCatalog[holding.id].name)} — فاقد پشتیبانی</td><td>{quantity(holding.quantityMilli)} {unsupportedCatalog[holding.id].unit}</td><td>{unsupportedCatalog[holding.id].assetClass} / عیار کاربرد ندارد</td><td>{money(evaluation.values[holding.id])}</td><td>{percent(evaluation.weightsBps[holding.id])}</td><td>تصمیم‌ناپذیر</td></tr>)}
       <tr><td>نقد آزاد</td><td>تومان</td><td>نقد / عیار کاربرد ندارد</td><td>{money(evaluation.cashToman)}</td><td>{percent(evaluation.weightsBps.SYNTH_CASH)}</td><td>یک بودجهٔ مشترک</td></tr>

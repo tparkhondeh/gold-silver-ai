@@ -1,6 +1,7 @@
 "use client";
 import { useMemo } from "react";
 import { buildActionSizingComparison } from "./action-sizing-comparison";
+import { NumberValue } from "./number-value";
 
 const labels: Record<string, string> = {
   ASHA_BENCHMARK_CASH_CONTROL_V1: "تمام نقد",
@@ -12,7 +13,7 @@ const labels: Record<string, string> = {
   ASHA_TRANSPARENT_GUARDED_DECISION_V1: "روش هشت‌عاملی پیشنهادی",
 };
 const money = (value: string) => `${BigInt(value).toLocaleString("fa-IR")} تومان`;
-const percent = (bps: number) => `${(bps / 100).toLocaleString("fa-IR", { maximumFractionDigits: 2 })}٪`;
+const percent = (bps: number) => <NumberValue value={bps} denominator={100} unit="٪" />;
 
 export function ActionSizingComparisonPanel() {
   const result = useMemo(() => {

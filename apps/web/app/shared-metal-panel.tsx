@@ -1,3 +1,4 @@
+import { NumberValue } from "./number-value";
 import { exampleMetalReferences, type MetalReferences, type buildRawMetalDiagnostics } from "./shared-metal-reference";
 
 const labels = { USD_TOMAN: "نرخ دلار — تومان برای یک دلار", XAU_USD: "اونس طلای خالص — دلار برای یک اونس تروا", XAG_USD: "اونس نقرهٔ خالص — دلار برای یک اونس تروا" };
@@ -6,11 +7,6 @@ const issues: Record<string, string> = { missing: "مقدار ندارد", futur
 function describeIssue(issue: string) {
   const [code, problem] = issue.split(":");
   return problem ? `${shortLabels[code as keyof typeof shortLabels]}: ${issues[problem]}` : issues[code];
-}
-// Keep display exact too, including large values and negative sub-unit differences.
-function decimal(scaled: string) {
-  const n = BigInt(scaled), magnitude = n < 0n ? -n : n;
-  return `${n < 0n ? "−" : ""}${(magnitude / 10000n).toLocaleString("fa-IR")}٫${Number(magnitude % 10000n).toLocaleString("fa-IR", { minimumIntegerDigits: 4, useGrouping: false })}`;
 }
 
 export function MetalReferenceEditor({ references, onChange }: { references: MetalReferences; onChange: (references: MetalReferences) => void }) {
@@ -30,12 +26,12 @@ export function MetalReferenceEditor({ references, onChange }: { references: Met
 export function RawMetalPanel({ report, names }: { report: ReturnType<typeof buildRawMetalDiagnostics>; names: Record<string, string> }) {
   return <section data-testid="shared-raw-metal"><h4>اختلاف قیمت با ارزش فلز خام</h4>
     <p>تشخیص ساختگی، نه حباب تاریخی یا نقطهٔ ورود و خروج. بر قیمت مبنای یک گرم محاسبه می‌شود؛ کارمزد، مالیات، ساخت و حمل در ارزش فلز خام نیستند.</p>
-    <div className="table-scroll"><table className="shared-table"><thead><tr><th>دارایی</th><th>ارزش فلز خام / گرم — تومان</th><th>اختلاف / گرم — تومان</th><th>درصد اختلاف نسبت به ارزش فلز خام</th></tr></thead><tbody>{report.rows.map(row => <tr key={row.assetId} data-testid={`raw-metal-${row.assetId}`}><td>{names[row.assetId]}</td>{row.rawMetalTomanPerGram && row.differenceTomanPerGram && row.premiumPercent ? <><td>{decimal(row.rawMetalTomanPerGram.scaled10000)}</td><td>{decimal(row.differenceTomanPerGram.scaled10000)}</td><td>{decimal(row.premiumPercent.scaled10000)}٪</td></> : <td colSpan={3}>قابل محاسبه نیست: {row.issues.map(describeIssue).join("؛ ")}</td>}</tr>)}</tbody></table></div>
+    <div className="table-scroll"><table className="shared-table"><thead><tr><th>دارایی</th><th>ارزش فلز خام / گرم — تومان</th><th>اختلاف / گرم — تومان</th><th>درصد اختلاف نسبت به ارزش فلز خام</th></tr></thead><tbody>{report.rows.map(row => <tr key={row.assetId} data-testid={`raw-metal-${row.assetId}`}><td>{names[row.assetId]}</td>{row.rawMetalTomanPerGram && row.differenceTomanPerGram && row.premiumPercent ? <><td>{<NumberValue value={row.rawMetalTomanPerGram.numerator} denominator={row.rawMetalTomanPerGram.denominator} />}</td><td>{<NumberValue value={row.differenceTomanPerGram.numerator} denominator={row.differenceTomanPerGram.denominator} />}</td><td>{<NumberValue value={row.premiumPercent.numerator} denominator={row.premiumPercent.denominator} unit="٪" />}</td></> : <td colSpan={3}>قابل محاسبه نیست: {row.issues.map(describeIssue).join("؛ ")}</td>}</tr>)}</tbody></table></div>
     <details className="action-detail"><summary>فرمول، مرجع و محاسبات دقیق فلز خام</summary>
       <p>ارزش فلز خام = دلارِ یک اونس ÷ ۳۱٫۱۰۳۴۷۶۸ × نرخ دلار به تومان × عیار ÷ ۱۰۰۰. درصد اختلاف = (قیمت داخلی ÷ ارزش فلز خام − ۱) × ۱۰۰. همهٔ مراجع باید معتبر و هم‌تاریخ باشند؛ درصد مثبت به‌تنهایی به معنای گران‌بودن یا لزوم فروش نیست.</p>
-      {report.source.quotes.map(quote => <p key={quote.code}>{labels[quote.code]}: {quote.value === null ? "موجود نیست" : decimal(String(BigInt(quote.value) * (quote.code === "USD_TOMAN" ? 10000n : 100n)))} · {quote.quotedOn} تا {quote.validUntil}</p>)}
+      {report.source.quotes.map(quote => <p key={quote.code}>{labels[quote.code]}: {quote.value === null ? "موجود نیست" : <NumberValue value={quote.value} denominator={quote.code === "USD_TOMAN" ? 1 : 100} />} · {quote.quotedOn} تا {quote.validUntil}</p>)}
       {report.rows.filter(row => row.state === "calculated").map(row => <p key={row.assetId}>{names[row.assetId]} · مبنای داخلی {row.domesticPriceToman.toLocaleString("fa-IR")} تومان · عیار {row.purityPermille.toLocaleString("fa-IR")} · تاریخ {row.domesticQuotedOn}<br /><code dir="ltr">raw={row.rawMetalTomanPerGram!.numerator}/{row.rawMetalTomanPerGram!.denominator}; premium%={row.premiumPercent!.numerator}/{row.premiumPercent!.denominator}</code></p>)}
-      <p>نمایش تا چهار رقم اعشار به‌سمت صفر کوتاه شده؛ کسر دقیق نگه داشته می‌شود و وارد تصمیم نمی‌شود.</p><code dir="ltr">{report.schemaVersion} · {report.source.sourceId}</code>
+      <p>نمایش حداکثر یک اعشار است؛ ≈ یعنی گرد‌شده. روی عدد بزن تا کسر یا مقدار دقیق باز شود. هیچ گردکردن نمایشی وارد تصمیم نمی‌شود.</p><code dir="ltr">{report.schemaVersion} · {report.source.sourceId}</code>
     </details>
   </section>;
 }
