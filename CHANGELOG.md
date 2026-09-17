@@ -7,6 +7,11 @@ state is recorded in `docs/10-project-state/CURRENT_STATE.md`.
 
 ## [Unreleased]
 
+- Hardened the existing isolated file test's receipt-time validation and active UI
+  freshness boundaries, preserving valid saved records and blocking invalid
+  historical replay without overwrites. Recorded fresh Rahavard entitlement,
+  sign-in and unresolved minimal-export/permission evidence; real Rahavard intake
+  remains disabled pending an authorized sample, not replaced by a guessed schema.
 - Connected validated latest Navasan prices to personal purchase lots and retained
   holdings through a versioned exact-rational valuation contract. Current value,
   landed basis and unrealized P&L have explicit coverage and provenance; no

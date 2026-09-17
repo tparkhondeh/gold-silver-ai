@@ -2,7 +2,23 @@
 
 **Source of truth for:** where the project stands right now.
 
-_Last reviewed: 2026-09-17, Asia/Tehran (personal portfolio current-market connection)_
+_Last reviewed: 2026-09-17, Asia/Tehran (Rahavard access and bounded file-timing review)_
+
+## Latest Rahavard checkpoint
+
+The owner requested Gold-subscription data alongside the existing Navasan personal
+connection. Fresh review still did not obtain an authorized minimal source file or
+provider permission reply. The previously open menu showed Gold, but fresh pages
+require sign-in; manual owner login was requested. No new data/API/history,
+scheduled export, message or server change occurred. The real Rahavard connection
+and real-file acceptance remain blocked, not finished by a synthetic test.
+
+Independent specialist review found and corrected two timing defects in the
+existing isolated file test: future local receipt and delayed UI expiry. Existing
+valid saved records are preserved; real-profile permission/schema gates remain
+closed. See [fresh evidence, verification and exact next action](RAHAVARD_REVIEW_2026-09-17.md).
+The personal-market implementation below remains intact. Exact final-SHA CI and
+owner acceptance are separate gates.
 
 ## Latest personal-market checkpoint
 

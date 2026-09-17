@@ -4,6 +4,15 @@
 merged to `main`. This is a log, not a plan — see `docs/01-product/ROADMAP.md` for
 what's ahead.
 
+## File timing hardening and Rahavard access review (2026-09-17)
+
+Bounded independent corrections prevent future local file receipt from supporting
+current value and refresh file-view validity at time boundaries without receipt
+or storage side effects. Gold/access, official export and the existing support
+inquiry were reviewed; no permitted real Rahavard file was acquired. See the
+[verification and remaining source gate](RAHAVARD_REVIEW_2026-09-17.md).
+This is not completion of the requested real Rahavard connection or owner acceptance.
+
 ## Personal current-market connection (2026-09-17; acceptance pending)
 
 Validated latest Navasan prices now value the existing personal purchase book with

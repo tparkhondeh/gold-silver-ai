@@ -105,7 +105,9 @@ export function evaluateFileTest(portfolio: FileTestPortfolio, nowMs: number) {
     exactKeys(file, ["version", "datasetKind", "profileVersion", "sourceText", "fileSha256", "fileBytes", "receivedAt", "observations"]);
     if (file.version !== "asha.file_snapshot.v1" || file.datasetKind !== "synthetic_fixture" || file.profileVersion !== FILE_PROFILE_VERSION || !/^[a-f0-9]{64}$/.test(file.fileSha256) || new TextEncoder().encode(file.sourceText).length !== file.fileBytes) fail("منشأ، نوع یا اندازه فایل ناسازگار است.");
     const received = instant(file.receivedAt);
-    if (received > nowMs + 300_000) fail("زمان دریافت در آینده است.");
+    // Local receipt is not a provider timestamp: clock-skew tolerance must not
+    // make a not-yet-received file support a current valuation.
+    if (received > nowMs) fail("زمان دریافت محلی فایل در آینده است؛ زمان دریافت نباید بعد از زمان ارزیابی باشد.");
     const parsed = parseSyntheticFileText(file.sourceText);
     if (canonical(parsed) !== canonical(file.observations)) fail("قیمت/واحد/زمان با متن اصلی فایل تطبیق ندارد.");
     if (parsed.some(q => q.publishedAt !== null && instant(q.publishedAt) > received + 300_000)) fail("زمان قیمت با زمان دریافت ناسازگار است.");

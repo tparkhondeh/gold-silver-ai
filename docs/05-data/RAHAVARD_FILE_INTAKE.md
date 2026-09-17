@@ -1,8 +1,17 @@
 # Rahavard official file intake — bounded preparation
 
-Reviewed 2026-09-16, Asia/Tehran. Owner scope: official licensed file acquisition and
+Reviewed 2026-09-17, Asia/Tehran. Owner scope: official licensed file acquisition and
 local technical testing; no scraping, history accumulation, purchase, server/main
 change or financial-method promotion. ADR 0011 remains binding.
+
+Latest active-turn review: the prior open menu showed Gold, but fresh navigation
+requires sign-in again; the owner was asked to complete it. A scoped authenticated
+mail search still found only the sent inquiry, not a matching reply/bounce. The
+configured export folder remains empty and no export was enabled. Official TXT
+transfer capability is distinct from verified latest-only acquisition, exact
+instrument metadata and retention. See the
+[September 17 review and bounded file-timing corrections](../10-project-state/RAHAVARD_REVIEW_2026-09-17.md).
+The existing synthetic intake is not a substitute for an actual licensed sample.
 
 September 16 follow-up: the scoped authenticated-mail search found only the sent
 inquiry, not a relevant reply/bounce. No duplicate was sent or export activated.

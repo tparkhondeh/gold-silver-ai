@@ -4,6 +4,22 @@
 
 ## Immediate Next Step
 
+Current owner priority is the **Rahavard Gold data route alongside personal
+Navasan valuation**. Use the [September 17 access review](RAHAVARD_REVIEW_2026-09-17.md).
+The owner must complete the currently visible sign-in if still required. Then
+review the relevant provider answer when supplied; do not re-send the inquiry or
+poll repeatedly. Subscription/login alone does not establish the missing
+latest-only controls, exact physical-silver identity, file profile or retention.
+
+Once that evidence exists, obtain only a permitted minimal sample into ignored
+local storage, define its reviewed real contract and join compatible quotes
+without silently replacing/averaging Navasan. Until then keep real Rahavard intake
+and automatic export off. Do not invent a vendor format or mark fixture tests as
+actual-file acceptance. The independent timing fixes are implemented; complete
+their exact delivery-SHA/three-job verification at handoff, then reuse them.
+
+### Personal-market continuation (retained)
+
 The September 17 personal-market connection supersedes the earlier separation
 restriction below: the owner explicitly authorized local current-price valuation
 of personal purchase lots. Follow the

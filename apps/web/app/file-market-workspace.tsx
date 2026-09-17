@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { createFileTestPortfolio, evaluateFileTest, FILE_PROFILE_VERSION, MAX_FILE_BYTES, readFileSnapshot, restoreFileTest, saveFileTest, SYNTHETIC_FILE, type FileTestPortfolio } from "./file-market-contract";
-import { displayRialAsToman as money, marketTestAssets, tomanInputToRial, rialToTomanInput } from "./market-test-contract";
+import { displayRialAsToman as money, marketTestAssets, MARKET_TTL_MS, tomanInputToRial, rialToTomanInput } from "./market-test-contract";
 import type { View } from "./workspace-navigation";
 import { snapshotFailure } from "./browser-snapshot-storage";
 import { NumberValue } from "./number-value";
@@ -21,9 +21,27 @@ export function FileMarketWorkspace({ active, view, onNavigate }: { active: bool
   // Keep the draft on workspace switches; refresh age without reloading storage.
   useEffect(() => {
     if (!active) return;
-    const timer = window.setTimeout(() => setNow(Date.now()), 0);
-    return () => window.clearTimeout(timer);
+    const refreshClock = () => setNow(Date.now());
+    const timer = window.setTimeout(refreshClock, 0);
+    const clock = window.setInterval(refreshClock, 60_000);
+    const visibility = () => { if (document.visibilityState === "visible") refreshClock(); };
+    window.addEventListener("focus", refreshClock);
+    document.addEventListener("visibilitychange", visibility);
+    return () => {
+      window.clearTimeout(timer); window.clearInterval(clock);
+      window.removeEventListener("focus", refreshClock);
+      document.removeEventListener("visibilitychange", visibility);
+    };
   }, [active, view]);
+  useEffect(() => {
+    if (!active || portfolio.file === null || now === null) return;
+    const boundaries = [Date.parse(portfolio.file.receivedAt), ...portfolio.file.observations.flatMap(quote => quote.publishedAt === null ? [] : [Date.parse(quote.publishedAt), Date.parse(quote.publishedAt) + MARKET_TTL_MS + 1])].filter(boundary => Number.isFinite(boundary) && boundary > now);
+    if (!boundaries.length) return;
+    // Schedule against the evaluated clock, including a boundary crossed between
+    // render and this effect. Only time changes; file/draft/storage stay intact.
+    const timer = window.setTimeout(() => setNow(Date.now()), Math.min(2_147_483_647, Math.max(0, Math.min(...boundaries) - Date.now())));
+    return () => window.clearTimeout(timer);
+  }, [active, portfolio.file, now]);
   useEffect(() => {
     let mounted = true;
     const timer = window.setTimeout(() => {
@@ -35,8 +53,7 @@ export function FileMarketWorkspace({ active, view, onNavigate }: { active: bool
         if (saved.portfolio) { setPortfolio(saved.portfolio); setNotice("آزمون فایل بازیابی شد؛ تازگی با زمان فعلی بررسی می‌شود."); }
       }).catch(() => { if (mounted) setNotice("نسخه ذخیره خراب یا غیرقابل‌خواندن است؛ اصل آن حفظ شده و ذخیره خاموش است."); }).finally(() => { if (mounted) setBusy(false); });
     }, 0);
-    const clock = window.setInterval(() => setNow(Date.now()), 60_000);
-    return () => { mounted = false; window.clearTimeout(timer); window.clearInterval(clock); };
+    return () => { mounted = false; window.clearTimeout(timer); };
   }, []);
   const computed = useMemo(() => {
     try { return { result: now === null ? null : evaluateFileTest(portfolio, now), error: "" }; }

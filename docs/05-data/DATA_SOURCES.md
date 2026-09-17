@@ -8,7 +8,12 @@ and permitted product use. Source-selection rationale is recorded in ADR 0003.
 Current authorized acquisition is the isolated one-shot Navasan technical-test path;
 generic multi-provider networking remains off. The capability rows below are not
 claims that every feed is currently running. Historical quota/status entries are
-superseded by the [September 16 actual-price evidence](../10-project-state/REAL_MARKET_REVIEW_2026-09-16.md).
+superseded by the [September 17 personal-price evidence](../10-project-state/PERSONAL_MARKET_REVIEW_2026-09-17.md).
+The historical Rahavard manual-capture row is **not current acquisition authority**:
+ADR 0011 supersedes it for new capture. The official Gold/TXT route remains pending
+verified minimal acquisition, source metadata and use/retention scope; follow the
+[fresh access and permission review](../10-project-state/RAHAVARD_REVIEW_2026-09-17.md),
+not the old snapshot, before enabling any real Rahavard integration.
 
 | ID | Provider | Coverage | Access and cadence | Timestamp / unit contract | Product use | Status |
 |---|---|---|---|---|---|---|

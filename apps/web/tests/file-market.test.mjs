@@ -114,6 +114,49 @@ test("invalid dates/timezones are rejected; future/stale/missing remain explicit
   assert.equal(evaluateFileTest(missing, now).currentTotalRial, "100000000");
 });
 
+test("local file receipt must not be in the future, including a single millisecond", async () => {
+  const p = await portfolio();
+  assert.equal(evaluateFileTest(p, now).currentTotalRial, "100003000");
+  for (const offset of [1, 60_000, 300_000, 300_001]) {
+    const future = { ...p, file: await readFileSnapshot(bytes(SYNTHETIC_FILE), new Date(now + offset).toISOString()) };
+    const original = structuredClone(future);
+    assert.throws(() => evaluateFileTest(future, now), /دریافت محلی فایل در آینده/);
+    await assert.rejects(() => encodeFileTest(future, now), /دریافت محلی فایل در آینده/);
+    assert.equal(evaluateFileTest(future, now + offset).currentTotalRial, "100003000");
+    assert.deepEqual(future, original); // No receipt/publication repair or provenance mutation.
+  }
+});
+
+test("valid saved file bytes remain compatible and a local clock rollback never overwrites them", async () => {
+  const { createTestLocks } = await import("./helpers/snapshot-locks.mjs");
+  const p = await portfolio();
+  const saved = await encodeFileTest(p, now);
+  // Captured from the valid synthetic document before the stricter receipt check.
+  assert.equal(createHash("sha256").update(saved).digest("hex"), "bb2e879494f9c1402eed1bd5f38746857724847a3aa08cea7640650c51d4e719");
+  const data = new Map([[FILE_TEST_STORAGE, saved]]); let writes = 0;
+  const storage = { getItem: key => data.get(key) ?? null, setItem: (key, value) => { writes++; data.set(key, value); } };
+  await assert.rejects(() => restoreFileTest(storage, now - 1), /دریافت محلی فایل در آینده/);
+  await assert.rejects(() => saveFileTest(storage, p, now - 1, saved, createTestLocks()), /دریافت محلی فایل در آینده/);
+  assert.equal(writes, 0); assert.equal(data.get(FILE_TEST_STORAGE), saved);
+  assert.deepEqual(await restoreFileTest(storage, now), { raw: saved, portfolio: p });
+  assert.equal(writes, 0); assert.equal(data.get(FILE_TEST_STORAGE), saved);
+});
+
+test("previously tolerated future-receipt documents fail closed without rewriting stored bytes", async () => {
+  const { createTestLocks } = await import("./helpers/snapshot-locks.mjs");
+  const p = await portfolio();
+  const document = JSON.parse(await encodeFileTest(p, now));
+  // The old five-minute allowance accepted this receipt at evaluatedAt=now;
+  // its valuation result was unchanged because receipt time was ignored.
+  document.portfolio.file.receivedAt = new Date(now + 1).toISOString();
+  const saved = canonical(document);
+  const data = new Map([[FILE_TEST_STORAGE, saved]]); let writes = 0;
+  const storage = { getItem: key => data.get(key) ?? null, setItem: (key, value) => { writes++; data.set(key, value); } };
+  await assert.rejects(() => restoreFileTest(storage, now + 1000), /دریافت محلی فایل در آینده/);
+  await assert.rejects(() => saveFileTest(storage, p, now + 1000, saved, createTestLocks()), /دریافت محلی فایل در آینده/);
+  assert.equal(writes, 0); assert.equal(data.get(FILE_TEST_STORAGE), saved);
+});
+
 test("snapshot/portfolio validation rejects drift, unknown fields, unsafe amounts and mixed provenance", async () => {
   const p = await portfolio();
   const mutations = [q => q.version = "v2", q => q.ownerSecret = "not-real", q => q.inputs.cashRial = "invalid", q => q.inputs.quantitiesMilli.EMAMI_COIN_IRR = 500,
