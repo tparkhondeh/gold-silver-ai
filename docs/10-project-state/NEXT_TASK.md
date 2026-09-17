@@ -6,22 +6,41 @@
 
 Current priority is **complete private-domain readiness for the unified personal
 workspace**, not rebuild the purchase book or restore public laboratory controls.
-Use [the latest bounded delivery and exact blockers](UNIFIED_PORTFOLIO_REVIEW_2026-09-17.md).
+Use [the latest identity delivery and exact blockers](PRIVATE_IDENTITY_REVIEW_2026-09-17.md)
+alongside the [unified-workspace evidence](UNIFIED_PORTFOLIO_REVIEW_2026-09-17.md).
 The local implementation is not domain deployment or owner acceptance.
+
+Do not rebuild the now-tested isolated identity core, OIDC adapter, storage check
+or synthetic login harness. The current fixed storage path reports blocked;
+explicit approval for `C:\Users\pc\.asha-private\google-owner-login` is pending.
+After approval, implement/review that exact destination and prove safe direct
+Save As before requesting replacement-client action-time approval. No real
+credential creation, download, activation or server transfer is currently implied.
+Keep the deleted exposed client deleted. Complete durable session/owner database
+authorization integration before any hosted portfolio release; the memory-only
+4175 harness does not satisfy those production gates.
 
 1. Implementation `9d8537c` passed all three GitHub jobs (run35191323042). Complete
    the documentation-follow-up's exact final-SHA verification if still pending.
    Personal backup HTTP download has now passed in the available browser; reuse
    the evidence rather than reverting to the unverified Blob-download path.
-2. Owner handoff: the empty Google project **Gold Silver AI** was created; its
-   branding form is at **Finish** and asks agreement to the **Google API Services:
-   User Data Policy**. A direct link to the prepared form was supplied. The earlier
-   Cloud welcome dialog is no longer shown; do not ask for its missing button.
-   Owner must review terms/account eligibility and personally accept only if agreed.
-   Do not accept terms, activate billing or create new sensitive
-   access on the owner's behalf without the required specific authorization.
-3. After the identity gate, implement/review owner-only verified login/session,
-   non-owner and anonymous denial, expiry/logout and RLS; prepare a production
+2. Owner handoff updated: the owner completed the terms/branding step. Fresh UI
+   on the original **Gold Silver AI** project reports **OAuth configuration created!**
+   after the owner's manual agreement. Do not repeat that completed request.
+   A specifically authorized web client was then created, but its secret was
+   exposed in tool output. The owner authorized deletion; the unused client was
+   deleted and the Google active-client list verified empty. **Do not restore it.
+   Verify safe private retention and obtain the required action-time authorization
+   before any replacement.** No secret download, local credential file, server transfer
+   or application login occurred. See the
+   [bounded incident and containment record](GOOGLE_IDENTITY_SETUP_2026-09-17.md).
+   Limit intended identity scopes to OpenID/email; no Gmail, Drive or financial-data access. Private-key
+   transfer to the server requires separate exact authority. Billing was not
+   activated; account eligibility and actual private-login acceptance remain
+   separate checks, not established by successful branding setup.
+3. Reuse the implemented/reviewed identity boundary and its signed-provider tests.
+   After the credential gate, integrate actual owner binding, durable sessions,
+   non-owner/anonymous denial and database authorization/RLS; prepare a production
    runtime plus supervised startup independent of SSH/laptop. Current server
    `Linger=no` and absent 3012 listener do not prove restart persistence. Keep the
    existing public proxy disconnected until a verified private gate exists.

@@ -2,7 +2,25 @@
 
 **Source of truth for:** where the project stands right now.
 
-_Last reviewed: 2026-09-17, Asia/Tehran (unified personal workspace, automatic prices and private-deployment preflight)_
+_Last reviewed: 2026-09-17, Asia/Tehran (isolated private-identity acceptance and credential-retention gate)_
+
+## Latest private-identity checkpoint
+
+Reusable owner-only identity/session controls and an inactive Google OIDC adapter
+are implemented and independently reviewed. The isolated browser test at
+`http://127.0.0.1:4175/` passed owner/non-owner, save/reload, logout/re-login,
+expiry and disconnected-server checks with an invented note only. Final local
+web suite: 497 passing tests; build/typecheck/lint and production audit passed.
+See [scope, evidence and owner steps](PRIVATE_IDENTITY_REVIEW_2026-09-17.md).
+
+Real Google login and domain access are **not activated**. The workspace credential
+path fails ancestor-permission checks despite a private empty leaf. Approval for
+the proposed outside-workspace private folder is pending; no replacement client,
+credential, server transfer or owner-data change occurred. Previous incident docs
+were preserved and the exposed deleted client must never be restored. Existing
+local portfolio identity is unchanged. Hosted sessions/storage, authorization
+integration and cross-device acceptance remain separate gates. Exact delivery-SHA
+GitHub status is the delivery commit's checks, not earlier run evidence.
 
 ## Latest unified personal-workspace checkpoint
 
@@ -33,9 +51,17 @@ delivery-SHA verification gate; it changes no tested product code.
 
 Private domain release is **not complete**: fresh read-only preflight found HTTPS
 503 and no backend on proxy port 3012. The owner authorized Google-login
-preparation; its empty project is created and branding form prepared, but manual
-Google API Services User Data Policy acceptance and subsequent sensitive credential
-authorization are still pending. Hosted identity, persistent runtime,
+preparation. After the owner's manual acceptance, the original **Gold Silver AI**
+project now visibly reports **OAuth configuration created!**; this gate is complete.
+The owner subsequently authorized one web OAuth client and local-only credential
+retention. It was created, but its secret appeared in tool output during UI
+inspection; treat it as compromised. It was not downloaded, stored or connected
+to the application/server. After specific owner confirmation, this unused client
+was deleted and the Google active-client list was verified empty. No replacement,
+safe credential or completed login is claimed. Follow the
+[incident, containment and exact next action](GOOGLE_IDENTITY_SETUP_2026-09-17.md).
+A second empty Google project was not deleted or used for this setup.
+Hosted identity, persistent runtime,
 server storage and cross-device acceptance remain open. No server/main change or
 private portfolio/key transfer occurred. This supersedes older UI/priority claims
 below; historical implementation evidence remains useful, not current readiness.

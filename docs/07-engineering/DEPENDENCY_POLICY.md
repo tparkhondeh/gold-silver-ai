@@ -45,6 +45,12 @@ The open-source product review and adopt/defer/reject decisions are recorded in
 GitHub actions and receives read-only repository contents permission. No source code
 from the reviewed AGPL financial products is included.
 
+The approved private-identity preparation adds a pinned maintained OIDC library,
+not handwritten protocol/signature verification. Its purpose, version/license,
+maintenance/official-source checks, signed-provider tests and fresh audit evidence
+are recorded in the [September 17 identity review](../10-project-state/PRIVATE_IDENTITY_REVIEW_2026-09-17.md).
+The inactive adapter is not authority to create/store credentials or deploy login.
+
 The Phase 2 laboratory uses the Python 3.12 standard library for contracts and every
 financial calculation. GitHub CI uses the official MIT-licensed
 `actions/setup-python@v7`, reviewed on 2026-09-01. Parquet transport now uses exactly

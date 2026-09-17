@@ -11,12 +11,16 @@ release is not established. Fresh inspection still found public HTTPS 503, no
 backend listener on 3012, and a writable project directory. No server file,
 service or setting was changed, and no deployed commit SHA was verified.
 
-Google login preparation is owner-approved; the empty project was created and the
-branding form prepared. Manual acceptance of the Google API Services User Data
-Policy remains pending at the form's Finish step. Preparation is not completed authentication, a credential
-release, or permission to expose an unauthenticated app. Keep existing loopback
-controls intact until the approved identity/session/owner-authorization boundary
-is implemented and verified. The observed `Linger=no` also leaves user-service
+Google branding/terms setup is complete after manual owner acceptance. Subsequent
+credential incident and verified deletion of that unused client are recorded in the
+[current identity checkpoint](../10-project-state/GOOGLE_IDENTITY_SETUP_2026-09-17.md).
+No safe credential, completed authentication, credential transfer or permission
+to expose an unauthenticated app is established. Keep existing loopback
+controls intact: the new isolated identity boundary is tested but not integrated
+with the real portfolio or a durable hosted runtime. See the
+[identity acceptance record](../10-project-state/PRIVATE_IDENTITY_REVIEW_2026-09-17.md)
+and [blocked credential retention check](GOOGLE_CREDENTIAL_STORAGE.md).
+The observed `Linger=no` also leaves user-service
 survival after logout/reboot unproven; writable files and available service tools
 do not establish persistent runtime supervision.
 
