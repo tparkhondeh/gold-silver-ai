@@ -9,7 +9,8 @@ workspace**, not rebuild the purchase book or restore public laboratory controls
 Use [the latest bounded delivery and exact blockers](UNIFIED_PORTFOLIO_REVIEW_2026-09-17.md).
 The local implementation is not domain deployment or owner acceptance.
 
-1. Complete exact final-SHA publication/three-job verification if still pending.
+1. Implementation `9d8537c` passed all three GitHub jobs (run35191323042). Complete
+   the documentation-follow-up's exact final-SHA verification if still pending.
    Personal backup HTTP download has now passed in the available browser; reuse
    the evidence rather than reverting to the unverified Blob-download path.
 2. Owner handoff: the empty Google project **Gold Silver AI** was created; its

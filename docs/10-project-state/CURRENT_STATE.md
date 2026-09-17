@@ -27,6 +27,9 @@ two-tab conflict and failed-save draft retention were exercised. HTTP backup fil
 download was verified after correcting the Blob-download path. Full evidence,
 code/test/CI distinctions and owner steps:
 [September 17 unified-workspace review](UNIFIED_PORTFOLIO_REVIEW_2026-09-17.md).
+Implementation `9d8537c` was pushed; all three exact-SHA GitHub jobs passed in
+run35191323042. This documentation-only evidence follow-up has a separate final
+delivery-SHA verification gate; it changes no tested product code.
 
 Private domain release is **not complete**: fresh read-only preflight found HTTPS
 503 and no backend on proxy port 3012. The owner authorized Google-login
