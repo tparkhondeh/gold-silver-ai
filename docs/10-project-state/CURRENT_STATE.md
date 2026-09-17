@@ -2,7 +2,40 @@
 
 **Source of truth for:** where the project stands right now.
 
-_Last reviewed: 2026-09-17, Asia/Tehran (Rahavard access and bounded file-timing review)_
+_Last reviewed: 2026-09-17, Asia/Tehran (unified personal workspace, automatic prices and private-deployment preflight)_
+
+## Latest unified personal-workspace checkpoint
+
+The public page now has one purchase/editor/Excel path backed by confirmed local
+PostgreSQL writes, automatic reads, exact per-lot/weighted Rial and USD basis,
+explicit coverage and protected drafts/version conflicts. Synthetic laboratories
+and manual price save/receive/replay controls are not imported by the public page;
+their internal regression implementations remain. The blank downloadable workbook
+has three sheets and no example holdings. No existing rows or browser drafts were
+deleted; browser-only drafts are preserved for explicit recovery, not silently merged.
+
+Automatic latest-only market handling now uses one private runtime cache plus the
+existing durable quota ledger and cross-process exclusion. Current source cooldown
+is respected; this checkpoint does **not** claim a new actual quote acquisition.
+Daily verified local backups run only while the local launcher is alive; they are
+not off-host backups or a deployed service. Actual restore verified all 25 tables.
+
+Three specialists and the coordinator reviewed/integrated the work. Browser
+acceptance used a new isolated database, never the owner portfolio: manual and
+XLSX saves/reload, date/FX validation, precise quantities, duplicate/corrupt files,
+two-tab conflict and failed-save draft retention were exercised. HTTP backup file
+download was verified after correcting the Blob-download path. Full evidence,
+code/test/CI distinctions and owner steps:
+[September 17 unified-workspace review](UNIFIED_PORTFOLIO_REVIEW_2026-09-17.md).
+
+Private domain release is **not complete**: fresh read-only preflight found HTTPS
+503 and no backend on proxy port 3012. The owner authorized Google-login
+preparation; its empty project is created and branding form prepared, but manual
+Google API Services User Data Policy acceptance and subsequent sensitive credential
+authorization are still pending. Hosted identity, persistent runtime,
+server storage and cross-device acceptance remain open. No server/main change or
+private portfolio/key transfer occurred. This supersedes older UI/priority claims
+below; historical implementation evidence remains useful, not current readiness.
 
 ## Latest Rahavard checkpoint
 

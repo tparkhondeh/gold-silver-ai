@@ -4,11 +4,26 @@
 
 ## Status
 
-Latest owner-domain observations and current scope (2026-09-13) are in
-[`R2_DOMAIN_REVIEW_2026-09-13.md`](../10-project-state/R2_DOMAIN_REVIEW_2026-09-13.md).
-The owner now permits a private deployment, but it has not occurred: public HTTPS
-503, no backend listener on 3012, and no production identity gate. Write access is
-available. The historical review URLs below are not proof of a working release.
+Latest scope and read-only evidence (2026-09-17):
+[unified-portfolio checkpoint](../10-project-state/UNIFIED_PORTFOLIO_REVIEW_2026-09-17.md).
+The owner permits private deployment preparation, but a working owner-domain
+release is not established. Fresh inspection still found public HTTPS 503, no
+backend listener on 3012, and a writable project directory. No server file,
+service or setting was changed, and no deployed commit SHA was verified.
+
+Google login preparation is owner-approved; the empty project was created and the
+branding form prepared. Manual acceptance of the Google API Services User Data
+Policy remains pending at the form's Finish step. Preparation is not completed authentication, a credential
+release, or permission to expose an unauthenticated app. Keep existing loopback
+controls intact until the approved identity/session/owner-authorization boundary
+is implemented and verified. The observed `Linger=no` also leaves user-service
+survival after logout/reboot unproven; writable files and available service tools
+do not establish persistent runtime supervision.
+
+The linked checkpoint owns command-level evidence and remaining actions. The
+[September 13 review](../10-project-state/R2_DOMAIN_REVIEW_2026-09-13.md) and the
+older URLs/observations below are historical context, not proof of a current
+working or private release.
 
 ### Permanent independent-access acceptance criteria
 
@@ -27,15 +42,18 @@ separate authorization gates. Domain publication alone is not project completion
 
 ### Historical Sites review
 
-`STATUS: PARTIAL`. The Phase 1 working branch has an owner-authorized public Sites
-deployment for interface review at
+`STATUS: HISTORICAL REVIEW`. The Phase 1 working branch had an owner-authorized
+public Sites deployment for interface review at
 `https://asha-gold-silver-ai.taha-p.chatgpt.site`. It is not a stable release and is
 not merged to `main`.
 
-The review deployment has no server-side portfolio persistence, no account model,
-and no production authentication. Portfolio/demo state is browser-session-local;
-the loopback CSV operator is disabled on the public hostname. Reviewers must use
-synthetic, non-sensitive inputs.
+That review had no server-side portfolio persistence, account model or production
+authentication. Portfolio/demo state was browser-session-local and the loopback
+CSV operator was disabled on the public hostname. It was for synthetic,
+non-sensitive inputs only; its current availability/features were not reverified
+as part of the unified-workspace rollout.
+
+## Owner-local run
 
 The local application remains the only approved operator surface. Its project-owned
 PostgreSQL, protected persistence environment, one-step owner-local launcher, strict
@@ -45,10 +63,18 @@ or partial in their respective operations documents.
 
 On the prepared owner Windows host, `npm run local:run` starts PostgreSQL, validates
 the protected runtime boundary and starts the web application only on
-`127.0.0.1:4174`. It runs in the foreground and does not make deployment or DNS
-changes.
+`127.0.0.1:4174`. The unified interface uses local PostgreSQL as portfolio storage
+and a protected, latest-only managed market cache. Neither is hosted sync.
+The launcher runs in the foreground and makes no deployment or DNS changes;
+its readiness-gated, lifetime-bound backup behavior is defined in [BACKUP.md](BACKUP.md).
 
-## Owner domain: current read-only review, 2026-09-09
+This Windows launcher is not a Linux production service or a deployment recipe.
+The local Node runtime mode must not be exposed through the domain proxy as an
+identity workaround. Before any hosted activation, verify the selected production
+runtime, exact release identity, private access, supervision, rollback and scoped
+storage under the independent-access criteria above.
+
+## Historical owner-domain read-only review, 2026-09-09
 
 The owner conditionally permitted a private evaluation deployment on 2026-09-06.
 The 2026-09-09 request is inspection/documentation-only and does not authorize a
@@ -72,7 +98,7 @@ Observed at approximately 17:07–17:09 UTC (20:37–20:39 Asia/Tehran):
   Other accounts, protected host-wide configuration and inaccessible paths were
   not inventoried; absence of deployment everywhere on the host is not claimed.
 
-Current diagnosis: the configured backend is not running/listening on its target
+Diagnosis at that checkpoint: the configured backend was not running/listening on its target
 port, consistent with the observed 503. Restored filesystem permission is not
 successful deployment. Proxy semantics, production build/runtime compatibility,
 private owner access, restart supervision, scoped backup and rollback must still

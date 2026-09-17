@@ -3,7 +3,7 @@
 import { createHash, randomBytes } from "node:crypto";
 import { execFileSync } from "node:child_process";
 import { createReadStream } from "node:fs";
-import { access, mkdir, readFile, writeFile, unlink, readdir, rename, stat } from "node:fs/promises";
+import { access, mkdir, open, readFile, writeFile, unlink, readdir, rename, stat } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import { parseEnv } from "node:util";
 import { join, resolve } from "node:path";
@@ -22,12 +22,17 @@ const secretFile = join(privateRoot, "credentials.json");
 const evidenceFile = join(privateRoot, "integration-evidence.json");
 const port = 55432;
 const command = process.argv[2] ?? "status";
+let backupCancellationRequested = false;
+if (command === "backup" && process.send) process.on("message", message => {
+  if (message && typeof message === "object" && message.type === "cancel-local-backup") backupCancellationRequested = true;
+});
+const assertBackupActive = () => { if (backupCancellationRequested) throw new Error("Local backup cancelled at a safe boundary"); };
 const exists = async (path) => { try { await access(path); return true; } catch (error) { if (error.code === "ENOENT") return false; throw error; } };
 const binary = (name) => join(runtime, `${name}.exe`);
 const run = (name, args) => execFileSync(binary(name), args, { windowsHide: true, stdio: "pipe", timeout: 60_000 }).toString();
 const runWithPassword = (name, args, password, timeout = 120_000) => execFileSync(binary(name), args, { windowsHide: true, stdio: "pipe", timeout, env: { ...process.env, PGPASSWORD: password } }).toString();
-const connect = async (connectionString) => {
-  const client = new Client({ connectionString, connectionTimeoutMillis: 3000 });
+const connect = async (connectionString, queryTimeout) => {
+  const client = new Client({ connectionString, connectionTimeoutMillis: 3000, query_timeout: queryTimeout, statement_timeout: queryTimeout });
   await client.connect();
   return client;
 };
@@ -45,7 +50,7 @@ async function privateDirectory() {
 }
 
 async function sourceFingerprint() {
-  const files = ["scripts/local-postgres.mjs", "scripts/local-backup.ts", "package-lock.json", "app/purchase-book.ts", "app/api/portfolio/route.ts"];
+  const files = ["scripts/local-postgres.mjs", "scripts/local-backup.ts", "scripts/local-backup-runtime.ts", "scripts/local-backup-supervisor.ts", "scripts/managed-market-runtime.ts", "scripts/start-local-app.mjs", "package-lock.json", "app/purchase-book.ts", "app/api/portfolio/route.ts", "app/api/managed-market/route.ts", "app/managed-market-contract.ts"];
   for (const folder of ["db", "data", "tests/integration"]) {
     for (const file of await readdir(join(webRoot, folder), { recursive: true, withFileTypes: true })) {
       if (file.isFile() && /\.(ts|mjs|sql)$/.test(file.name)) files.push(join(file.parentPath, file.name));
@@ -207,8 +212,16 @@ async function configure(secret) {
 }
 
 async function verifiedBackup(secret) {
-  await start(secret);
   await privateDirectory();
+  const lockPath = join(privateRoot, "backup-active.lock");
+  const lock = await open(lockPath, "wx", 0o600);
+  try { return await performVerifiedBackup(secret); }
+  finally { await lock.close(); await unlink(lockPath); }
+}
+
+async function performVerifiedBackup(secret) {
+  assertBackupActive();
+  await start(secret);
   const createdAt = new Date();
   const plan = createLocalBackupPlan(privateRoot, createdAt, randomBytes(4).toString("hex"));
   const verificationDatabase = quoteVerificationDatabase(plan.verificationDatabase);
@@ -218,18 +231,29 @@ async function verifiedBackup(secret) {
   }
   let verificationCreated = false;
   let completedBackup = null;
+  let source;
   try {
-    const runtimeClient = await connect(url("asha_runtime", secret.runtime, "asha_local"));
+    assertBackupActive();
+    const runtimeClient = await connect(url("asha_runtime", secret.runtime, "asha_local"), 30_000);
     try { await verifyActivation(runtimeClient, { allowPendingMigrations: true }); }
     finally { await runtimeClient.end(); }
+
+    assertBackupActive();
+    source = await connect(url("postgres", secret.admin, "asha_local"), 30_000);
+    // Keep counts and dump on exactly one point in time while the owner app may
+    // continue writing. Comparing the dump with later live counts is not valid.
+    await source.query("BEGIN ISOLATION LEVEL REPEATABLE READ READ ONLY");
+    const snapshotId = (await source.query("SELECT pg_export_snapshot() AS snapshot")).rows[0]?.snapshot;
+    if (typeof snapshotId !== "string" || !/^[0-9A-F-]+$/.test(snapshotId)) throw new Error("Invalid exported backup snapshot");
 
     runWithPassword("pg_dump", [
       "--host", "127.0.0.1", "--port", port.toString(), "--username", "postgres",
       "--dbname", "asha_local", "--no-password", "--format", "custom",
-      "--compress", "6", "--no-owner", "--no-privileges", "--file", plan.temporaryBackupPath,
+      "--compress", "6", "--no-owner", "--no-privileges", "--snapshot", snapshotId, "--file", plan.temporaryBackupPath,
     ], secret.admin);
 
-    const controller = await connect(url("postgres", secret.admin, "postgres"));
+    assertBackupActive();
+    const controller = await connect(url("postgres", secret.admin, "postgres"), 30_000);
     try {
       if ((await controller.query("SELECT 1 FROM pg_database WHERE datname=$1", [plan.verificationDatabase])).rowCount) {
         throw new Error("Verification database already exists");
@@ -239,30 +263,31 @@ async function verifiedBackup(secret) {
       await controller.query(`REVOKE CONNECT ON DATABASE ${verificationDatabase} FROM PUBLIC`);
     } finally { await controller.end(); }
 
+    assertBackupActive();
     runWithPassword("pg_restore", [
       "--host", "127.0.0.1", "--port", port.toString(), "--username", "postgres",
       "--dbname", plan.verificationDatabase, "--no-password", "--exit-on-error",
       "--single-transaction", "--no-owner", "--no-privileges", plan.temporaryBackupPath,
     ], secret.admin);
 
-    let source;
     let restored;
     try {
-      source = await connect(url("postgres", secret.admin, "asha_local"));
-      restored = await connect(url("postgres", secret.admin, plan.verificationDatabase));
+      assertBackupActive();
+      restored = await connect(url("postgres", secret.admin, plan.verificationDatabase), 30_000);
       const expectedMigrations = (await source.query("SELECT id,checksum FROM asha_schema_migrations ORDER BY id")).rows;
       const restoredMigrations = (await restored.query("SELECT id,checksum FROM asha_schema_migrations ORDER BY id")).rows;
       if (JSON.stringify(restoredMigrations) !== JSON.stringify(expectedMigrations)) throw new Error("Restored migration journal differs");
       for (const table of localBackupTables) {
+        assertBackupActive();
         const sourceCount = (await source.query(`SELECT count(*)::text AS count FROM public."${table}"`)).rows[0]?.count;
         const restoredCount = (await restored.query(`SELECT count(*)::text AS count FROM public."${table}"`)).rows[0]?.count;
         if (sourceCount !== restoredCount) throw new Error("Restored table count differs");
       }
     } finally {
-      if (source) await source.end();
       if (restored) await restored.end();
     }
 
+    assertBackupActive();
     const backupStat = await stat(plan.temporaryBackupPath);
     const sha256 = await fileFingerprint(plan.temporaryBackupPath);
     const manifest = {
@@ -281,13 +306,15 @@ async function verifiedBackup(secret) {
       retention: "manual_no_automatic_deletion",
     };
     await writeFile(plan.temporaryManifestPath, `${JSON.stringify(manifest, null, 2)}\n`, { flag: "wx", mode: 0o600 });
+    assertBackupActive();
     await rename(plan.temporaryBackupPath, plan.backupPath);
     await rename(plan.temporaryManifestPath, plan.manifestPath);
     completedBackup = { backupCreated: plan.backupFile, manifestCreated: plan.manifestFile, bytes: backupStat.size, sha256, fullRestoreVerified: true, tablesVerified: localBackupTables.length };
   } finally {
     try {
+      if (source) await source.end();
       if (verificationCreated) {
-        const controller = await connect(url("postgres", secret.admin, "postgres"));
+        const controller = await connect(url("postgres", secret.admin, "postgres"), 30_000);
         try { await controller.query(`DROP DATABASE ${verificationDatabase} WITH (FORCE)`); }
         finally { await controller.end(); }
       }
@@ -323,4 +350,6 @@ try {
 } catch {
   console.error("Local PostgreSQL operation failed. Existing data and secrets were not reset. Inspect the project-owned server log privately; do not paste credentials.");
   process.exitCode = 1;
+} finally {
+  if (command === "backup" && process.connected) process.disconnect();
 }

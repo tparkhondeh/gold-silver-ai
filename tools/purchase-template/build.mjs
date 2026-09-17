@@ -5,6 +5,12 @@ import { Workbook, SpreadsheetFile, FileBlob } from "@oai/artifact-tool";
 import { purchaseAssetCatalog } from "../../apps/web/app/purchase-book.ts";
 import { PURCHASE_IMPORT_COLUMNS, PURCHASE_IMPORT_VERSION } from "../../apps/web/app/purchase-import-schema.ts";
 
+// Internal browser-acceptance data is never shipped in the downloadable template.
+const syntheticRows = [
+  ["synthetic-buy-001", "GOLD_18K_IRR", "gold", "gram", 750, 2.5, new Date("2026-01-10T00:00:00Z"), null, "TOMAN", 10000000, 100000, "کاملاً ساختگی؛ برای آزمون داخلی", "synthetic fixture", 100000, new Date("2026-01-10T00:00:00Z"), "ساختگی", "آزمون داخلی", null, "gregorian", "Asia/Tehran"],
+  ["synthetic-buy-002", "GOLD_18K_IRR", "gold", "gram", 750, 1.5, new Date("2026-02-10T00:00:00Z"), null, "TOMAN", 12000000, 0, "کاملاً ساختگی؛ برای آزمون داخلی", "synthetic fixture", 120000, new Date("2026-02-10T00:00:00Z"), "ساختگی", "آزمون داخلی", null, "gregorian", "Asia/Tehran"],
+];
+
 if (process.argv[2] === "--help") {
   console.log("build.mjs [output-directory] OR --fill-test downloaded-template.xlsx output-directory");
   process.exit(0);
@@ -13,8 +19,7 @@ if (process.argv[2] === "--fill-test") {
   const source = resolve(process.argv[3]); const destination = resolve(process.argv[4]);
   const testBook = await SpreadsheetFile.importXlsx(await FileBlob.load(source));
   const target = testBook.worksheets.getItem("خریدها");
-  const sample = testBook.worksheets.getItem("نمونه ساختگی");
-  target.getRange("A4:T5").copyFrom(sample.getRange("A4:T5"), "values");
+  target.getRange("A4:T5").values = syntheticRows;
   testBook.recalculate();
   await fs.mkdir(destination, { recursive: true });
   console.log((await testBook.inspect({kind:"table",range:"خریدها!F4:K5",include:"values,formulas",maxChars:1200})).ndjson);
@@ -29,9 +34,8 @@ const workbook = Workbook.create();
 const guide = workbook.worksheets.add("راهنما");
 const input = workbook.worksheets.add("خریدها");
 const lists = workbook.worksheets.add("فهرست‌ها");
-const examples = workbook.worksheets.add("نمونه ساختگی");
 const headers = ["شناسه خرید *", "کد دارایی *", "کلاس دارایی *", "واحد مقدار *", "عیار در هزار", "مقدار خرید *", "تاریخ خرید میلادی *", "ساعت تهران", "ارز پرداخت *", "قیمت هر واحد", "جمع هزینه جانبی", "یادداشت", "منشأ خرید", "تومان برای یک دلار", "تاریخ نرخ میلادی", "نوع نرخ", "منشأ نرخ", "زمان ثبت نرخ UTC", "تقویم *", "منطقه زمانی *"];
-for (const sheet of [guide, input, lists, examples]) {
+for (const sheet of [guide, input, lists]) {
   sheet.showGridLines = false;
   sheet.getRange("A1:T30").format.font = { name: "Arial", size: 11, color: "#263343" };
   sheet.getRange("A1:T30").format.verticalAlignment = "center";
@@ -51,7 +55,7 @@ guide.getRange("A4:B18").values = [
   ["نرخ تاریخی دلار", "اختیاری است. اگر نرخ دارید، ستون‌های نرخ، تاریخ همان روز خرید، نوع و منشأ نرخ را کامل کنید. نرخ امروز جایگزین نشود."],
   ["زمان ثبت نرخ", "اختیاری، مانند 2026-09-16T10:00:00.000Z. خالی باشد، زمان ورود فایل ثبت می‌شود؛ زمان دریافت از فروشنده ادعا نمی‌شود."],
   ["اعتبار نرخ دستی", "همه نرخ‌های این فایل «واردشده توسط کاربر و تأییدنشدهٔ منبع» هستند. هیچ نرخ مفقودی تخمین زده نمی‌شود."],
-  ["تقویم و منطقه زمانی", "برای هر خرید، ستون تقویم gregorian و منطقه زمانی Asia/Tehran باشد. اطلاعات نمونه خودکار وارد نمی‌شوند."],
+  ["تقویم و منطقه زمانی", "برای هر خرید، ستون تقویم gregorian و منطقه زمانی Asia/Tehran باشد."],
   ["دقت اعداد", "اکسل معمولاً ۱۵ رقم معنادار نگه می‌دارد. برای مقدار دقیق طولانی‌تر، قالب سلول را Text کنید و سپس عدد را دوباره وارد کنید."],
   ["محدوده و امنیت", "حداکثر ۵۰۰ خرید و فایل ۲ مگابایت. فرمول سلولی، ماکرو، رمزگذاری و پیوند خارجی پذیرفته نیست. فایل در مرورگر خوانده می‌شود."],
   ["حفظ سبد قبلی", "خریدهای فایل به سبد اضافه می‌شوند. موجودی قبلی را دوباره ننویسید. همان فایل و شناسه‌های قبلی دوباره ثبت نمی‌شوند."],
@@ -72,7 +76,7 @@ lists.getRange("A2:A16").format.columnWidth = 25; lists.getRange("B2:B16").forma
 lists.getRange("C2:H16").format.columnWidth = 20; lists.getRange("A3:H16").format.rowHeight = 26;
 lists.freezePanes.freezeRows(2);
 
-for (const sheet of [input, examples]) {
+for (const sheet of [input]) {
   sheet.getRange("A1").values = [[PURCHASE_IMPORT_VERSION]];
   sheet.getRange("A2:T2").values = [[...PURCHASE_IMPORT_COLUMNS]];
   sheet.getRange("A3:T3").values = [headers];
@@ -94,19 +98,12 @@ for (const sheet of [input, examples]) {
   sheet.getRange("S4:S503").dataValidation = { rule: { type: "list", values: ["gregorian"] } };
   sheet.getRange("T4:T503").dataValidation = { rule: { type: "list", values: ["Asia/Tehran"] } };
 }
-const syntheticRows = [
-  ["synthetic-buy-001", "GOLD_18K_IRR", "gold", "gram", 750, 2.5, new Date("2026-01-10T00:00:00Z"), null, "TOMAN", 10000000, 100000, "کاملاً ساختگی؛ برای آموزش", "synthetic fixture", 100000, new Date("2026-01-10T00:00:00Z"), "ساختگی", "نمونه آموزشی", null, "gregorian", "Asia/Tehran"],
-  ["synthetic-buy-002", "GOLD_18K_IRR", "gold", "gram", 750, 1.5, new Date("2026-02-10T00:00:00Z"), null, "TOMAN", 12000000, 0, "کاملاً ساختگی؛ برای آموزش", "synthetic fixture", 120000, new Date("2026-02-10T00:00:00Z"), "ساختگی", "نمونه آموزشی", null, "gregorian", "Asia/Tehran"],
-];
-examples.getRange("A4:T5").values = syntheticRows;
-examples.getRange("A7").values = [["این برگه خوانده نمی‌شود؛ نمونه‌ها فقط با انتقال آگاهانه به برگه خریدها وارد پیش‌نمایش می‌شوند."]];
-examples.getRange("A7").format.font = { bold: true, color: "#9A5500" };
 workbook.recalculate();
 console.log((await workbook.inspect({ kind: "table", range: "خریدها!A1:F5", include: "values,formulas", tableMaxRows: 5, tableMaxCols: 6, maxChars: 1600 })).ndjson);
 console.log((await workbook.inspect({ kind: "match", searchTerm: "#REF!|#DIV/0!|#VALUE!|#NAME\\?|#NUM!", options: { useRegex: true, maxResults: 20 }, maxChars: 1000 })).ndjson);
-for (const [sheetName, range, name] of [["راهنما", "A1:B18", "guide"], ["فهرست‌ها", "A1:H14", "lists"], ["خریدها", "A1:J7", "input"], ["نمونه ساختگی", "A1:J6", "examples"], ["نمونه ساختگی", "K2:T6", "examples-fx"]]) {
+for (const [sheetName, range, name] of [["راهنما", "A1:B18", "guide"], ["فهرست‌ها", "A1:H14", "lists"], ["خریدها", "A1:J7", "input"]]) {
   const image = await workbook.render({ sheetName, range, scale: 1.5, format: "png" });
   await fs.writeFile(resolve(output, `${name}.png`), new Uint8Array(await image.arrayBuffer()));
 }
 await (await SpreadsheetFile.exportXlsx(workbook)).save(resolve(output, "purchase-lots-v1.xlsx"));
-console.log("Template exported with four sheets and no input rows or formulas.");
+console.log("Template exported with three sheets and no examples, input rows or formulas.");

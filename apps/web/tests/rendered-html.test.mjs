@@ -12,7 +12,7 @@ async function render() {
   return request();
 }
 
-test("renders the Persian wealth and market dashboard", async () => {
+test("renders only the unified Persian personal portfolio, without a synthetic laboratory", async () => {
   const response = await render();
   assert.equal(response.status, 200);
   assert.equal(response.headers.get("x-content-type-options"), "nosniff");
@@ -22,21 +22,16 @@ test("renders the Persian wealth and market dashboard", async () => {
   assert.match(html, /lang="fa"/);
   assert.match(html, /dir="rtl"/);
   assert.match(html, /اشا/);
-  assert.match(html, /نشان اشا/);
-  assert.match(html, /ASHA/);
-  assert.match(html, /آزمون با قیمت بازار/);
-  assert.match(html, /آزمایشگاه ساختگی/);
-  assert.match(html, /سبد شخصی جداگانه/);
+  assert.match(html, /data-testid="unified-workspace"/);
+  assert.match(html, /سبد شخصی/);
+  assert.match(html, /ثبت و ویرایش/);
+  assert.doesNotMatch(html, /آزمون با قیمت بازار|آزمایشگاه ساختگی|سبد شخصی جداگانه/);
   assert.doesNotMatch(html, /notification-center/);
-  assert.match(html, /تحلیل دارایی‌ها/);
-  assert.match(html, /هیئت بررسی/);
-  assert.match(html, /در حال بررسی نسخهٔ آزمون/);
-  assert.match(html, /بدون سفارش/);
-  assert.match(html, /مرکز دارایی/);
-  assert.match(html, /تصمیم‌های دارایی/);
-  assert.match(html, /MARKET · TECHNICAL TEST/);
+  assert.match(html, /تحلیل و تصمیم/);
+  assert.match(html, /تنظیمات و پشتیبان/);
+  assert.match(html, /سود \/ زیان دلاری/);
+  assert.doesNotMatch(html, /MARKET · TECHNICAL TEST|دریافت یک‌باره|ذخیرهٔ آخرین قیمت|بازیابی قیمت/);
   assert.doesNotMatch(html, /فرصت‌های خیلی جذاب/);
-  assert.match(html, /دیده‌بان بازار/);
   assert.doesNotMatch(html, /MARKET WATCH/);
   assert.doesNotMatch(html, /تصمیم بهتر، از/);
   assert.doesNotMatch(html, /Your site is taking shape/);

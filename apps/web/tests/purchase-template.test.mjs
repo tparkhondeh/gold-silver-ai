@@ -12,7 +12,7 @@ const REL = "http://schemas.openxmlformats.org/package/2006/relationships";
 const DOC_REL = "http://schemas.openxmlformats.org/officeDocument/2006/relationships";
 const list = (document, name) => [...document.getElementsByTagNameNS(NS, name)];
 
-test("downloaded artifact template keeps input blank, all catalog choices present and synthetic examples separate", async () => {
+test("downloaded artifact template keeps input blank and all catalog choices present without synthetic examples", async () => {
   const file = new Blob([await readFile(new URL("../public/templates/purchase-lots-v1.xlsx", import.meta.url))]);
   const result = await previewPurchaseWorkbook(file, emptyPurchaseBook(), "2000-01-01T00:00:00.000Z");
   assert.equal(result.canImport, false); assert.deepEqual(result.lots, []); assert.deepEqual(result.rows, []);
@@ -26,7 +26,7 @@ test("downloaded artifact template keeps input blank, all catalog choices presen
     }
   } finally { await archive.close(); }
   const sheets = list(documents.get("xl/workbook.xml"), "sheet");
-  assert.deepEqual(sheets.map((sheet) => sheet.getAttribute("name")), ["راهنما", PURCHASE_IMPORT_SHEET, "فهرست‌ها", "نمونه ساختگی"]);
+  assert.deepEqual(sheets.map((sheet) => sheet.getAttribute("name")), ["راهنما", PURCHASE_IMPORT_SHEET, "فهرست‌ها"]);
   const relations = [...documents.get("xl/_rels/workbook.xml.rels").getElementsByTagNameNS(REL, "Relationship")];
   const getSheet = (name) => {
     const id = sheets.find((sheet) => sheet.getAttribute("name") === name).getAttributeNS(DOC_REL, "id");
@@ -41,12 +41,10 @@ test("downloaded artifact template keeps input blank, all catalog choices presen
   assert.ok(validations.every((node) => node.getAttribute("type") === "list"));
   const choices = list(getSheet("فهرست‌ها"), "c").map((node) => node.textContent);
   for (const asset of purchaseAssetCatalog) assert.ok(choices.includes(asset.id), asset.id);
-  const example = getSheet("نمونه ساختگی");
-  const exampleCell = (reference) => list(example, "c").find((node) => node.getAttribute("r") === reference);
-  for (const reference of ["F4", "G4", "O4"]) assert.equal(exampleCell(reference).getAttribute("t"), "n", `${reference}: quantity and dates remain typed numeric`);
+  const inputCell = (reference) => list(input, "c").find((node) => node.getAttribute("r") === reference);
   const styles = documents.get("xl/styles.xml");
   const cellFormats = list(styles, "cellXfs")[0].childNodes;
-  const dateStyle = [...cellFormats].filter((node) => node.nodeType === 1)[Number(exampleCell("G4").getAttribute("s"))];
+  const dateStyle = [...cellFormats].filter((node) => node.nodeType === 1)[Number(inputCell("G4").getAttribute("s"))];
   const numberFormat = list(styles, "numFmt").find((node) => node.getAttribute("numFmtId") === dateStyle.getAttribute("numFmtId"));
   assert.equal(numberFormat.getAttribute("formatCode"), "yyyy-mm-dd");
   for (const document of documents.values()) assert.equal(list(document, "f").length, 0);

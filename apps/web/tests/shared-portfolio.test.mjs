@@ -146,7 +146,7 @@ test("storage replays exact input, selected asset and both horizons; tampering i
 
 test("UI wiring isolates browser-only synthetic persistence and keeps the existing comparison", async () => {
   const ui = await readFile(new URL("../app/shared-portfolio-workspace.tsx", import.meta.url), "utf8");
-  const page = await readFile(new URL("../app/page.tsx", import.meta.url), "utf8");
+  const page = await readFile(new URL("../app/internal-legacy-workbench.tsx", import.meta.url), "utf8");
   const desk = await readFile(new URL("../app/decision-action-workbench.tsx", import.meta.url), "utf8");
   assert.match(page, /<SharedPortfolioWorkspace active=\{sharedPortfolioActive\}/);
   assert.match(page, /!sharedPortfolioActive &&/);

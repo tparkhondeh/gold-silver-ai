@@ -4,6 +4,39 @@
 
 ## Immediate Next Step
 
+Current priority is **complete private-domain readiness for the unified personal
+workspace**, not rebuild the purchase book or restore public laboratory controls.
+Use [the latest bounded delivery and exact blockers](UNIFIED_PORTFOLIO_REVIEW_2026-09-17.md).
+The local implementation is not domain deployment or owner acceptance.
+
+1. Complete exact final-SHA publication/three-job verification if still pending.
+   Personal backup HTTP download has now passed in the available browser; reuse
+   the evidence rather than reverting to the unverified Blob-download path.
+2. Owner handoff: the empty Google project **Gold Silver AI** was created; its
+   branding form is at **Finish** and asks agreement to the **Google API Services:
+   User Data Policy**. A direct link to the prepared form was supplied. The earlier
+   Cloud welcome dialog is no longer shown; do not ask for its missing button.
+   Owner must review terms/account eligibility and personally accept only if agreed.
+   Do not accept terms, activate billing or create new sensitive
+   access on the owner's behalf without the required specific authorization.
+3. After the identity gate, implement/review owner-only verified login/session,
+   non-owner and anonymous denial, expiry/logout and RLS; prepare a production
+   runtime plus supervised startup independent of SSH/laptop. Current server
+   `Linger=no` and absent 3012 listener do not prove restart persistence. Keep the
+   existing public proxy disconnected until a verified private gate exists.
+4. Back up affected server configuration and define rollback before deployment;
+   request separate exact authority before transferring private rows or keys.
+   Verify actual deployed SHA, HTTPS/login/write/reload/logout and real independent
+   browser/device behavior. Do not equate a health response with acceptance.
+
+Preserve local exact input/confirmed save/conflict gates and managed latest-only
+price cache. Reuse registered source cadence and quota; no extra calls to bypass
+cooldown. Rahavard Gold alone still does not authorize history/automated export.
+Browser-only historical drafts and the three previously recorded synthetic lots
+remain preserved; do not silently delete, reinterpret or double-import them.
+
+### Previous Rahavard priority (retained context)
+
 Current owner priority is the **Rahavard Gold data route alongside personal
 Navasan valuation**. Use the [September 17 access review](RAHAVARD_REVIEW_2026-09-17.md).
 The owner must complete the currently visible sign-in if still required. Then

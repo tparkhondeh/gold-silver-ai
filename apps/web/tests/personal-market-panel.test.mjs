@@ -179,7 +179,7 @@ test("exact display keeps rational numerator/denominator including fractional-ri
 
 test("page wiring shares one exact personal result and keeps generic feeds and numerical scenarios separate", () => {
   // Source-wiring contract only. Hydrated browser acceptance is a separate gate.
-  const page = readFileSync(new URL("../app/page.tsx", import.meta.url), "utf8");
+  const page = readFileSync(new URL("../app/internal-legacy-workbench.tsx", import.meta.url), "utf8");
   assert.match(page, /evaluatePersonalMarketValuation\(purchaseBook, legacyHoldings, personalPrices.snapshot, personalPrices.nowMs\)/);
   assert.match(page, /portfolioMode === "personal" && <PersonalMarketPanel evaluation=\{personalMarket\} prices=\{personalPrices\}/);
   assert.equal((page.match(/<PersonalMarketPanel /g) ?? []).length, 1);
@@ -194,7 +194,7 @@ test("page wiring shares one exact personal result and keeps generic feeds and n
 test("non-Number-projectable books retain exact panel and recovery while incompatible old views are hidden", () => {
   // Execute the actual guard against a valid exact book; view checks below are
   // source-wiring assertions, not a substitute for hydrated browser acceptance.
-  const page = readFileSync(new URL("../app/page.tsx", import.meta.url), "utf8");
+  const page = readFileSync(new URL("../app/internal-legacy-workbench.tsx", import.meta.url), "utf8");
   const declaration = page.match(/const personalProjectionBlocked = [^;]+;/)?.[0]; assert.ok(declaration);
   const blocked = new Function("portfolioMode", "purchaseEvaluation", `${declaration} return personalProjectionBlocked;`);
   const book = { ...emptyPurchaseBook(), lots: [lot("exact-large", "GOLD_18K_IRR", { quantity: "9007199254740993", unitPrice: null, fees: null })] };
@@ -215,7 +215,7 @@ test("non-Number-projectable books retain exact panel and recovery while incompa
 });
 
 test("personal colors use exact signed results and old provider cards and cost percentage do not leak", () => {
-  const page = readFileSync(new URL("../app/page.tsx", import.meta.url), "utf8");
+  const page = readFileSync(new URL("../app/internal-legacy-workbench.tsx", import.meta.url), "utf8");
   const toneSource = page.slice(page.indexOf("function personalRatioTone("), page.indexOf("export default function Home()"));
   assert.ok(toneSource.startsWith("function personalRatioTone("));
   const tone = new Function(`${transpile(toneSource)} return personalRatioTone;`)();

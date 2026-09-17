@@ -13,6 +13,13 @@ need to change, that's an edit to `PROJECT_RULES.md` § 3, not here.
 
 ## A) Owner-Critical Decisions
 
+Latest identity handoff: Google preparation was explicitly allowed in the
+September17 unified-workspace task, but a configured/verified production login
+has not been delivered. Terms, credential creation and private-data/key transfer
+retain their action-specific owner gates. See the
+[current evidence and next step](UNIFIED_PORTFOLIO_REVIEW_2026-09-17.md#domain-and-google-handoff).
+Do not interpret this preparation as final acceptance of hosted readiness.
+
 Decision owner for every item in this section: **the project owner**, presented
 using the format in `docs/00-governance/PROJECT_RULES.md` § 2 (what/why/options/
 pros/cons/recommendation/risk). Claude Code may still research and prepare a

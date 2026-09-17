@@ -209,7 +209,7 @@ test("browser implementation exposes all views and explicit limits without netwo
   for (const view of ["overview", "portfolio", "asset-center", "analysis", "decisions", "risk", "data", "market", "agents"]) assert.ok(ui.includes(`"${view}"`));
   for (const marker of ["SHA-256", "تصمیم‌ناپذیر", "کاملاً ساختگی", "قالب واقعی رهاورد هنوز تأیید نشده", "arrayBuffer", "file.size > MAX_FILE_BYTES"]) assert.ok(ui.includes(marker));
   assert.ok(parent.includes("FileMarketWorkspace"));
-  const root = readFileSync(new URL("../app/page.tsx", import.meta.url), "utf8");
+  const root = readFileSync(new URL("../app/internal-legacy-workbench.tsx", import.meta.url), "utf8");
   assert.ok(root.includes("نوع و منبع داده در نمای فعال مشخص است"));
   assert.doesNotMatch(root, /قیمت منبع واقعی · موجودی فرضی/);
   const css = readFileSync(new URL("../app/market-test-workspace.css", import.meta.url), "utf8");

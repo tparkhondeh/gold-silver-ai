@@ -235,6 +235,15 @@ export async function resolveNavasanQuotaLedger(
   };
 }
 
+// Reuse the validated local pool only for the latest-file replacement lock.
+// This adds no table, credential exposure, portfolio access or provider request.
+export function resolveManagedMarketCacheRunner(environment: RuntimeEnvironment = process.env): TransactionRunner {
+  if (environment.ASHA_LOCAL_NODE_DEV !== "true") throw new Error("Local Node runtime required");
+  const configuration = inspectOperatorDatabaseEnvironment(environment);
+  if (!configuration.available) throw new Error("Local cache lock unavailable");
+  return createPgTransactionRunner(getRuntimePool(configuration.connectionString));
+}
+
 export async function inspectLocalPortfolioDatabaseHealth(environment: RuntimeEnvironment = process.env) {
   if (environment.ASHA_LOCAL_PORTFOLIO_ENABLED !== "true") {
     return { state: "blocked", reason: "local_portfolio_not_enabled" } as const;

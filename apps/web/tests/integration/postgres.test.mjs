@@ -2,6 +2,8 @@ import assert from "node:assert/strict";
 import { randomBytes } from "node:crypto";
 import { execFileSync } from "node:child_process";
 import { join } from "node:path";
+import { mkdtemp, rm } from "node:fs/promises";
+import { tmpdir } from "node:os";
 import test from "node:test";
 import { Client, Pool } from "pg";
 import { applyMigrations, readMigrations } from "../../db/migrations.ts";
@@ -16,6 +18,8 @@ import { PostgresProvenanceRepository, buildArtifactVersion } from "../../data/p
 import { PostgresSourceReconciliationRepository } from "../../data/source-reconciliation.ts";
 import { PostgresPortfolioLedgerRepository } from "../../data/portfolio-ledger.ts";
 import { fingerprintNavasanRequest, NAVASAN_DURABLE_CALL_LIMIT, PostgresNavasanQuotaLedger } from "../../data/navasan-quota-ledger.ts";
+import { FileManagedMarketCache } from "../../data/managed-market-cache.ts";
+import { makeNavasanSnapshot } from "../../app/market-test-contract.ts";
 
 // Never use DATABASE_URL or load .env.local: only an explicitly disposable database.
 const connectionString = process.env.ASHA_TEST_DATABASE_URL;
@@ -43,11 +47,13 @@ test("real PostgreSQL migration, isolation, persistence and restore", async (t) 
   const restoredSchema = `${schema}_restored`;
   const role = `${schema}_writer`;
   const pool = new Pool({ connectionString, max: 3, connectionTimeoutMillis: 3000 });
+  const cacheDirectory = await mkdtemp(join(tmpdir(), "asha-integration-latest-"));
   let schemaCreated = false;
   let roleCreated = false;
   let restoredCreated = false;
   t.after(async () => {
     await pool.end();
+    await rm(cacheDirectory, { recursive: true, force: true });
     if (restoredCreated) await admin.query(`DROP SCHEMA "${restoredSchema}" CASCADE`);
     if (schemaCreated) await admin.query(`DROP SCHEMA "${schema}" CASCADE`);
     if (roleCreated) await admin.query(`DROP ROLE "${role}"`);
@@ -414,6 +420,31 @@ test("real PostgreSQL migration, isolation, persistence and restore", async (t) 
     assert.deepEqual(stored, [{ last_outcome: "failure", quote_count: null, duration_ms: 8000 }]);
     assert.equal(Number((await admin.query("SELECT count(*) FROM provider_runtime_status")).rows[0].count), 1);
   });
+  await t.test("latest-only cache serializes actual PostgreSQL writers without adding a market archive", async () => {
+    const runner = createPgTransactionRunner(runtimePool);
+    let active = 0, maximum = 0;
+    const measuredRunner = { transaction(work) { return runner.transaction(async executor => {
+      let entered = false;
+      try {
+        return await work({ async query(sql, parameters) {
+          const result = await executor.query(sql, parameters);
+          if (sql === "SELECT pg_advisory_xact_lock(174228531, 11)") { entered = true; active++; maximum = Math.max(maximum, active); }
+          return result;
+        } });
+      } finally { if (entered) active--; }
+    }); } };
+    const cacheA = new FileManagedMarketCache(cacheDirectory, measuredRunner);
+    const cacheB = new FileManagedMarketCache(cacheDirectory, measuredRunner);
+    const time = Date.parse("2000-01-01T12:00:00.000Z");
+    const make = offset => makeNavasanSnapshot({ "18ayar": { value: "5432199", timestamp: String((time + offset) / 1000) } }, "TOMAN", new Date(time + offset).toISOString());
+    await Promise.all([cacheA.replace(make(1000), time + 1000), cacheB.replace(make(0), time + 1000)]);
+    assert.equal(maximum, 1);
+    assert.deepEqual(await cacheB.read(time + 1000), make(1000));
+    const tables = (await admin.query("SELECT tablename FROM pg_tables WHERE schemaname=$1", [schema])).rows.map(row => row.tablename);
+    assert.equal(tables.length, 25);
+    assert.ok(tables.every(table => !table.includes("managed_market")));
+  });
+
   await t.test("backup restores into an independently created test schema", async () => {
     const url = new URL(connectionString);
     const env = { ...process.env, PGPASSWORD: decodeURIComponent(url.password) };
@@ -428,6 +459,7 @@ test("real PostgreSQL migration, isolation, persistence and restore", async (t) 
     ).toString();
     for (const name of ["pg_dump", "psql"]) assert.match(clientCommand(name, ["--version"]), /\b17\./);
     const dump = clientCommand("pg_dump", [...args, "--schema", schema, "--no-owner", "--no-privileges"]).replaceAll(schema, restoredSchema);
+    assert.doesNotMatch(dump, /asha\.managed_market_cache\.v1|5432199/); // Latest file is deliberately outside DB backup retention.
     // pg_dump plain output includes psql meta commands; use psql's parser.
     clientCommand("psql", [...args, "--set", "ON_ERROR_STOP=1", "--single-transaction"], dump);
     restoredCreated = true;

@@ -71,7 +71,7 @@ test("loads only the same-origin reference path and fails closed on a missing fi
 });
 
 test("wires the read-only expandable panel only into the synthetic demo", async () => {
-  const page = await readFile(new URL("../app/page.tsx", import.meta.url), "utf8");
+  const page = await readFile(new URL("../app/internal-legacy-workbench.tsx", import.meta.url), "utf8");
   const panel = await readFile(new URL("../app/calibration-readiness-panel.tsx", import.meta.url), "utf8");
   assert.match(page, /portfolioMode === "demo" && <CalibrationReadinessPanel\/>/);
   assert.match(panel, /report\.gateReadiness\.map/);

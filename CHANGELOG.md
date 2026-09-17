@@ -7,6 +7,15 @@ state is recorded in `docs/10-project-state/CURRENT_STATE.md`.
 
 ## [Unreleased]
 
+- Replaced the public demonstration workbench with a unified personal portfolio,
+  confirmed PostgreSQL saves/automatic recovery and one manual/XLSX purchase path.
+  Preserved old rows/drafts and internal regressions; the downloadable entry
+  workbook is blank, with no demo sheet. Added exact USD acquisition/current-value
+  separation, partial coverage, managed latest-only quota-safe prices, daily
+  launcher-scoped verified backups and isolated browser acceptance. Corrected
+  empty-body Node transport, delayed freshness, load/draft race and compact-number
+  layout findings. Private hosted identity/storage/deployment remain gated;
+  see the September 17 unified-workspace review rather than assuming domain release.
 - Hardened the existing isolated file test's receipt-time validation and active UI
   freshness boundaries, preserving valid saved records and blocking invalid
   historical replay without overwrites. Recorded fresh Rahavard entitlement,

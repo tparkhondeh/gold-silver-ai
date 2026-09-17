@@ -11,7 +11,7 @@ const preferences = { liquidityReservePercent: "10", maxSingleAssetPercent: "40"
 const holding = { id: "synthetic-holding", name: "Synthetic recovery fixture", amount: 1, unit: "test", costToman: null, purchaseDate: null, note: "" };
 const first = { version: 1, holdings: [holding], preferences };
 const second = { version: 2, holdings: [{ ...holding, amount: 2 }], preferences: { ...preferences, liquidityReservePercent: "20" } };
-const source = readFileSync(new URL("../app/page.tsx", import.meta.url), "utf8");
+const source = readFileSync(new URL("../app/internal-legacy-workbench.tsx", import.meta.url), "utf8");
 const handlers = source.slice(source.indexOf("  async function savePersonalPortfolioToDatabase()"), source.indexOf("  function loadDemoPortfolio()"));
 const initialStart = source.lastIndexOf("  useEffect(() => {", source.indexOf('if (marketTestActive || !holdingsLoaded || portfolioMode !== "personal")'));
 const initialEffect = source.slice(initialStart, source.indexOf("  }, [holdingsLoaded, portfolioMode, marketTestActive]);", initialStart) + "  }, [holdingsLoaded, portfolioMode, marketTestActive]);".length);

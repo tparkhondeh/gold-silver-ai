@@ -161,7 +161,7 @@ test("UI uses a separate contract for all navigation paths, no scraping or marke
   const ui = readFileSync(new URL("../app/market-test-workspace.tsx", import.meta.url), "utf8");
   for (const view of ["overview", "portfolio", "asset-center", "analysis", "decisions", "risk", "market", "data", "agents"]) assert.ok(ui.includes(`view === "${view}"`));
   assert.ok(!ui.includes("buildActionPlan")); assert.ok(!ui.includes("setInterval(() => receive")); assert.ok(ui.includes("validateMarketSnapshot(body.snapshot"));
-  const page = readFileSync(new URL("../app/page.tsx", import.meta.url), "utf8"); assert.ok(page.includes("!sharedPortfolioActive && !marketTestActive")); assert.ok(page.includes("if (marketTestActive || !holdingsLoaded || portfolioMode !=="));
+  const page = readFileSync(new URL("../app/internal-legacy-workbench.tsx", import.meta.url), "utf8"); assert.ok(page.includes("!sharedPortfolioActive && !marketTestActive")); assert.ok(page.includes("if (marketTestActive || !holdingsLoaded || portfolioMode !=="));
   assert.ok(page.includes('if (!holdingsLoaded) { sessionStorage.setItem(portfolioPreferenceKey, mode); setPortfolioMode(mode); return; }'));
   assert.ok(page.includes('if (portfolioMode === mode) return;'));
   assert.ok(page.includes('if (legacyStorageIssue || marketTestActive || !holdingsLoaded || portfolioMode === "demo") return;'));

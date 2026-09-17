@@ -102,6 +102,6 @@ test("comparison panel is wired into the owner workbench with its own non-rankin
   assert.match(panel, /data-testid="action-sizing-comparison"/);
   assert.match(panel, /رتبه‌بندی یا انتخاب برنده انجام نمی‌شود/);
   assert.doesNotMatch(panel, /fetch\(|localStorage|dangerouslySetInnerHTML/);
-  const page = await readFile(new URL("../app/page.tsx", import.meta.url), "utf8");
+  const page = await readFile(new URL("../app/internal-legacy-workbench.tsx", import.meta.url), "utf8");
   assert.match(page, /portfolioMode === "demo" \? "PHASE 2 · LABORATORY" : "PHASE 1 · EVALUATION"/);
 });

@@ -4,6 +4,18 @@
 merged to `main`. This is a log, not a plan — see `docs/01-product/ROADMAP.md` for
 what's ahead.
 
+## Unified personal workspace (2026-09-17; bounded local implementation)
+
+One confirmed-database purchase/edit/XLSX entry point now replaces the public
+parallel demos and manual price controls. Exact USD provenance/partial coverage,
+managed latest-only price cache/quota/deduplication, draft/version protection,
+daily local verified backup and an isolated browser-acceptance launcher are
+implemented. Three specialists independently reviewed sensitive changes.
+Evidence and uncompleted hosted/data/owner gates are in the
+[unified-workspace review](UNIFIED_PORTFOLIO_REVIEW_2026-09-17.md).
+This entry records local work, not completion of private domain release or the
+whole owner request; it is not a merge into main or final owner acceptance.
+
 ## File timing hardening and Rahavard access review (2026-09-17)
 
 Bounded independent corrections prevent future local file receipt from supporting

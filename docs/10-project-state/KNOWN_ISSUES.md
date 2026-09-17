@@ -2,6 +2,23 @@
 
 **Source of truth for:** known limitations and gaps in the current state.
 
+## Latest unified-workspace limits — September 17, 2026
+
+The [current review](UNIFIED_PORTFOLIO_REVIEW_2026-09-17.md) supersedes historical
+public-laboratory/manual-price-control descriptions below. Local confirmed
+database saves are implemented; private hosted login, server storage, supervised
+restart and cross-device recovery are **not**. Domain HTTPS currently returns 503
+because its proxy backend is absent; no release SHA is deployed/verified.
+Google-login preparation is authorized, but terms/credential handoffs remain.
+
+Existing browser-only recovery records are preserved, not automatically merged;
+three prior explicitly synthetic test purchases in the local database were not
+deleted. New acceptance records use an isolated database. Do not describe the
+owner database as an empty, production-ready personal account. Local backup is
+daily while the launcher is running, not an off-device/disaster-recovery guarantee.
+Actual quote receipt into the new shared cache is still gated by current cooldown;
+historical FX, silver/other source gaps and analytical-input gates remain.
+
 ## Latest actual-market status — September 16, 2026
 
 The former authenticated Navasan acquisition blocker is closed by one successful
