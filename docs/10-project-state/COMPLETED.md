@@ -4,6 +4,18 @@
 merged to `main`. This is a log, not a plan — see `docs/01-product/ROADMAP.md` for
 what's ahead.
 
+## Personal current-market connection (2026-09-17; acceptance pending)
+
+Validated latest Navasan prices now value the existing personal purchase book with
+exact rational math, explicit incomplete coverage and separate acquisition basis.
+One real latest receipt, shared personal views, explicit price save/restore and
+reload were locally exercised without altering existing purchases. Three actual
+specialists reviewed calculations, security/storage and integration; 352 web and
+19 isolated PostgreSQL tests passed. See the
+[review and owner guide](PERSONAL_MARKET_REVIEW_2026-09-17.md).
+This is bounded local implementation, not whole-project completion, a main merge,
+server release, operational financial approval or owner acceptance.
+
 ## Purchase-book local implementation (2026-09-16; acceptance pending)
 
 Independent purchase lots, exact weighted raw/landed/dated-USD basis, compatible

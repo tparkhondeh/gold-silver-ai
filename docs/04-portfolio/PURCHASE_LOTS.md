@@ -149,6 +149,11 @@ overwritten. Cancel a preview before confirmation to leave the portfolio unchang
 
 ## Integration boundary
 
+The owner-authorized September 17 extension connects current Navasan prices to
+this book without altering it. See the separate
+[personal market valuation contract](PERSONAL_MARKET_VALUATION.md) for exact
+current value, cost-covered P&L, missing/stale handling and storage separation.
+
 Purchase lots belong to the **separate personal portfolio** and require its
 enabled owner-local PostgreSQL save/restore boundary. Dashboard, asset center,
 analysis and decision views consume the same evaluated purchase book and projected

@@ -2,7 +2,27 @@
 
 **Source of truth for:** where the project stands right now.
 
-_Last reviewed: 2026-09-16, Asia/Tehran (purchase lots and Excel intake)_
+_Last reviewed: 2026-09-17, Asia/Tehran (personal portfolio current-market connection)_
+
+## Latest personal-market checkpoint
+
+The owner-authorized local price connection now joins the personal purchase book
+and retained holdings to validated latest Navasan observations. Exact quantity,
+weighted acquisition/landed basis, current value and unrealized P&L are separated;
+incomplete totals, stale FX, unsupported units and absent silver are explicit.
+One actual request succeeded with eight observations (seven fresh, USD stale).
+The existing synthetic gold purchases were valued in the browser; real prices
+never rewrote their costs, dates or historical FX. Personal overview, portfolio,
+asset center, analysis/readiness and separate latest-only save/replay were tested.
+
+Three specialist agents and coordinator integration completed independent
+arithmetic/security reviews. Final local gates: 352 web tests, 19 isolated real
+PostgreSQL tests, build/typecheck/lint/readiness and clean production audit.
+See [evidence, limitations and owner test steps](PERSONAL_MARKET_REVIEW_2026-09-17.md)
+and [versioned contract](../04-portfolio/PERSONAL_MARKET_VALUATION.md).
+Exact-SHA GitHub verification is a separate final handoff gate. No main/server,
+historical download, financial-method change, deployment or owner acceptance.
+Older checkpoints below are retained context, not authority to undo this connection.
 
 ## Latest purchase-book checkpoint
 

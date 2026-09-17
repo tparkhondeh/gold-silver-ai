@@ -4,6 +4,29 @@
 
 ## Immediate Next Step
 
+The September 17 personal-market connection supersedes the earlier separation
+restriction below: the owner explicitly authorized local current-price valuation
+of personal purchase lots. Follow the
+[review and owner test guide](PERSONAL_MARKET_REVIEW_2026-09-17.md) and
+[contract](../04-portfolio/PERSONAL_MARKET_VALUATION.md). Complete exact-SHA
+publication/three-job verification at handoff; do not rebuild this connector.
+
+Preserve exact partial-coverage math, independent latest-price browser storage,
+purchase database versioning and the no-synthetic-factor personal analysis gate.
+One actual request succeeded; subsequent receipt requires a fresh local quota and
+cooldown check. No polling/history, Rahavard activation, server change or new
+provider authority is implied. Missing silver/24K and mesghal unit compatibility
+remain explicit. An old snapshot is not freshened by saving/restoring it.
+
+Next independent priorities remain compatible fixes for registered development
+dependency advisories and an isolated hydrated-browser regression lane covering
+purchase/price save, restore, mode changes and freshness. Avoid duplicating the
+controlled hook/SSR/source-wiring tests or calling them hydrated automation.
+Owner acceptance, licensed history/FX, sufficient validated financial inputs and
+hosted identity/storage are separate outstanding gates.
+
+### Earlier purchase-book checkpoint (retained)
+
 The latest owner-authorized purchase-lot/Excel stage is implemented; follow the
 [purchase-book review and test guide](PURCHASE_LOTS_REVIEW_2026-09-16.md), not the
 older prompt priority below. Complete exact-delivery-SHA publication/three CI jobs

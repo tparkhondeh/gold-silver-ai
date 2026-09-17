@@ -7,6 +7,14 @@ state is recorded in `docs/10-project-state/CURRENT_STATE.md`.
 
 ## [Unreleased]
 
+- Connected validated latest Navasan prices to personal purchase lots and retained
+  holdings through a versioned exact-rational valuation contract. Current value,
+  landed basis and unrealized P&L have explicit coverage and provenance; no
+  historical FX or acquisition record is rewritten. Added separate guarded
+  latest-only browser price storage, quota-safe explicit receipt, freshness and
+  lifecycle controls, exact shared-view presentation and independent specialist
+  regression tests. Unsupported source units and missing prices fail closed;
+  synthetic scenario factors remain outside personal analysis.
 - Added independent dated purchase lots, exact weighted acquisition/landed costs
   and per-lot historical USD equivalents, with explicit missing-data coverage.
   Integrated personal views and additive atomic PostgreSQL persistence without
