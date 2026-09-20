@@ -1,5 +1,5 @@
-import { UnifiedPortfolioWorkspace } from "./unified-portfolio-workspace";
+import { OwnerWorkspace } from "./owner-workspace";
 
 export default function Home() {
-  return <UnifiedPortfolioWorkspace />;
+  return <OwnerWorkspace />;
 }

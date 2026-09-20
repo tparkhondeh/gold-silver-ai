@@ -9,6 +9,7 @@ import test from "node:test";
 import { startLocalBackupSupervisor, LOCAL_BACKUP_INTERVAL_MS, LOCAL_BACKUP_RETRY_MS } from "../scripts/local-backup-supervisor.ts";
 import { createLocalBackupProcessRunner, latestVerifiedLocalBackup, writeLocalBackupStatus } from "../scripts/local-backup-runtime.ts";
 import { createLocalBackupPlan, localBackupTables, quoteVerificationDatabase } from "../scripts/local-backup.ts";
+import { identityBackupExclusions, transientIdentityTables } from "../scripts/private-backup-policy.ts";
 
 const now = Date.parse("2000-01-02T12:00:00.000Z");
 const iso = time => new Date(time).toISOString();
@@ -151,7 +152,7 @@ function backupCommandHarness({ cancelAfter = null, occupiedLock = false } = {})
   const privateRoot = join(tmpdir(), "synthetic-backup-harness-no-io");
   if (occupiedLock) files.set(join(privateRoot, "backup-active.lock"), "OTHER_OWNER");
   const dependencies = {
-    privateRoot, join, privateDirectory: async () => {}, start: async () => {},
+    privateRoot, join, identityBackupExclusions, transientIdentityTables, privateDirectory: async () => {}, start: async () => {},
     open: async (path, flags) => { assert.equal(flags, "wx"); if (files.has(path)) throw Error("exists"); files.set(path, "LOCK"); return { async close() {} }; },
     assertBackupActive: () => { if (cancelled) throw Error("safe cancellation"); },
     createLocalBackupPlan, randomBytes: () => Buffer.from("a1b2c3d4", "hex"), quoteVerificationDatabase,
@@ -173,7 +174,7 @@ function backupCommandHarness({ cancelAfter = null, occupiedLock = false } = {})
     verifyActivation: async (_client, options) => { assert.deepEqual(options, { allowPendingMigrations: true }); },
     runWithPassword: (name, args) => {
       calls.push([name, args]);
-      if (name === "pg_dump") { assert.ok(snapshotOpen); assert.equal(args[args.indexOf("--snapshot") + 1], "00000001-00000002-1"); files.set(args[args.indexOf("--file") + 1], "DUMP"); liveCount = 99; }
+      if (name === "pg_dump") { assert.ok(snapshotOpen); assert.ok(identityBackupExclusions.every(flag => args.includes(flag))); assert.equal(args[args.indexOf("--snapshot") + 1], "00000001-00000002-1"); files.set(args[args.indexOf("--file") + 1], "DUMP"); liveCount = 99; }
       if (name === cancelAfter) cancelled = true;
     },
     localBackupTables, stat: async () => ({ size: 4 }), fileFingerprint: async () => "a".repeat(64), sourceFingerprint: async () => "b".repeat(64),

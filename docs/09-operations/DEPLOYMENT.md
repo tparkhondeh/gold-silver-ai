@@ -4,25 +4,18 @@
 
 ## Status
 
-Latest scope and read-only evidence (2026-09-17):
-[unified-portfolio checkpoint](../10-project-state/UNIFIED_PORTFOLIO_REVIEW_2026-09-17.md).
-The owner permits private deployment preparation, but a working owner-domain
-release is not established. Fresh inspection still found public HTTPS 503, no
-backend listener on 3012, and a writable project directory. No server file,
-service or setting was changed, and no deployed commit SHA was verified.
+Latest scope and fresh read-only evidence (2026-09-20):
+[private-domain checkpoint](../10-project-state/PRIVATE_DOMAIN_READINESS_2026-09-20.md).
+The owner authorizes project-only deployment, but key creation/transfer and existing
+portfolio transfer have separate gates. Public HTTPS is 503, the project backend
+is absent, and no deployed SHA is verified. No server file/service was changed.
 
-Google branding/terms setup is complete after manual owner acceptance. Subsequent
-credential incident and verified deletion of that unused client are recorded in the
-[current identity checkpoint](../10-project-state/GOOGLE_IDENTITY_SETUP_2026-09-17.md).
-No safe credential, completed authentication, credential transfer or permission
-to expose an unauthenticated app is established. Keep existing loopback
-controls intact: the new isolated identity boundary is tested but not integrated
-with the real portfolio or a durable hosted runtime. See the
-[identity acceptance record](../10-project-state/PRIVATE_IDENTITY_REVIEW_2026-09-17.md)
-and [blocked credential retention check](GOOGLE_CREDENTIAL_STORAGE.md).
-The observed `Linger=no` also leaves user-service
-survival after logout/reboot unproven; writable files and available service tools
-do not establish persistent runtime supervision.
+Private authorization, durable PostgreSQL sessions and a Node production entry
+are implemented and tested with isolated nonprivate inputs. Actual Google login,
+server database/supervision and independent-device acceptance remain incomplete.
+The external Windows secret destination is prepared; browser direct Save As and
+replacement credential creation remain pending. The deleted exposed client must
+never be reused. See [credential procedure](GOOGLE_CREDENTIAL_STORAGE.md).
 
 The linked checkpoint owns command-level evidence and remaining actions. The
 [September 13 review](../10-project-state/R2_DOMAIN_REVIEW_2026-09-13.md) and the
@@ -43,6 +36,62 @@ Runtime supervision after administrative disconnect, safe restart/recovery,
 scoped backups/rollback and preservation of other hosted services are mandatory.
 Secret/private-data transfer and production identity selection retain their
 separate authorization gates. Domain publication alone is not project completion.
+
+### Private Node activation plan
+
+This is a **not-yet-executed** project-only plan. Stop at each missing permission,
+unsafe path or unverified dependency; do not route the public proxy to local mode.
+
+1. Prepare the Google credential and verified owner issuer/sub using the private
+   handoff, then request exact transfer approval. Proposed destination:
+   `/home/wealthos_dev/.asha-private/goldsilver/runtime.json`, outside the served
+   project. Inspect all ancestors; directories must be private 0700 and the regular
+   single-link file 0600, owned by the non-root service account, with no symlinks or
+   shared write permissions. Do not alter broad existing directories/ACLs to pass.
+   Never place configuration in document root, environment output, Git or logs.
+2. Server administrator must provision or identify an explicitly project-dedicated
+   PostgreSQL 17 database `asha_private` and tools for verified backup/restore.
+   Use loopback only, separate migration/backup authority, and the non-owner,
+   non-superuser `asha_private_runtime` role with no inherited role membership.
+   Do not repurpose the unidentified existing port 5432 service. Bind an explicit
+   hosted portfolio subject distinct from `local-owner-v1`; no owner-data import.
+   Apply reviewed migrations, including 0013, with the migration authority.
+   Grant only required runtime CRUD and journal read. Runtime startup checks the
+   full journal and private table/RLS/privilege boundary and never migrates itself.
+3. Reserve sufficient build/backup disk space. Review the complete private-runtime
+   dependency graph (Vinext is currently a devDependency and requires the reviewed
+   locked full install, not `npm ci --omit=dev`); fix applicable advisories
+   before activation. An omit-dev audit alone is insufficient. Build a **clean
+   committed** working-branch release with locked dependencies using
+   `npm run build:private`; retain its `dist-private/release.json`. Both runtime TS
+   checkout and build must match that SHA. Default Worker build is a separate target.
+   Never deploy ignored `.cache`, local env, provider keys or local database files.
+4. Before changing a release/proxy/service, privately back up the exact affected
+   project files and dedicated database, record previous service/release identity,
+   and test restore into a separate disposable DB. Exclude ephemeral login/session
+   data using `scripts/private-backup-policy.ts`; ensure restored auth tables are
+   empty. Define a restore/restart rollback that does not undo unrelated services.
+   Do not delete old releases/backups automatically. Establish regular protected
+   backup storage and retention appropriate to remaining disk space; local launcher
+   backup is not the hosted solution.
+5. Administrator must provide project-only supervision under `wealthos_dev`:
+   a reviewed system service, or specifically authorized user lingering, restarting
+   on failure and enabled after boot. `Linger=no` is not sufficient. Entry is
+   `npm run start:private` in the verified release's `apps/web`; no root runtime,
+   development command, shared key environment or fallback. The gateway binds only
+   `127.0.0.1:3012`, UI upstream uses another loopback port, database stays private.
+   Keep logs generic/private; no credential values in service definitions or output.
+6. Verify that the existing project-only HTTPS proxy preserves the exact public
+   Host and does not expose the upstream directly. Test anonymous/other-user denial,
+   real owner login and callback, logout/expiry, stable-subject save/recovery after
+   another login, stale-write conflict and disconnected/failed-save behavior with
+   invented acceptance records. Test service process restart and administrative
+   disconnect; coordinate a server reboot rather than rebooting other services.
+   Record untested devices explicitly. Only then report actual deployed SHA and
+   owner-ready access; server transfer/owner acceptance are not automatic.
+
+The administrator handoff is limited to this project's DB/tools and durable service;
+it is not a request to grant unrestricted sudo, weaken authentication or expose a DB.
 
 ### Historical Sites review
 

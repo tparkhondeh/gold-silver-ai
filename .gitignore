@@ -41,6 +41,7 @@ node_modules/
 .next/
 .vinext/
 dist/
+dist-private/
 .wrangler/
 coverage/
 *.tsbuildinfo

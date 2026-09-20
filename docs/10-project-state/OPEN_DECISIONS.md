@@ -13,12 +13,13 @@ need to change, that's an edit to `PROJECT_RULES.md` § 3, not here.
 
 ## A) Owner-Critical Decisions
 
-Latest identity handoff: Google preparation was explicitly allowed in the
-September17 unified-workspace task, but a configured/verified production login
-has not been delivered. Terms, credential creation and private-data/key transfer
-retain their action-specific owner gates. See the
-[current evidence and next step](UNIFIED_PORTFOLIO_REVIEW_2026-09-17.md#domain-and-google-handoff).
-Do not interpret this preparation as final acceptance of hosted readiness.
+Google owner-only identity is selected by the owner's September 20 instruction
+([ADR 0012](../08-decisions/ADR/0012-google-owner-private-domain.md)); original
+branding/terms acceptance and exact external-folder creation are complete.
+Replacement-client creation, any new terms, private-data/key transfer and final
+acceptance retain their separate action-specific owner gates. See
+[current evidence and next step](PRIVATE_DOMAIN_READINESS_2026-09-20.md).
+Do not ask the owner to select an identity vendor again or infer deployed readiness.
 
 Decision owner for every item in this section: **the project owner**, presented
 using the format in `docs/00-governance/PROJECT_RULES.md` § 2 (what/why/options/

@@ -52,7 +52,10 @@ test("personal backup roundtrip preserves exact input and excludes market/API se
 test("public entry imports only unified workspace, not synthetic workbenches", async () => {
   const page = await readFile(new URL("../app/page.tsx", import.meta.url), "utf8");
   const ui = await readFile(new URL("../app/unified-portfolio-workspace.tsx", import.meta.url), "utf8");
-  assert.match(page, /UnifiedPortfolioWorkspace/);
+  assert.match(page, /OwnerWorkspace/);
+  const ownerUi = await readFile(new URL("../app/owner-workspace.tsx", import.meta.url), "utf8");
+  assert.match(ownerUi, /UnifiedPortfolioWorkspace/);
+  assert.match(ownerUi, /readAccessMode/);
   assert.doesNotMatch(page + ui, /internal-legacy-workbench|loadDemoPortfolio|DecisionLab|DecisionActionWorkbench|CalibrationReadinessPanel/);
   assert.doesNotMatch(ui, /sessionStorage\.setItem|localStorage\.setItem|دریافت یک‌باره|ذخیرهٔ آخرین قیمت|بازیابی قیمت/);
   assert.match(ui, /fetchPortfolioSnapshot/); assert.match(ui, /saveUnifiedPortfolio/);

@@ -18,7 +18,7 @@ export function createPortfolioExport(load = createPortfolioGet(), clock = Date.
       || (request.headers.has("origin") && request.headers.get("origin") !== url.origin)) return unavailable(403);
     try {
       const response = await load(request);
-      if (!response.ok) return unavailable(response.status === 403 ? 403 : 503);
+      if (!response.ok) return unavailable(response.status === 401 || response.status === 403 ? response.status : 503);
       const body: unknown = await response.json();
       onlyKeys(body, ["ok", "snapshot"]);
       if (body.ok !== true) return unavailable();

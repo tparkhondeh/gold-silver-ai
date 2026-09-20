@@ -248,7 +248,7 @@ test("managed client sends only fixed bodyless intent and validates every return
   const result = await requestManagedMarket(undefined, async (url, init) => {
     calls++; assert.equal(url, "/api/managed-market"); assert.equal(init.body, undefined);
     assert.deepEqual(Object.keys(init).sort(), ["cache", "credentials", "headers", "method", "redirect", "signal"]);
-    assert.deepEqual(init.headers, { "x-asha-managed-market": "latest" }); assert.equal(init.credentials, "same-origin");
+    assert.deepEqual(init.headers, { "x-asha-managed-market": "latest", "X-ASHA-Intent": "owner-action" }); assert.equal(init.credentials, "same-origin");
     return Response.json(responseBody());
   }, () => now);
   assert.deepEqual(result, responseBody()); assert.equal(calls, 1);

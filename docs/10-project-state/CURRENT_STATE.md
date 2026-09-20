@@ -2,27 +2,28 @@
 
 **Source of truth for:** where the project stands right now.
 
-_Last reviewed: 2026-09-17, Asia/Tehran (isolated private-identity acceptance and credential-retention gate)_
+_Last reviewed: 2026-09-20, Asia/Tehran (durable private-identity implementation; activation still gated)_
 
 ## Latest private-identity checkpoint
 
-Reusable owner-only identity/session controls and an inactive Google OIDC adapter
-are implemented and independently reviewed. The isolated browser test at
-`http://127.0.0.1:4175/` passed owner/non-owner, save/reload, logout/re-login,
-expiry and disconnected-server checks with an invented note only. Final local
-web suite: 497 passing tests; build/typecheck/lint and production audit passed.
-See [scope, evidence and owner steps](PRIVATE_IDENTITY_REVIEW_2026-09-17.md).
+Durable owner sessions, server-authorized portfolio storage, the private browser
+shell and a fail-closed Node production entry are implemented and independently
+reviewed. Existing purchase/Excel/math contracts are reused. The approved external
+credential directories were created safely; real browser direct-Save-As proof and
+replacement-client consent remain pending. No secret was created or transferred.
 
-Real Google login and domain access are **not activated**. The workspace credential
-path fails ancestor-permission checks despite a private empty leaf. Approval for
-the proposed outside-workspace private folder is pending; no replacement client,
-credential, server transfer or owner-data change occurred. Previous incident docs
-were preserved and the exposed deleted client must never be restored. Existing
-local portfolio identity is unchanged. Hosted sessions/storage, authorization
-integration and cross-device acceptance remain separate gates. Exact delivery-SHA
-GitHub status is the delivery commit's checks, not earlier run evidence.
+Real Google login and domain access are **not activated**. Fresh domain HTTPS is
+503; server database provisioning, persistent supervision, actual key/owner binding,
+server restore and independent-device acceptance remain gates. Existing local data,
+main and server were not changed. Code readiness is not deployed readiness.
+The [September 20 checkpoint](PRIVATE_DOMAIN_READINESS_2026-09-20.md) owns exact
+changes, 552 web/29 database tests, browser limits, security findings and handoff.
+Final-SHA GitHub results must be verified separately from earlier run evidence.
 
 ## Latest unified personal-workspace checkpoint
+
+The paragraphs below retain September 17 evidence. Current identity/runtime
+readiness is the September 20 checkpoint above, not the older deferred work list.
 
 The public page now has one purchase/editor/Excel path backed by confirmed local
 PostgreSQL writes, automatic reads, exact per-lot/weighted Rial and USD basis,

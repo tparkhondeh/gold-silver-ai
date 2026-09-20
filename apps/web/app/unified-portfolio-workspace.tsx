@@ -68,7 +68,7 @@ function useManagedPrices() {
   return { data, now, error };
 }
 
-export function UnifiedPortfolioWorkspace() {
+export function UnifiedPortfolioWorkspace({ storageLocation = "local" }: { storageLocation?: "local" | "server" } = {}) {
   const [snapshot, setSnapshot] = useState<PortfolioSnapshot | null>(null);
   const [status, setStatus] = useState<"loading" | "ready" | "saving" | "error">("loading");
   const [message, setMessage] = useState("");
@@ -99,13 +99,13 @@ export function UnifiedPortfolioWorkspace() {
       // Preserve browser-only records left by earlier versions. Never silently
       // migrate a demonstration/session portfolio into the authoritative account.
       try {
-        const keys = ["gold-silver-holdings", "asha-purchase-book-v1", "asha-personal-holdings-backup-v1"];
+        const keys = storageLocation === "local" ? ["gold-silver-holdings", "asha-purchase-book-v1", "asha-personal-holdings-backup-v1"] : [];
         const present = Object.fromEntries(keys.flatMap((key) => { const value = sessionStorage.getItem(key); return value ? [[key, value]] : []; }));
         if (Object.keys(present).length) setBrowserDraft(JSON.stringify({ format: "asha.browser_recovery.v1", records: present }, null, 2));
       } catch { setMessage("حافظهٔ این مرورگر قابل‌خواندن نیست؛ بازیابی سبد از پایگاه داده مستقل انجام می‌شود."); }
     }, 0);
     return () => { controller.abort(); loadRequest.current?.abort(); loadRequest.current = null; window.clearTimeout(timer); };
-  }, [load]);
+  }, [load, storageLocation]);
 
   const commit = async (change: Partial<Pick<PortfolioSnapshot, "holdings" | "preferences" | "purchaseBook">>) => {
     if (!savedRef.current || writing.current || loadRequest.current || needsReload || status === "loading") throw new Error("ابتدا اتصال و وضعیت ذخیره را بررسی کن؛ ورودی فرم حفظ شده است.");
@@ -134,7 +134,7 @@ export function UnifiedPortfolioWorkspace() {
 
   return <main className="unified-workspace" data-testid="unified-workspace">
     <header className="unified-header"><div><span>اشا</span><h1>سبد شخصی</h1></div><nav aria-label="بخش‌های سبد">{([ ["overview", "نمای سبد"], ["purchases", "ثبت و ویرایش"], ["analysis", "تحلیل و تصمیم"], ["settings", "تنظیمات و پشتیبان"] ] as const).map(([id, label]) => <button key={id} aria-current={tab === id ? "page" : undefined} onClick={() => setTab(id)}>{label}</button>)}</nav></header>
-    <section className="unified-status" aria-live="polite"><span role={status === "error" ? "alert" : "status"}>{message || "در حال اتصال به پایگاه داده…"}</span>{needsReload && <button className="ghost-button" disabled={status === "loading" || status === "saving"} onClick={() => void load()}>بررسی وضعیت ذخیره</button>}<small>اطلاعات فعلاً در پایگاه دادهٔ همین کامپیوتر است؛ همگام‌سازی دستگاه‌ها هنوز فعال نیست.</small></section>
+    <section className="unified-status" aria-live="polite"><span role={status === "error" ? "alert" : "status"}>{message || "در حال اتصال به پایگاه داده…"}</span>{needsReload && <button className="ghost-button" disabled={status === "loading" || status === "saving"} onClick={() => void load()}>بررسی وضعیت ذخیره</button>}<small>{storageLocation === "server" ? "اطلاعات تأییدشده متعلق به حساب شما و در پایگاه دادهٔ سرور است؛ در دستگاه دیگر پس از ورود بازیابی می‌شود." : "اطلاعات فعلاً در پایگاه دادهٔ همین کامپیوتر است؛ همگام‌سازی دستگاه‌ها هنوز فعال نیست."}</small></section>
     {browserDraft && <details className="unified-warning"><summary>اطلاعاتی در حافظهٔ مرورگر باقی مانده است</summary><p>این اطلاعات خودکار به سبد اضافه نشده‌اند تا دارایی تکراری یا اشتباه ثبت نشود. نسخهٔ آن‌ها حفظ شده است.</p><button className="ghost-button" onClick={() => download("asha-browser-recovery.json", browserDraft)}>دریافت نسخهٔ بازیابی این مرورگر</button></details>}
     <div className="unified-price-status" role="status">{prices.error ? "به‌روزرسانی قیمت انجام نشد؛ نسخهٔ قبلی، اگر موجود باشد، حفظ شده است." : prices.data?.snapshot ? "آخرین قیمت دریافت‌شده نگهداری می‌شود؛ فقط قیمت تازه در ارزش‌گذاری استفاده می‌شود." : "قیمت معتبر هنوز در دسترس نیست."}<details><summary>وضعیت منبع</summary><p>{prices.data ? priceReasons[prices.data.reason] : prices.error ? "پاسخ برنامه کامل یا معتبر نبود؛ تلاش بعدی خودکار است." : "در حال بررسی دسترسی"}</p><p>{prices.data?.checkedAt ? `آخرین بررسی: ${timeLabel(prices.data.checkedAt)}` : ""}</p>{prices.data?.quota && <p>سهمیهٔ باقی‌مانده: <NumberValue value={prices.data.quota.remaining} /></p>}<p>به‌روزرسانی خودکار در محدودهٔ سهمیه است؛ قیمت لحظه‌ای تضمین نمی‌شود.</p>
       <div data-testid="current-usd-rate"><p>نرخ دلار برای ارزش‌گذاری امروز: {valuation ? quoteLabels[valuation.usdConversion.quoteState] : "در انتظار اطلاعات"} · <PurchaseRatio value={valuation?.usdConversion.currentRialPerUsd ?? null} unit="تومان برای هر دلار" rialToToman /></p>

@@ -12,7 +12,7 @@ async function render() {
   return request();
 }
 
-test("renders only the unified Persian personal portfolio, without a synthetic laboratory", async () => {
+test("renders a Persian access shell without exposing a portfolio before access verification", async () => {
   const response = await render();
   assert.equal(response.status, 200);
   assert.equal(response.headers.get("x-content-type-options"), "nosniff");
@@ -22,14 +22,13 @@ test("renders only the unified Persian personal portfolio, without a synthetic l
   assert.match(html, /lang="fa"/);
   assert.match(html, /dir="rtl"/);
   assert.match(html, /اشا/);
-  assert.match(html, /data-testid="unified-workspace"/);
+  assert.doesNotMatch(html, /data-testid="unified-workspace"/);
   assert.match(html, /سبد شخصی/);
-  assert.match(html, /ثبت و ویرایش/);
+  assert.match(html, /در حال بررسی دسترسی/);
   assert.doesNotMatch(html, /آزمون با قیمت بازار|آزمایشگاه ساختگی|سبد شخصی جداگانه/);
   assert.doesNotMatch(html, /notification-center/);
-  assert.match(html, /تحلیل و تصمیم/);
-  assert.match(html, /تنظیمات و پشتیبان/);
-  assert.match(html, /سود \/ زیان دلاری/);
+  assert.match(html, /ورود به سبد شخصی/);
+  assert.match(html, /بررسی دوبارهٔ دسترسی/);
   assert.doesNotMatch(html, /MARKET · TECHNICAL TEST|دریافت یک‌باره|ذخیرهٔ آخرین قیمت|بازیابی قیمت/);
   assert.doesNotMatch(html, /فرصت‌های خیلی جذاب/);
   assert.doesNotMatch(html, /MARKET WATCH/);

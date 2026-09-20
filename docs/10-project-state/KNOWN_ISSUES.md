@@ -2,6 +2,20 @@
 
 **Source of truth for:** known limitations and gaps in the current state.
 
+## Current private-domain limits — September 20, 2026
+
+Private session/storage integration and production-entry code are now tested, but
+not deployed. Actual Google login, verified owner binding, dedicated server DB,
+service restart persistence, server restore and real cross-device acceptance remain
+unverified. The approved external local secret destination is prepared; direct
+browser Save As, replacement-client creation and key transfer remain gated.
+Domain HTTPS remains 503. Full dependency audit still has existing advisories;
+the private Node runtime uses some devDependencies, so omit-dev audit is not the
+complete release security proof. Exact evidence and bounded handoffs:
+[September 20 checkpoint](PRIVATE_DOMAIN_READINESS_2026-09-20.md).
+
+Historical status paragraphs below do not override this checkpoint.
+
 ## Latest unified-workspace limits — September 17, 2026
 
 The [current review](UNIFIED_PORTFOLIO_REVIEW_2026-09-17.md) supersedes historical

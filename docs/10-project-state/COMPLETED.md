@@ -4,6 +4,16 @@
 merged to `main`. This is a log, not a plan — see `docs/01-product/ROADMAP.md` for
 what's ahead.
 
+## Private-domain foundation (2026-09-20; not activated)
+
+Durable bound owner sessions, authorized portfolio integration, private browser
+shell, strict Node production entry, database readiness and session-free restore
+are implemented with independent specialist review. The expressly approved
+external Windows credential directories were prepared without creating a key.
+Evidence and uncompleted deployment/identity gates are in the
+[September 20 checkpoint](PRIVATE_DOMAIN_READINESS_2026-09-20.md).
+This is not a server deployment, main merge, financial approval or owner acceptance.
+
 ## Unified personal workspace (2026-09-17; bounded local implementation)
 
 One confirmed-database purchase/edit/XLSX entry point now replaces the public

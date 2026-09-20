@@ -43,7 +43,8 @@ export default defineConfig(async ({ command }) => {
 
   // Wrangler snapshots its log path while the Cloudflare plugin is imported.
   const nodeDev = localNodeDevEnabled(command, process.env);
-  const runtimePlugin = nodeDev ? localNodeDev() : (await import("@cloudflare/vite-plugin")).cloudflare({
+  const privateBuild = command === "build" && process.env.ASHA_BUILD_TARGET === "private-node";
+  const runtimePlugin = privateBuild ? undefined : nodeDev ? localNodeDev() : (await import("@cloudflare/vite-plugin")).cloudflare({
     viteEnvironment: { name: "rsc", childEnvironments: ["ssr"] },
     config: localBindingConfig,
   });
@@ -56,7 +57,7 @@ export default defineConfig(async ({ command }) => {
       : undefined,
     plugins: [
       vinext(),
-      sites(),
+      privateBuild ? undefined : sites(),
       runtimePlugin,
     ],
   };

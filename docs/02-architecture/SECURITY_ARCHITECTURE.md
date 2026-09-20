@@ -4,9 +4,9 @@
 
 ## Status
 
-`STATUS: PARTIAL`. A public review deployment exists, but it has no account system,
-production portfolio storage, or production authentication and must not collect
-sensitive holdings. The owner-only local application now has versioned PostgreSQL
+`STATUS: PARTIAL`. The historical public review was not an authenticated personal
+service. Current owner-domain activation is still blocked; do not collect sensitive
+holdings there. The owner-only local application has versioned PostgreSQL
 portfolio storage with forced row-level security. Existing browser holdings,
 constraints and horizon preferences move only after explicit save/restore actions,
 and the demo portfolio is excluded. The
@@ -25,11 +25,15 @@ The owner-only audience for the next real release is accepted in
 accepted an external identity service limited to minimum login identifiers and
 session evidence; portfolio and financial data remain outside that provider under
 [`ADR 0007`](../08-decisions/ADR/0007-third-party-identity-boundary.md). Exact provider
-selection is deliberately deferred during the simple local/demo stage, but becomes a
-fail-closed prerequisite before hosted real financial data under
+selection was deferred under
 [`ADR 0008`](../08-decisions/ADR/0008-defer-production-identity-to-real-data-gate.md).
-Production access mechanics remain `DECISION REQUIRED: YES` in
-[`IDENTITY_RECOMMENDATION.md`](IDENTITY_RECOMMENDATION.md).
+The owner now selects Google under
+[`ADR 0012`](../08-decisions/ADR/0012-google-owner-private-domain.md).
+Durable bound sessions, owner-authorized database transactions and the private
+runtime are implemented; actual Google/hosted activation remains gated. The fixed
+external credential directory is prepared, without any replacement credential.
+Current proofs, remaining private transfer/owner enrollment gates and full-audit
+limits are in the [September 20 checkpoint](../10-project-state/PRIVATE_DOMAIN_READINESS_2026-09-20.md).
 Broader security tooling is a Tier B / Implementation decision
 (`docs/00-governance/PROJECT_RULES.md` § 3): Claude Code selects baseline
 tooling following standard security practice when an implementation phase

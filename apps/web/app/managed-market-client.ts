@@ -1,4 +1,5 @@
 import { validateManagedMarketResponse, type ManagedMarketResponse } from "./managed-market-contract.ts";
+import { notifyOwnerAccessLost } from "./access-client.ts";
 export type { ManagedMarketResponse, ManagedMarketReason } from "./managed-market-contract.ts";
 
 const messages = {
@@ -50,7 +51,8 @@ export async function requestManagedMarket(signal?: AbortSignal, request: typeof
     controller.signal.addEventListener("abort", onAbort, { once: true });
   });
   const receive = async () => {
-    const response = await request("/api/managed-market", { method: "POST", headers: { "x-asha-managed-market": "latest" }, cache: "no-store", credentials: "same-origin", redirect: "error", signal: controller.signal });
+    const response = await request("/api/managed-market", { method: "POST", headers: { "x-asha-managed-market": "latest", "X-ASHA-Intent": "owner-action" }, cache: "no-store", credentials: "same-origin", redirect: "error", signal: controller.signal });
+    notifyOwnerAccessLost(response);
     let value: unknown;
     try { value = await boundedJson(response, controller.signal); } catch { throw new ManagedMarketRequestError("invalid_response"); }
     if (!response.ok) {

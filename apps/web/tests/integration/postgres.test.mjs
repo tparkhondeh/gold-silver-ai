@@ -441,7 +441,7 @@ test("real PostgreSQL migration, isolation, persistence and restore", async (t) 
     assert.equal(maximum, 1);
     assert.deepEqual(await cacheB.read(time + 1000), make(1000));
     const tables = (await admin.query("SELECT tablename FROM pg_tables WHERE schemaname=$1", [schema])).rows.map(row => row.tablename);
-    assert.equal(tables.length, 25);
+    assert.equal(tables.length, 27);
     assert.ok(tables.every(table => !table.includes("managed_market")));
   });
 

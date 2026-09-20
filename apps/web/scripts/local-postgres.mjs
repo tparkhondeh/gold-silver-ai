@@ -12,6 +12,7 @@ import { applyMigrations, readMigrations } from "../db/migrations.ts";
 import { probeObservationDatabase } from "../db/postgres-runtime.ts";
 import { phase1Instruments, phase1Sources } from "../data/phase1-registry.ts";
 import { createLocalBackupPlan, localBackupTables, migrationJournalMatches, quoteVerificationDatabase } from "./local-backup.ts";
+import { identityBackupExclusions, transientIdentityTables } from "./private-backup-policy.ts";
 
 const root = fileURLToPath(new URL("../../../", import.meta.url));
 const webRoot = fileURLToPath(new URL("../", import.meta.url));
@@ -249,7 +250,7 @@ async function performVerifiedBackup(secret) {
     runWithPassword("pg_dump", [
       "--host", "127.0.0.1", "--port", port.toString(), "--username", "postgres",
       "--dbname", "asha_local", "--no-password", "--format", "custom",
-      "--compress", "6", "--no-owner", "--no-privileges", "--snapshot", snapshotId, "--file", plan.temporaryBackupPath,
+      "--compress", "6", "--no-owner", "--no-privileges", ...identityBackupExclusions, "--snapshot", snapshotId, "--file", plan.temporaryBackupPath,
     ], secret.admin);
 
     assertBackupActive();
@@ -277,6 +278,10 @@ async function performVerifiedBackup(secret) {
       const expectedMigrations = (await source.query("SELECT id,checksum FROM asha_schema_migrations ORDER BY id")).rows;
       const restoredMigrations = (await restored.query("SELECT id,checksum FROM asha_schema_migrations ORDER BY id")).rows;
       if (JSON.stringify(restoredMigrations) !== JSON.stringify(expectedMigrations)) throw new Error("Restored migration journal differs");
+      for (const table of transientIdentityTables) {
+        const present = (await restored.query("SELECT to_regclass($1) AS relation", [`public.${table}`])).rows[0]?.relation;
+        if (present && (await restored.query(`SELECT count(*)::text AS count FROM public."${table}"`)).rows[0]?.count !== "0") throw new Error("Restored authentication data must be empty");
+      }
       for (const table of localBackupTables) {
         assertBackupActive();
         const sourceCount = (await source.query(`SELECT count(*)::text AS count FROM public."${table}"`)).rows[0]?.count;

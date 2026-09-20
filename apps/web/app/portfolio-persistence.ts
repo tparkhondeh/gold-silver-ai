@@ -1,6 +1,7 @@
 import type { PortfolioSnapshot } from "../data/postgres-portfolio-repository.ts";
 import { portfolioPreferenceLimits, validPortfolioAmount, validPortfolioCost, validPortfolioPreference } from "../data/portfolio-numeric-contract.ts";
 import { validatePurchaseBook } from "./purchase-book.ts";
+import { notifyOwnerAccessLost } from "./access-client.ts";
 
 function record(value: unknown): value is Record<string, unknown> {
   return value !== null && typeof value === "object" && !Array.isArray(value);
@@ -31,6 +32,7 @@ export function decodePortfolioSnapshot(value: unknown): PortfolioSnapshot {
 export async function fetchPortfolioSnapshot(signal?: AbortSignal, request: typeof fetch = fetch): Promise<PortfolioSnapshot> {
   const timeout = AbortSignal.timeout(10_000);
   const response = await request("/api/portfolio", { cache: "no-store", credentials: "same-origin", signal: signal ? AbortSignal.any([signal, timeout]) : timeout });
+  notifyOwnerAccessLost(response);
   const payload: unknown = await response.json();
   if (!response.ok || !record(payload) || payload.ok !== true) throw new Error("portfolio could not be loaded");
   return decodePortfolioSnapshot(payload.snapshot);

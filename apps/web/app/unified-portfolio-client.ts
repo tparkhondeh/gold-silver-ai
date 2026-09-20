@@ -1,6 +1,7 @@
 import type { PortfolioSnapshot } from "../data/postgres-portfolio-repository.ts";
 import { decodePortfolioSnapshot } from "./portfolio-persistence.ts";
 import { emptyPurchaseBook } from "./purchase-book.ts";
+import { notifyOwnerAccessLost } from "./access-client.ts";
 
 export class PortfolioSaveError extends Error {
   readonly requiresReload: boolean;
@@ -25,9 +26,10 @@ export async function saveUnifiedPortfolio(next: PortfolioSnapshot, request: typ
   let response: Response;
   try {
     response = await request("/api/portfolio", { method: "PUT", credentials: "same-origin", cache: "no-store",
-      headers: { "Content-Type": "application/json", "X-Asha-Portfolio-Request": "save" },
+      headers: { "Content-Type": "application/json", "X-Asha-Portfolio-Request": "save", "X-ASHA-Intent": "owner-action" },
       body: JSON.stringify({ expectedVersion: next.version, ...content }), signal: AbortSignal.timeout(10_000) });
   } catch { throw new PortfolioSaveError("نتیجهٔ ذخیره مشخص نیست؛ ورودی حفظ شد. پیش از تکرار، وضعیت ذخیره را بررسی کن.", true); }
+  notifyOwnerAccessLost(response);
   if (response.status === 409) throw new PortfolioSaveError("سبد در پنجرهٔ دیگری تغییر کرده است؛ ورودی شما حفظ شد. ابتدا وضعیت ذخیره را بررسی کن.", true);
   if (response.status === 422) throw new PortfolioSaveError("ورودی معتبر نیست؛ ذخیره نشد. اطلاعات فرم را اصلاح کن.", false);
   if (!response.ok) throw new PortfolioSaveError("ذخیره تأیید نشد؛ ورودی حفظ شد. ابتدا وضعیت ذخیره را بررسی کن.", true);

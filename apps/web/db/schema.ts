@@ -307,3 +307,53 @@ export const portfolioValuationTransactions = pgTable("portfolio_valuation_trans
   valuationId: text("valuation_id").notNull().references(() => portfolioValuationSnapshots.id),
   transactionId: text("transaction_id").notNull().references(() => portfolioTransactionEvents.id),
 }, (table) => [primaryKey({ columns: [table.valuationId, table.transactionId] })]);
+
+// Forced RLS policies and backup-data exclusion are enforced by migration 0013
+// and runtime operations; these declarations mirror its storage shape only.
+export const privateOwnerLoginTransactions = pgTable("private_owner_login_transactions", {
+  hash: text("hash").primaryKey(),
+  bindingHash: text("binding_hash").notNull(),
+  origin: text("origin").notNull(),
+  issuer: text("issuer").notNull(),
+  subject: text("subject").notNull(),
+  state: text("state").notNull(),
+  nonce: text("nonce").notNull(),
+  pkceVerifier: text("pkce_verifier").notNull(),
+  createdAt: utcTimestamp("created_at").notNull(),
+  expiresAt: utcTimestamp("expires_at").notNull(),
+  claimed: boolean("claimed").notNull().default(false),
+}, (table) => [
+  index("private_owner_login_expiry_idx").on(table.bindingHash, table.expiresAt),
+  check("private_owner_login_transactions_hash_check", sql`${table.hash} ~ '^[A-Za-z0-9_-]{43}$'`),
+  check("private_owner_login_transactions_binding_hash_check", sql`${table.bindingHash} ~ '^[a-f0-9]{64}$'`),
+  check("private_owner_login_transactions_origin_check", sql`length(${table.origin}) BETWEEN 1 AND 2048`),
+  check("private_owner_login_transactions_issuer_check", sql`length(${table.issuer}) BETWEEN 1 AND 2048`),
+  check("private_owner_login_transactions_subject_check", sql`length(${table.subject}) BETWEEN 1 AND 255`),
+  check("private_owner_login_transactions_state_check", sql`${table.state} ~ '^[A-Za-z0-9_-]{43}$'`),
+  check("private_owner_login_transactions_nonce_check", sql`${table.nonce} ~ '^[A-Za-z0-9_-]{43}$'`),
+  check("private_owner_login_transactions_pkce_verifier_check", sql`${table.pkceVerifier} ~ '^[A-Za-z0-9_-]{43}$'`),
+  check("private_owner_login_transactions_check", sql`${table.expiresAt} > ${table.createdAt} AND ${table.expiresAt} <= ${table.createdAt} + interval '5 minutes'`),
+]);
+
+export const privateOwnerSessions = pgTable("private_owner_sessions", {
+  hash: text("hash").primaryKey(),
+  bindingHash: text("binding_hash").notNull(),
+  loginTransactionHash: text("login_transaction_hash").notNull(),
+  origin: text("origin").notNull(),
+  issuer: text("issuer").notNull(),
+  subject: text("subject").notNull(),
+  portfolioSubject: text("portfolio_subject").notNull(),
+  createdAt: utcTimestamp("created_at").notNull(),
+  expiresAt: utcTimestamp("expires_at").notNull(),
+}, (table) => [
+  index("private_owner_session_expiry_idx").on(table.bindingHash, table.expiresAt),
+  uniqueIndex("private_owner_sessions_binding_hash_login_transaction_hash_key").on(table.bindingHash, table.loginTransactionHash),
+  check("private_owner_sessions_hash_check", sql`${table.hash} ~ '^[A-Za-z0-9_-]{43}$'`),
+  check("private_owner_sessions_binding_hash_check", sql`${table.bindingHash} ~ '^[a-f0-9]{64}$'`),
+  check("private_owner_sessions_login_transaction_hash_check", sql`${table.loginTransactionHash} ~ '^[A-Za-z0-9_-]{43}$'`),
+  check("private_owner_sessions_origin_check", sql`length(${table.origin}) BETWEEN 1 AND 2048`),
+  check("private_owner_sessions_issuer_check", sql`length(${table.issuer}) BETWEEN 1 AND 2048`),
+  check("private_owner_sessions_subject_check", sql`length(${table.subject}) BETWEEN 1 AND 255`),
+  check("private_owner_sessions_portfolio_subject_check", sql`length(${table.portfolioSubject}) BETWEEN 1 AND 200 AND ${table.portfolioSubject} <> 'local-owner-v1'`),
+  check("private_owner_sessions_check", sql`${table.expiresAt} > ${table.createdAt} AND ${table.expiresAt} <= ${table.createdAt} + interval '8 hours'`),
+]);

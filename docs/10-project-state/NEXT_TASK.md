@@ -6,19 +6,36 @@
 
 Current priority is **complete private-domain readiness for the unified personal
 workspace**, not rebuild the purchase book or restore public laboratory controls.
-Use [the latest identity delivery and exact blockers](PRIVATE_IDENTITY_REVIEW_2026-09-17.md)
+Use [the latest identity delivery and exact blockers](PRIVATE_DOMAIN_READINESS_2026-09-20.md)
 alongside the [unified-workspace evidence](UNIFIED_PORTFOLIO_REVIEW_2026-09-17.md).
 The local implementation is not domain deployment or owner acceptance.
 
-Do not rebuild the now-tested isolated identity core, OIDC adapter, storage check
-or synthetic login harness. The current fixed storage path reports blocked;
-explicit approval for `C:\Users\pc\.asha-private\google-owner-login` is pending.
-After approval, implement/review that exact destination and prove safe direct
-Save As before requesting replacement-client action-time approval. No real
-credential creation, download, activation or server transfer is currently implied.
-Keep the deleted exposed client deleted. Complete durable session/owner database
-authorization integration before any hosted portfolio release; the memory-only
-4175 harness does not satisfy those production gates.
+Do not rebuild the implemented durable identity store, authorized repository,
+private browser shell, production entry or external-folder preparation. The
+external private folder is created and metadata-safe; actual direct Save As is
+still unverified. Obtain that harmless-file proof and recheck metadata before
+requesting replacement-client action-time consent. No real key has been created.
+
+1. Complete the credential handoff and verified stable Google owner-subject binding;
+   no first-login-wins, email-only binding, secret-bearing UI dumps or reuse of the
+   deleted exposed client. Preserve the original completed branding/terms setup.
+2. Follow the [project-only activation plan](../09-operations/DEPLOYMENT.md#private-node-activation-plan):
+   dedicated PostgreSQL/least-privilege role, checked migrations, supervised service,
+   runtime dependency review and scoped server backup/restore/rollback. Do not reuse
+   the unrelated existing PostgreSQL listener or modify other services.
+3. Verify the proposed private server destination and obtain separate key-transfer
+   consent. Existing personal portfolio migration remains separately gated; start
+   acceptance with empty hosted storage and clearly marked nonprivate test records.
+4. Build from a clean exact delivery SHA after all three GitHub jobs pass. Verify
+   real Google owner/non-owner access, expiry/logout, save/recovery and independent
+   browsers/devices; report the actually deployed SHA separately. No activation
+   or readiness claim from synthetic tests or a health response alone.
+
+The owner-only local version remains at `http://127.0.0.1:4174/` while its launcher
+runs. It is not synchronized to the server. Resume only changed/relevant checks;
+do not repeat the completed implementation to wait for a user handoff.
+
+### September 17 handoff history (superseded by the list above)
 
 1. Implementation `9d8537c` passed all three GitHub jobs (run35191323042). Complete
    the documentation-follow-up's exact final-SHA verification if still pending.

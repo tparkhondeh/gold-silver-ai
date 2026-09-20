@@ -47,7 +47,7 @@ function cookieFrom(response, name = "__Host-asha-login") {
 function fixture(options = {}) {
   const fake = provider(), base = options.origin ?? origin;
   const adapter = createAcceptanceOidcAdapter({ clientId, clientSecret: secret, redirectUri: `${base}${OWNER_AUTH_PATHS.callback}`, metadata, fetch: fake.fetch });
-  const gate = (options.acceptance ? createAcceptanceOwnerIdentityGate : createOwnerIdentityGate)({ origin: base, ownerSubject: subject, adapter, ...options });
+  const gate = (options.acceptance ? createAcceptanceOwnerIdentityGate : createOwnerIdentityGate)({ origin: base, ownerSubject: subject, adapter, store: createMemoryOwnerIdentityStore(), ...options });
   return { fake, adapter, gate };
 }
 async function started(f, base = origin) {
@@ -230,6 +230,7 @@ test("in-flight transaction and protected response cannot outlive absolute expir
   now += 5 * 60_000; finish(); assert.equal((await callback).status, 401);
   const owner = fixture({ clock: () => now, sessionTtlMs: 1000 }), logged = await loggedIn(owner);
   let complete; const response = owner.gate.requireOwner(request("/private", { cookie: logged.cookie }), () => new Promise(resolve => { complete = () => resolve(Response.json({ synthetic: true })); }));
+  while (!complete) await new Promise(resolve => setImmediate(resolve));
   now += 1000; complete(); assert.equal((await response).status, 401);
   const backwards = fixture({ clock: () => now }), last = await loggedIn(backwards);
   now--; assert.equal((await backwards.gate.session(request(OWNER_AUTH_PATHS.session, { cookie: last.cookie }))).status, 401);
