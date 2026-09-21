@@ -104,6 +104,33 @@ Observed on September 20, approximately 14:12 Asia/Tehran:
 
 ## Credential gate: precise current state
 
+### September 21 follow-up — supersedes the earlier destination readiness
+
+The owner reported completing the harmless Save As. A fresh metadata-only check
+found neither `save-as-probe.txt` nor `credentials.json` at the exact destination.
+Do not infer where the file was saved or that the owner merely opened the link.
+No Downloads, account contents or credential contents were inspected.
+
+The protected `google-owner-login` leaf still has exactly owner/SYSTEM access.
+The `.asha-private` parent now has one additional explicit read/execute/synchronize
+grant, inherited by unprotected descendants. Owner, protected status and the two
+original owner/SYSTEM grants remain. Its exact cause/time/actor is unknown; no
+claim of compromise or protected-leaf exposure follows from read/list access alone.
+All path/ancestor-mutation/Git-boundary checks passed, but the strict private-parent
+check failed. The helper correctly reports **blocked**, not safe credential storage.
+
+Security specialist independently reviewed these bounded facts. No ACL, guard,
+credential, server setting or portfolio was changed. Do not remove the parent's
+grant under existing authority: it may serve another application and inherited
+permissions on other children may be affected. Proposed non-mutating alternative:
+request permission for a NEW project-only destination
+`C:\Users\pc\.goldsilver-private\google-owner-login`, with a reviewed fixed-path
+helper update and fresh ancestor/creation checks. This path is not yet approved,
+created or used. After that gate, repeat harmless direct Save As; new-client
+creation and key transfer still require their separate approvals.
+
+### September 20 evidence (historical)
+
 `C:\Users\pc\.asha-private\google-owner-login` exists with reviewed owner/SYSTEM
 protection and safe checked ancestors; metadata preflight passed. No replacement
 credential exists. No old workspace credential path or Downloads was read.
