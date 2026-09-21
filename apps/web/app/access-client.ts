@@ -28,9 +28,10 @@ export function notifyOwnerAccessLost(response: Response) {
   if (response.status === 401 && typeof window !== "undefined") window.dispatchEvent(new Event(OWNER_ACCESS_LOST));
 }
 
-export async function readAccessMode(request: typeof fetch = fetch): Promise<"local" | "private"> {
+export async function readAccessMode(request: typeof fetch = fetch): Promise<"local" | "private" | "passkey"> {
   const response = await request("/api/access-mode", { cache: "no-store", credentials: "same-origin", signal: AbortSignal.timeout(5000) });
   const body = await boundedAuthJson(response);
+  if (response.ok && Object.keys(body).sort().join(",") === "authMethod,mode" && body.mode === "private" && body.authMethod === "passkey") return "passkey";
   if (!response.ok || Object.keys(body).length !== 1 || (body.mode !== "local" && body.mode !== "private")) throw new Error("Access mode unavailable");
   return body.mode;
 }

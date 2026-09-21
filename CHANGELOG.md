@@ -7,6 +7,14 @@ state is recorded in `docs/10-project-state/CURRENT_STATE.md`.
 
 ## [Unreleased]
 
+- Added owner-bound passkey login as an explicitly authorized alternative to the
+  blocked Google setup, with user verification, durable one-use ceremonies,
+  bootstrap/recovery gates, cross-worker throttling and session revocation.
+  Reused the private portfolio/Excel/valuation boundary. Added project-only Linux
+  PostgreSQL preparation, retained backup verification and supervised release
+  tooling; actual activation/enrollment evidence is tracked separately in the
+  September 21 private delivery checkpoint. Updated reviewed locked dependencies;
+  no financial-method change, owner-data migration or automatic signup.
 - Replaced the public demonstration workbench with a unified personal portfolio,
   confirmed PostgreSQL saves/automatic recovery and one manual/XLSX purchase path.
   Preserved old rows/drafts and internal regressions; the downloadable entry

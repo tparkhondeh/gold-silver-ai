@@ -6,8 +6,12 @@ import * as schema from "../db/schema.ts";
 import { probePrivatePortfolioDatabase } from "../auth/private-database-readiness.ts";
 
 const migrations = (await readMigrations()).map(({ id, checksum }) => ({ id, checksum }));
-const models = [schema.privateOwnerLoginTransactions, schema.privateOwnerSessions, schema.userPortfolios, schema.portfolioHoldings, schema.portfolioPreferences];
+const models = [schema.privateOwnerLoginTransactions, schema.privateOwnerSessions, schema.privatePasskeyOwners, schema.privatePasskeyCredentials, schema.privatePasskeyBootstrapGrants, schema.privatePasskeyChallenges, schema.userPortfolios, schema.portfolioHoldings, schema.portfolioPreferences];
 const expectedPolicies = {
+  private_passkey_owners: ["private_passkey_owner_binding", "(binding_hash = current_setting('asha.identity_binding'::text, true))"],
+  private_passkey_credentials: ["private_passkey_credential_binding", "(binding_hash = current_setting('asha.identity_binding'::text, true))"],
+  private_passkey_bootstrap_grants: ["private_passkey_bootstrap_binding", "(binding_hash = current_setting('asha.identity_binding'::text, true))"],
+  private_passkey_challenges: ["private_passkey_challenge_binding", "(binding_hash = current_setting('asha.identity_binding'::text, true))"],
   private_owner_login_transactions: ["private_owner_login_binding", "(binding_hash = current_setting('asha.identity_binding'::text, true))"],
   private_owner_sessions: ["private_owner_session_binding", "(binding_hash = current_setting('asha.identity_binding'::text, true))"],
   user_portfolios: ["user_portfolios_subject_isolation", "(subject_id = current_setting('asha.subject_id'::text, true))"],
@@ -32,7 +36,7 @@ function fixture() {
   return { data, calls, database };
 }
 
-test("five-table schema mirror and exact migration/policy metadata satisfy private readiness with no user-row reads", async () => {
+test("nine-table schema mirror and exact migration/policy metadata satisfy private readiness with no user-row reads", async () => {
   const f = fixture(); assert.deepEqual(await probePrivatePortfolioDatabase(f.database, migrations), { state: "ready", reason: "private_identity_and_portfolio_ready" });
   assert.equal(f.calls.length, 4); assert.match(f.calls[0].sql, /FROM "public"\.asha_schema_migrations/);
   assert.ok(f.calls.every(call => /^SELECT\b/.test(call.sql)));
@@ -60,7 +64,7 @@ test("only public or a validated disposable identity schema is queried, with no 
 });
 
 test("invalid or incomplete expected migrations cannot trigger even metadata I/O", async () => {
-  for (const expected of [null, [], migrations.slice(0, 12), [...migrations, migrations[0]], migrations.map((row, index) => index === 0 ? null : row), migrations.map((row, index) => index === 0 ? { ...row, checksum: "bad" } : row)]) {
+  for (const expected of [null, [], migrations.slice(0, 12), migrations.filter(row => row.id !== "0014_owner_passkeys.sql"), [...migrations, migrations[0]], migrations.map((row, index) => index === 0 ? null : row), migrations.map((row, index) => index === 0 ? { ...row, checksum: "bad" } : row)]) {
     const f = fixture(); assert.equal((await probePrivatePortfolioDatabase(f.database, expected)).reason, "private_migration_expectation_invalid"); assert.equal(f.calls.length, 0);
   }
 });

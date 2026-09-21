@@ -10,7 +10,7 @@ import { PostgresPortfolioRepository, emptyPortfolioPreferences } from "../../da
 import { PostgresOwnerIdentityStore, createOwnerAuthorizedRunner, identityBindingHash, OwnerAuthorizationError } from "../../auth/postgres-owner-identity-store.ts";
 import { probePrivatePortfolioDatabase } from "../../auth/private-database-readiness.ts";
 import { createPrivatePortfolioRuntime } from "../../auth/private-runtime.ts";
-import { identityBackupExclusions } from "../../scripts/private-backup-policy.ts";
+import { identityBackupExclusions, transientIdentityTables } from "../../scripts/private-backup-policy.ts";
 
 // No .env loading and never DATABASE_URL: only the explicitly disposable database.
 const connectionString = process.env.ASHA_TEST_DATABASE_URL;
@@ -44,7 +44,7 @@ test("durable private-owner PostgreSQL isolation, restart, atomic revocation and
   async function grant(target) {
     await admin.query(`GRANT USAGE ON SCHEMA "${target}" TO "${role}"`);
     await admin.query(`GRANT SELECT ON "${target}".asha_schema_migrations TO "${role}"`);
-    for (const table of ["private_owner_login_transactions", "private_owner_sessions", "user_portfolios", "portfolio_holdings", "portfolio_preferences"]) await admin.query(`GRANT SELECT,INSERT,UPDATE,DELETE ON "${target}"."${table}" TO "${role}"`);
+    for (const table of [...transientIdentityTables, "user_portfolios", "portfolio_holdings", "portfolio_preferences"]) await admin.query(`GRANT SELECT,INSERT,UPDATE,DELETE ON "${target}"."${table}" TO "${role}"`);
   }
   await grant(schema);
   const scopedPool = target => ({ async connect() { const client = await pool.connect(); await client.query(`SET ROLE "${role}"`); await client.query(`SET search_path TO "${target}"`); return client; } });
@@ -228,7 +228,7 @@ test("durable private-owner PostgreSQL isolation, restart, atomic revocation and
     const dump = command("pg_dump", [...args, "--schema", schema, "--no-owner", "--no-privileges", ...identityBackupExclusions]).replaceAll(schema, restored);
     assert.equal(dump.includes(active.session), false); assert.equal(dump.includes(pending), false);
     command("psql", [...args, "--set", "ON_ERROR_STOP=1", "--single-transaction"], dump); restoredCreated = true;
-    for (const table of ["private_owner_sessions", "private_owner_login_transactions"]) assert.equal(Number((await admin.query(`SELECT count(*) FROM "${restored}"."${table}"`)).rows[0].count), 0);
+    for (const table of transientIdentityTables) assert.equal(Number((await admin.query(`SELECT count(*) FROM "${restored}"."${table}"`)).rows[0].count), 0);
     for (const table of ["user_portfolios", "portfolio_holdings", "portfolio_preferences"]) {
       const rows = async target => (await admin.query(`SELECT to_jsonb(t) AS row FROM "${target}"."${table}" t ORDER BY to_jsonb(t)::text`)).rows;
       assert.deepEqual(await rows(restored), await rows(schema));

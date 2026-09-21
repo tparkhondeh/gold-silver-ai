@@ -4,6 +4,15 @@
 
 ## Status
 
+Current execution: [September 21 passkey delivery](../10-project-state/PRIVATE_PASSKEY_DELIVERY_2026-09-21.md)
+and [project-only passkey operations](PRIVATE_PASSKEY_OPERATIONS.md).
+The owner has authorized an independent provider-free private login and scoped
+server deployment under ADR 0013. The earlier Google-only sequence below is
+historical; it must not trigger another Google client/secret or repeat access403.
+Only the linked current execution record establishes what is actually deployed.
+
+### Historical September 20 status (superseded)
+
 Latest scope and fresh read-only evidence (2026-09-20):
 [private-domain checkpoint](../10-project-state/PRIVATE_DOMAIN_READINESS_2026-09-20.md).
 The owner authorizes project-only deployment, but key creation/transfer and existing
@@ -37,7 +46,7 @@ scoped backups/rollback and preservation of other hosted services are mandatory.
 Secret/private-data transfer and production identity selection retain their
 separate authorization gates. Domain publication alone is not project completion.
 
-### Private Node activation plan
+### Private Node activation plan — prior Google version
 
 This is a **not-yet-executed** project-only plan. Stop at each missing permission,
 unsafe path or unverified dependency; do not route the public proxy to local mode.

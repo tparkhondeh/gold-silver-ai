@@ -8,7 +8,7 @@ import { execFileSync } from "node:child_process";
 import { startProdServer } from "vinext/server/prod-server";
 import { readPrivateServerConfig, assertPrivateProcessEnvironment } from "./private-server-config.ts";
 import { createGoogleIdentityAdapter } from "../auth/google-identity-adapter.ts";
-import { createPrivatePortfolioRuntime } from "../auth/private-runtime.ts";
+import { createPrivatePortfolioRuntime, createPrivatePasskeyRuntime } from "../auth/private-runtime.ts";
 import { createPrivateHttpServer } from "../auth/private-http.ts";
 import { createPgTransactionRunner } from "../db/postgres-runtime.ts";
 import { readMigrations } from "../db/migrations.ts";
@@ -39,13 +39,15 @@ try {
   if (probe.state !== "ready") throw Error();
   // Fixed private upstream in the same supervised process, not a development server.
   ui = await startProdServer({ host: "127.0.0.1", port: 0, outDir, silent: true, noCompression: true });
-  const binding = { origin: configuration.origin, issuer: "https://accounts.google.com", ownerSubject: configuration.ownerSubject, portfolioSubject: configuration.portfolioSubject };
-  const adapter = createGoogleIdentityAdapter({ clientId: configuration.googleClientId, clientSecret: configuration.googleClientSecret, redirectUri: `${configuration.origin}/auth/google/callback` });
-  const application = createPrivatePortfolioRuntime({ binding, adapter, runner, release,
+  const binding = { origin: configuration.origin, issuer: configuration.version === 2 ? configuration.origin : "https://accounts.google.com", ownerSubject: configuration.ownerSubject, portfolioSubject: configuration.portfolioSubject };
+  const common = { binding, runner, release,
     async publicUi(request) {
       const path = new URL(request.url).pathname;
       return privateUiResponse(await fetch(`http://127.0.0.1:${ui.port}${path}`, { headers: { accept: request.headers.get("accept") ?? "*/*", "accept-encoding": "identity" }, redirect: "error", signal: AbortSignal.timeout(10_000) }));
     },
+  };
+  const application = configuration.version === 2 ? createPrivatePasskeyRuntime(common) : createPrivatePortfolioRuntime({ ...common,
+    adapter: createGoogleIdentityAdapter({ clientId: configuration.googleClientId, clientSecret: configuration.googleClientSecret, redirectUri: `${configuration.origin}/auth/google/callback` }),
   });
   gateway = createPrivateHttpServer(configuration.origin, application);
   await new Promise((done, reject) => { gateway.once("error", reject); gateway.listen(3012, "127.0.0.1", done); });

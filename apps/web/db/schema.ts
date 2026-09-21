@@ -1,6 +1,8 @@
 import { sql } from "drizzle-orm";
 import {
   boolean,
+  bigint,
+  customType,
   check,
   index,
   integer,
@@ -356,4 +358,68 @@ export const privateOwnerSessions = pgTable("private_owner_sessions", {
   check("private_owner_sessions_subject_check", sql`length(${table.subject}) BETWEEN 1 AND 255`),
   check("private_owner_sessions_portfolio_subject_check", sql`length(${table.portfolioSubject}) BETWEEN 1 AND 200 AND ${table.portfolioSubject} <> 'local-owner-v1'`),
   check("private_owner_sessions_check", sql`${table.expiresAt} > ${table.createdAt} AND ${table.expiresAt} <= ${table.createdAt} + interval '8 hours'`),
+]);
+
+// Migration 0014 owns constraints and forced binding RLS. All DATA is excluded
+// from backups: restore requires explicitly authorized fresh owner enrollment.
+const publicKeyBytes = customType<{ data: Uint8Array }>({ dataType: () => "bytea" });
+export const privatePasskeyOwners = pgTable("private_passkey_owners", {
+  bindingHash: text("binding_hash").primaryKey(),
+  revision: integer("revision").notNull(),
+  windowStartedAt: utcTimestamp("window_started_at").notNull(),
+  attempts: integer("attempts").notNull(),
+}, table => [
+  check("private_passkey_owners_binding_hash_check", sql`${table.bindingHash} ~ '^[a-f0-9]{64}$'`),
+  check("private_passkey_owners_revision_check", sql`${table.revision} > 0`),
+  check("private_passkey_owners_attempts_check", sql`${table.attempts} BETWEEN 0 AND 20`),
+]);
+export const privatePasskeyCredentials = pgTable("private_passkey_credentials", {
+  bindingHash: text("binding_hash").notNull().references(() => privatePasskeyOwners.bindingHash),
+  id: text("id").notNull(),
+  publicKey: publicKeyBytes("public_key").notNull(),
+  counter: bigint("counter", { mode: "number" }).notNull(),
+  transports: text("transports").array().notNull(),
+  deviceType: text("device_type").notNull(),
+  backedUp: boolean("backed_up").notNull(),
+}, table => [
+  primaryKey({ columns: [table.bindingHash, table.id] }),
+  check("private_passkey_credentials_id_check", sql`length(${table.id}) BETWEEN 1 AND 1366 AND ${table.id} ~ '^[A-Za-z0-9_-]+$'`),
+  check("private_passkey_credentials_public_key_check", sql`octet_length(${table.publicKey}) BETWEEN 1 AND 4096`),
+  check("private_passkey_credentials_counter_check", sql`${table.counter} BETWEEN 0 AND 4294967295`),
+  check("private_passkey_credentials_transports_check", sql`cardinality(${table.transports}) <= 5 AND ${table.transports} <@ ARRAY['usb','nfc','ble','internal','hybrid']::text[]`),
+  check("private_passkey_credentials_device_type_check", sql`${table.deviceType} IN ('singleDevice','multiDevice')`),
+  check("private_passkey_credentials_check", sql`${table.deviceType} <> 'singleDevice' OR NOT ${table.backedUp}`),
+]);
+export const privatePasskeyBootstrapGrants = pgTable("private_passkey_bootstrap_grants", {
+  bindingHash: text("binding_hash").primaryKey().references(() => privatePasskeyOwners.bindingHash),
+  hash: text("hash").notNull().unique(),
+  ownerRevision: integer("owner_revision").notNull(),
+  createdAt: utcTimestamp("created_at").notNull(),
+  expiresAt: utcTimestamp("expires_at").notNull(),
+  challengeHash: text("challenge_hash"),
+}, table => [
+  check("private_passkey_bootstrap_grants_hash_check", sql`${table.hash} ~ '^[A-Za-z0-9_-]{43}$'`),
+  check("private_passkey_bootstrap_grants_owner_revision_check", sql`${table.ownerRevision} > 0`),
+  check("private_passkey_bootstrap_grants_challenge_hash_check", sql`${table.challengeHash} ~ '^[A-Za-z0-9_-]{43}$'`),
+  check("private_passkey_bootstrap_grants_check", sql`${table.expiresAt} > ${table.createdAt} AND ${table.expiresAt} <= ${table.createdAt} + interval '5 minutes'`),
+]);
+export const privatePasskeyChallenges = pgTable("private_passkey_challenges", {
+  hash: text("hash").primaryKey(),
+  bindingHash: text("binding_hash").notNull().references(() => privatePasskeyOwners.bindingHash),
+  purpose: text("purpose").notNull(),
+  challenge: text("challenge").notNull(),
+  ownerRevision: integer("owner_revision").notNull(),
+  createdAt: utcTimestamp("created_at").notNull(),
+  expiresAt: utcTimestamp("expires_at").notNull(),
+  claimed: boolean("claimed").notNull().default(false),
+  authorityKind: text("authority_kind"),
+  authorityHash: text("authority_hash"),
+}, table => [
+  index("private_passkey_challenge_expiry_idx").on(table.bindingHash, table.expiresAt),
+  check("private_passkey_challenges_hash_check", sql`${table.hash} ~ '^[A-Za-z0-9_-]{43}$'`),
+  check("private_passkey_challenges_purpose_check", sql`${table.purpose} IN ('authentication','registration')`),
+  check("private_passkey_challenges_challenge_check", sql`${table.challenge} ~ '^[A-Za-z0-9_-]{43}$'`),
+  check("private_passkey_challenges_owner_revision_check", sql`${table.ownerRevision} > 0`),
+  check("private_passkey_challenges_check", sql`${table.expiresAt} > ${table.createdAt} AND ${table.expiresAt} <= ${table.createdAt} + interval '5 minutes'`),
+  check("private_passkey_challenges_check1", sql`(${table.purpose}='authentication' AND ${table.authorityKind} IS NULL AND ${table.authorityHash} IS NULL) OR (${table.purpose}='registration' AND ${table.authorityKind} IS NOT NULL AND ${table.authorityKind} IN ('bootstrap','session') AND ${table.authorityHash} ~ '^[A-Za-z0-9_-]{43}$' AND ${table.authorityHash} IS NOT NULL)`),
 ]);

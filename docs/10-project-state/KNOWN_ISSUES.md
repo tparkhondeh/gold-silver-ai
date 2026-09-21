@@ -105,6 +105,13 @@ connections failing. Exact evidence and retry boundary:
    the link is public and unauthenticated, testers must not enter real sensitive
    financial information.
 8. **Development-dependency audit findings remain; production audit is clean.**
+   September21 supersedes the historical count below: reviewed compatible locked
+   maintenance updates reduced the full graph to4moderate findings in the unused
+   drizzle-kit/esbuild chain, with0high/critical; production-only audit reports0.
+   Private runtime still needs the full installation, so omit-dev alone is not a
+   deployment gate. Exact updates/testing and remaining scope:
+   [passkey delivery checkpoint](PRIVATE_PASSKEY_DELIVERY_2026-09-21.md).
+   Historical September16 finding set:
    A fresh registry audit on 2026-09-16 reports 11 affected development packages
    (5 high, 6 moderate), superseding the earlier single-finding count. These are
    pre-existing packages, not the new purchase importer dependencies. Advisory groups:

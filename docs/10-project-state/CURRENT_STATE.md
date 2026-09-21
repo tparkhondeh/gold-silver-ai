@@ -2,11 +2,29 @@
 
 **Source of truth for:** where the project stands right now.
 
-_Last reviewed: 2026-09-21, Asia/Tehran (one replacement client authorized; secure path verified; Google console access blocked)_
+_Last reviewed: 2026-09-21, Asia/Tehran (owner-authorized independent passkey delivery in progress)_
+
+## Active private-domain delivery
+
+Google is no longer a required dependency. The owner authorized choosing and
+implementing an independent private login and project-only deployment; see
+[ADR 0013](../08-decisions/ADR/0013-owner-passkey-private-domain.md).
+Owner-bound passkey implementation, signed protocol tests and all 37 isolated
+PostgreSQL integration tests pass. Existing purchase/Excel/valuation contracts
+are reused, not rebuilt. The actual owner enrollment and safe grant handoff
+remain separately gated; no real passkey, bootstrap grant, API key transfer or
+personal-portfolio transfer has occurred.
+
+The latest execution record, including server changes and deployment evidence,
+is [September 21 passkey delivery](PRIVATE_PASSKEY_DELIVERY_2026-09-21.md).
+This record supersedes the older Google-only next steps below. Technical test
+success is not a completed owner login or independent-device acceptance.
+
+## Historical Google-only checkpoint (superseded)
 
 Owner-directed workflow clarification is now recorded in [CLAUDE.md § 9](../../CLAUDE.md#9-autonomy-and-necessary-owner-approval).
-This documentation-only change preserves the approval gates and AGENTS.md pointer;
-it does not implement a different login method or alter the identity blocker below.
+The earlier documentation-only clarification preserved approval gates and the
+AGENTS.md pointer. The later owner-authorized implementation is recorded above.
 
 ## Latest private-identity checkpoint
 

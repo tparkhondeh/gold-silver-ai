@@ -4,6 +4,26 @@
 
 ## Immediate Next Step
 
+Continue [the active passkey delivery checkpoint](PRIVATE_PASSKEY_DELIVERY_2026-09-21.md)
+and [the scoped operations runbook](../09-operations/PRIVATE_PASSKEY_OPERATIONS.md).
+Do not retry unchanged Google 403 requests, recreate an OAuth client or rebuild
+the completed passkey/purchase/Excel implementation. Project-only deployment is
+authorized; actual owner enrollment/grant handoff and key/private-portfolio
+transfer remain distinct gates. The coordinator has already asked the owner for
+one bootstrap grant and its exact protected local delivery; do not repeat that
+question without changed scope. Continue independent tests/server preparation.
+
+Before activation: resolve independent operations findings, finish full regression,
+commit/push the working branch, verify all three jobs for that SHA, build the clean
+exact server release, provision only the new project database, verify retained
+backup/restore and install project-only supervision. Never reuse unknown port5432.
+Then verify public HTTPS/private denials and actual deployed SHA. Genuine owner
+passkey creation needs the owner's device confirmation; a synthetic ceremony is
+not that acceptance. Hosted market access is unavailable until separate provider
+configuration/transfer authority; no local key/portfolio copying is implicit.
+
+### Prior Google-only next steps (historical, superseded)
+
 Current priority is **complete private-domain readiness for the unified personal
 workspace**, not rebuild the purchase book or restore public laboratory controls.
 Use [the latest identity delivery and exact blockers](PRIVATE_DOMAIN_READINESS_2026-09-20.md)

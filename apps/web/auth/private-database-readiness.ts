@@ -4,6 +4,10 @@ import type { Migration } from "../db/migrations.ts";
 type Column = readonly [type: string, required: boolean];
 const text = ["text", true] as const, time = ["timestamp with time zone", true] as const;
 const columns: Readonly<Record<string, Readonly<Record<string, Column>>>> = {
+  private_passkey_owners: { binding_hash: text, revision: ["integer", true], window_started_at: time, attempts: ["integer", true] },
+  private_passkey_credentials: { binding_hash: text, id: text, public_key: ["bytea", true], counter: ["bigint", true], transports: ["text[]", true], device_type: text, backed_up: ["boolean", true] },
+  private_passkey_bootstrap_grants: { binding_hash: text, hash: text, owner_revision: ["integer", true], created_at: time, expires_at: time, challenge_hash: ["text", false] },
+  private_passkey_challenges: { hash: text, binding_hash: text, purpose: text, challenge: text, owner_revision: ["integer", true], created_at: time, expires_at: time, claimed: ["boolean", true], authority_kind: ["text", false], authority_hash: ["text", false] },
   private_owner_login_transactions: { hash: text, binding_hash: text, origin: text, issuer: text, subject: text, state: text, nonce: text, pkce_verifier: text, created_at: time, expires_at: time, claimed: ["boolean", true] },
   private_owner_sessions: { hash: text, binding_hash: text, login_transaction_hash: text, origin: text, issuer: text, subject: text, portfolio_subject: text, created_at: time, expires_at: time },
   user_portfolios: { id: text, schema_version: ["smallint", true], subject_id: text, version: ["integer", true], created_at: time, updated_at: time, purchase_book: ["jsonb", false] },
@@ -12,6 +16,10 @@ const columns: Readonly<Record<string, Readonly<Record<string, Column>>>> = {
 };
 const tables = Object.keys(columns).sort();
 const policies: Readonly<Record<string, readonly [name: string, expression: string]>> = {
+  private_passkey_owners: ["private_passkey_owner_binding", "(binding_hash = current_setting('asha.identity_binding'::text, true))"],
+  private_passkey_credentials: ["private_passkey_credential_binding", "(binding_hash = current_setting('asha.identity_binding'::text, true))"],
+  private_passkey_bootstrap_grants: ["private_passkey_bootstrap_binding", "(binding_hash = current_setting('asha.identity_binding'::text, true))"],
+  private_passkey_challenges: ["private_passkey_challenge_binding", "(binding_hash = current_setting('asha.identity_binding'::text, true))"],
   private_owner_login_transactions: ["private_owner_login_binding", "(binding_hash = current_setting('asha.identity_binding'::text, true))"],
   private_owner_sessions: ["private_owner_session_binding", "(binding_hash = current_setting('asha.identity_binding'::text, true))"],
   user_portfolios: ["user_portfolios_subject_isolation", "(subject_id = current_setting('asha.subject_id'::text, true))"],
@@ -29,9 +37,10 @@ const blocked = (reason: string) => ({ state: "blocked" as const, reason });
  * The limited schema override exists for disposable identity integration tests. */
 export async function probePrivatePortfolioDatabase(database: SqlExecutor, expectedMigrations: readonly Pick<Migration, "id" | "checksum">[], schema = "public") {
   if (schema !== "public" && !/^asha_identity_test_[a-f0-9]{16}(?:_restored)?$/.test(schema)) return blocked("private_schema_not_allowed");
-  if (!Array.isArray(expectedMigrations) || expectedMigrations.length < 13 || expectedMigrations.length > 1000
+  if (!Array.isArray(expectedMigrations) || expectedMigrations.length < 14 || expectedMigrations.length > 1000
     || expectedMigrations.some(row => !row || !/^\d{4}_[a-z0-9_]+\.sql$/.test(row.id) || !/^[a-f0-9]{64}$/.test(row.checksum))
     || !expectedMigrations.some(row => row.id === "0013_private_owner_identity.sql")
+    || !expectedMigrations.some(row => row.id === "0014_owner_passkeys.sql")
     || new Set(expectedMigrations.map(row => row.id)).size !== expectedMigrations.length) return blocked("private_migration_expectation_invalid");
   try {
     // schema is validated above, including the entire fixed test-only pattern.

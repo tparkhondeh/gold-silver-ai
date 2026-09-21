@@ -3,23 +3,26 @@
 import { useEffect, useRef, useState } from "react";
 import { OWNER_ACCESS_LOST, ownerAction, readAccessMode, readOwnerSession } from "./access-client";
 import { UnifiedPortfolioWorkspace } from "./unified-portfolio-workspace";
+import { PasskeyLogin } from "./passkey-login";
 
 export function OwnerWorkspace() {
-  const [mode, setMode] = useState<"local" | "private" | null>(null);
+  const [mode, setMode] = useState<"local" | "private" | "passkey" | null>(null);
   const [expiresAt, setExpiresAt] = useState<number | null>(null);
   const [message, setMessage] = useState("در حال بررسی دسترسی…");
   const [busy, setBusy] = useState(false);
   const [attempt, setAttempt] = useState(0);
   const generation = useRef(0);
+  const mounted = useRef(false);
   const resumeBlocked = useRef(false);
   const [curtain, setCurtain] = useState(false);
+  useEffect(() => { mounted.current = true; return () => { mounted.current = false; }; }, []);
   useEffect(() => {
     let stopped = false;
     const started = ++generation.current;
     void readAccessMode().then(async (value) => {
       if (stopped || started !== generation.current) return;
       setMode(value);
-      if (value === "private") {
+      if (value === "private" || value === "passkey") {
         const expires = await readOwnerSession();
         if (!stopped && started === generation.current && !resumeBlocked.current) { setExpiresAt(expires); setCurtain(false); setMessage(expires ? "" : "برای دیدن سبد، با حساب مالک وارد شو."); }
       }
@@ -27,7 +30,7 @@ export function OwnerWorkspace() {
     return () => { stopped = true; };
   }, [attempt]);
   useEffect(() => {
-    if (mode !== "private") return;
+    if (mode !== "private" && mode !== "passkey") return;
     let stopped = false, pending = false;
     const loseAccess = () => { generation.current++; setExpiresAt(null); setMessage("ورود نیازمند بررسی دوباره است. اگر هنگام ثبت قطع شد، پس از ورود ابتدا وضعیت ذخیره را بررسی کن."); };
     const check = async () => {
@@ -64,9 +67,17 @@ export function OwnerWorkspace() {
     } catch { setMessage(action === "logout" ? "خروج روی سرور تأیید نشد؛ اطلاعات این صفحه پنهان شد. اتصال را بررسی و خروج را دوباره بزن." : "ورود شروع نشد؛ اتصال یا تنظیمات ورود نیازمند بررسی است."); }
     finally { generation.current++; setBusy(false); }
   };
+  const beginPasskey = () => { resumeBlocked.current = true; setExpiresAt(null); return ++generation.current; };
+  const confirmPasskey = async (started: number) => {
+    if (!mounted.current || started !== generation.current) throw Error("Obsolete login");
+    const expires = await readOwnerSession();
+    if (!mounted.current || started !== generation.current || expires === null) throw Error("Session unconfirmed");
+    resumeBlocked.current = false; setExpiresAt(expires); setCurtain(false); setMessage("");
+  };
   if (mode === "local") return <UnifiedPortfolioWorkspace />;
+  const privateMode = mode === "private" || mode === "passkey";
   return <>
-    <header className="unified-status" aria-label="دسترسی خصوصی"><b>اشا · حساب خصوصی</b>{mode === "private" && <button className="ghost-button" disabled={busy} onClick={() => void act("logout")}>خروج امن</button>}</header>
-    {mode === "private" && expiresAt !== null && !busy ? <><div hidden={curtain} inert={curtain}><UnifiedPortfolioWorkspace storageLocation="server" /></div>{curtain && <p role="status">{message || "در حال بررسی دوبارهٔ ورود…"}</p>}</> : <main className="unified-workspace"><section className="panel"><h1>ورود به سبد شخصی</h1><p role="status">{message}</p>{mode === "private" && <button className="primary-button" disabled={busy} onClick={() => void act("login")}>ورود با گوگل</button>}<button className="ghost-button" disabled={busy} onClick={() => { resumeBlocked.current = false; setMode(null); setExpiresAt(null); setAttempt(value => value + 1); }}>بررسی دوبارهٔ دسترسی</button></section></main>}
+    <header className="unified-status" aria-label="دسترسی خصوصی"><b>اشا · حساب خصوصی</b>{privateMode && <button className="ghost-button" disabled={busy} onClick={() => void act("logout")}>خروج امن</button>}</header>
+    {privateMode && expiresAt !== null && !busy ? <><div hidden={curtain} inert={curtain}><UnifiedPortfolioWorkspace storageLocation="server" />{mode === "passkey" && <PasskeyLogin authenticated disabled={curtain} onBegin={beginPasskey} onAuthenticated={confirmPasskey} />}</div>{curtain && <p role="status">{message || "در حال بررسی دوبارهٔ ورود…"}</p>}</> : <main className="unified-workspace"><section className="panel"><h1>ورود به سبد شخصی</h1><p role="status">{message}</p>{mode === "private" && <button className="primary-button" disabled={busy} onClick={() => void act("login")}>ورود با گوگل</button>}{mode === "passkey" && <PasskeyLogin disabled={busy} onBegin={beginPasskey} onAuthenticated={confirmPasskey} />}<button className="ghost-button" disabled={busy} onClick={() => { resumeBlocked.current = false; setMode(null); setExpiresAt(null); setAttempt(value => value + 1); }}>بررسی دوبارهٔ دسترسی</button></section></main>}
   </>;
 }

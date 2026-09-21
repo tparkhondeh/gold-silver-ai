@@ -52,9 +52,11 @@ function harness({ mode = async () => "private", session = async () => at + 30_0
   const document = { ...eventTarget("document"), visibilityState: "visible" };
   class Clock extends Date { static now() { return now; } }
   function UnifiedPortfolioWorkspace() {}
+  function PasskeyLogin() {}
   const dependencies = {
     react,
     "./unified-portfolio-workspace": { UnifiedPortfolioWorkspace },
+    "./passkey-login": { PasskeyLogin },
     "./access-client": {
       OWNER_ACCESS_LOST: lost,
       readAccessMode: () => mode(++modeReads),
@@ -98,6 +100,7 @@ function harness({ mode = async () => "private", session = async () => at + 30_0
     advance(milliseconds) { now += milliseconds; for (const [id, timer] of [...timers]) if (timer.due <= now) { timers.delete(id); timer.callback(); } return render(); },
     unmount() { unmounted = true; for (const slot of slots) slot.cleanup?.(); child = null; },
     get child() { return child; }, get text() { return text(tree); }, get modeReads() { return modeReads; }, get sessionReads() { return sessionReads; },
+    get passkey() { return nodes(tree).find(node => node.type === PasskeyLogin)?.props; },
     get lateStateWrites() { return lateStateWrites; }, get listenerCount() { return listeners.size; }, get timerCount() { return timers.size + intervals.size; },
     actions, redirects,
   };
@@ -111,6 +114,44 @@ test("private workspace is absent until mode and owner session both confirm", as
   identity.resolve(at + 30_000); await ui.settle();
   assert.equal(ui.child.props.storageLocation, "server"); assert.equal(ui.child.hidden, false);
   ui.unmount(); assert.equal(ui.listenerCount, 0); assert.equal(ui.timerCount, 0);
+});
+
+test("passkey mode has one login path and opens only after a fresh authoritative session read", async () => {
+  const confirmation = deferred();
+  const ui = harness({ mode: async () => "passkey", session: call => call === 1 ? Promise.resolve(null) : confirmation.promise });
+  await ui.start(); assert.equal(ui.child, null); assert.ok(ui.passkey); assert.doesNotMatch(ui.text, /ورود با گوگل/);
+  const generation = ui.passkey.onBegin(), pending = ui.passkey.onAuthenticated(generation);
+  ui.render(); assert.equal(ui.child, null); assert.equal(ui.sessionReads, 2);
+  confirmation.resolve(at + 30_000); await pending; await ui.settle();
+  assert.equal(ui.child.props.storageLocation, "server"); assert.equal(ui.passkey.authenticated, true); assert.deepEqual(ui.actions, []);
+  ui.unmount();
+});
+
+test("passkey assertion alone, missing session, or late confirmation after logout cannot unlock", async () => {
+  const missing = harness({ mode: async () => "passkey", session: async () => null });
+  await missing.start(); await assert.rejects(missing.passkey.onAuthenticated(missing.passkey.onBegin()));
+  await missing.settle(); assert.equal(missing.child, null); missing.unmount();
+  const confirmation = deferred();
+  const ui = harness({ mode: async () => "passkey", session: call => call === 1 ? Promise.resolve(null) : confirmation.promise });
+  await ui.start(); const pending = ui.passkey.onAuthenticated(ui.passkey.onBegin());
+  ui.click("خروج امن"); await ui.settle(); confirmation.resolve(at + 30_000); await assert.rejects(pending);
+  await ui.settle(); assert.equal(ui.child, null); assert.match(ui.text, /از حساب خارج شدی/); ui.unmount();
+});
+
+test("passkey security action preserves the draft across curtains and uses existing exact expiry", async () => {
+  const ui = harness({ mode: async () => "passkey" }); await ui.start();
+  const initial = ui.child; initial.draft = "synthetic pending purchase"; assert.equal(ui.passkey.authenticated, true);
+  ui.fire("offline"); assert.equal(ui.child, initial); assert.equal(ui.child.hidden, true); assert.equal(ui.passkey.disabled, true);
+  ui.poll(); await ui.settle(); assert.equal(ui.child, initial); assert.equal(initial.draft, "synthetic pending purchase");
+  ui.advance(30_000); assert.equal(ui.child, null); assert.equal(ui.passkey.authenticated, undefined); ui.unmount();
+});
+
+test("passkey session confirmation completing after unmount cannot publish state", async () => {
+  const confirmation = deferred();
+  const ui = harness({ mode: async () => "passkey", session: call => call === 1 ? Promise.resolve(null) : confirmation.promise });
+  await ui.start(); const pending = ui.passkey.onAuthenticated(ui.passkey.onBegin());
+  ui.unmount(); confirmation.resolve(at + 30_000); await assert.rejects(pending); await ui.settle();
+  assert.equal(ui.child, null); assert.equal(ui.lateStateWrites, 0);
 });
 
 test("local entry uses the unchanged local workspace without owner polling or auth controls", async () => {

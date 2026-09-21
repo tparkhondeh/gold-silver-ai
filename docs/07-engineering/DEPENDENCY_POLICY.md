@@ -51,6 +51,12 @@ maintenance/official-source checks, signed-provider tests and fresh audit eviden
 are recorded in the [September 17 identity review](../10-project-state/PRIVATE_IDENTITY_REVIEW_2026-09-17.md).
 The inactive adapter is not authority to create/store credentials or deploy login.
 
+The owner-authorized Google-independent alternative uses pinned MIT-licensed
+SimpleWebAuthn, with the technical review and identity boundaries in
+[ADR0013](../08-decisions/ADR/0013-owner-passkey-private-domain.md).
+Current dependency maintenance/security evidence is linked from CURRENT_STATE;
+Google credential creation is not a prerequisite for the passkey route.
+
 The Phase 2 laboratory uses the Python 3.12 standard library for contracts and every
 financial calculation. GitHub CI uses the official MIT-licensed
 `actions/setup-python@v7`, reviewed on 2026-09-01. Parquet transport now uses exactly

@@ -1,0 +1,94 @@
+# Private passkey delivery — 2026-09-21
+
+## Authority and preservation
+
+The owner made Google optional and authorized a secure independent implementation
+and deployment of this project only. Actual owner access and sensitive transfers
+remain separate. Working branch: `codex/phase-2-decision-engine`, initial clean
+SHA `5b95ba0ae828213a57283bca44a42aaba1f10c62`. Verified pre-edit Git bundle:
+`.cache/checkpoints/passkey-private-release-20260921/repository.bundle`.
+No main change, local portfolio migration, market history/call, Google retry,
+paid service or unrelated server modification is part of this delivery.
+
+## Implemented
+
+- [ADR0013](../08-decisions/ADR/0013-owner-passkey-private-domain.md): owner-bound
+  WebAuthn/passkey, exact RP/origin and required presence/user verification, no
+  first-visitor enrollment or fallback. A real bootstrap grant is a separate
+  explicitly approved operator action. Additional keys require a fresh session.
+- Four new forced-RLS auth tables, migration0014, durable admission limits,
+  atomic one-use ceremonies and owner/session/counter checks. Admin reset never
+  deletes the portfolio. Backups cannot resurrect credentials/grants/sessions.
+- Existing private purchase/Excel/repository flow reused. Server authorization
+  decides access; browser assertions do not unlock the portfolio by themselves.
+- Fresh-only dedicated Linux database preparation, least-privilege runtime,
+  fixed protected configuration and private supervision/verified-backup tooling.
+  Tool implementation is not proof these operations ran successfully.
+
+## Actual evidence so far
+
+| Check | Result | Limit |
+|---|---|---|
+| Actual PostgreSQL integration | 37/37 pass after fixture corrections | Disposable integration DB, not owner device/server acceptance |
+| Signed auth protocol | 32 focused tests pass, including14 passkey cryptographic cases | Synthetic authenticators, no actual owner key |
+| UI regressions | 26 focused tests pass | Does not prove physical authenticator compatibility |
+| Private built UI smoke | Google/passkey modes serve shell,8assets and blank XLSX; private/legacy routes denied | Controlled gates, not real login |
+| Browser127.0.0.1:4177 | Persian shell, login-service failure, invalid synthetic grant, failed enrollment, collapse/reload tested; portfolio remains concealed | Failure-only isolated harness; no owner credential/database/provider access |
+| Dependencies | Full graph:0critical/0high/4moderate in unused drizzle-kit/esbuild tooling chain | Not a blanket security certification; production tools never served |
+
+Locked maintenance updates include Cloudflare Vite plugin1.57.0, Wrangler4.136.0
+and compatible patched Browserslist/baseline/fflate transitives. npm production
+audit reports0. No financial calculation dependency was added. First full build
+and coverage regression passed617tests (96.39%lines/90.75%branches/92.37%functions);
+final expanded regression passed634tests
+(96.44%lines/90.90%branches/92.50%functions). Lint and TypeScript pass; after the
+last cleanup-order hardening, all17 affected backup tests passed again.
+
+Three specialists actually used: architecture/QA (protocol and independent ops
+review), security/storage (durable store, backup/restore security), finance/data
+(UI integration and fixed server preparation). Sensitive changes were reviewed
+by a different agent. Independent review found and corrected the restore-DB HBA
+gap, retained-dump integrity, recurring backup and restart-log findings. Focused
+verification covers retained artifacts12, executed producer5 and supervision10
+tests. Independent security/architecture cross-review found no remaining blocker
+in these changes. Real-server execution remains distinct from these tests.
+
+Final exact-SHA CI and server activation evidence are still being collected;
+earlier successful CI is not evidence for this change.
+
+## Actual server state
+
+Fresh SSH metadata showed nonroot account wealthos_dev, a writable project-only
+document root, existing proxy to127.0.0.1:3012 and no project backend. Public HTTPS
+returned503. Unrelated port5432 was not reused. No sudo/Docker privilege was added.
+crond is active; existing account crontab is nonempty and must be preserved.
+
+Reviewed PostgreSQL17.11 official source, SHA256
+`5367f6fb2ec97efe1eb2e0c7926bb33438e51b0bd3a9733b88498056a7dc9a7e`,
+was compiled into `/home/wealthos_dev/.goldsilver-service/tools/postgresql-17.11`.
+Fresh binary checks verified postgres/pg_dump/pg_restore17.11 and no15432listener.
+The command transport appended a trailing CR after successful build and returned1;
+the completed installation was verified separately, not rerun/overwritten.
+Sources/build/log are retained privately. About10GiB free remained; preparation
+and backup require at least8GiB free. No broad cleanup is authorized.
+
+As of this checkpoint draft: no project DB, hosted account, new service/crontab,
+proxy edit or deployed SHA is claimed. The tested local scripts are not deployment.
+
+## Owner gates and remaining acceptance
+
+One concise approval was requested for creating one five-minute bootstrap grant
+and transferring it only to
+`C:\Users\pc\.goldsilver-private\passkey-owner-login\bootstrap-grant.txt`.
+No response/grant/transfer is recorded yet. Recheck destination protection before
+delivery; never display the code in tools/chat/screenshots/URLs/logs. The owner
+must perform actual device-unlock/passkey creation. Do not automate that handoff.
+
+Hosted market configuration remains `missing_key`; no provider key or local
+portfolio has been transferred. Missing prices/analytical inputs stay explicit;
+no synthetic factors enter real analysis. Financial-use lock remains on.
+
+Actual owner login, independent Chrome/Edge/Firefox/mobile, cross-device recovery,
+host reboot, off-host disaster recovery and final owner acceptance remain unproven.
+Continue only useful permitted work via the linked operations runbook. Do not
+claim background work, full project completion or financial validation.
