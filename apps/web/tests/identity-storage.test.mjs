@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { execFileSync } from "node:child_process";
+import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { identityStorageBooleanFields, identityStorageReport } from "../scripts/identity-storage-policy.ts";
 import { runIdentityStoragePreflight } from "../scripts/identity-storage.mjs";
@@ -75,15 +76,25 @@ test("missing directory can be prepared only below safe parents; existing unsafe
   assert.equal(identityStorageReport({ ...safe(), privateDirectorySafe: false }).canPrepare, false);
 });
 
-test("check uses only the approved fixed private path and metadata, never the old workspace cache", async () => {
+test("check uses only the newly approved fixed private path and metadata, never either prior destination", async () => {
   const h = harness();
   const result = await runIdentityStoragePreflight(["--check"], h.dependencies);
   assert.equal(result.readyForDirectSaveAs, true);
   assert.equal(h.calls.length, 1);
   assert.deepEqual(h.calls.map(call => call.program), ["powershell.exe"]);
   assert.equal(h.calls.at(-1).args.at(-1), "Check");
-  assert.deepEqual(h.inspections, [String.raw`C:\Users\pc\.asha-private\google-owner-login\credentials.json`, String.raw`C:\Users\pc\.asha-private\google-owner-login\save-as-probe.txt`]);
+  assert.deepEqual(h.inspections, [String.raw`C:\Users\pc\.goldsilver-private\google-owner-login\credentials.json`, String.raw`C:\Users\pc\.goldsilver-private\google-owner-login\save-as-probe.txt`]);
   assert.ok(h.calls.every(call => call.options.stdio === "pipe" && call.options.windowsHide && call.options.timeout === 15000));
+});
+
+test("Windows helper pins the same new parent and contains no old-path or environment fallback", () => {
+  // Read code only. Never invoke the checker or inspect any private destination.
+  const source = readFileSync(new URL("../scripts/identity-storage-windows.ps1", import.meta.url), "utf8");
+  assert.match(source, /^\s*\$identityDirectory = 'C:\\Users\\pc\\\.goldsilver-private'\r?$/m);
+  assert.equal([...source.matchAll(/^\s*\$identityDirectory\s*=/gm)].length, 1);
+  assert.match(source, /^\s*\$privateDirectory = Join-Path \$identityDirectory 'google-owner-login'\r?$/m);
+  assert.equal([...source.matchAll(/^\s*\$privateDirectory\s*=/gm)].length, 1);
+  for (const forbidden of [".asha-private", ".cache", "$env:", "GetEnvironmentVariable"]) assert.equal(source.includes(forbidden), false);
 });
 
 test("invalid options, arbitrary paths and unsupported platforms do not invoke any I/O", async () => {
@@ -94,6 +105,21 @@ test("invalid options, arbitrary paths and unsupported platforms do not invoke a
   const h = harness();
   assert.equal((await runIdentityStoragePreflight(["--prepare"], { ...h.dependencies, platform: "linux" })).status, "blocked");
   assert.equal(h.calls.length, 0);
+});
+
+test("old and new paths cannot be supplied as CLI overrides to check or prepare", async () => {
+  const destinations = [
+    String.raw`C:\Users\pc\.asha-private\google-owner-login`,
+    String.raw`C:\Users\pc\Desktop\project\gold silver\.cache\identity\google-owner-login`,
+    String.raw`C:\Users\pc\.goldsilver-private\google-owner-login`,
+  ];
+  for (const destination of destinations) {
+    for (const args of [["--check", destination], ["--prepare", "--path", destination], [`--prepare=${destination}`]]) {
+      const h = harness();
+      assert.equal((await runIdentityStoragePreflight(args, h.dependencies)).status, "blocked");
+      assert.equal(h.calls.length, 0); assert.equal(h.inspections.length, 0);
+    }
+  }
 });
 
 test("prepare rechecks safe missing directories and returns the verified creation result", async () => {
@@ -216,7 +242,7 @@ $checks=New-Object 'System.Collections.Generic.List[bool]'
 $fixtureAcl.OwnerSid=$installerSid
 $checks.Add((Test-AncestorMutation 'C:\\'))
 $checks.Add((-not (Test-AncestorMutation 'C:\\Users\\pc')))
-$checks.Add((-not (Test-AncestorMutation 'C:\\Users\\pc\\.asha-private')))
+$checks.Add((-not (Test-AncestorMutation 'C:\\Users\\pc\\.goldsilver-private')))
 $fixtureAcl.OwnerSid='S-1-5-21-1-2-3-1002'
 $checks.Add((-not (Test-AncestorMutation 'C:\\')))
 $fixtureAcl.OwnerSid=$installerSid
@@ -227,6 +253,11 @@ $fixtureAcl.Rules=@((New-FixtureRule $installerSid))
 $checks.Add((-not (Test-AncestorMutation 'C:\\Users\\pc')))
 $fixtureAcl.Rules=@((New-FixtureRule $currentSid),(New-FixtureRule $systemSid))
 $checks.Add((Test-PrivateAcl 'C:\\synthetic-private' $true))
+$readOnlyRule=New-FixtureRule 'S-1-5-21-1-2-3-1002'
+$readOnlyRule.FileSystemRights=[Security.AccessControl.FileSystemRights]'ReadAndExecute,Synchronize'
+$fixtureAcl.Rules+=@($readOnlyRule)
+$checks.Add((-not (Test-PrivateAcl 'C:\\synthetic-private' $true)))
+$fixtureAcl.Rules=@((New-FixtureRule $currentSid),(New-FixtureRule $systemSid))
 $fixtureAcl.OwnerSid=$installerSid
 $checks.Add((-not (Test-PrivateAcl 'C:\\synthetic-private' $true)))
 $fixtureAcl.OwnerSid=$currentSid
@@ -238,5 +269,5 @@ $checks.Add((-not (Test-PrivateAcl 'C:\\synthetic-private' $true)))
 $checks.ToArray()|ConvertTo-Json -Compress
 `;
   const result = execFileSync("powershell.exe", ["-NoProfile", "-NonInteractive", "-Command", command], { windowsHide: true, stdio: "pipe", timeout: 15_000, maxBuffer: 16_384 });
-  assert.deepEqual(JSON.parse(result.toString("utf8")), Array(10).fill(true));
+  assert.deepEqual(JSON.parse(result.toString("utf8")), Array(11).fill(true));
 });

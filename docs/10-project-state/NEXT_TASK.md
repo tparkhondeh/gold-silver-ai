@@ -12,13 +12,13 @@ The local implementation is not domain deployment or owner acceptance.
 
 Do not rebuild the implemented durable identity store, authorized repository,
 private browser shell, production entry or external-folder preparation. The
-external private folder was prepared, but the September 21 parent-permission
-recheck now blocks it; the expected harmless file is absent. Follow the
-[new checkpoint](PRIVATE_DOMAIN_READINESS_2026-09-20.md#september-21-follow-up--supersedes-the-earlier-destination-readiness).
-Do not weaken the checker or change shared parent permissions. Obtain permission
-for the proposed separate destination before any fixed-path helper update or
-directory creation, then recheck and obtain actual harmless direct Save As proof.
-Replacement-client creation still needs action-time consent. No real key exists.
+former private destination failed the September 21 shared-parent permission check.
+The owner approved the new project-only destination, and its preparation and
+metadata recheck are now complete. Follow the
+[active checkpoint](PRIVATE_CREDENTIAL_DESTINATION_2026-09-21.md); do not repeat
+folder permission requests/creation or modify old ACLs. Obtain actual harmless
+direct Save As proof at the new path and recheck its metadata before requesting
+replacement-client action-time consent. No real key exists.
 
 1. Complete the credential handoff and verified stable Google owner-subject binding;
    no first-login-wins, email-only binding, secret-bearing UI dumps or reuse of the

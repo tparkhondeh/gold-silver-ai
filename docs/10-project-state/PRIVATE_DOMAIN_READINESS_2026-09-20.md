@@ -106,6 +106,10 @@ Observed on September 20, approximately 14:12 Asia/Tehran:
 
 ### September 21 follow-up — supersedes the earlier destination readiness
 
+This subsection records the initial failed recheck. The owner subsequently
+approved and completed preparation of an isolated destination; use the
+[new active checkpoint](PRIVATE_CREDENTIAL_DESTINATION_2026-09-21.md) for continuation.
+
 The owner reported completing the harmless Save As. A fresh metadata-only check
 found neither `save-as-probe.txt` nor `credentials.json` at the exact destination.
 Do not infer where the file was saved or that the owner merely opened the link.
@@ -125,8 +129,8 @@ grant under existing authority: it may serve another application and inherited
 permissions on other children may be affected. Proposed non-mutating alternative:
 request permission for a NEW project-only destination
 `C:\Users\pc\.goldsilver-private\google-owner-login`, with a reviewed fixed-path
-helper update and fresh ancestor/creation checks. This path is not yet approved,
-created or used. After that gate, repeat harmless direct Save As; new-client
+helper update and fresh ancestor/creation checks. At the initial recheck it had
+not yet been approved, created or used. After that gate, repeat harmless direct Save As; new-client
 creation and key transfer still require their separate approvals.
 
 ### September 20 evidence (historical)

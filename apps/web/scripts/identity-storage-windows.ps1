@@ -10,7 +10,7 @@ try {
     Import-Module (Join-Path $PSHOME 'Modules\Microsoft.PowerShell.Security\Microsoft.PowerShell.Security.psd1') -ErrorAction Stop
     $repository = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..\..\..'))
     $profileDirectory = 'C:\Users\pc'
-    $identityDirectory = 'C:\Users\pc\.asha-private'
+    $identityDirectory = 'C:\Users\pc\.goldsilver-private'
     $privateDirectory = Join-Path $identityDirectory 'google-owner-login'
     $credentialFile = Join-Path $privateDirectory 'credentials.json'
     $probeFile = Join-Path $privateDirectory 'save-as-probe.txt'
@@ -151,7 +151,7 @@ public static class AshaIdentityStorageNative {
         $facts.directoryContentsExpected -and $facts.probeMetadataSafe -and -not $facts.credentialPresent -and (-not $facts.privateDirectoryPresent -or $facts.privateDirectorySafe)) {
         $created = $false
         # Never create/alter the existing profile or any ancestor, only these two
-        # exact private directories. No old workspace cache path is accessed.
+        # exact private directories. No prior private or workspace cache path is accessed.
         if (-not (Test-Path -LiteralPath $profileDirectory -PathType Container)) { throw 'Private parent unavailable' }
         foreach ($target in @($identityDirectory, $privateDirectory)) {
             $before = Get-Facts

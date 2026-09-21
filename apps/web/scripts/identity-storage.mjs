@@ -8,7 +8,7 @@ import { identityStorageBooleanFields, identityStorageReport } from "./identity-
 const checker = fileURLToPath(new URL("./identity-storage-windows.ps1", import.meta.url));
 // This exact outside-workspace destination was owner-approved. Do not derive it
 // from USERPROFILE/HOME or allow path arguments; moving it requires a new review.
-const privateDirectory = String.raw`C:\Users\pc\.asha-private\google-owner-login`;
+const privateDirectory = String.raw`C:\Users\pc\.goldsilver-private\google-owner-login`;
 
 export async function runIdentityStoragePreflight(args, dependencies = {}) {
   const execute = dependencies.execute ?? execFileSync;

@@ -2,21 +2,22 @@
 
 **Source of truth for:** where the project stands right now.
 
-_Last reviewed: 2026-09-21, Asia/Tehran (credential destination recheck blocked; no key created)_
+_Last reviewed: 2026-09-21, Asia/Tehran (new isolated credential destination prepared; browser proof pending)_
 
 ## Latest private-identity checkpoint
 
 Durable owner sessions, server-authorized portfolio storage, the private browser
 shell and a fail-closed Node production entry are implemented and independently
 reviewed. Existing purchase/Excel/math contracts are reused. The approved external
-credential directories were created safely on September 20. Today's recheck found
-an additional parent read permission and no expected harmless probe file; the
-strict storage gate is now blocked. Protected leaf access remains restricted.
-See the [fresh follow-up and required permission](PRIVATE_DOMAIN_READINESS_2026-09-20.md#september-21-follow-up--supersedes-the-earlier-destination-readiness).
-No secret was created or transferred; direct Save As remains unverified.
+credential destination failed today's shared-parent recheck. The owner explicitly
+approved a new isolated destination; the fixed-path helper was independently
+reviewed, the new directories created safely and metadata verification passed.
+Old paths/permissions remain unchanged. Current evidence and active handoff:
+[September 21 isolated destination](PRIVATE_CREDENTIAL_DESTINATION_2026-09-21.md).
+No secret was created or transferred; actual direct Save As remains unverified.
 
-Real Google login and domain access are **not activated**. Fresh domain HTTPS is
-503; server database provisioning, persistent supervision, actual key/owner binding,
+Real Google login and domain access are **not activated**. The latest domain check
+(September 20) returned 503; server database provisioning, persistent supervision, actual key/owner binding,
 server restore and independent-device acceptance remain gates. Existing local data,
 main and server were not changed. Code readiness is not deployed readiness.
 The [September 20 checkpoint](PRIVATE_DOMAIN_READINESS_2026-09-20.md) owns exact

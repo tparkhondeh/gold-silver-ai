@@ -7,9 +7,10 @@ restored or reused. No replacement credential is supplied by this procedure.
 
 ## Fixed destination and commands
 
-On 2026-09-20 the owner explicitly approved creating only the private destination
-`C:\Users\pc\.asha-private\google-owner-login`. The helper now targets exactly
-`C:\Users\pc\.asha-private\google-owner-login\credentials.json`, outside the
+On 2026-09-21 the owner explicitly approved a NEW isolated private destination
+`C:\Users\pc\.goldsilver-private\google-owner-login`, leaving the previous shared
+parent and protected leaf untouched. The helper now targets exactly
+`C:\Users\pc\.goldsilver-private\google-owner-login\credentials.json`, outside the
 workspace. It does not derive a destination from an environment variable or
 accept a caller-selected path. From `apps/web`:
 
@@ -19,7 +20,7 @@ node --experimental-strip-types scripts/identity-storage.mjs --prepare
 ```
 
 `--check` reads filesystem/permission metadata only. `--prepare` may create
-missing `.asha-private` and `google-owner-login` directories **only below the
+missing `.goldsilver-private` and `google-owner-login` directories **only below the
 verified existing `C:\Users\pc` profile**, with owner+SYSTEM permissions attached at the
 instant of creation. Neither command reads/imports/writes credential contents,
 changes an existing ACL, repairs an unsafe path, scans Downloads, starts a server,
@@ -57,6 +58,11 @@ of public internet exposure, but it prevents certifying the complete fixed path.
 That old path is not repaired, reused, deleted, or accessed by the new helper;
 the authorized scope does not include changing broad workspace ACLs.
 
+The intermediate `.asha-private\google-owner-login` destination is also preserved
+and is no longer accessed by the helper. Its September 21 shared-parent permission
+failure did not establish exposure of the separately protected leaf. The owner
+approved isolation at the new fixed destination, not removal of shared grants.
+
 Owner approval now permits the exact outside-workspace path, but creation must
 follow the reviewed implementation and a fresh successful preflight. `canPrepare`
 means that the missing private directories can be created; it is not proof they
@@ -69,10 +75,9 @@ guarantee or proof of protection from an already compromised owner session.
 
 ## Owner-operated direct Save As
 
-September 20 execution: reviewed preparation created the approved directories and
-a subsequent metadata check passed. No credential or harmless probe file existed
-at that check. Actual browser direct Save As is still pending; metadata readiness
-does not certify it. See the [current checkpoint](../10-project-state/PRIVATE_DOMAIN_READINESS_2026-09-20.md#credential-gate-precise-current-state).
+Current execution evidence and outstanding direct-Save-As proof are recorded in
+the [September 21 destination checkpoint](../10-project-state/PRIVATE_CREDENTIAL_DESTINATION_2026-09-21.md).
+Do not substitute an earlier path's metadata check for the active destination.
 
 Only after a reviewed destination reports `ready_for_direct_save_as`:
 
