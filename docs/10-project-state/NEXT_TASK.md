@@ -16,9 +16,11 @@ former private destination failed the September 21 shared-parent permission chec
 The owner approved the new project-only destination, and its preparation and
 metadata recheck are now complete. Follow the
 [active checkpoint](PRIVATE_CREDENTIAL_DESTINATION_2026-09-21.md); do not repeat
-folder permission requests/creation or modify old ACLs. Obtain actual harmless
-direct Save As proof at the new path and recheck its metadata before requesting
-replacement-client action-time consent. No real key exists.
+folder permission requests/creation or modify old ACLs. The owner has now confirmed
+direct Save As and a fresh check found the expected harmless file with safe metadata.
+Do not repeat that completed handoff. Replacement-client/local-retention action-time
+consent has been requested and remains pending; no real key exists. Recheck private
+destination metadata before credential handling, without reading file contents.
 
 1. Complete the credential handoff and verified stable Google owner-subject binding;
    no first-login-wins, email-only binding, secret-bearing UI dumps or reuse of the

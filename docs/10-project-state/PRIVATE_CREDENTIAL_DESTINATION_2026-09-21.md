@@ -53,18 +53,30 @@ Exact final delivery-SHA GitHub checks are required separately from baseline CI.
 
 ## Remaining handoff
 
-Metadata success is NOT proof of actual browser Save As. Ask the owner to right-click
-the harmless attachment in Chrome/Edge and use **Save link as** directly to:
+### Direct Save As confirmed by owner and checked locally
+
+After the repeated instruction to save directly, the owner reported completion.
+A fresh fixed-path `--check` confirmed `probePresent`, `probeMetadataSafe` and
+`probeSingleLink` all true; all parent/leaf/ancestor/Git checks also passed.
+`credentialPresent` remained false and the checker returned
+`ready_for_direct_save_as`. The existing test file was not opened or rewritten.
+
+This closes the harmless direct-save handoff through the owner's confirmation
+plus filesystem metadata evidence, NOT through an agent-observed Save As dialog
+or a claim that the helper can reconstruct the download route. An attempted
+Windows UI action earlier stopped because the tool could not confidently resolve
+the browser URL; no file was saved by that attempted automation. No Downloads,
+unrelated files, credential contents or secret-bearing UI were inspected.
+
+The exact successfully checked harmless path is:
 
 `C:\Users\pc\.goldsilver-private\google-owner-login\save-as-probe.txt`
 
-The owner's earlier completion report did not produce the expected file in the
-old location. Do not guess where it went or inspect unrelated downloads. New-path
-browser proof remains pending. After explicit direct-save confirmation, recheck
-the fixed destination's metadata; do not read the probe contents or claim the
-helper verifies the browser's prior download route.
-
-Only after successful handoff request action-time replacement-client consent.
+Do not ask the owner to repeat this completed harmless test without new failure
+evidence. Before any real credential handling, recheck the destination metadata.
+Action-time consent for ONE replacement Google login client and local-only
+credential retention has now been requested; no approval or creation is inferred
+from the harmless-file completion message.
 Its eventual local filename is `credentials.json`; no secret-bearing UI snapshots,
 screenshots, logs or chat. Server key transfer and existing-portfolio migration
 remain separately gated. Keep the exposed deleted client deleted. See the

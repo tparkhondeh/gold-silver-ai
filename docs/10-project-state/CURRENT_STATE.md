@@ -2,7 +2,7 @@
 
 **Source of truth for:** where the project stands right now.
 
-_Last reviewed: 2026-09-21, Asia/Tehran (new isolated credential destination prepared; browser proof pending)_
+_Last reviewed: 2026-09-21, Asia/Tehran (owner direct-save confirmation and safe probe verified; new-client consent pending)_
 
 ## Latest private-identity checkpoint
 
@@ -14,7 +14,9 @@ approved a new isolated destination; the fixed-path helper was independently
 reviewed, the new directories created safely and metadata verification passed.
 Old paths/permissions remain unchanged. Current evidence and active handoff:
 [September 21 isolated destination](PRIVATE_CREDENTIAL_DESTINATION_2026-09-21.md).
-No secret was created or transferred; actual direct Save As remains unverified.
+The owner confirmed direct Save As and the harmless file now passes metadata,
+single-link and directory checks. No agent-observed dialog is claimed. No secret
+was created or transferred; replacement-client/local-retention consent is pending.
 
 Real Google login and domain access are **not activated**. The latest domain check
 (September 20) returned 503; server database provisioning, persistent supervision, actual key/owner binding,
