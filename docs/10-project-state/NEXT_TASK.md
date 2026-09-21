@@ -11,16 +11,36 @@ the completed passkey/purchase/Excel implementation. Project-only deployment is
 authorized; actual owner enrollment/grant handoff and key/private-portfolio
 transfer remain distinct gates. The coordinator has already asked the owner for
 one bootstrap grant and its exact protected local delivery; do not repeat that
-question without changed scope. Continue independent tests/server preparation.
+question without changed scope.
 
-Before activation: resolve independent operations findings, finish full regression,
-commit/push the working branch, verify all three jobs for that SHA, build the clean
-exact server release, provision only the new project database, verify retained
-backup/restore and install project-only supervision. Never reuse unknown port5432.
-Then verify public HTTPS/private denials and actual deployed SHA. Genuine owner
-passkey creation needs the owner's device confirmation; a synthetic ceremony is
-not that acceptance. Hosted market access is unavailable until separate provider
-configuration/transfer authority; no local key/portfolio copying is implicit.
+The independent deployment work is complete for code SHA
+`51e0791b94416f8c85c0e6d01ab4c1ee2013ffed`: all three jobs, clean Linux build,
+dedicated PostgreSQL,14migrations, verified backup/separate restore, project
+supervision/upgrade and public HTTPS checks passed. Do not reprovision or rerun
+the one-time empty-state resume/upgrade attempt. Public cache-header loss was
+resolved using only two new exact-host page rules; preserve these and unrelated
+rules. Detailed evidence is in the active checkpoint.
+
+1. On the pending explicit grant/delivery approval, verify the exact private local
+   destination, create one five-minute grant and deliver without displaying it.
+   Hand actual passkey creation to the owner; no synthetic credential as a shortcut.
+2. Follow the short [owner acceptance guide](../09-operations/PRIVATE_OWNER_ACCEPTANCE.md):
+   genuine login, nonprivate sample purchase/Excel/save/reload/logout and second
+   device. Keep existing local records untouched. Report anything untested.
+3. Hosted prices are a distinct gate: protected provider destination and transfer
+   authority, plus audited single-account quota cutover preserving existing31-day
+   reservations/cooldown, narrow DB grants and Linux latest-only cache. Reuse the
+   prepared optional adapter seam; a key alone is insufficient. Never start a
+   fresh quota ledger as if prior consumption did not exist.
+4. Remaining operational acceptance: off-host recovery/approved retention-capacity
+   plan, real scheduled daily backup observation and coordinated host reboot only
+   when separately safe for this shared server. Approximately8.2GiB free remains,
+   close to the8GiB backup safety reserve; do not accumulate another full dependency
+   release or delete old data/releases without a scoped reviewed plan.
+
+The service is on the domain, but the owner's private session and hosted market
+use are not activated. Do not call the whole project complete or repeatedly retry
+Google while waiting for these specific gates.
 
 ### Prior Google-only next steps (historical, superseded)
 

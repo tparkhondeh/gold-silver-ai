@@ -58,7 +58,7 @@ Implementation `a609337a5e87d232176e29a3fb96761a3f587053` was pushed and
 passed all three jobs: quality/build/audit, real PostgreSQL and Python laboratory.
 Later follow-up commits require their own exact-SHA check; this is not activation.
 
-## Actual server state
+## Deployment chronology (earlier observations, then corrective release below)
 
 Fresh SSH metadata showed nonroot account wealthos_dev, a writable project-only
 document root, existing proxy to127.0.0.1:3012 and no project backend. Public HTTPS
@@ -102,7 +102,10 @@ loopback transport, Host `127.0.0.1:3012`, two identical canonical public hosts 
 `X-Forwarded-Host`, and `X-Forwarded-Proto: https`. The probe exited and changed no
 proxy files or other service. The gateway's original direct-Host-only contract
 therefore needs a narrowly configured adapter before this deployment can work.
-This is Apache/nginx behind the public edge, not a presumed LiteSpeed setup.
+The observed process inventory included Apache/nginx names. A later direct-origin
+valid-TLS response identifies itself as LiteSpeed; that response does not establish
+the complete host topology. The adapter depends on observed headers, not a server
+brand assumption.
 The explicit adapter is now implemented with18 passing adjacent/proxy tests:
 one/two identical canonical hosts, duplicate/malformed/hostile chains, exact HTTPS,
 loopback-only transport, stripped identity/IP forwarding and unchanged session/
@@ -151,6 +154,68 @@ immutable authorization proof, exact response validation before/after serializat
 so this does not activate hosted prices, transfer a key or consume quota. The
 operations runbook records the remaining quota-authority/cache/grant requirements.
 
+## Verified deployed corrective release
+
+Code `51e0791b94416f8c85c0e6d01ab4c1ee2013ffed` was pushed; all three exact-SHA
+jobs passed in [run35625349395](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/35625349395)
+by16:25:23UTC. Its separate clean Linux checkout and locked production build
+passed. Before upgrade, a new actual backup/separate restore was verified for
+this SHA; the populated local portfolio was never copied.
+
+The reviewed installer replaced only the exact00f5a20 project cron block and
+backed up the prior full crontab to
+`/home/wealthos_dev/.asha-private/goldsilver/crontab-before-1790007975694.txt`.
+The existing lock inode was preserved. Exact prior supervisor PID130872/UID1056/
+argv and the new schedule were checked before a scoped SIGTERM. PostgreSQL was
+not stopped. The minute job started the new supervisor169775/runtime169832 at
+16:28:01UTC after the administrative command exited. A subsequent external HTTPS
+health check returned200 and the exact51e0791 SHA; root and all eight referenced
+JS/CSS assets returned200. This is actual deployment, not an inferred origin match.
+
+### Public-edge cache correction
+
+External acceptance found `Cache-Control` removed by the public MizbanCloud path.
+The same `/auth/session`401 preserved `no-store` at loopback and at the direct
+origin using the domain's verified TLS name (`curl --resolve`, no insecure flag).
+Thus the evidence localized the change downstream of the project origin. No owner
+credentials or personal portfolio were present; this was not evidence of leakage.
+`Pragma` and a vendor BYPASS marker alone were not accepted as a replacement for
+the missing directive; see [RFC9111§5.4](https://www.rfc-editor.org/rfc/rfc9111.html#section-5.4).
+
+The already signed-in official hosting portal was available. Only a NEW exact-host
+page path `goldsilver.wealthos.ir/**`, priority15, was added, with two active rules:
+Cache Settings Off (ErrorCacheOff, Cookie/Device/Full/AcceptVary/OriginControlOff)
+and Browser Caching Off. The optional Origin Control-on setting was rejected as
+unsupported by the current plan; it was turned off before successful save. No
+upgrade/payment/terms/DNS/shared-default/security change occurred. The two prior
+personalagent-only paths remained untouched. Scoped before/after records are in
+ignored `.cache/checkpoints/passkey-private-release-20260921/cdn-project-rule-*.json`.
+Both new rules expose reversible enable switches; do not delete old paths or
+disable protection during private use as a casual rollback.
+
+Repeated ordinary requests (no cache-busting), with no cookie and a deliberately
+invalid synthetic cookie, verified root/access/health200, session/portfolio/export401,
+`Cache-Control:no-store`, BYPASS and no Age. The blank Excel template and eight
+assets retain `no-store,must-revalidate,no-cache,max-age=0`. Independent security
+verification reproduced the final public results. Operator/old-market routes404
+and an invalid-Origin logout403 remained enforced. The public unauthenticated
+market POST was403; it made no provider call. Authenticated200 behavior remains
+pending genuine owner enrollment and is not inferred from these failures.
+
+Browser acceptance on the actual HTTPS domain checked the Persian passkey shell,
+collapsed/expanded enrollment, rejection of an explicitly invalid synthetic grant,
+login refusal before an owner key exists, reload and successful anonymous logout
+(the UI reports logout). No actual credential/device-unlock ceremony was automated.
+Only the in-app browser is available through the current browser tool; independent
+Chrome/Edge/Firefox/mobile and signed-in cross-device acceptance are untested.
+
+Disk reserve after the third immutable release was8,589,344KiB (about8.2GiB),
+near the8GiB backup guard. Existing releases/builds/data were preserved. Future
+full-release staging needs a reviewed capacity/retention plan; do not accumulate
+duplicates or automatically delete artifacts. Same-host backups are not off-host
+disaster recovery. Actual shared-host reboot/first scheduled daily backup remain
+unobserved. Later documentation-only commits do not change the running code SHA.
+
 ## Owner gates and remaining acceptance
 
 One concise approval was requested for creating one five-minute bootstrap grant
@@ -168,3 +233,9 @@ Actual owner login, independent Chrome/Edge/Firefox/mobile, cross-device recover
 host reboot, off-host disaster recovery and final owner acceptance remain unproven.
 Continue only useful permitted work via the linked operations runbook. Do not
 claim background work, full project completion or financial validation.
+
+The next useful step is the already-requested owner grant approval and actual
+device handoff, followed by the [short acceptance guide](../09-operations/PRIVATE_OWNER_ACCEPTANCE.md).
+The currently reachable domain is a protected login page, not a delivered usable
+owner session. Hosted prices additionally require approved provider configuration
+and the quota-authority work recorded above; enrollment alone will not enable them.

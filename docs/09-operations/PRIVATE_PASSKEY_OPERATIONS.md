@@ -23,6 +23,12 @@ These are scoped operator procedures, not permission to transfer owner data/keys
   protocol header. Canonical application Host is reconstructed only after these
   checks. Forwarded identity/IP/host are stripped; original browser Origin and
   session/CSRF checks remain mandatory. Direct canonical Host is still supported.
+- The existing public CDN has two project-only page rules on
+  `goldsilver.wealthos.ir/**`: Cache Settings Off and Browser Caching Off. They
+  preserve no-store from the application; no global/default/other-host rule was
+  changed. Recheck public headers after any CDN change. Origin Control is not
+  available in the current plan and is not required by this tested configuration.
+  Never upgrade the plan or ignore cache-control as a workaround.
 
 ## Preparation and activation
 
@@ -88,6 +94,10 @@ If every authenticator is lost, verified owner/admin approval is required before
 `reset-owner --confirmed-owner-recovery`. It revokes credentials/grants/challenges/
 sessions without deleting the portfolio, followed by a new deliberate enrollment.
 Restored backups likewise require reenrollment; never restore stale auth data.
+
+Use the [short Persian owner acceptance guide](PRIVATE_OWNER_ACCEPTANCE.md) for
+the actual browser/device handoff. Do not infer authenticated behavior from the
+already completed anonymous/public checks.
 
 ## Rollback and limitations
 

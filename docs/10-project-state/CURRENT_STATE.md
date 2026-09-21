@@ -2,7 +2,7 @@
 
 **Source of truth for:** where the project stands right now.
 
-_Last reviewed: 2026-09-21, Asia/Tehran (owner-authorized independent passkey delivery in progress)_
+_Last reviewed: 2026-09-21, Asia/Tehran (private domain deployed; owner activation pending)_
 
 ## Active private-domain delivery
 
@@ -20,13 +20,32 @@ is [September 21 passkey delivery](PRIVATE_PASSKEY_DELIVERY_2026-09-21.md).
 This record supersedes the older Google-only next steps below. Technical test
 success is not a completed owner login or independent-device acceptance.
 
+Actual hosted code: `51e0791b94416f8c85c0e6d01ab4c1ee2013ffed`, all three exact-SHA
+GitHub jobs passed. Public HTTPS root and eight assets return200; health reports
+that SHA, anonymous session/portfolio/export return401 and local operator routes
+remain404. Dedicated PostgreSQL15432,14migrations, real backup/separate restore,
+project-only supervision and verified release upgrade are installed. No dependency
+on a local launcher/SSH session remains for serving the login page.
+
+The public edge had stripped origin no-store. Two narrowly scoped existing-plan
+rules on `goldsilver.wealthos.ir/**` now disable edge/browser caching; external
+and independent checks confirm no-store and unchanged access denials. Other
+hosts, DNS, shared cache/security defaults and existing rules were not changed.
+
+Still NOT accepted: actual owner enrollment/login, authenticated save/reload/logout,
+second-device recovery, live hosted prices, actual host reboot and off-host disaster
+recovery. The hosted portfolio is empty and the market adapter remains disabled;
+no private portfolio/API key was transferred. Read the linked checkpoint and
+[short acceptance guide](../09-operations/PRIVATE_OWNER_ACCEPTANCE.md), not the
+historical statuses below. This is not yet a usable signed-in owner account.
+
 ## Historical Google-only checkpoint (superseded)
 
 Owner-directed workflow clarification is now recorded in [CLAUDE.md § 9](../../CLAUDE.md#9-autonomy-and-necessary-owner-approval).
 The earlier documentation-only clarification preserved approval gates and the
 AGENTS.md pointer. The later owner-authorized implementation is recorded above.
 
-## Latest private-identity checkpoint
+## Historical private-identity checkpoint (September20)
 
 Durable owner sessions, server-authorized portfolio storage, the private browser
 shell and a fail-closed Node production entry are implemented and independently
@@ -51,10 +70,11 @@ The [September 20 checkpoint](PRIVATE_DOMAIN_READINESS_2026-09-20.md) owns exact
 changes, 552 web/29 database tests, browser limits, security findings and handoff.
 Final-SHA GitHub results must be verified separately from earlier run evidence.
 
-## Latest unified personal-workspace checkpoint
+## Historical unified personal-workspace checkpoint (September17)
 
-The paragraphs below retain September 17 evidence. Current identity/runtime
-readiness is the September 20 checkpoint above, not the older deferred work list.
+The paragraphs below retain September17 evidence. Identity/runtime readiness was
+subsequently recorded in the September20 checkpoint; current status is the active
+September21 section above, not either historical deferred-work list.
 
 The public page now has one purchase/editor/Excel path backed by confirmed local
 PostgreSQL writes, automatic reads, exact per-lot/weighted Rial and USD basis,
