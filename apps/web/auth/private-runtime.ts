@@ -8,7 +8,7 @@ import { createPrivateApplication } from "./private-application.ts";
 import { createOwnerPasskeyGate } from "./passkey-identity.ts";
 import { PostgresPasskeyStore } from "./postgres-passkey-store.ts";
 
-type RuntimeInput = { binding: OwnerIdentityBinding; runner: TransactionRunner; release: string; publicUi: (request: Request) => Promise<Response> };
+type RuntimeInput = { binding: OwnerIdentityBinding; runner: TransactionRunner; release: string; publicUi: (request: Request) => Promise<Response>; market?: Parameters<typeof createPrivateApplication>[0]["market"] };
 
 /** Server-only composition; no env/credential loading, enrollment or local portfolio migration. */
 export function createPrivatePortfolioRuntime(input: RuntimeInput & { adapter: IdentityAdapter }) {
@@ -29,7 +29,7 @@ export function createPrivatePasskeyRuntime(input: RuntimeInput) {
 }
 
 function composePrivateRuntime(input: RuntimeInput, binding: OwnerIdentityBinding, gate: Parameters<typeof createPrivateApplication>[0]["gate"]) {
-  return createPrivateApplication({ origin: binding.origin, release: input.release, gate, publicUi: input.publicUi,
+  return createPrivateApplication({ origin: binding.origin, release: input.release, gate, publicUi: input.publicUi, market: input.market,
     async portfolio(request, proof) {
       const repository = new PostgresPortfolioRepository(createOwnerAuthorizedRunner(input.runner, proof, binding));
       const bound = createPrivatePortfolioHandlers({ origin: binding.origin, repository: {

@@ -18,8 +18,8 @@ These are scoped operator procedures, not permission to transfer owner data/keys
   The project HTTPS proxy must meet the gateway's explicitly reviewed transport
   contract; arbitrary forwarded identity, client IP or host is never accepted.
   Production explicitly enables `goldsilver-loopback-v1`: loopback peer,
-  transport Host exactly `127.0.0.1:3012`, one raw forwarded-host header with
-  one or two identical `goldsilver.wealthos.ir` entries, and one exact `https`
+  transport Host exactly `127.0.0.1:3012`, one or two raw forwarded-host fields
+  with at most two total identical `goldsilver.wealthos.ir` entries, and one exact `https`
   protocol header. Canonical application Host is reconstructed only after these
   checks. Forwarded identity/IP/host are stripped; original browser Origin and
   session/CSRF checks remain mandatory. Direct canonical Host is still supported.
@@ -52,6 +52,18 @@ These are scoped operator procedures, not permission to transfer owner data/keys
    existing crontab byte-for-byte outside this project's delimited additions.
    Project boot/minute supervision and daily verified backups are separate jobs;
    failures must not launch permissive local mode. Logs contain fixed labels only.
+   To replace an already installed release, additionally specify
+   `--replace-reviewed-release=<previous40hexSHA>`. The installer must recognize
+   exactly the previous generated project block, preserve all unrelated bytes and
+   validate the existing service lock without replacing or acquiring it. The old
+   release and crontab backup remain available. A protected exclusive old-SHA
+   upgrade marker prevents two targets replacing the same release concurrently;
+   an ambiguous attempt remains for manual inspection, never automatic eviction.
+   This operation changes the schedule, not the running process.
+   Stop only the positively identified
+   old project supervisor after the new schedule is verified; its child is stopped
+   by that supervisor and the minute job starts the reviewed replacement. Do not
+   signal PostgreSQL, another site's processes or an unverified PID.
 6. Check public HTTPS root/assets/template, exact release health, private401s,
    operator404s, allowed passkey protocol and unavailable provider state. Verify
    process restart/admin-disconnect. Do not reboot a shared host to prove this;
@@ -91,3 +103,12 @@ Backups retained on the same host are not off-host disaster recovery. No automat
 deletion/rotation is authorized; monitor8GiB reserve and arrange capacity/retention
 before it is exhausted. Provider configuration and portfolio import are separate
 gates; until approved, hosted prices remain unavailable instead of guessed.
+
+For hosted prices, key copying alone is insufficient. The authenticated runtime
+can accept a validated server-supplied market adapter, but production currently
+supplies none. Linux private latest-cache preparation, narrow quota/outcome table
+grants/readiness, protected provider configuration and one audited account-level
+quota authority are still required. Reuse existing service/cache/ledger code,
+never the local-only route or its development flags. Reconcile the existing
+31-day reservations/cooldown and disable the old acquisition authority before
+enabling another; a fresh hosted ledger or key rotation is not a quota reset.

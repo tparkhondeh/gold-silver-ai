@@ -108,6 +108,49 @@ one/two identical canonical hosts, duplicate/malformed/hostile chains, exact HTT
 loopback-only transport, stripped identity/IP forwarding and unchanged session/
 Origin enforcement. It does not change the shared proxy or accept arbitrary hosts.
 
+Follow-up release `00f5a20b36986fe5189f219486fba04c8cba2ee3` passed all three
+exact-SHA jobs in [run35622921802](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/35622921802).
+Its separate clean Linux checkout and locked private production build succeeded.
+The explicit empty-state continuation succeeded: dedicated15432 PostgreSQL,
+14migrations, runtime readiness and empty private tables were verified. Retained
+service configuration was reused; no owner grant or local portfolio was copied.
+The actual server backup command succeeded, restored a separate disposable copy,
+matched25persistent tables, excluded6auth datasets, verified retained dump SHA and
+removed only its own verification database. This first hosted backup contains an
+empty portfolio; seeded-data behavior is separately covered by integration tests.
+
+Project supervision was installed for this exact release after these gates.
+The pre-existing account crontab was preserved and privately backed up at
+`/home/wealthos_dev/.asha-private/goldsilver/crontab-before-1790006685434.txt`.
+Boot/minute recovery and daily03:17(server-local) verified backups are configured;
+the first scheduled daily run and actual shared-host reboot are not yet observed.
+No public proxy file, other site or previous release was changed.
+
+The first public acceptance returned400, not success: a follow-up harmless raw
+probe showed two separate canonical forwarded-host fields (Node's normalized
+property had joined them). The corrected representation keeps the same aggregate
+maximum of two matching hosts and rejects all conflicting/additional values;
+19focused tests and independent security review pass. It still requires the one
+exact HTTPS protocol and loopback peer; no session/Origin rule is relaxed.
+The scoped runtime interruption also verified real automatic recovery: original
+PID130944 was replaced, and fixed events show exits/start requests15seconds apart.
+This does not prove a host reboot or working owner login. The corrected release
+and external acceptance are still required before claiming domain availability.
+
+The next corrective batch also provides an exact prior-release supervision
+upgrade: preserve the live lock and unrelated cron bytes, retain a protected
+per-prior-SHA attempt marker and require the new release's verified backup before
+replacing its schedule. The running supervisor is not restarted by the installer.
+Independent review passed19 tests; the coordinator's combined gateway, application,
+market-composition and supervision run passed45 tests.
+
+An optional authenticated market-adapter composition seam is prepared in both
+runtime factories. Seven new tests and a separate security review cover guards,
+immutable authorization proof, exact response validation before/after serialization,
+64KiB output limits and logout/expiry suppression. Startup supplies no adapter,
+so this does not activate hosted prices, transfer a key or consume quota. The
+operations runbook records the remaining quota-authority/cache/grant requirements.
+
 ## Owner gates and remaining acceptance
 
 One concise approval was requested for creating one five-minute bootstrap grant

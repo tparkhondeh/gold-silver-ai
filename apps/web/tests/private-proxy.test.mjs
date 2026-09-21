@@ -43,19 +43,39 @@ test("explicit production contract accepts observed one/two-host loopback chain 
   }
 });
 
-test("proxy selection rejects duplicate raw headers, bad first/last hosts and longer or noncanonical chains", async t => {
+test("proxy selection rejects duplicate Host/proto, bad first/last hosts and longer or noncanonical chains", async t => {
   const f = await fixture(t);
   const badChains = ["evil.invalid", `evil.invalid, ${publicHost}`, `${publicHost}, evil.invalid`, `${publicHost}, ${publicHost}, ${publicHost}`,
     `${publicHost},`, `,${publicHost}`, "", `${publicHost}:443`, `user@${publicHost}`, `${publicHost}.`, publicHost.toUpperCase(), `https://${publicHost}`,
     `${publicHost};token=x`, `${publicHost}/`, `${publicHost},\t${publicHost}`, `${publicHost},   ${publicHost}`, "a".repeat(1024)];
   for (const chain of badChains) assert.equal((await f.call(forwarded(chain))).status, 400, chain);
   for (const headers of [
-    [...forwarded(), `Host: ${transportHost}`], [...forwarded(), `x-forwarded-host: ${publicHost}`], [...forwarded(), "x-forwarded-proto: https"],
+    [...forwarded(), `Host: ${transportHost}`], [...forwarded(), "x-forwarded-proto: https"],
     [`Host: ${transportHost}`, "X-Forwarded-Proto: https"], [`Host: ${transportHost}`, `X-Forwarded-Host: ${publicHost}`],
     ...["http", "HTTPS", "https,http", "https, https", "https;token=x", ""].map(proto => [`Host: ${transportHost}`, `X-Forwarded-Host: ${publicHost}`, `X-Forwarded-Proto: ${proto}`]),
     ...["localhost:3012", "127.0.0.1", "127.0.0.1:3013", "[::1]:3012", "evil.invalid"].map(host => [`Host: ${host}`, `X-Forwarded-Host: ${publicHost}`, "X-Forwarded-Proto: https"]),
   ]) assert.equal((await f.call(headers)).status, 400);
   assert.equal(f.captured.length, 0);
+});
+
+test("separate canonical forwarded-host fields are equivalent to joined fields with aggregate maximum two", async t => {
+  const f = await fixture(t);
+  const separate = [...forwarded(), `x-forwarded-host: ${publicHost}`];
+  assert.equal((await f.call(separate, "GET", "/api/health")).status, 200);
+  assert.equal(f.captured[0].url, `${origin}/api/health`); assert.equal(f.captured[0].headers.get("host"), publicHost);
+  assert.equal(f.captured[0].headers.has("x-forwarded-host"), false);
+  for (const entries of [
+    [publicHost, publicHost, publicHost], [`${publicHost}, ${publicHost}`, publicHost], [publicHost, `${publicHost}, ${publicHost}`],
+    [`${publicHost}, ${publicHost}`, `${publicHost}, ${publicHost}`], ["evil.invalid", publicHost], [publicHost, "evil.invalid"],
+    ["", publicHost], [publicHost, ""], [" ", publicHost], [publicHost, "\t"], [`${publicHost},`, publicHost],
+    [publicHost, `gold\tsilver.wealthos.ir`], [publicHost, `${publicHost}:443`], [publicHost, `user@${publicHost}`],
+  ]) {
+    const headers = [`Host: ${transportHost}`, ...entries.map(value => `X-Forwarded-Host: ${value}`), "X-Forwarded-Proto: https"];
+    assert.equal((await f.call(headers)).status, 400, JSON.stringify(entries));
+  }
+  assert.equal((await f.call([...separate, "X-Forwarded-Proto: https"])).status, 400);
+  assert.equal((await f.call([...separate, `Host: ${transportHost}`])).status, 400);
+  assert.equal(f.captured.length, 1);
 });
 
 test("socket must be loopback; no forwarding header or identity token can override a remote peer", async t => {
@@ -99,8 +119,10 @@ test("accepted proxy envelope neither creates an owner session nor bypasses exac
   const gate = createOwnerSessionBoundary({ origin, issuer: origin, ownerSubject: "synthetic-owner", store: { async getSession() { return null; }, async revokeBrowser() {} } });
   const app = createPrivateApplication({ origin, release: "a".repeat(40), gate, portfolio: async () => { portfolioCalls++; return new Response("private"); }, publicUi: async () => new Response("Synthetic public shell") });
   const f = await fixture(t, contract, app);
-  assert.equal((await f.call([...forwarded(), "X-OAI-Subject: synthetic-owner"], "GET", "/api/portfolio")).status, 401);
-  assert.equal((await f.call([...forwarded(), "Origin: https://evil.invalid", "Sec-Fetch-Site: same-origin", "X-ASHA-Intent: owner-action", "Content-Length: 0"], "PUT", "/api/portfolio")).status, 403);
+  for (const envelope of [forwarded(), [...forwarded(), `X-Forwarded-Host: ${publicHost}`]]) {
+    assert.equal((await f.call([...envelope, "X-OAI-Subject: synthetic-owner"], "GET", "/api/portfolio")).status, 401);
+    assert.equal((await f.call([...envelope, "Origin: https://evil.invalid", "Sec-Fetch-Site: same-origin", "X-ASHA-Intent: owner-action", "Content-Length: 0"], "PUT", "/api/portfolio")).status, 403);
+  }
   assert.equal(portfolioCalls, 0);
 });
 

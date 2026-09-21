@@ -17,9 +17,11 @@ export function createPrivateHttpServer(origin: string, handle: (request: Reques
     if (incoming.headers.host === expected.host) return true;
     if (!proxy || incoming.headers.host !== "127.0.0.1:3012") return false;
     const hosts = rawValues(incoming, "x-forwarded-host"), protocols = rawValues(incoming, "x-forwarded-proto");
-    if (hosts.length !== 1 || protocols.length !== 1 || protocols[0] !== "https"
-      || hosts[0].length > expected.host.length * 2 + 2 || /[^a-z0-9., -]/.test(hosts[0])) return false;
-    const chain = hosts[0].split(",");
+    if (hosts.length < 1 || hosts.length > 2 || protocols.length !== 1 || protocols[0] !== "https"
+      || hosts.some(value => value.length > expected.host.length * 2 + 2 || /[^a-z0-9., -]/.test(value))) return false;
+    // Apache/nginx may preserve two separate raw fields or join them. Bound the
+    // aggregate values, not only field count: two two-value fields are denied.
+    const chain = hosts.flatMap(value => value.split(","));
     return chain.length >= 1 && chain.length <= 2 && chain.every(value => value.trim() === expected.host);
   }
   const serve = async (incoming: IncomingMessage, outgoing: ServerResponse) => {
