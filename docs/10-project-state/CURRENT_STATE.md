@@ -2,7 +2,7 @@
 
 **Source of truth for:** where the project stands right now.
 
-_Last reviewed: 2026-09-21, Asia/Tehran (owner direct-save confirmation and safe probe verified; new-client consent pending)_
+_Last reviewed: 2026-09-21, Asia/Tehran (one replacement client authorized; secure path verified; Google console access blocked)_
 
 ## Latest private-identity checkpoint
 
@@ -16,7 +16,10 @@ Old paths/permissions remain unchanged. Current evidence and active handoff:
 [September 21 isolated destination](PRIVATE_CREDENTIAL_DESTINATION_2026-09-21.md).
 The owner confirmed direct Save As and the harmless file now passes metadata,
 single-link and directory checks. No agent-observed dialog is claimed. No secret
-was created or transferred; replacement-client/local-retention consent is pending.
+was created or transferred. One replacement and local-only retention are now
+explicitly authorized, but official Google console access is blocked; execution
+has not occurred. The linked September 21 checkpoint owns the fresh evidence,
+resolved exact path, supported-browser limitation and next prerequisite.
 
 Real Google login and domain access are **not activated**. The latest domain check
 (September 20) returned 503; server database provisioning, persistent supervision, actual key/owner binding,

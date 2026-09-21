@@ -74,10 +74,65 @@ The exact successfully checked harmless path is:
 
 Do not ask the owner to repeat this completed harmless test without new failure
 evidence. Before any real credential handling, recheck the destination metadata.
-Action-time consent for ONE replacement Google login client and local-only
-credential retention has now been requested; no approval or creation is inferred
-from the harmless-file completion message.
 Its eventual local filename is `credentials.json`; no secret-bearing UI snapshots,
 screenshots, logs or chat. Server key transfer and existing-portfolio migration
 remain separately gated. Keep the exposed deleted client deleted. See the
 [active credential procedure](../09-operations/GOOGLE_CREDENTIAL_STORAGE.md).
+
+### Replacement authorized; official console access blocked
+
+The owner's subsequent explicit instruction authorizes exactly ONE replacement
+Google client for the existing project and local-only credential retention. A
+missing path separator in that instruction was queried; the owner delegated the
+choice, and the coordinator selected the already prepared/tested destination:
+
+`C:\Users\pc\.goldsilver-private\google-owner-login\credentials.json`
+
+No alternative folder was created. A fresh metadata-only preflight returned
+`ready_for_direct_save_as`: all path/ancestor/ACL/Git checks passed, the harmless
+probe was safe and single-link, and `credentialPresent` was false. The completed
+harmless Save As was not repeated. It does not establish that Google's JSON
+download automatically uses the same private destination; establish that before
+any real secret generation/download, with only the necessary manual handoff if
+the tool cannot guarantee it. Never stage the secret elsewhere.
+
+Fresh read-only access evidence on September 21:
+
+- The official Clients page for existing project `stunning-object-508906-t0`
+  returned **403 Forbidden**, including after one intentional reload. A separate
+  OS HEAD request without the browser session also returned 403.
+- After the owner asked the agent to handle the access check, normal navigation
+  to `https://console.cloud.google.com/` also returned 403. The page says the client
+  lacks permission to retrieve the URL; it does not establish the precise cause.
+  No conclusion about IAM, account eligibility or region is justified by this alone.
+- Browser inventory exposes only the in-app browser. The supported attempt to
+  open that same official Clients URL in Chrome returned `Browser is not available`.
+  No Chrome/Edge success or independent-browser acceptance is claimed. No dedicated
+  Google Cloud management connector was available.
+- No proxy, alternate Google project, unofficial API, permission change, browser
+  session extraction or security bypass was attempted. No secret-bearing page,
+  credential contents, new agreement, existing data or server was touched.
+
+**Authorized replacements: one. Created replacements: zero. Local credential:
+absent. Real hosted login: not activated.** The previous exposed client remains
+deleted; the provider's present client inventory could not be inspected. Do not
+create another client blindly when access returns: inspect the nonsecret list first.
+
+Security/storage independently reviewed the bounded evidence and confirmed that
+creation must stop at this access block. Existing runtime/identity implementation
+and its tests remain unchanged; no substitute authentication system or filler
+feature was added. Before these documentation-only changes the three affected
+state documents were copied to the ignored checkpoint
+`.cache/checkpoints/google-client-preparation-20260921/`.
+Baseline `29273a5ead72b57efb762757d6f5825ed8717b39` has all three
+[GitHub jobs successful](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/35577362148);
+the documentation delivery requires its own exact-SHA check.
+
+Next prerequisite is normal authenticated access to the official console in the
+same project, through an available supported browser. The owner has asked to
+minimize manual involvement; do not repeat the pending request as if it were
+completed, or retry unchanged 403 pages. A manual login/access handoff is necessary
+only if the available tools cannot resolve it. Once access changes, recheck storage,
+inspect the client list and apply the bounded creation/direct-retention procedure.
+Separate server-transfer approval and the previously documented deployment gates
+remain outstanding. No background polling or scheduled continuation was created.

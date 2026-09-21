@@ -18,9 +18,14 @@ metadata recheck are now complete. Follow the
 [active checkpoint](PRIVATE_CREDENTIAL_DESTINATION_2026-09-21.md); do not repeat
 folder permission requests/creation or modify old ACLs. The owner has now confirmed
 direct Save As and a fresh check found the expected harmless file with safe metadata.
-Do not repeat that completed handoff. Replacement-client/local-retention action-time
-consent has been requested and remains pending; no real key exists. Recheck private
-destination metadata before credential handling, without reading file contents.
+Do not repeat that completed handoff. The owner has explicitly authorized one
+replacement client and local-only retention at the resolved safe path, but none
+was created: official console access is currently blocked. Follow the checkpoint's
+fresh evidence and supported-browser limitation; do not repeat unchanged access
+attempts or the completed path/harmless-file approvals. Restore ordinary official
+access first, inspect the nonsecret client list to avoid duplication, then recheck
+destination metadata and establish safe direct retention before credential handling.
+Do not bypass the provider restriction or read/display any secret contents.
 
 1. Complete the credential handoff and verified stable Google owner-subject binding;
    no first-login-wins, email-only binding, secret-bearing UI dumps or reuse of the
