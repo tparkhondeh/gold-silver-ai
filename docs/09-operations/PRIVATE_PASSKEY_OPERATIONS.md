@@ -15,7 +15,14 @@ These are scoped operator procedures, not permission to transfer owner data/keys
 - Dedicated PostgreSQL17.11 on127.0.0.1:15432, no Unix socket/remote listener;
   SCRAM, separate cluster/migration/runtime roles. Never reuse port5432.
 - Gateway127.0.0.1:3012 with a built production UI on another loopback port.
-  The existing project HTTPS proxy must preserve the exact public Host.
+  The project HTTPS proxy must meet the gateway's explicitly reviewed transport
+  contract; arbitrary forwarded identity, client IP or host is never accepted.
+  Production explicitly enables `goldsilver-loopback-v1`: loopback peer,
+  transport Host exactly `127.0.0.1:3012`, one raw forwarded-host header with
+  one or two identical `goldsilver.wealthos.ir` entries, and one exact `https`
+  protocol header. Canonical application Host is reconstructed only after these
+  checks. Forwarded identity/IP/host are stripped; original browser Origin and
+  session/CSRF checks remain mandatory. Direct canonical Host is still supported.
 
 ## Preparation and activation
 
@@ -25,7 +32,13 @@ These are scoped operator procedures, not permission to transfer owner data/keys
    --prepare` is explicit/fresh-only and requires8GiB free. It generates service
    database credentials on the server, applies reviewed migrations, checks exact
    runtime readiness and empty private tables. It creates no owner grant/key.
-   A partial preparation is preserved and diagnosed; never rerun/init/reset it.
+   A partial preparation is preserved and diagnosed; never blindly rerun/reset it.
+   The reviewed `--resume-empty-initialization` exception is only for the exact
+   retained three protected configurations plus preparation marker and an empty
+   data directory. It preserves credentials, uses an exclusive persistent attempt
+   marker, refuses any populated/unknown state and feeds initdb through a fixed
+   kernel pipe with `--no-clean`. Back up that exact retained state first. A failed
+   attempt is not automatically retried and its marker/data are not removed.
 3. Locked full `npm ci` and `npm run build:private` on the clean exact branch/SHA.
    Runtime needs Vinext, currently in devDependencies; omit-dev alone is wrong.
    Full dependency review remains mandatory. No development server/operator route.

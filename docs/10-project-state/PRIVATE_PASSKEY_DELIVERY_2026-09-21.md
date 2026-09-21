@@ -53,8 +53,10 @@ verification covers retained artifacts12, executed producer5 and supervision10
 tests. Independent security/architecture cross-review found no remaining blocker
 in these changes. Real-server execution remains distinct from these tests.
 
-Final exact-SHA CI and server activation evidence are still being collected;
-earlier successful CI is not evidence for this change.
+Implementation `a609337a5e87d232176e29a3fb96761a3f587053` was pushed and
+[run35620404430](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/35620404430)
+passed all three jobs: quality/build/audit, real PostgreSQL and Python laboratory.
+Later follow-up commits require their own exact-SHA check; this is not activation.
 
 ## Actual server state
 
@@ -72,8 +74,39 @@ the completed installation was verified separately, not rerun/overwritten.
 Sources/build/log are retained privately. About10GiB free remained; preparation
 and backup require at least8GiB free. No broad cleanup is authorized.
 
-As of this checkpoint draft: no project DB, hosted account, new service/crontab,
-proxy edit or deployed SHA is claimed. The tested local scripts are not deployment.
+The same clean implementation SHA was cloned into its exact private release path;
+locked Linux installation and production build succeeded. Initial database setup
+stopped safely before database initialization: the data directory is empty, with
+only private generated service configurations and preparation marker retained.
+No owner credential, database listener, new service/crontab or proxy change occurred.
+The original state/proxy were privately copied to
+`/home/wealthos_dev/.goldsilver-service/checkpoints/pre-db-resume-20260921-a609337`.
+
+A harmless server probe reproduced the cause: Node child stdin uses a socket,
+while PostgreSQL initdb opens `/dev/stdin` as a file. Direct opening fails ENXIO;
+a fixed kernel-pipe bridge works with nonsecret text. PostgreSQL's
+[17.11 source](https://raw.githubusercontent.com/postgres/postgres/REL_17_11/src/bin/initdb/initdb.c)
+confirms the file-open behavior. The bounded correction must preserve existing
+configuration and allow continuation only for this verified empty state, never
+reinitialize a populated/partial PostgreSQL directory. No deployed SHA is claimed
+until actual service activation and external checks pass.
+
+The correction now has22 focused passing tests plus one Linux-only pipe test
+(skipped on Windows), including executed controller tests of unchanged retained
+credentials, unsafe/nonempty rejection, concurrent exclusion and preservation
+after failure. A second specialist reviewed it independently with no blocker.
+Linux CI and actual empty-state continuation remain separate acceptance checks.
+
+A separate30-second nonprivate503 probe behind the existing project proxy showed
+loopback transport, Host `127.0.0.1:3012`, two identical canonical public hosts in
+`X-Forwarded-Host`, and `X-Forwarded-Proto: https`. The probe exited and changed no
+proxy files or other service. The gateway's original direct-Host-only contract
+therefore needs a narrowly configured adapter before this deployment can work.
+This is Apache/nginx behind the public edge, not a presumed LiteSpeed setup.
+The explicit adapter is now implemented with18 passing adjacent/proxy tests:
+one/two identical canonical hosts, duplicate/malformed/hostile chains, exact HTTPS,
+loopback-only transport, stripped identity/IP forwarding and unchanged session/
+Origin enforcement. It does not change the shared proxy or accept arbitrary hosts.
 
 ## Owner gates and remaining acceptance
 

@@ -81,10 +81,11 @@ test("backup restore HBA admits only exact disposable names for the cluster role
 
 test("preparation source retains exclusive creation, stdin secret, bounded commands and readiness before completion", () => {
   const source = readFileSync(new URL("../scripts/prepare-private-database.mjs", import.meta.url), "utf8");
-  assert.match(source, /O_EXCL \| constants\.O_NOFOLLOW/); assert.match(source, /"--pwfile", "\/dev\/stdin"/); assert.match(source, /randomBytes\(32\)/);
-  assert.ok(source.indexOf("await exclusiveFile(plan.started") < source.indexOf('command("initdb",'));
+  const initialization = readFileSync(new URL("../scripts/private-empty-initialization.ts", import.meta.url), "utf8");
+  assert.match(source, /O_EXCL \| constants\.O_NOFOLLOW/); assert.match(initialization, /"--pwfile", "\/dev\/stdin"/); assert.match(source, /randomBytes\(32\)/);
+  assert.ok(source.indexOf("await exclusiveFile(plan.started") < source.indexOf("runPrivateInitdb(clusterPassword)"));
   assert.ok(source.indexOf("probePrivatePortfolioDatabase(runtimeClient") < source.indexOf("await exclusiveFile(plan.complete"));
-  assert.doesNotMatch(source, /process\.env|readPrivateServerConfig\(|readPrivateAdministrationConfig\(|\b(?:unlink|rm|chmod|chown)\(|shell:\s*true|stdio:\s*["']inherit|console\./);
+  assert.doesNotMatch(source, /process\.env|\b(?:unlink|rm|chmod|chown)\(|shell:\s*true|stdio:\s*["']inherit|console\./);
   assert.doesNotMatch(source, /bootstrapToken|issueGrant|resetCredentials|5432\b|3012\b/);
   assert.match(source, /No owner enrollment, portfolio transfer or application activation/);
 });

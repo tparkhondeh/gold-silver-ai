@@ -49,7 +49,9 @@ try {
   const application = configuration.version === 2 ? createPrivatePasskeyRuntime(common) : createPrivatePortfolioRuntime({ ...common,
     adapter: createGoogleIdentityAdapter({ clientId: configuration.googleClientId, clientSecret: configuration.googleClientSecret, redirectUri: `${configuration.origin}/auth/google/callback` }),
   });
-  gateway = createPrivateHttpServer(configuration.origin, application);
+  // Reviewed Apache/nginx transport: loopback Host plus a bounded matching
+  // public-host chain. Never enable arbitrary proxy or header-based identity trust.
+  gateway = createPrivateHttpServer(configuration.origin, application, { proxy: "goldsilver-loopback-v1" });
   await new Promise((done, reject) => { gateway.once("error", reject); gateway.listen(3012, "127.0.0.1", done); });
   process.stdout.write(`Private service listening on loopback; release ${release}. Real login still requires acceptance verification.\n`);
   for (const signal of ["SIGINT", "SIGTERM"]) process.once(signal, () => { void stop(); });

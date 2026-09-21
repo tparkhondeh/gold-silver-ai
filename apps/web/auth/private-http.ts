@@ -1,21 +1,38 @@
 import { createServer, type IncomingMessage, type ServerResponse } from "node:http";
 import { Readable } from "node:stream";
 
-/** TLS is terminated by this project's existing proxy. Never trust forwarded identity/host/IP. */
-export function createPrivateHttpServer(origin: string, handle: (request: Request) => Promise<Response>) {
+type PrivateHttpOptions = { proxy: "goldsilver-loopback-v1" };
+
+/** Direct canonical Host remains the default. The explicit production contract
+ * recognizes only this project's observed loopback proxy envelope; forwarding
+ * never establishes identity, client IP, permissions, or the application's origin. */
+export function createPrivateHttpServer(origin: string, handle: (request: Request) => Promise<Response>, options?: PrivateHttpOptions) {
   const expected = new URL(origin);
   if (expected.protocol !== "https:" || expected.origin !== origin) throw new Error("Invalid private origin");
+  const proxy = options !== undefined;
+  if (proxy && (!options || Object.keys(options).join(",") !== "proxy" || options.proxy !== "goldsilver-loopback-v1"
+    || origin !== "https://goldsilver.wealthos.ir")) throw new Error("Invalid private proxy contract");
+  const rawValues = (incoming: IncomingMessage, name: string) => incoming.rawHeaders.flatMap((value, index) => index % 2 === 0 && value.toLowerCase() === name ? [incoming.rawHeaders[index + 1]] : []);
+  function canonicalTransport(incoming: IncomingMessage) {
+    if (incoming.headers.host === expected.host) return true;
+    if (!proxy || incoming.headers.host !== "127.0.0.1:3012") return false;
+    const hosts = rawValues(incoming, "x-forwarded-host"), protocols = rawValues(incoming, "x-forwarded-proto");
+    if (hosts.length !== 1 || protocols.length !== 1 || protocols[0] !== "https"
+      || hosts[0].length > expected.host.length * 2 + 2 || /[^a-z0-9., -]/.test(hosts[0])) return false;
+    const chain = hosts[0].split(",");
+    return chain.length >= 1 && chain.length <= 2 && chain.every(value => value.trim() === expected.host);
+  }
   const serve = async (incoming: IncomingMessage, outgoing: ServerResponse) => {
     const fail = () => { if (!outgoing.headersSent) outgoing.writeHead(400, { "cache-control": "no-store", "content-type": "text/plain", connection: "close" }); outgoing.end("Request unavailable"); incoming.resume(); };
     try {
-      const hostHeaders = incoming.rawHeaders.filter((_, index) => index % 2 === 0 && incoming.rawHeaders[index].toLowerCase() === "host");
-      if (!["127.0.0.1", "::1", "::ffff:127.0.0.1"].includes(incoming.socket.remoteAddress ?? "") || hostHeaders.length !== 1
-        || incoming.headers.host !== expected.host || !incoming.url?.startsWith("/") || incoming.url.startsWith("//") || [...incoming.url].some(char => char === "\\" || char.charCodeAt(0) <= 32 || char.charCodeAt(0) === 127)
+      if (!["127.0.0.1", "::1", "::ffff:127.0.0.1"].includes(incoming.socket.remoteAddress ?? "") || rawValues(incoming, "host").length !== 1
+        || !canonicalTransport(incoming) || !incoming.url?.startsWith("/") || incoming.url.startsWith("//") || [...incoming.url].some(char => char === "\\" || char.charCodeAt(0) <= 32 || char.charCodeAt(0) === 127)
         || incoming.url.length > 8192 || !["GET", "HEAD", "POST", "PUT", "PATCH", "DELETE"].includes(incoming.method ?? "")) { fail(); return; }
       const length = incoming.headers["content-length"];
       if (length !== undefined && (!/^\d+$/.test(length) || Number(length) > 2_097_152)) { fail(); return; }
       const headers = new Headers();
-      for (const name of ["host", "cookie", "origin", "sec-fetch-site", "content-type", "content-length", "x-asha-intent", "x-asha-portfolio-request", "x-asha-managed-market", "accept"]) {
+      headers.set("host", expected.host);
+      for (const name of ["cookie", "origin", "sec-fetch-site", "content-type", "content-length", "x-asha-intent", "x-asha-portfolio-request", "x-asha-managed-market", "accept"]) {
         const value = incoming.headers[name];
         if (Array.isArray(value)) { fail(); return; }
         if (value !== undefined) headers.set(name, value);

@@ -1,7 +1,8 @@
-// Preparation is explicit and fresh-only. Never run as part of application startup.
+// Preparation is explicit: fresh, or one reviewed empty-initialization recovery.
+// Never run as part of application startup; never resume initialized PG files.
 // No enrollment, provider keys, existing portfolio, proxy, cron or public listener.
 import { constants } from "node:fs";
-import { lstat, mkdir, open, statfs } from "node:fs/promises";
+import { lstat, mkdir, open, readdir, statfs } from "node:fs/promises";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { userInfo } from "node:os";
@@ -11,9 +12,10 @@ import { execFileSync } from "node:child_process";
 import { Pool } from "pg";
 import { readMigrations, applyMigrations } from "../db/migrations.ts";
 import { probePrivatePortfolioDatabase } from "../auth/private-database-readiness.ts";
-import { parsePrivateServerConfig, parsePrivateAdministrationConfig } from "./private-server-config.ts";
+import { parsePrivateServerConfig, parsePrivateAdministrationConfig, readPrivateServerConfig, readPrivateAdministrationConfig, readPrivateClusterAdministrationConfig } from "./private-server-config.ts";
 import { PRIVATE_LINUX_PLAN as plan, PRIVATE_RUNTIME_TABLES, assertPrivatePreparationContext, assertPrivateMetadata,
   privateDatabaseUrl, privateRoleSql, privateRuntimeGrants, privatePostgresConfiguration, privatePostgresHba } from "./private-linux-plan.ts";
+import { INITIALIZATION_ATTEMPT_MARKER, assertEmptyInitializationLayout, inspectRetainedInitialization, privateInitdbInvocation } from "./private-empty-initialization.ts";
 
 const metadata = stat => ({ uid: stat.uid, mode: stat.mode, nlink: stat.nlink, directory: stat.isDirectory(), file: stat.isFile(), symlink: stat.isSymbolicLink() });
 const failure = () => Error("Private database preparation unconfirmed; details withheld");
@@ -48,7 +50,45 @@ function command(name, args, input, timeout) {
   catch { throw failure(); } // Never print child output, argv, SQL or credentials.
 }
 
-export async function preparePrivateDatabase() {
+export function runPrivateInitdb(password, execute = execFileSync) {
+  if (!/^[a-f0-9]{64}$/.test(password)) throw failure();
+  const invocation = privateInitdbInvocation();
+  try {
+    // Node's exec input may be a socket. cat supplies a genuine pipe that initdb
+    // can reopen as /dev/stdin; no password enters shell text, argv or a file.
+    execute(invocation.executable, invocation.args, { cwd: plan.root, env: processEnvironment, input: Buffer.from(password + "\n"),
+      timeout: 120_000, maxBuffer: 1024 * 1024, stdio: ["pipe", "pipe", "pipe"] });
+  } catch { throw failure(); }
+}
+
+async function retainedEmptyInitialization(uid, claimedAttempt = false) {
+  const paths = { parent: plan.parent, root: plan.root, database: plan.data, started: plan.started,
+    runtime: plan.runtime, administration: plan.administration, clusterAdministration: plan.clusterAdministration };
+  const retainedMetadata = {};
+  for (const [key, path] of Object.entries(paths)) {
+    const info = metadata(await lstat(path));
+    assertPrivateMetadata(info, uid, ["parent", "root", "database"].includes(key) ? "directory" : "file");
+    retainedMetadata[key] = info;
+  }
+  assertEmptyInitializationLayout({ uid, metadata: retainedMetadata, entries: await readdir(plan.root), databaseEntries: await readdir(plan.data),
+    ...(claimedAttempt ? { claimedAttempt: metadata(await lstat(INITIALIZATION_ATTEMPT_MARKER)) } : {}) });
+  const marker = await open(plan.started, constants.O_RDONLY | constants.O_NOFOLLOW | constants.O_NONBLOCK);
+  let started;
+  try {
+    const info = await marker.stat(); assertPrivateMetadata(metadata(info), uid, "file");
+    if (info.size < 1 || info.size > 512) throw failure();
+    const buffer = Buffer.alloc(513), result = await marker.read(buffer, 0, buffer.length, 0);
+    if (result.bytesRead !== info.size || result.bytesRead > 512) throw failure();
+    started = JSON.parse(new TextDecoder("utf-8", { fatal: true }).decode(buffer.subarray(0, result.bytesRead)));
+  } finally { await marker.close(); }
+  const [runtime, administration, clusterAdministration] = await Promise.all([
+    readPrivateServerConfig(), readPrivateAdministrationConfig(), readPrivateClusterAdministrationConfig(),
+  ]);
+  return inspectRetainedInitialization({ started, runtime, administration, clusterAdministration }, Date.now());
+}
+
+export async function preparePrivateDatabase(mode = "prepare") {
+  if (!["prepare", "resume-empty-initialization"].includes(mode)) throw failure();
   const uid = process.getuid?.();
   if (process.platform !== "linux" || !Number.isInteger(uid) || uid <= 0 || userInfo().username !== plan.account) throw failure();
   process.umask(0o077);
@@ -61,21 +101,33 @@ export async function preparePrivateDatabase() {
   for (const name of ["initdb", "pg_ctl", "postgres", "pg_dump", "pg_restore"]) await checked(join(plan.tools, name), uid, "tool");
   const migrations = await readMigrations();
   if (migrations.length < 14 || !migrations.some(value => value.id === "0014_owner_passkeys.sql")) throw failure();
-  await privateDirectory(plan.parent, uid); await privateDirectory(plan.root, uid);
-  for (const path of [plan.data, plan.log, plan.started, plan.complete, plan.runtime, plan.administration, plan.clusterAdministration]) if (!await missing(path)) throw failure();
+  if (mode === "prepare") {
+    await privateDirectory(plan.parent, uid); await privateDirectory(plan.root, uid);
+    for (const path of [plan.data, plan.log, plan.started, plan.complete, plan.runtime, plan.administration, plan.clusterAdministration, INITIALIZATION_ATTEMPT_MARKER]) if (!await missing(path)) throw failure();
+  } else { await checked(plan.parent, uid, "directory"); await checked(plan.root, uid, "directory"); }
   for (const name of ["initdb", "pg_ctl", "postgres", "pg_dump", "pg_restore"]) if (command(name, ["--version"], undefined, 5000) !== `${name} (PostgreSQL) ${plan.version}`) throw failure();
-  // Exclusive persistent marker doubles as a lock. Never remove it or retry a
-  // partial preparation automatically. Existing paths/data/config are untouched.
-  await exclusiveFile(plan.started, JSON.stringify({ version: 1, state: "preparing", startedAt: new Date().toISOString() }), uid);
-  const clusterPassword = randomBytes(32).toString("hex"), adminPassword = randomBytes(32).toString("hex"), runtimePassword = randomBytes(32).toString("hex");
-  const runtime = { version: 2, authentication: "passkey", origin: plan.origin, ownerSubject: plan.ownerSubject, portfolioSubject: plan.portfolioSubject, databaseUrl: privateDatabaseUrl(plan.runtimeRole, runtimePassword) };
-  const administration = { version: 1, databaseUrl: privateDatabaseUrl(plan.adminRole, adminPassword) };
-  parsePrivateServerConfig(JSON.stringify(runtime)); parsePrivateAdministrationConfig(JSON.stringify(administration));
-  await exclusiveFile(plan.clusterAdministration, JSON.stringify({ version: 1, databaseUrl: privateDatabaseUrl(plan.clusterRole, clusterPassword) }), uid);
-  await exclusiveFile(plan.administration, JSON.stringify(administration), uid);
-  await exclusiveFile(plan.runtime, JSON.stringify(runtime), uid);
-  await mkdir(plan.data, { mode: 0o700 }); await checked(plan.data, uid, "directory");
-  command("initdb", ["--pgdata", plan.data, "--username", plan.clusterRole, "--auth-host", "scram-sha-256", "--auth-local", "reject", "--encoding", "UTF8", "--locale", "C", "--pwfile", "/dev/stdin"], Buffer.from(clusterPassword + "\n"), 120_000);
+  let clusterPassword, adminPassword, runtimePassword;
+  if (mode === "prepare") {
+    // Exclusive persistent marker serializes fresh preparations. Never remove it.
+    await exclusiveFile(plan.started, JSON.stringify({ version: 1, state: "preparing", startedAt: new Date().toISOString() }), uid);
+    clusterPassword = randomBytes(32).toString("hex"); adminPassword = randomBytes(32).toString("hex"); runtimePassword = randomBytes(32).toString("hex");
+    const runtime = { version: 2, authentication: "passkey", origin: plan.origin, ownerSubject: plan.ownerSubject, portfolioSubject: plan.portfolioSubject, databaseUrl: privateDatabaseUrl(plan.runtimeRole, runtimePassword) };
+    const administration = { version: 1, databaseUrl: privateDatabaseUrl(plan.adminRole, adminPassword) };
+    parsePrivateServerConfig(JSON.stringify(runtime)); parsePrivateAdministrationConfig(JSON.stringify(administration));
+    await exclusiveFile(plan.clusterAdministration, JSON.stringify({ version: 1, databaseUrl: privateDatabaseUrl(plan.clusterRole, clusterPassword) }), uid);
+    await exclusiveFile(plan.administration, JSON.stringify(administration), uid);
+    await exclusiveFile(plan.runtime, JSON.stringify(runtime), uid);
+    await mkdir(plan.data, { mode: 0o700 }); await checked(plan.data, uid, "directory");
+  } else {
+    ({ clusterPassword, adminPassword, runtimePassword } = await retainedEmptyInitialization(uid));
+  }
+  // Both fresh and resumed invocations claim the same persistent exclusive
+  // attempt. This also prevents a resume racing a fresh process before initdb.
+  await exclusiveFile(INITIALIZATION_ATTEMPT_MARKER, JSON.stringify({ version: 1, state: "initializing", mode, attemptedAt: new Date().toISOString() }), uid);
+  const retained = await retainedEmptyInitialization(uid, true);
+  if (retained.clusterPassword !== clusterPassword || retained.adminPassword !== adminPassword || retained.runtimePassword !== runtimePassword
+    || !await portAvailable()) throw failure();
+  runPrivateInitdb(clusterPassword);
   await replaceGeneratedConfig(join(plan.data, "postgresql.conf"), privatePostgresConfiguration(), uid);
   await replaceGeneratedConfig(join(plan.data, "pg_hba.conf"), privatePostgresHba(), uid);
   await exclusiveFile(plan.log, "", uid);
@@ -127,8 +179,9 @@ export async function preparePrivateDatabase() {
 
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   try {
-    if (process.argv.slice(2).join(" ") !== "--prepare") throw failure();
-    await preparePrivateDatabase();
+    const mode = process.argv.slice(2).join(" ");
+    if (!["--prepare", "--resume-empty-initialization"].includes(mode)) throw failure();
+    await preparePrivateDatabase(mode.slice(2));
     process.stdout.write("Private empty project database prepared on fixed loopback port. Runtime readiness verified. No owner enrollment, portfolio transfer or application activation.\n");
   } catch {
     process.stderr.write("Private database preparation unconfirmed. Partial project files/database/listener, if any, are preserved; do not rerun or reset automatically. No login is enabled by this script.\n");
