@@ -4,6 +4,10 @@
 
 _Last reviewed: 2026-09-21, Asia/Tehran (one replacement client authorized; secure path verified; Google console access blocked)_
 
+Owner-directed workflow clarification is now recorded in [CLAUDE.md § 9](../../CLAUDE.md#9-autonomy-and-necessary-owner-approval).
+This documentation-only change preserves the approval gates and AGENTS.md pointer;
+it does not implement a different login method or alter the identity blocker below.
+
 ## Latest private-identity checkpoint
 
 Durable owner sessions, server-authorized portfolio storage, the private browser
