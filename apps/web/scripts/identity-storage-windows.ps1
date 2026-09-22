@@ -1,4 +1,4 @@
-param([ValidateSet('Check', 'Prepare')][string]$Mode = 'Check')
+param([ValidateSet('Check', 'Prepare')][string]$Mode = 'Check', [switch]$DefinitionsOnly)
 $ErrorActionPreference = 'Stop'
 $ProgressPreference = 'SilentlyContinue'
 
@@ -146,6 +146,9 @@ public static class AshaIdentityStorageNative {
         } finally { if ($descriptor -ne [IntPtr]::Zero) { [void][AshaIdentityStorageNative]::LocalFree($descriptor) } }
     }
 
+    # The fixed passkey handoff reuses these reviewed predicates/atomic directory
+    # creation only. This internal library mode performs no filesystem inspection.
+    if ($DefinitionsOnly) { return }
     $facts = Get-Facts
     if ($Mode -eq 'Prepare' -and $facts.outsideRepository -and $facts.gitBoundarySafe -and $facts.pathChainSafe -and $facts.ancestorMutationSafe -and $facts.privateParentSafe -and
         $facts.directoryContentsExpected -and $facts.probeMetadataSafe -and -not $facts.credentialPresent -and (-not $facts.privateDirectoryPresent -or $facts.privateDirectorySafe)) {

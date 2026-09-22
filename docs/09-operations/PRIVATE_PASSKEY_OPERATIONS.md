@@ -85,6 +85,34 @@ requires specific authority. Never embed the grant in a URL, output or screensho
 The owner enters/submits it and confirms the device's passkey prompt themselves.
 Registration does not establish a session; then use normal passkey login.
 
+### Windows direct-delivery boundary
+
+After explicit one-grant authority, use the fixed local entry point
+`node scripts/passkey-handoff.mjs --check`, then `--prepare` if safe. These two
+operations do not contact the server or issue a grant. They must never change
+shared/parent ACLs. Preserve the Google credential directory and its own stricter
+storage policy. The new passkey leaf and files use protected owner/SYSTEM-only
+ACLs at creation; no permissive create-then-repair interval is acceptable.
+The existing parent may have explicit read/list/execute-only additional entries,
+but must remain protected, owned by the current account, with current/SYSTEM full
+control and no foreign create/write/delete/ACL/ownership capability. Extra parent
+read permissions cannot enter the protected leaf. This handoff-only parent rule
+does not relax the original Google guard or the exact two-entry leaf/file checks.
+
+Only when owner handoff is ready, the separately authorized
+`--issue-and-deliver-once` claims an exclusive persistent nonsecret attempt marker
+and an exclusive final-file handle before contacting the pinned SSH peer. The
+fixed deployed administration script issues one grant. Only the token's43ASCII
+bytes enter the final file; expiry is returned as nonsecret metadata. The secret
+pipe stays inside the helper processes, never tool output. Never run
+`passkey-handoff-remote.mjs`'s delivery function directly from an interactive tool.
+
+An existing grant/attempt, failed or ambiguous delivery is a hard no-retry state,
+not permission to delete a marker, overwrite a file or mint a second grant. Keep
+all artifacts and diagnose first. Finish tests/CI before consuming the five-minute
+window. Starting registration consumes the grant at the options step; cancelling
+the device prompt may therefore require a separately authorized recovery action.
+
 After genuine login, verify purchase/Excel/save/reload/logout and a second
 independent device with nonprivate acceptance records. Additional passkey creation
 requires a fresh login (at most5minutes) and explicit user device confirmation.

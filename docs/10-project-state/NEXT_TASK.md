@@ -4,14 +4,13 @@
 
 ## Immediate Next Step
 
-Continue [the active passkey delivery checkpoint](PRIVATE_PASSKEY_DELIVERY_2026-09-21.md)
+Continue [the active owner-activation checkpoint](PRIVATE_OWNER_ACTIVATION_2026-09-22.md)
 and [the scoped operations runbook](../09-operations/PRIVATE_PASSKEY_OPERATIONS.md).
 Do not retry unchanged Google 403 requests, recreate an OAuth client or rebuild
 the completed passkey/purchase/Excel implementation. Project-only deployment is
-authorized; actual owner enrollment/grant handoff and key/private-portfolio
-transfer remain distinct gates. The coordinator has already asked the owner for
-one bootstrap grant and its exact protected local delivery; do not repeat that
-question without changed scope.
+authorized; one bootstrap grant and exact protected local delivery are explicitly
+approved on September22. Do not repeat that approval question. Actual device
+confirmation/login and key/private-portfolio transfer remain distinct gates.
 
 The independent deployment work is complete for code SHA
 `51e0791b94416f8c85c0e6d01ab4c1ee2013ffed`: all three jobs, clean Linux build,
@@ -21,8 +20,9 @@ the one-time empty-state resume/upgrade attempt. Public cache-header loss was
 resolved using only two new exact-host page rules; preserve these and unrelated
 rules. Detailed evidence is in the active checkpoint.
 
-1. On the pending explicit grant/delivery approval, verify the exact private local
-   destination, create one five-minute grant and deliver without displaying it.
+1. Complete the reviewed direct-delivery helper and verify the exact private local
+   destination, then create the approved one five-minute grant only when ready for
+   handoff and deliver without displaying it. Never overwrite or auto-retry.
    Hand actual passkey creation to the owner; no synthetic credential as a shortcut.
 2. Follow the short [owner acceptance guide](../09-operations/PRIVATE_OWNER_ACCEPTANCE.md):
    genuine login, nonprivate sample purchase/Excel/save/reload/logout and second
@@ -33,8 +33,9 @@ rules. Detailed evidence is in the active checkpoint.
    prepared optional adapter seam; a key alone is insufficient. Never start a
    fresh quota ledger as if prior consumption did not exist.
 4. Remaining operational acceptance: off-host recovery/approved retention-capacity
-   plan, real scheduled daily backup observation and coordinated host reboot only
-   when separately safe for this shared server. Approximately8.2GiB free remains,
+   plan and coordinated host reboot only
+   when separately safe for this shared server. September22 verified the latest
+   scheduled backup; see the active checkpoint. Approximately8.45GiB free remains,
    close to the8GiB backup safety reserve; do not accumulate another full dependency
    release or delete old data/releases without a scoped reviewed plan.
 

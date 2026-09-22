@@ -2,9 +2,17 @@
 
 **Source of truth for:** where the project stands right now.
 
-_Last reviewed: 2026-09-21, Asia/Tehran (private domain deployed; owner activation pending)_
+_Last reviewed: 2026-09-22, Asia/Tehran (private domain verified; owner activation authorized)_
 
-## Active private-domain delivery
+## Current owner-activation checkpoint
+
+The owner now explicitly authorizes one five-minute bootstrap grant and direct
+protected local delivery. Follow [September22 activation](PRIVATE_OWNER_ACTIVATION_2026-09-22.md)
+for fresh Git, deployment, backup and handoff evidence. This approval is not an
+actual grant, enrollment or authenticated-session success. The prior question
+must not be repeated; device/passkey confirmation remains the owner's action.
+
+## Deployed private-domain baseline
 
 Google is no longer a required dependency. The owner authorized choosing and
 implementing an independent private login and project-only deployment; see
