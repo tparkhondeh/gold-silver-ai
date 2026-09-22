@@ -2,15 +2,16 @@
 
 **Source of truth for:** where the project stands right now.
 
-_Last reviewed: 2026-09-22, Asia/Tehran (private domain verified; owner activation authorized)_
+_Last reviewed: 2026-09-22, Asia/Tehran (one secure grant delivered; owner login pending)_
 
 ## Current owner-activation checkpoint
 
-The owner now explicitly authorizes one five-minute bootstrap grant and direct
-protected local delivery. Follow [September22 activation](PRIVATE_OWNER_ACTIVATION_2026-09-22.md)
-for fresh Git, deployment, backup and handoff evidence. This approval is not an
-actual grant, enrollment or authenticated-session success. The prior question
-must not be repeated; device/passkey confirmation remains the owner's action.
+Exactly one approved five-minute bootstrap grant has been securely delivered
+after focused tests, independent review and all three exact-SHA GitHub jobs.
+Follow [September22 activation](PRIVATE_OWNER_ACTIVATION_2026-09-22.md) for expiry,
+Git, deployment, backup and handoff evidence. Do not issue again or overwrite the
+handoff artifacts. Actual device confirmation and authenticated owner login are
+still unconfirmed; delivery is not enrollment or session success.
 
 ## Deployed private-domain baseline
 
@@ -20,8 +21,9 @@ implementing an independent private login and project-only deployment; see
 Owner-bound passkey implementation, signed protocol tests and all 37 isolated
 PostgreSQL integration tests pass. Existing purchase/Excel/valuation contracts
 are reused, not rebuilt. The actual owner enrollment and safe grant handoff
-remain separately gated; no real passkey, bootstrap grant, API key transfer or
-personal-portfolio transfer has occurred.
+were separately gated at the September21 baseline; today's actual bootstrap
+delivery is recorded above. No real passkey, API key transfer or personal-portfolio
+transfer is confirmed.
 
 The latest execution record, including server changes and deployment evidence,
 is [September 21 passkey delivery](PRIVATE_PASSKEY_DELIVERY_2026-09-21.md).

@@ -37,7 +37,7 @@ screenshots, URLs, logs, Git, Downloads or an intermediate file.
 
 ## Handoff gate
 
-STATUS: pre-issuance preparation; actual owner interaction remains pending.
+STATUS: exactly one grant securely delivered; actual owner interaction pending.
 The separate Windows helper implements fixed-path Check/Prepare and a distinct
 one-shot issue/delivery operation. Check/Prepare must not issue a grant. Actual delivery
 must be exclusive, directly into the protected final file, pinned to the existing
@@ -63,9 +63,28 @@ zeroing its buffer. All31 focused Windows tests passed (11handoff plus20existing
 identity-storage regressions), including25 adversarial parent-ACL assertions and
 native proof that a protected child does not inherit the parent's read entry.
 Architecture/QA independently reran all11handoff tests. Root's complete lint and
-typecheck, final changed-file lint and diff checks passed. Exact-commit CI is the
-remaining gate before real issuance; no product redeployment is needed for this
-local-only operator helper.
+typecheck, final changed-file lint and diff checks passed. All three jobs passed
+for helper commit `78765c6400a1ed6198360a5d6bef5cea678f9860`:
+[exact-SHA CI](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/35700243721).
+No product redeployment was needed for this local-only operator helper.
+
+## Actual delivery and next manual action
+
+After CI and destination checks, the coordinator invoked the reviewed one-shot
+helper exactly once. Result: delivered, private path safe, attempt marker present,
+final grant file present and handle metadata safe. Expiry:
+`2026-09-22T07:41:39.511Z` (11:11:39 Asia/Tehran). The secret was not displayed or
+read into model/tool output. Only its dedicated protected final file received the
+43-byte token; the existing issuer retains its private server artifact. No API
+key or personal portfolio was transferred. Parent/shared ACLs remain unchanged.
+
+The owner received concise manual file/enrollment/device-confirmation/login
+instructions immediately. Do not issue another grant, delete the attempt marker
+or overwrite either handoff file, even if this grant expires. First establish the
+actual owner outcome; a new grant/recovery would require separate authority.
+Neither enrollment nor authenticated login is yet confirmed. Do not snapshot,
+read the clipboard or inspect the code field while the owner enters the code.
+The server continues to run the separate deployed code SHA51e0791 cited above.
 
 Follow [the acceptance guide](../09-operations/PRIVATE_OWNER_ACCEPTANCE.md) after
 actual owner login. Authenticated purchases/Excel/save/reload/logout and second

@@ -9,8 +9,9 @@ and [the scoped operations runbook](../09-operations/PRIVATE_PASSKEY_OPERATIONS.
 Do not retry unchanged Google 403 requests, recreate an OAuth client or rebuild
 the completed passkey/purchase/Excel implementation. Project-only deployment is
 authorized; one bootstrap grant and exact protected local delivery are explicitly
-approved on September22. Do not repeat that approval question. Actual device
-confirmation/login and key/private-portfolio transfer remain distinct gates.
+approved and delivered on September22. Do not repeat issuance, overwrite the file
+or remove the attempt marker. Actual device confirmation/login and
+key/private-portfolio transfer remain distinct gates.
 
 The independent deployment work is complete for code SHA
 `51e0791b94416f8c85c0e6d01ab4c1ee2013ffed`: all three jobs, clean Linux build,
@@ -20,10 +21,11 @@ the one-time empty-state resume/upgrade attempt. Public cache-header loss was
 resolved using only two new exact-host page rules; preserve these and unrelated
 rules. Detailed evidence is in the active checkpoint.
 
-1. Complete the reviewed direct-delivery helper and verify the exact private local
-   destination, then create the approved one five-minute grant only when ready for
-   handoff and deliver without displaying it. Never overwrite or auto-retry.
-   Hand actual passkey creation to the owner; no synthetic credential as a shortcut.
+1. Obtain the outcome of the already-delivered grant from the owner, who must
+   complete real device confirmation and then separate login. See the checkpoint's
+   expiry and immediate handoff instructions. Do not view a populated code field,
+   use a synthetic credential, mint another grant or overwrite preserved files.
+   An expired/failed attempt needs diagnosis and separate authority, not auto-retry.
 2. Follow the short [owner acceptance guide](../09-operations/PRIVATE_OWNER_ACCEPTANCE.md):
    genuine login, nonprivate sample purchase/Excel/save/reload/logout and second
    device. Keep existing local records untouched. Report anything untested.
