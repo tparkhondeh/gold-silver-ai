@@ -11,7 +11,8 @@ Follow [September23 public evaluation](PUBLIC_EVALUATION_2026-09-23.md) and
 The owner has deferred passkey activation to final acceptance: STOP bootstrap
 issuance/follow-up; preserve existing artifacts and private authorization.
 The new `/evaluation` route reuses product components with isolated nonprivate
-browser-tab records. Implementation/testing evidence is recorded in that checkpoint.
+browser-tab records. Local implementation, browser acceptance and all three
+exact-source-SHA GitHub checks succeeded; evidence is recorded in that checkpoint.
 The hosted release remains51e0791; new deployment is blocked by freshly observed
 3.52GiB available space, below the8GiB backup guard. No server changes or deletion.
 Historical enrollment and capacity instructions below do not override this scope.

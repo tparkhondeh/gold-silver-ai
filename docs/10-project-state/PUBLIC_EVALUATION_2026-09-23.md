@@ -57,8 +57,8 @@ adjacent gateway/proxy tests passed; full TypeScript, lint and diff checks passe
 Both actual private-build smokes (Google/passkey gates,11 built assets and Excel
 template) passed; default build and complete unit/coverage run exited0. Coverage
 was96.44% lines,91.15% branches,92.68% functions. A later browser clarity correction
-removed unconditional “complete coverage” labels for unknown USD totals; its
-affected checks and exact-commit CI are recorded below when complete.
+removed unconditional “complete coverage” labels for unknown USD totals; all18
+evaluation client/workspace/gateway tests and changed-file lint then passed.
 
 Full dependency audit has no high/critical finding, but retains four moderate
 development-chain advisories rooted in old esbuild under drizzle-kit. Its proposed
@@ -87,6 +87,8 @@ portfolio information was not read into this route or overwritten.
   the imported book. Display100.3USD/g expanded to exact100.25.
 - Short/medium horizons explicitly report missing inputs/decision unavailable,
   no fabricated recommendation. Private login controls are absent from this view.
+- The reset confirmation was opened and cancelled in the browser; the purchase
+  book remained intact. Actual reset isolation is covered by automated tests.
 
 Storage denial/corruption/quota/conflict and no-private-read/write paths are
 controlled automated tests, not production incidents or actual private-session
@@ -94,7 +96,13 @@ acceptance. Browser automation currently covers the in-app browser only;
 independent Chrome/Edge/Firefox/mobile are not claimed tested. Local availability
 is not independent hosted availability. Public domain remains the old release.
 
-Git/CI: pending exact-commit recording after the reviewed source is committed.
+Reviewed implementation commit: `662a79adbe40d3cc910f41ccc82a578c1dabc51a`, pushed
+only to `codex/phase-2-decision-engine`. A clean private production build and both
+actual gateway smokes passed again against that committed source. All three jobs
+of [exact-SHA GitHub run35908791392](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/35908791392)
+completed successfully: lint/typecheck/build/test/audit, real PostgreSQL migration
+and integration, and synthetic Python financial laboratory. The repository was
+clean after push; subsequent checkpoint-only edits do not change tested source.
 
 ## Remaining delivery and final acceptance
 

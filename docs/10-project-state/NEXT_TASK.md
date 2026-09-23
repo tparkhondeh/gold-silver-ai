@@ -7,8 +7,10 @@
 Continue [September23 public evaluation](PUBLIC_EVALUATION_2026-09-23.md).
 Owner activation is explicitly deferred to FINAL acceptance. Do not issue grants,
 retry Google or ask the owner to enroll merely to continue independent evaluation.
-Complete/verify the isolated `/evaluation` route and existing purchase/Excel paths;
-use its [short test guide](../09-operations/PUBLIC_EVALUATION_ACCEPTANCE.md).
+The isolated `/evaluation` route and existing purchase/Excel paths are implemented
+and locally verified, with all three exact-source-SHA CI jobs successful. Do not
+rebuild them or repeat unchanged tests; use the
+[short test guide](../09-operations/PUBLIC_EVALUATION_ACCEPTANCE.md).
 
 Domain deployment is blocked by verified3.52GiB free, below8GiB backup reserve.
 After administrator capacity restoration, recheck exact Git/CI/release identity,
