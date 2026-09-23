@@ -2,9 +2,21 @@
 
 **Source of truth for:** where the project stands right now.
 
-_Last reviewed: 2026-09-22, Asia/Tehran (one secure grant delivered; owner login pending)_
+_Last reviewed: 2026-09-23 (public evaluation authorized; final-stage owner activation)_
 
-## Current owner-activation checkpoint
+## Active public-evaluation checkpoint
+
+Follow [September23 public evaluation](PUBLIC_EVALUATION_2026-09-23.md) and
+[ADR0014](../08-decisions/ADR/0014-isolated-public-evaluation-route.md).
+The owner has deferred passkey activation to final acceptance: STOP bootstrap
+issuance/follow-up; preserve existing artifacts and private authorization.
+The new `/evaluation` route reuses product components with isolated nonprivate
+browser-tab records. Implementation/testing evidence is recorded in that checkpoint.
+The hosted release remains51e0791; new deployment is blocked by freshly observed
+3.52GiB available space, below the8GiB backup guard. No server changes or deletion.
+Historical enrollment and capacity instructions below do not override this scope.
+
+## September22 owner-activation checkpoint (historical sequence)
 
 Exactly one approved five-minute bootstrap grant has been securely delivered
 after focused tests, independent review and all three exact-SHA GitHub jobs.

@@ -4,6 +4,11 @@
 
 ## Status
 
+Active scope: [September23 public evaluation](../10-project-state/PUBLIC_EVALUATION_2026-09-23.md).
+ADR0014 permits only an isolated `/evaluation` public route, not anonymous private
+portfolio access. Owner activation is deferred to final acceptance. Fresh server
+capacity is below the backup reserve; no new deployment until that gate is restored.
+
 Current execution: [September 21 passkey delivery](../10-project-state/PRIVATE_PASSKEY_DELIVERY_2026-09-21.md)
 and [project-only passkey operations](PRIVATE_PASSKEY_OPERATIONS.md).
 The owner has authorized an independent provider-free private login and scoped

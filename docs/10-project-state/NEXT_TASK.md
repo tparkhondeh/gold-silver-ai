@@ -4,6 +4,22 @@
 
 ## Immediate Next Step
 
+Continue [September23 public evaluation](PUBLIC_EVALUATION_2026-09-23.md).
+Owner activation is explicitly deferred to FINAL acceptance. Do not issue grants,
+retry Google or ask the owner to enroll merely to continue independent evaluation.
+Complete/verify the isolated `/evaluation` route and existing purchase/Excel paths;
+use its [short test guide](../09-operations/PUBLIC_EVALUATION_ACCEPTANCE.md).
+
+Domain deployment is blocked by verified3.52GiB free, below8GiB backup reserve.
+After administrator capacity restoration, recheck exact Git/CI/release identity,
+build cleanly, verify a current backup/separate restore and perform only the
+reviewed project-specific upgrade. No deletion, lowered reserve, skipped backup,
+private-data transfer or other-site changes. Until then report local readiness
+separately from domain404. Final owner-login/device/private-data acceptance stays
+mandatory under ADR0014; public review is not completion of the project.
+
+### September22 activation sequence (historical, superseded by ADR0014)
+
 Continue [the active owner-activation checkpoint](PRIVATE_OWNER_ACTIVATION_2026-09-22.md)
 and [the scoped operations runbook](../09-operations/PRIVATE_PASSKEY_OPERATIONS.md).
 Do not retry unchanged Google 403 requests, recreate an OAuth client or rebuild

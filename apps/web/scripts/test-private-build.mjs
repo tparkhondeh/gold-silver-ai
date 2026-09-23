@@ -25,20 +25,30 @@ try {
     const response = await app(new Request(origin));
     assert.equal(response.status, 200); const html = await response.text();
     assert.match(html, /ورود به سبد شخصی/); assert.doesNotMatch(html, /data-testid="unified-workspace"/);
-    const assets = [...html.matchAll(/(?:src|href)="(\/(?:assets|_next\/static)\/[^"?]+\.(?:js|css|woff2?))"/g)].map(match => match[1]);
+    const evaluationResponse = await app(new Request(`${origin}/evaluation`, { headers: { cookie: "synthetic-must-not-forward=1", "x-oai-subject": "synthetic-not-identity" } }));
+    assert.equal(evaluationResponse.status, 200); assert.equal(evaluationResponse.headers.get("cache-control"), "no-store");
+    const evaluation = await evaluationResponse.text();
+    assert.match(evaluation, /data-testid="public-evaluation-workspace"/);
+    assert.match(evaluation, /ارزیابی آزمایشی سبد/);
+    assert.doesNotMatch(evaluation, /data-testid="unified-workspace"/);
+    assert.doesNotMatch(evaluation, /synthetic-must-not-forward|synthetic-not-identity/);
+    for (const [path, method] of [["/evaluation?__rsc=1", "GET"], ["/evaluation/private", "GET"], ["/evaluation", "POST"]]) assert.equal((await app(new Request(origin + path, { method }))).status, 404);
+    const assets = [...(html + evaluation).matchAll(/(?:src|href)="(\/(?:assets|_next\/static)\/[^"?]+\.(?:js|css|woff2?))"/g)].map(match => match[1]);
     assert.ok(assets.length > 0);
     for (const path of new Set([...assets, "/templates/purchase-lots-v1.xlsx"])) {
       const asset = await app(new Request(origin + path));
       assert.equal(asset.status, 200); assert.equal(asset.headers.get("content-encoding"), null); assert.ok((await asset.arrayBuffer()).byteLength > 0);
     }
     assert.equal((await app(new Request(origin + "/api/portfolio"))).status, 401);
+    assert.equal((await app(new Request(origin + "/api/portfolio/export"))).status, 401);
+    assert.equal((await app(new Request(origin + "/api/managed-market", { method: "POST", headers: { origin, "sec-fetch-site": "same-origin", "x-asha-intent": "owner-action", "x-asha-managed-market": "latest" } }))).status, 401);
     assert.equal((await app(new Request(origin + "/api/operator/csv"))).status, 404);
     const mode = await (await app(new Request(origin + "/api/access-mode"))).json();
     assert.deepEqual(mode, method === "passkey" ? { mode: "private", authMethod: "passkey" } : { mode: "private" });
     assert.equal((await app(new Request(origin + "/auth/session"))).status, 401);
     for (const path of Object.values(PASSKEY_PATHS)) assert.equal((await app(new Request(origin + path, { method: "POST" }))).status, method === "passkey" ? 503 : 404);
     if (method === "passkey") for (const path of ["/auth/google/start", "/auth/google/callback"]) assert.equal((await app(new Request(origin + path, { method: "POST" }))).status, 404);
-    process.stdout.write(`Private Node ${method} build smoke passed: shell, ${new Set(assets).size} built assets, Excel template, anonymous denial. No real login or deployment.\n`);
+    process.stdout.write(`Private Node ${method} build smoke passed: login/evaluation shells, ${new Set(assets).size} built assets, Excel template, anonymous denial. No real login or deployment.\n`);
   }
 } catch { process.stderr.write("Private Node build smoke failed; no secret details logged.\n"); process.exitCode = 1; }
 finally { if (ui) { ui.server.closeAllConnections(); await new Promise(done => ui.server.close(done)); } }

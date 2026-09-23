@@ -68,3 +68,4 @@ What this decision implies for future work — including what it forecloses.
 - ADR 0011: isolated authorized market-data software test; no financial activation
 - ADR 0012: Google identity for the owner-only private domain; activation gates remain
 - ADR 0013: owner-bound passkey replaces mandatory Google dependency; real enrollment remains gated
+- ADR 0014: isolated public evaluation route; owner activation deferred to final acceptance

@@ -7,6 +7,13 @@ state is recorded in `docs/10-project-state/CURRENT_STATE.md`.
 
 ## [Unreleased]
 
+- Added a separate no-login evaluation route reusing the purchase editor, Excel
+  import and exact cost/valuation logic. Test records use an isolated browser-tab
+  store, never private APIs or existing portfolios. Private login/security tests
+  remain intact; owner activation is deferred to final acceptance under ADR0014.
+  Domain deployment and local test evidence are tracked separately in the
+  September23 checkpoint; lack of server capacity is not a completed deployment.
+
 - Added owner-bound passkey login as an explicitly authorized alternative to the
   blocked Google setup, with user verification, durable one-use ceremonies,
   bootstrap/recovery gates, cross-worker throttling and session revocation.

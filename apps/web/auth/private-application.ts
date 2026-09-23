@@ -75,8 +75,9 @@ export function createPrivateApplication(options: PrivateApplicationOptions) {
         return json({ version: MANAGED_MARKET_VERSION, state: "unavailable", snapshot: null, checkedAt: new Date(now).toISOString(), nextCheckAt: new Date(now + 300_000).toISOString(), reason: "missing_key", quota: null });
       });
     }
-    // No RSC actions, arbitrary route handlers, image proxy or development endpoints.
-    if (request.method === "GET" && !url.search && (path === "/" || path === "/templates/purchase-lots-v1.xlsx" || /^\/(?:_next\/static|assets)\/[A-Za-z0-9_./-]+\.(?:js|css|woff2?|png|svg|ico)$/.test(path))) {
+    // Evaluation is a separate public, browser-only workspace, not an auth mode
+    // or a portfolio/API bypass. No RSC actions, subroutes or query passthrough.
+    if (request.method === "GET" && !url.search && (path === "/" || path === "/evaluation" || path === "/templates/purchase-lots-v1.xlsx" || /^\/(?:_next\/static|assets)\/[A-Za-z0-9_./-]+\.(?:js|css|woff2?|png|svg|ico)$/.test(path))) {
       return options.publicUi(new Request(`${origin.origin}${path}`, { headers: { accept: request.headers.get("accept") ?? "*/*" } }));
     }
     return json({ error: "route_unavailable" }, 404);
