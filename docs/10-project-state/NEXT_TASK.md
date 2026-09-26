@@ -16,6 +16,9 @@ Hosted market activation additionally needs exact quota/outcome grants and a
 reviewed single-account quota/cooldown cutover, plus separate protected-key transfer
 authority. The new cache-storage helper alone is not this activation. Final owner
 login/device/private-data acceptance remains deliberately last.
+The inactive proof-bound market adapter is prepared separately; startup remains
+unwired. Its tests do not authorize copying keys, resetting account usage or
+running a second provider acquisition authority.
 
 ### Previous local-evaluation handoff (September23)
 

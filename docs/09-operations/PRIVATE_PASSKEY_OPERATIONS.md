@@ -177,7 +177,16 @@ gates; until approved, hosted prices remain unavailable instead of guessed.
 
 For hosted prices, key copying alone is insufficient. The authenticated runtime
 can accept a validated server-supplied market adapter, but production currently
-supplies none. Linux private latest-cache preparation, narrow quota/outcome table
+supplies none. The inactive `auth/private-managed-market.ts` factory composes the
+existing service/ledger with a live owner check before cache access and another
+session-locked authorization inside quota reservation. Each invocation owns its
+proof; outcome accounting after a committed reservation uses bounded ordinary
+transactions, not a revoked session and never a refund/retry. HTTP pre/post-owner
+checks remain mandatory. Dependencies are explicit; it loads no environment,
+files or keys and is not imported by the production entry. Controlled transport
+and disposable-database tests are not a provider activation or live owner login.
+
+Linux private latest-cache preparation, narrow quota/outcome table
 grants/readiness, protected provider configuration and one audited account-level
 quota authority are still required. Reuse existing service/cache/ledger code,
 never the local-only route or its development flags. Reconcile the existing

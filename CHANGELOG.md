@@ -16,6 +16,9 @@ state is recorded in `docs/10-project-state/CURRENT_STATE.md`.
   is still blocked by capacity and an unverified-current backup.
   Evaluation downloads now fail safely without losing confirmed records or drafts;
   exact output and error-cleanup paths have executed regressions.
+  Prepared an inactive owner-proof-bound market adapter: fresh authorization for
+  cache entry and quota reservation, independent counted-outcome completion after
+  logout, and explicit injected dependencies; production startup remains unwired.
 
 - Added a separate no-login evaluation route reusing the purchase editor, Excel
   import and exact cost/valuation logic. Test records use an isolated browser-tab
