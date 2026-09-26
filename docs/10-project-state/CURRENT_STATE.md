@@ -14,6 +14,11 @@ The pre-change exact source was dcc1822; the domain still serves51e0791 and its
 evaluation path is not deployed. This review supersedes prior timestamped capacity
 and backup observations, without undoing their recorded work or final-stage login
 deferral. No server/data/key transfer or grant was performed.
+The reviewed independent code is now at1f17cea: local800tests/798pass/two
+environment-specific skips and all three exact-SHA CI jobs passed. Sorting,
+evaluation export recovery and inactive hosted-market preparation are recorded in
+that checkpoint. Real quota/key handoff and production startup attachment remain
+separate unfinished gates; do not treat prepared contracts as operational evidence.
 
 ## Public-evaluation implementation checkpoint (September23)
 
