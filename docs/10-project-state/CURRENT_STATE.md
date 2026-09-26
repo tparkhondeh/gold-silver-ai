@@ -2,9 +2,20 @@
 
 **Source of truth for:** where the project stands right now.
 
-_Last reviewed: 2026-09-23 (public evaluation authorized; final-stage owner activation)_
+_Last reviewed: 2026-09-26 (fresh delivery review; owner activation still final-stage)_
 
-## Active public-evaluation checkpoint
+## Current delivery coordinate
+
+Follow [September26 delivery readiness](DELIVERY_READINESS_2026-09-26.md) for the
+fresh Git/CI/domain/capacity evidence, six delivery packages, conditional estimates,
+independent corrections and remaining owner/data/hosting dependencies. Do not
+infer a whole-project completion percentage from the number of passing tests.
+The pre-change exact source was dcc1822; the domain still serves51e0791 and its
+evaluation path is not deployed. This review supersedes prior timestamped capacity
+and backup observations, without undoing their recorded work or final-stage login
+deferral. No server/data/key transfer or grant was performed.
+
+## Public-evaluation implementation checkpoint (September23)
 
 Follow [September23 public evaluation](PUBLIC_EVALUATION_2026-09-23.md) and
 [ADR0014](../08-decisions/ADR/0014-isolated-public-evaluation-route.md).

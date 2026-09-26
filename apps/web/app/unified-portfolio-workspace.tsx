@@ -8,6 +8,7 @@ import { NumberValue } from "./number-value";
 import { fetchPortfolioSnapshot } from "./portfolio-persistence";
 import { PortfolioSaveError, saveUnifiedPortfolio } from "./unified-portfolio-client";
 import { evaluatePersonalMarketValuation, type PersonalQuoteState } from "./personal-market-valuation";
+import { orderPersonalAssetRows, PERSONAL_ASSET_SORT_FIELDS, type PersonalAssetSortDirection, type PersonalAssetSortField } from "./personal-asset-order";
 import { requestManagedMarket, type ManagedMarketResponse } from "./managed-market-client";
 import { MARKET_TTL_MS } from "./market-test-contract";
 import "./unified-portfolio.css";
@@ -125,6 +126,9 @@ export function UnifiedPortfolioWorkspace({ storageLocation = "local" }: { stora
     return evaluatePersonalMarketValuation(snapshot.purchaseBook ?? emptyPurchaseBook(), snapshot.holdings, prices.data?.snapshot ?? null, prices.now);
   }, [snapshot, prices.now, prices.data?.snapshot]);
   const total = valuation?.totals;
+  const [sortField, setSortField] = useState<PersonalAssetSortField>("original");
+  const [sortDirection, setSortDirection] = useState<PersonalAssetSortDirection>("asc");
+  const displayedAssets = useMemo(() => orderPersonalAssetRows(valuation?.rows ?? [], sortField, sortDirection), [valuation?.rows, sortField, sortDirection]);
   const busy = status === "loading" || status === "saving" || !snapshot || needsReload;
   const [preferencesDraft, setPreferencesDraft] = useState<PortfolioPreferences | null>(null);
   const [preferencesDraftBase, setPreferencesDraftBase] = useState("");
@@ -150,7 +154,9 @@ export function UnifiedPortfolioWorkspace({ storageLocation = "local" }: { stora
         <article><span>سود / زیان دلاری</span><strong><PurchaseRatio value={total?.profitLossUsd ?? null} unit="دلار" /></strong><small><PurchaseRatio value={total?.profitLossUsdPercent ?? null} unit="٪ از بهای دلاری خرید" /></small></article>
       </div>
       {snapshot && total?.totalAssetCount === 0 && <div className="panel"><p>هنوز دارایی ثبت نشده است.</p><button className="primary-button" onClick={() => setTab("purchases")}>ثبت دارایی یا ورود Excel</button></div>}
-      <div className="unified-assets">{valuation?.rows.map((row) => <article className="panel" key={row.id} data-testid={`asset-${row.id}`}><header><h2>{row.name}</h2><span className={row.quoteState === "fresh" ? "fresh" : "pending"}>{quoteLabels[row.quoteState]}</span></header><dl>
+      {displayedAssets.length > 0 && <div role="group" aria-label="مرتب‌سازی دارایی‌ها" aria-describedby="unified-sort-note"><div className="unified-horizons"><label>مرتب‌سازی بر پایهٔ<select data-testid="unified-sort-field" value={sortField} onChange={event => setSortField(event.target.value as PersonalAssetSortField)}>{PERSONAL_ASSET_SORT_FIELDS.map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label><label>جهت ترتیب<select data-testid="unified-sort-direction" value={sortDirection} disabled={sortField === "original"} onChange={event => setSortDirection(event.target.value as PersonalAssetSortDirection)}><option value="asc">صعودی</option><option value="desc">نزولی</option></select></label></div><small id="unified-sort-note">مبالغ بر پایهٔ تومان مقایسه می‌شوند؛ مقدار نامشخص همیشه در پایان است.</small></div>}
+      <div className="unified-assets">{displayedAssets.map((row) => <article className="panel" key={row.id} data-testid={`asset-${row.id}`}><header><h2>{row.name}</h2><span className={row.quoteState === "fresh" ? "fresh" : "pending"}>{quoteLabels[row.quoteState]}</span></header><dl>
+        <div><dt>جمع بهای خرید با هزینه</dt><dd><PurchaseRatio value={row.landedBasisRial.complete ? row.landedBasisRial.total : null} unit="تومان" rialToToman /></dd></div>
         <div><dt>موجودی</dt><dd><PurchaseRatio value={row.quantity} unit={row.displayUnit} /></dd></div>
         <div><dt>میانگین وزنی خرید، با هزینه</dt><dd><PurchaseRatio value={row.landedBasisRial.average} unit={`تومان / ${row.displayUnit}`} rialToToman /></dd></div>
         <div><dt>ارزش با قیمت معتبر</dt><dd><PurchaseRatio value={row.currentValueRial} unit="تومان" rialToToman /></dd></div>

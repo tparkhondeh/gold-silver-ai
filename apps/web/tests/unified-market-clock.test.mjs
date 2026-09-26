@@ -32,6 +32,7 @@ function harness({ at = base, request = async () => receipt() } = {}) {
   const hookModule = {};
   const modules = { react, "./purchase-book": {}, "./purchase-book-panel": {}, "./number-value": {}, "./portfolio-persistence": {}, "./unified-portfolio-client": {}, "./personal-market-valuation": {},
     "./managed-market-client": { requestManagedMarket: signal => { calls++; return request(signal); } }, "./market-test-contract": { MARKET_TTL_MS }, "./unified-portfolio.css": {} };
+  modules["./personal-asset-order"] = {};
   new Function("require", "exports", "React", "window", "document", "Date", compiled)(name => { assert.ok(Object.hasOwn(modules, name), `Unexpected hook module dependency: ${name}`); return modules[name]; }, hookModule, {}, window, document, Clock);
   const render = () => { cursor = 0; output = hookModule.useManagedPrices(); while (effects.length) effects.shift()(); return output; };
   const runTimers = () => { for (const [id, timer] of [...timers]) if (timer.due <= now) { timers.delete(id); void timer.fn(); } return render(); };

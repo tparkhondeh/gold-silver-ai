@@ -7,6 +7,16 @@ state is recorded in `docs/10-project-state/CURRENT_STATE.md`.
 
 ## [Unreleased]
 
+- Restored exact, display-only asset sorting in the active unified/evaluation
+  views without mutating purchases or financial methods. Added a fixed-scope
+  read-only private release/capacity/retained-backup check and protected build
+  evidence reader, plus inactive Linux latest-cache storage preparation. No keys,
+  provider calls, quota activation, owner enrollment or server changes. Fresh
+  remaining delivery gates are in the September26 readiness checkpoint; deployment
+  is still blocked by capacity and an unverified-current backup.
+  Evaluation downloads now fail safely without losing confirmed records or drafts;
+  exact output and error-cleanup paths have executed regressions.
+
 - Added a separate no-login evaluation route reusing the purchase editor, Excel
   import and exact cost/valuation logic. Test records use an isolated browser-tab
   store, never private APIs or existing portfolios. Private login/security tests

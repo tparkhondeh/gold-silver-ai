@@ -25,6 +25,7 @@
     "identity:check-storage": "node --experimental-strip-types scripts/identity-storage.mjs --check",
     "identity:acceptance": "node --experimental-strip-types scripts/start-private-login-acceptance.mjs",
     "ops:check-local": "node --experimental-strip-types scripts/check-local-readiness.mjs",
+    "ops:check-private": "node --experimental-strip-types scripts/check-private-readiness.mjs",
     "test:db": "node --experimental-strip-types --test tests/integration/*.test.mjs"
   },
   "dependencies": {

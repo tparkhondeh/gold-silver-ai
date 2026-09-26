@@ -77,6 +77,10 @@ These are scoped operator procedures, not permission to transfer owner data/keys
 
 ## Actual owner enrollment and recovery
 
+Owner activation is deferred to final acceptance under ADR0014. The procedures
+below describe that final-stage handoff, not the next task or authority to issue
+another grant while independent work continues.
+
 There is no signup or first-login-wins. `private-passkey-administration.mjs
 issue-bootstrap` is a separately approved operator action. It issues one grant
 for at most5minutes, writes plaintext once to a new private0600server file, and
@@ -128,6 +132,35 @@ the actual browser/device handoff. Do not infer authenticated behavior from the
 already completed anonymous/public checks.
 
 ## Rollback and limitations
+
+### Read-only operator check
+
+Run `npm run ops:check-private` from the exact reviewed Linux release's `apps/web`
+directory. It accepts no path/environment/flag override and makes no service,
+database, provider, configuration, schedule or cleanup change. It validates the
+clean branch/SHA and bounded, nonlinked built manifest, available bytes against
+the existing8GiB reserve, and the existing protected-file retained-backup verifier
+(freshness, same-release binding, actual retained dump digest). Failed/unknown
+checks exit nonzero with fixed reasons; raw errors, dump paths and secrets are
+not printed. A Windows/development checkout deliberately cannot pass this check.
+
+This is a manual point-in-time check, not background alerting, a new backup or a
+substitute for the upgrade installer's gates. Passing does NOT prove browser/login,
+database health, spare build headroom, private-use readiness or off-host recovery.
+The existing public health endpoint remains availability/release-only.
+
+### Prepared but inactive market-cache storage
+
+`scripts/private-market-cache-storage.ts` provides fixed Linux owner-only inspection
+and explicit preparation of `PRIVATE_DATA_ROOT/latest-market`. It reuses the
+existing latest-cache names; no provider/cache contents or key are read. Inspection
+does not create a missing leaf; explicit preparation can create only that leaf
+with0700 permissions under already-safe pinned ancestors. Unsafe/linked/writable
+state, unknown files and races are rejected, preserved and never repaired/deleted.
+Its metadata-safe result is NOT quote validity, quota readiness or activation;
+existing lock/pending markers remain visible, not automatically evicted. No startup
+or production service is attached to this preparer. Actual production execution
+and narrow database grants still require the remaining documented gates below.
 
 Before any deployment, retain the previous exact code/config/crontab and verified
 data backup. On an unsafe initial activation, disable ONLY this project's new

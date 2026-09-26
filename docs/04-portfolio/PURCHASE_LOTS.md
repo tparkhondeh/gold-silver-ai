@@ -83,9 +83,10 @@ method and execution restrictions remain unchanged.
 ## XLSX template and parsing
 
 The personal portfolio's purchase panel downloads
-`/templates/purchase-lots-v1.xlsx`. It has four sheets: `راهنما`, `خریدها`,
-`فهرست‌ها`, and `نمونه ساختگی`. Only `خریدها` is imported; examples are separate
-and never added automatically. Asset/class/unit/currency/calendar/time-zone
+`/templates/purchase-lots-v1.xlsx`. It has three sheets: `راهنما`, `خریدها`,
+and `فهرست‌ها`. The public workbook has blank input rows and no synthetic-example
+sheet. Only `خریدها` is imported. Separate labelled test fixtures are not part of
+the downloadable template. Asset/class/unit/currency/calendar/time-zone
 dropdowns assist entry; validators still enforce the actual allowed combinations.
 
 [`purchase-import-schema.ts`](../../apps/web/app/purchase-import-schema.ts) owns

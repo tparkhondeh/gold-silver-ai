@@ -4,6 +4,21 @@
 
 ## Immediate Next Step
 
+Start with [September26 delivery readiness](DELIVERY_READINESS_2026-09-26.md), not
+the historical activation sequence. Independent readiness/sorting/cache-storage
+work and exact remaining delivery gates are recorded there. Actual domain update
+still requires administrator-restored capacity and a current verified backup.
+After those checks, publish the reviewed evaluation release and test its actual
+HTTPS/browser boundary. Do not lower reserve, delete artifacts, create another
+bootstrap grant, transfer keys/holdings or claim real login to bypass the blocker.
+
+Hosted market activation additionally needs exact quota/outcome grants and a
+reviewed single-account quota/cooldown cutover, plus separate protected-key transfer
+authority. The new cache-storage helper alone is not this activation. Final owner
+login/device/private-data acceptance remains deliberately last.
+
+### Previous local-evaluation handoff (September23)
+
 Continue [September23 public evaluation](PUBLIC_EVALUATION_2026-09-23.md).
 Owner activation is explicitly deferred to FINAL acceptance. Do not issue grants,
 retry Google or ask the owner to enroll merely to continue independent evaluation.

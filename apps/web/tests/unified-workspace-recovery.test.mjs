@@ -7,6 +7,7 @@ import { emptyPurchaseBook } from "../app/purchase-book.ts";
 import { PortfolioSaveError } from "../app/unified-portfolio-client.ts";
 import { evaluatePersonalMarketValuation } from "../app/personal-market-valuation.ts";
 import { MARKET_TTL_MS } from "../app/market-test-contract.ts";
+import * as assetOrder from "../app/personal-asset-order.ts";
 
 const source = readFileSync(new URL("../app/unified-portfolio-workspace.tsx", import.meta.url), "utf8");
 const compiled = ts.transpileModule(source, { compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.CommonJS, jsx: ts.JsxEmit.React } }).outputText;
@@ -41,6 +42,7 @@ function harness({ fetchSnapshot, saveSnapshot, stored = {} }) {
   const components = { PurchaseBookPanel: function PurchaseBookPanel() {}, PurchaseRatio: function PurchaseRatio() {} };
   const dependencies = { react, "./purchase-book": { emptyPurchaseBook }, "./purchase-book-panel": components, "./number-value": { NumberValue: function NumberValue() {} }, "./portfolio-persistence": { fetchPortfolioSnapshot: signal => { reads++; requests.push(signal); return fetchSnapshot(reads, signal); } }, "./unified-portfolio-client": { PortfolioSaveError, saveUnifiedPortfolio: next => { writes++; return saveSnapshot(next, writes); }, personalBackup() { throw Error("unexpected export"); } }, "./personal-market-valuation": { evaluatePersonalMarketValuation }, "./market-test-contract": { MARKET_TTL_MS }, "./managed-market-client": { requestManagedMarket: async () => ({ state: "unavailable", snapshot: null, checkedAt: new Date(at).toISOString(), nextCheckAt: new Date(at + 60_000).toISOString(), quota: null }) }, "./unified-portfolio.css": {} };
   const exports = {};
+  dependencies["./personal-asset-order"] = assetOrder;
   new Function("require", "exports", "React", "window", "document", "sessionStorage", "Date", compiled)(name => { assert.ok(Object.hasOwn(dependencies, name), name); return dependencies[name]; }, exports, React, window, document, { getItem: key => stored[key] ?? null }, Clock);
   const render = () => { cursor = 0; const tree = exports.UnifiedPortfolioWorkspace(); while (effects.length) effects.shift()(); return tree; };
   return { render, requests, get reads() { return reads; }, get writes() { return writes; }, async start() { render(); for (const [id, timer] of [...timers]) if (timer.delay === 0) { timers.delete(id); timer.fn(); } await flush(); return render(); }, unmount() { for (const slot of slots) slot.cleanup?.(); }, get listenerCount() { return events.size; } };
@@ -110,4 +112,23 @@ test("tab switches hide rather than remove the purchase editor and untouched bro
   }
   assert.match(text(ui.render()), /اطلاعاتی در حافظهٔ مرورگر باقی مانده است/);
   assert.equal(ui.writes, 0); assert.equal(preserved["gold-silver-holdings"], "synthetic browser-only draft"); ui.unmount();
+});
+
+test("actual private workspace sorting preserves saved version, exact purchase IDs, preferences draft and editor identity without writes", async () => {
+  const saved = snapshot(), common = { assetClass: "gold", unit: "gram", purityPermille: 750, quantity: "1", purchaseDate: "2000-01-01", purchaseTime: null, paymentCurrency: "TOMAN", fees: "0", note: "NONPRIVATE SORT FIXTURE", source: { kind: "manual", reference: null }, fx: null };
+  saved.holdings = []; saved.purchaseBook.lots = [{ ...common, id: "gold", assetId: "GOLD_18K_IRR", unitPrice: "500" }, { ...common, id: "silver", assetId: "SILVER_999_IRR", assetClass: "silver", purityPermille: 999, unitPrice: "100" }, { ...common, id: "unknown", assetId: "SILVER_925_IRR", assetClass: "silver", purityPermille: 925, unitPrice: null }];
+  const before = JSON.stringify(saved), ui = harness({ fetchSnapshot: async () => saved, saveSnapshot: async () => assert.fail("sort must not save") });
+  let tree = await ui.start(); const retained = panel(tree), select = (view, id) => nodes(view).find(node => node.props["data-testid"] === id);
+  const rows = evaluatePersonalMarketValuation(saved.purchaseBook, [], null, at).rows, expected = ids => ids.map(id => `asset-${rows.find(row => row.assetId === id).id}`);
+  const displayed = () => nodes(ui.render()).filter(node => node.type === "article" && node.props["data-testid"]?.startsWith("asset-")).map(node => node.props["data-testid"]);
+  const originalOrder = displayed(); inputs(tree)[0].props.onChange({ target: { value: "7" } });
+  select(tree, "unified-sort-field").props.onChange({ target: { value: "cost" } }); tree = ui.render();
+  assert.deepEqual(displayed(), expected(["SILVER_999_IRR", "GOLD_18K_IRR", "SILVER_925_IRR"]));
+  select(tree, "unified-sort-direction").props.onChange({ target: { value: "desc" } }); tree = ui.render();
+  assert.deepEqual(displayed(), expected(["GOLD_18K_IRR", "SILVER_999_IRR", "SILVER_925_IRR"]));
+  button(tree, "ثبت و ویرایش").props.onClick(); tree = ui.render(); button(tree, "نمای سبد").props.onClick(); tree = ui.render();
+  assert.equal(select(tree, "unified-sort-field").props.value, "cost"); assert.equal(select(tree, "unified-sort-direction").props.value, "desc");
+  select(tree, "unified-sort-field").props.onChange({ target: { value: "original" } }); tree = ui.render(); assert.deepEqual(displayed(), originalOrder);
+  assert.equal(panel(tree).type, retained.type); assert.equal(panel(tree).key, retained.key); assert.equal(panel(tree).props.book, retained.props.book);
+  assert.equal(inputs(tree)[0].props.value, "7"); assert.equal(JSON.stringify(saved), before); assert.equal(ui.writes, 0); assert.equal(ui.reads, 1); ui.unmount();
 });
