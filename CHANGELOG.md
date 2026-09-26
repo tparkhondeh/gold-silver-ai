@@ -19,6 +19,11 @@ state is recorded in `docs/10-project-state/CURRENT_STATE.md`.
   Prepared an inactive owner-proof-bound market adapter: fresh authorization for
   cache entry and quota reservation, independent counted-outcome completion after
   logout, and explicit injected dependencies; production startup remains unwired.
+  Added inactive protected-provider configuration, exact read-only quota-table
+  readiness and a pure narrow-grant plan. A preparatory handoff contract preserves
+  inclusive rolling usage, microseconds and the global latest cooldown without
+  pretending to verify actual account usage, transfer approval or source fencing.
+  No real key, grant, accounting transfer or provider activation was performed.
 
 - Added a separate no-login evaluation route reusing the purchase editor, Excel
   import and exact cost/valuation logic. Test records use an isolated browser-tab

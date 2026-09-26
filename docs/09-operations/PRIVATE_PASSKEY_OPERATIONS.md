@@ -186,9 +186,34 @@ checks remain mandatory. Dependencies are explicit; it loads no environment,
 files or keys and is not imported by the production entry. Controlled transport
 and disposable-database tests are not a provider activation or live owner login.
 
-Linux private latest-cache preparation, narrow quota/outcome table
-grants/readiness, protected provider configuration and one audited account-level
-quota authority are still required. Reuse existing service/cache/ledger code,
+The following independent preparation is implemented, still unmounted:
+
+- `scripts/private-market-config.ts`: bounded descriptor-pinned read of the fixed
+  `PRIVATE_DATA_ROOT/market-provider.json` only. Missing leaf disables; malformed,
+  linked, unsafe or replaced state rejects with a fixed non-secret error. A valid
+  file reports `configured_only`, not verified transfer/quota/runtime activation.
+  It creates no file and must never be serialized or logged because its server
+  value contains the key. There is no environment or alternate-path fallback.
+- `auth/private-market-readiness.ts`: read-only migration, role, table, constraint
+  and integrity-trigger inspection. `scripts/private-market-grants.ts` is only a
+  pure two-statement plan for reservation SELECT/INSERT and outcome
+  SELECT/INSERT/UPDATE; the auth-only preparer does not execute it. Metadata-ready
+  is not account authority, migrated usage or provider readiness.
+- `data/navasan-quota-handoff.ts`: pure preparatory data contract, not an accepted
+  operational cutover. Inclusive31-day reservations across all existing endpoints
+  plus the global latest reservation preserve microseconds and prior cooldown;
+  exhausted usage remains exhausted. A caller-supplied observation time rejects
+  future captures. Its bounded canonical digest proves consistency only. Opaque
+  account/ledger/approval references do not verify account identity, completeness,
+  retirement of source callers, transfer authority or activation; those status
+  flags always remain false. No actual capture/import/fence tool is supplied.
+
+Actual Linux preparation, narrow grants/readiness, approved protected-provider
+transfer and one audited account-level quota authority are still required.
+Verify external usage as well as local accounting, retire every source caller and
+drain admitted requests before reviewing actual capture/import and attaching
+startup; a local advisory lock cannot fence another database or caller.
+Reuse existing service/cache/ledger code,
 never the local-only route or its development flags. Reconcile the existing
 31-day reservations/cooldown and disable the old acquisition authority before
 enabling another; a fresh hosted ledger or key rotation is not a quota reset.

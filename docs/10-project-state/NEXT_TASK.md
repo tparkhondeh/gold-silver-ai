@@ -19,6 +19,13 @@ login/device/private-data acceptance remains deliberately last.
 The inactive proof-bound market adapter is prepared separately; startup remains
 unwired. Its tests do not authorize copying keys, resetting account usage or
 running a second provider acquisition authority.
+The optional protected-config reader, exact quota-table metadata probe/grant plan
+and preparatory microsecond-preserving handoff contract are also implemented and
+inactive. Do not rebuild them. They do not verify source completeness/account
+usage, fence or drain existing acquisition, import accounting, grant real access,
+transfer a key or connect startup. Complete those operational gates only with the
+required source evidence and explicit transfer authority; no placeholder approval
+or document digest is an activation certificate.
 
 ### Previous local-evaluation handoff (September23)
 
