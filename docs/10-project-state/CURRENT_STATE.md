@@ -2,7 +2,18 @@
 
 **Source of truth for:** where the project stands right now.
 
-_Last reviewed: 2026-10-03 (evaluation published and browser-tested; owner activation still final-stage)_
+_Last reviewed: 2026-10-03 (hosted-market prerequisites and one actual local price test; no hosted activation)_
+
+## October3 hosted-market checkpoint
+
+Continue from [hosted-market preparation](HOSTED_MARKET_PREPARATION_2026-10-03.md).
+One counted local latest-price request and exact fictional-multilot valuation
+succeeded; existing usage was preserved. The fixed Linux cache and native quota
+accounting/lifecycle prerequisites are implemented separately from activation.
+Hosted key transfer, verified account-wide usage/source retirement and guarded
+production attachment are not complete; owner enrollment remains FINAL.
+The live release is still50a9c3a. No private holdings, key or accounting ledger
+was transferred to it by this preparation; evaluation remains isolated.
 
 ## October3 active release checkpoint
 

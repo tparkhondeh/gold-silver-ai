@@ -7,6 +7,14 @@ state is recorded in `docs/10-project-state/CURRENT_STATE.md`.
 
 ## [Unreleased]
 
+- Prepared fixed-path Linux latest-cache I/O with pinned descriptors and safe
+  artifact preservation, reusing unchanged price/receipt rules. Added executable
+  PostgreSQL quota capture/import verification and local lifecycle protections
+  against silently restoring a retired caller's INSERT permission. Read-only
+  source accounting remains backup-compatible. Actual key/quota transfer,
+  account reconciliation and hosted activation remain separate gates; see
+  `docs/10-project-state/HOSTED_MARKET_PREPARATION_2026-10-03.md`.
+
 - Patched compatible locked brace-expansion, fast-uri and scoped Miniflare/Undici
   dependencies before evaluation publication. October3 fresh capacity, independent
   security review, remaining build-only advisories and release gates are recorded

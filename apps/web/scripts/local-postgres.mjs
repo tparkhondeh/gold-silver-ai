@@ -13,6 +13,7 @@ import { probeObservationDatabase } from "../db/postgres-runtime.ts";
 import { phase1Instruments, phase1Sources } from "../data/phase1-registry.ts";
 import { createLocalBackupPlan, localBackupTables, migrationJournalMatches, quoteVerificationDatabase } from "./local-backup.ts";
 import { identityBackupExclusions, transientIdentityTables } from "./private-backup-policy.ts";
+import { initializeLocalQuotaLifecycle, localQuotaPrivilegePredicate } from "./local-quota-lifecycle.ts";
 
 const root = fileURLToPath(new URL("../../../", import.meta.url));
 const webRoot = fileURLToPath(new URL("../", import.meta.url));
@@ -51,7 +52,7 @@ async function privateDirectory() {
 }
 
 async function sourceFingerprint() {
-  const files = ["scripts/local-postgres.mjs", "scripts/local-backup.ts", "scripts/local-backup-runtime.ts", "scripts/local-backup-supervisor.ts", "scripts/managed-market-runtime.ts", "scripts/start-local-app.mjs", "package-lock.json", "app/purchase-book.ts", "app/api/portfolio/route.ts", "app/api/managed-market/route.ts", "app/managed-market-contract.ts"];
+  const files = ["scripts/local-postgres.mjs", "scripts/local-quota-lifecycle.ts", "scripts/local-backup.ts", "scripts/local-backup-runtime.ts", "scripts/local-backup-supervisor.ts", "scripts/managed-market-runtime.ts", "scripts/start-local-app.mjs", "package-lock.json", "app/purchase-book.ts", "app/api/portfolio/route.ts", "app/api/managed-market/route.ts", "app/managed-market-contract.ts"];
   for (const folder of ["db", "data", "tests/integration"]) {
     for (const file of await readdir(join(webRoot, folder), { recursive: true, withFileTypes: true })) {
       if (file.isFile() && /\.(ts|mjs|sql)$/.test(file.name)) files.push(join(file.parentPath, file.name));
@@ -84,6 +85,8 @@ async function verifyActivation(client, { allowPendingMigrations = false } = {})
       WHEN c.relname='provider_runtime_status'
         THEN has_table_privilege(current_user,c.oid,'INSERT,UPDATE')
           AND NOT has_table_privilege(current_user,c.oid,'DELETE,TRUNCATE,TRIGGER')
+      WHEN c.relname='provider_request_reservations'
+        THEN ${localQuotaPrivilegePredicate(allowPendingMigrations)}
       ELSE has_table_privilege(current_user,c.oid,'INSERT')
         AND NOT has_table_privilege(current_user,c.oid,'UPDATE,DELETE,TRUNCATE,TRIGGER')
       END
@@ -169,21 +172,20 @@ async function initialize(secret) {
   try {
     await owner.query("SET search_path TO public");
     await owner.query("REVOKE ALL ON SCHEMA public FROM PUBLIC");
-    const applied = await applyMigrations(owner, await readMigrations());
-    await owner.query("BEGIN");
-    for (const i of phase1Instruments) await owner.query("INSERT INTO instruments VALUES ($1,$2,$3,$4,$5,$6,$7,$8) ON CONFLICT (code) DO NOTHING", [i.code,i.schemaVersion,i.displayName,i.assetClass,i.canonicalCurrency,i.canonicalUnit,i.activeFrom,i.retiredAt]);
-    for (const s of phase1Sources) {
-      await owner.query("INSERT INTO sources VALUES ($1,$2,$3,$4,$5,$6) ON CONFLICT (id) DO NOTHING", [s.id,s.schemaVersion,s.displayName,s.quality,s.accessMode,s.active]);
-      await owner.query(`INSERT INTO source_contract_versions (source_id,version,display_name,quality,access_mode,active)
-        VALUES ($1,$2,$3,$4,$5,$6) ON CONFLICT (source_id,version) DO NOTHING`, [s.id,s.schemaVersion,s.displayName,s.quality,s.accessMode,s.active]);
-    }
-    await owner.query("GRANT USAGE ON SCHEMA public TO asha_runtime");
-    await owner.query("GRANT SELECT ON ALL TABLES IN SCHEMA public TO asha_runtime");
-    await owner.query("GRANT INSERT ON ingestion_batches, observations, quarantine_records, validation_results, quarantine_resolutions TO asha_runtime");
-    await owner.query("GRANT INSERT ON provider_request_reservations TO asha_runtime");
-    await owner.query("GRANT INSERT, UPDATE ON provider_runtime_status TO asha_runtime");
-    await owner.query("GRANT INSERT, UPDATE, DELETE ON user_portfolios, portfolio_holdings, portfolio_preferences TO asha_runtime");
-    await owner.query("COMMIT");
+    const migrations = await readMigrations();
+    const applied = await initializeLocalQuotaLifecycle(owner, () => applyMigrations(owner, migrations), async () => {
+      for (const i of phase1Instruments) await owner.query("INSERT INTO instruments VALUES ($1,$2,$3,$4,$5,$6,$7,$8) ON CONFLICT (code) DO NOTHING", [i.code,i.schemaVersion,i.displayName,i.assetClass,i.canonicalCurrency,i.canonicalUnit,i.activeFrom,i.retiredAt]);
+      for (const s of phase1Sources) {
+        await owner.query("INSERT INTO sources VALUES ($1,$2,$3,$4,$5,$6) ON CONFLICT (id) DO NOTHING", [s.id,s.schemaVersion,s.displayName,s.quality,s.accessMode,s.active]);
+        await owner.query(`INSERT INTO source_contract_versions (source_id,version,display_name,quality,access_mode,active)
+          VALUES ($1,$2,$3,$4,$5,$6) ON CONFLICT (source_id,version) DO NOTHING`, [s.id,s.schemaVersion,s.displayName,s.quality,s.accessMode,s.active]);
+      }
+      await owner.query("GRANT USAGE ON SCHEMA public TO asha_runtime");
+      await owner.query("GRANT SELECT ON ALL TABLES IN SCHEMA public TO asha_runtime");
+      await owner.query("GRANT INSERT ON ingestion_batches, observations, quarantine_records, validation_results, quarantine_resolutions TO asha_runtime");
+      await owner.query("GRANT INSERT, UPDATE ON provider_runtime_status TO asha_runtime");
+      await owner.query("GRANT INSERT, UPDATE, DELETE ON user_portfolios, portfolio_holdings, portfolio_preferences TO asha_runtime");
+    });
     console.log(JSON.stringify({ localDatabase: "asha_local", testDatabase: "asha_integration", migrationsApplied: applied, syntheticMarketRowsSeeded: 0 }));
   } finally { await owner.end(); }
 }

@@ -206,7 +206,37 @@ The following independent preparation is implemented, still unmounted:
   future captures. Its bounded canonical digest proves consistency only. Opaque
   account/ledger/approval references do not verify account identity, completeness,
   retirement of source callers, transfer authority or activation; those status
-  flags always remain false. No actual capture/import/fence tool is supplied.
+  flags always remain false. This pure contract itself supplies no native I/O;
+  the inactive capture/import functions below do not supply operator orchestration.
+
+Additional inactive October3 implementation:
+
+- `scripts/private-market-cache.ts` provides fixed-path, descriptor-pinned Linux
+  runtime I/O using the existing latest-cache contract and selection rules. It
+  never creates/prepares storage or attaches itself to startup. Existing lock or
+  pending files block reads/writes until reviewed recovery; unknown artifacts
+  are preserved. This is not isolation against malicious same-UID processes.
+- `data/navasan-quota-import.ts` performs native PostgreSQL capture and atomic
+  append-only import/verification with explicitly supplied executors. Capture
+  requires the provider lock and disabled source runtime admission; target import
+  requires disabled admission and empty outcomes, and accepts only an empty
+  ledger or an exactly identical replay. Independent expected references/digest
+  are mandatory; do not derive them from the incoming manifest. Runtime table,
+  schema/database ownership and effective mutation authority are rejected even
+  if INSERT was self-revoked. It preserves microseconds and the
+  original usage/cooldown, not a fresh allowance. No physical database/account
+  identity, process retirement, transfer approval or activation is established.
+  Protected transport/native operator orchestration is still separate work.
+- `scripts/local-quota-lifecycle.ts` prevents explicit local initialization from
+  restoring quota INSERT on an existing table; first-time grants require the
+  actual new-table migration under provider-wide exclusion. Read-only quota
+  access remains sufficient for backup validation, not normal activation.
+  An interrupted fresh initialization after migration but before grants fails
+  closed on retry; repair needs reviewed recovery, not automatic reactivation.
+
+See [the October3 hosted-market checkpoint](../10-project-state/HOSTED_MARKET_PREPARATION_2026-10-03.md)
+for executed evidence and unexecuted operational gates. These modules are not
+permission to fence a source, transfer a key or activate the target.
 
 Actual Linux preparation, narrow grants/readiness, approved protected-provider
 transfer and one audited account-level quota authority are still required.

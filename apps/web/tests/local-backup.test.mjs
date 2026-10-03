@@ -3,6 +3,7 @@ import { readFileSync } from "node:fs";
 import test from "node:test";
 
 import { createLocalBackupPlan, localBackupTables, migrationJournalMatches, quoteVerificationDatabase } from "../scripts/local-backup.ts";
+import { localQuotaPrivilegePredicate } from "../scripts/local-quota-lifecycle.ts";
 
 test("local backup paths stay inside the protected backup directory", () => {
   const plan = createLocalBackupPlan("C:/project/.cache/postgres-local", new Date("2026-08-31T12:34:56.789Z"), "a1b2c3d4");
@@ -49,10 +50,10 @@ test("actual backup verification skips only code activation evidence; configure,
       if (sql.includes("FROM pg_trigger")) return { rows: (triggers ? triggerNames : triggerNames.slice(1)).map(tgname => ({ tgname })) };
       throw Error("Unexpected synthetic verification query");
     } };
-    const verify = new Function("readMigrations", "migrationJournalMatches", "readFile", "evidenceFile", "sourceFingerprint", `${code}; return verifyActivation;`)(
+    const verify = new Function("readMigrations", "migrationJournalMatches", "readFile", "evidenceFile", "sourceFingerprint", "localQuotaPrivilegePredicate", `${code}; return verifyActivation;`)(
       async () => expected, migrationJournalMatches,
       async () => { evidenceReads++; return JSON.stringify({ fingerprint, completedAt: new Date().toISOString() }); },
-      "synthetic-evidence-only", async () => "current",
+      "synthetic-evidence-only", async () => "current", localQuotaPrivilegePredicate,
     );
     return { run: options => verify(client, options), evidenceReads: () => evidenceReads };
   }

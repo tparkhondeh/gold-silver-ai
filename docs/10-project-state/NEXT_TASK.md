@@ -4,6 +4,19 @@
 
 ## Immediate Next Step
 
+Start with [October3 hosted-market preparation](HOSTED_MARKET_PREPARATION_2026-10-03.md),
+not another evaluation rebuild or key creation. Reuse the new Linux cache,
+native quota capture/import and source-initialization/backup lifecycle guards.
+Local latest access was actually checked once; do not repeat it before the
+existing cooldown or treat the local remainder as verified account-wide credit.
+Key-transfer approval is still separate and no approval is recorded in this
+checkpoint. Complete account/caller reconciliation, protected operator
+orchestration, source retirement/fencing, exact target import/grants and guarded
+startup attachment before hosted acquisition. The source/target code helpers
+are not completed operational handoff evidence. Owner activation stays FINAL.
+
+### Earlier October3 evaluation handoff
+
 Continue from [October3 evaluation release](EVALUATION_RELEASE_2026-10-03.md).
 The evaluation route is deployed at50a9c3a and tested on HTTPS; do not repeat
 publication, the one-shot upgrade, purchases/Excel implementation or unchanged

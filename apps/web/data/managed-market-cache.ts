@@ -30,6 +30,23 @@ export type ManagedMarketCache = {
   replace(snapshot: MarketSnapshot, now: number): Promise<MarketSnapshot>;
 };
 
+/** Shared selection for already decoded, canonical cache documents. Filesystem
+ * backends own validation/locking; receipt and source-publication rules stay here. */
+export function selectManagedCacheSnapshot(current: { raw: string; snapshot: MarketSnapshot } | null, candidate: { raw: string; snapshot: MarketSnapshot }): MarketSnapshot {
+  if (current && Date.parse(current.snapshot.receivedAt) >= Date.parse(candidate.snapshot.receivedAt)) {
+    if (current.snapshot.receivedAt === candidate.snapshot.receivedAt && current.raw !== candidate.raw) throw Error("Conflicting latest receipt");
+    return current.snapshot;
+  }
+  for (const prior of current?.snapshot.observations ?? []) {
+    const next = candidate.snapshot.observations.find(item => item.providerSymbol === prior.providerSymbol);
+    if (!next || Date.parse(next.publishedAt) < Date.parse(prior.publishedAt)) throw Error("Latest source coverage or time regressed");
+    const oldQuote = { ...prior, receivedAt: "" };
+    const newQuote = { ...next, receivedAt: "" };
+    if (next.publishedAt === prior.publishedAt && canonical(oldQuote) !== canonical(newQuote)) throw Error("Conflicting source publication");
+  }
+  return candidate.snapshot;
+}
+
 // The launcher creates this owner-only directory outside PostgreSQL data/backups.
 // Only the committed latest.json, a lock and one recovery staging file can exist;
 // this is a disposable latest cache, never an append-only quote/history archive.
@@ -87,17 +104,8 @@ export class FileManagedMarketCache implements ManagedMarketCache {
       const lock = await open(lockPath, "wx", 0o600);
       try {
       const current = await this.readFile(MANAGED_CACHE_FILE, now);
-      if (current && Date.parse(current.snapshot.receivedAt) >= Date.parse(candidate.receivedAt)) {
-        if (current.snapshot.receivedAt === candidate.receivedAt && current.raw !== raw) throw Error("Conflicting latest receipt");
-        return current.snapshot;
-      }
-      for (const prior of current?.snapshot.observations ?? []) {
-        const next = candidate.observations.find(item => item.providerSymbol === prior.providerSymbol);
-        if (!next || Date.parse(next.publishedAt) < Date.parse(prior.publishedAt)) throw Error("Latest source coverage or time regressed");
-        const oldQuote = { ...prior, receivedAt: "" };
-        const newQuote = { ...next, receivedAt: "" };
-        if (next.publishedAt === prior.publishedAt && canonical(oldQuote) !== canonical(newQuote)) throw Error("Conflicting source publication");
-      }
+      const selected = selectManagedCacheSnapshot(current, { raw, snapshot: candidate });
+      if (selected !== candidate) return selected;
       const pendingPath = join(this.directory, "latest.pending");
       // Only a validated, recognized interrupted staging write is disposable.
       if (await this.readFile("latest.pending", now)) await unlink(pendingPath);
