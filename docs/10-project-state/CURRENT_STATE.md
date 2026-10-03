@@ -2,18 +2,21 @@
 
 **Source of truth for:** where the project stands right now.
 
-_Last reviewed: 2026-10-03 (evaluation release preparation; owner activation still final-stage)_
+_Last reviewed: 2026-10-03 (evaluation published and browser-tested; owner activation still final-stage)_
 
 ## October3 active release checkpoint
 
-Follow [October3 evaluation release](EVALUATION_RELEASE_2026-10-03.md). Fresh
-read-only server evidence supersedes the historical capacity blocker below:
-about28.93GiB is available. Actual domain still serves51e0791 until the recorded
-candidate gates and activation complete. Four compatible dependency patches and
-the full local800-test suite are complete; residual build-tool advisories are
-explicitly reviewed there. This is not yet a successful publication or owner login.
+Follow [October3 evaluation release](EVALUATION_RELEASE_2026-10-03.md). The live
+HTTPS `/evaluation` now serves reviewed code50a9c3a, with all three exact-SHA CI
+jobs successful. Fresh capacity is above8GiB reserve; candidate-bound backup and
+separate restore passed, project-only supervision upgraded and browser purchase/
+Excel/edit/sort/export/reload paths verified. Four compatible dependency patches
+and the full local800-test suite are complete; residual build-tool advisories and
+untested independent browsers/devices are explicit in the checkpoint. Evaluation
+uses temporary same-tab records, not personal-account or cross-device storage.
+Owner activation, hosted prices and final private-use acceptance remain pending.
 
-## Current delivery coordinate
+## September26 delivery coordinate (historical; superseded above)
 
 Follow [September26 delivery readiness](DELIVERY_READINESS_2026-09-26.md) for the
 fresh Git/CI/domain/capacity evidence, six delivery packages, conditional estimates,

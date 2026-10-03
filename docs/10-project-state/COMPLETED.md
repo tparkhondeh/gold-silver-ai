@@ -4,6 +4,16 @@
 merged to `main`. This is a log, not a plan — see `docs/01-product/ROADMAP.md` for
 what's ahead.
 
+## Hosted evaluation release (2026-10-03)
+
+Published exact reviewed50a9c3a to the existing project's HTTPS `/evaluation`,
+after compatible dependency repair, independent review, all three CI jobs,
+candidate-bound backup/separate restore and safe-capacity check. Real browser
+purchase/edit/Excel/deduplication/precision/sort/export/reload acceptance passed;
+private endpoints remain unauthorized to anonymous users. Evidence and explicit
+remaining owner/data/device gates: [October3 checkpoint](EVALUATION_RELEASE_2026-10-03.md).
+No main merge, owner activation, private-data transfer or financial approval.
+
 ## Private-domain foundation (2026-09-20; not activated)
 
 Durable bound owner sessions, authorized portfolio integration, private browser

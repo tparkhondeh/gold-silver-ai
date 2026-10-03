@@ -4,13 +4,20 @@
 
 ## Immediate Next Step
 
-Continue [October3 evaluation release](EVALUATION_RELEASE_2026-10-03.md).
-The old disk blocker is resolved by fresh observation, not by project cleanup.
-Complete patched exact-SHA CI, clean private build and reviewed import graph;
-create/verify a release-bound backup and separate restore, recheck8GiB reserve,
-then upgrade only this project's supervision and test actual domain evaluation.
-Preserve old release/data/cron and final-stage owner activation. No bootstrap,
-key transfer, provider activation or private-holdings transfer is authorized.
+Continue from [October3 evaluation release](EVALUATION_RELEASE_2026-10-03.md).
+The evaluation route is deployed at50a9c3a and tested on HTTPS; do not repeat
+publication, the one-shot upgrade, purchases/Excel implementation or unchanged
+tests. The old disk blocker is resolved without project cleanup. Later docs-only
+HEAD is not the live code SHA. The owner can now use the public evaluation guide.
+
+Next substantive gate is authorized hosted-price activation using the prepared
+adapter: actual licensed coverage and account quota evidence, source-caller
+fencing/draining, protected-key transfer approval and reviewed narrow DB grants.
+Those steps must not expose prices/keys/private data through the public evaluation
+route. No transfer or activation is authorized by the October3 release task.
+Owner enrollment and independent-device private persistence remain FINAL; do not
+create another bootstrap grant to continue public evaluation. Native browser/device
+and off-host recovery limitations are recorded rather than claimed complete.
 
 ### September26 handoff (historical baseline)
 

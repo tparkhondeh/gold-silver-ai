@@ -2,7 +2,18 @@
 
 **Source of truth for:** known limitations and gaps in the current state.
 
-## Current private-domain limits — September 20, 2026
+## Current delivery limits — October 3, 2026
+
+The [October3 checkpoint](EVALUATION_RELEASE_2026-10-03.md) supersedes older503,
+capacity and undeployed-state statements below. Reviewed code50a9c3a is live on
+HTTPS with isolated public evaluation, project supervision and verified separate
+restore. Owner enrollment/private login, independent-device persistence, licensed
+hosted prices and final acceptance are still pending; same-tab evaluation storage
+is not personal-account storage. Independent native browsers and actual reboot
+remain untested. Same-host backups do not protect against total host loss.
+Full dependency audit residuals are recorded in item8; no zero-findings claim.
+
+## Private-domain limits — September 20, 2026 (historical)
 
 Private session/storage integration and production-entry code are now tested, but
 not deployed. Actual Google login, verified owner binding, dedicated server DB,

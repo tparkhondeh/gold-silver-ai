@@ -12,6 +12,9 @@ state is recorded in `docs/10-project-state/CURRENT_STATE.md`.
   security review, remaining build-only advisories and release gates are recorded
   in `docs/10-project-state/EVALUATION_RELEASE_2026-10-03.md`; no financial-method,
   owner-activation, data-transfer or other-site change.
+  Published reviewed50a9c3a after verified backup/separate restore and project-only
+  supervision upgrade. Domain evaluation and isolated purchase/Excel/export/reload
+  paths are verified; personal login and hosted prices remain final-delivery gates.
 
 - Restored exact, display-only asset sorting in the active unified/evaluation
   views without mutating purchases or financial methods. Added a fixed-scope
