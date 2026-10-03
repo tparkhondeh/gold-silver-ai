@@ -2,7 +2,16 @@
 
 **Source of truth for:** where the project stands right now.
 
-_Last reviewed: 2026-09-26 (fresh delivery review; owner activation still final-stage)_
+_Last reviewed: 2026-10-03 (evaluation release preparation; owner activation still final-stage)_
+
+## October3 active release checkpoint
+
+Follow [October3 evaluation release](EVALUATION_RELEASE_2026-10-03.md). Fresh
+read-only server evidence supersedes the historical capacity blocker below:
+about28.93GiB is available. Actual domain still serves51e0791 until the recorded
+candidate gates and activation complete. Four compatible dependency patches and
+the full local800-test suite are complete; residual build-tool advisories are
+explicitly reviewed there. This is not yet a successful publication or owner login.
 
 ## Current delivery coordinate
 

@@ -4,6 +4,16 @@
 
 ## Immediate Next Step
 
+Continue [October3 evaluation release](EVALUATION_RELEASE_2026-10-03.md).
+The old disk blocker is resolved by fresh observation, not by project cleanup.
+Complete patched exact-SHA CI, clean private build and reviewed import graph;
+create/verify a release-bound backup and separate restore, recheck8GiB reserve,
+then upgrade only this project's supervision and test actual domain evaluation.
+Preserve old release/data/cron and final-stage owner activation. No bootstrap,
+key transfer, provider activation or private-holdings transfer is authorized.
+
+### September26 handoff (historical baseline)
+
 Start with [September26 delivery readiness](DELIVERY_READINESS_2026-09-26.md), not
 the historical activation sequence. Independent readiness/sorting/cache-storage
 work and exact remaining delivery gates are recorded there. Actual domain update

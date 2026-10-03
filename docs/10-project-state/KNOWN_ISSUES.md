@@ -105,6 +105,12 @@ connections failing. Exact evidence and retry boundary:
    the link is public and unauthenticated, testers must not enter real sensitive
    financial information.
 8. **Development-dependency audit findings remain; production audit is clean.**
+   October3 supersedes the historical counts below: four compatible patches
+   reduce the full audit to11entries (7high from one unpatched build/lint braces
+   advisory,4moderate in the existing Drizzle/esbuild chain,0critical). Full audit
+   remains nonzero; independent reachability review and release gates are in the
+   [October3 checkpoint](EVALUATION_RELEASE_2026-10-03.md). Do not label it clean
+   or force framework downgrades to hide findings.
    September21 supersedes the historical count below: reviewed compatible locked
    maintenance updates reduced the full graph to4moderate findings in the unused
    drizzle-kit/esbuild chain, with0high/critical; production-only audit reports0.

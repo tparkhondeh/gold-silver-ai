@@ -7,6 +7,12 @@ state is recorded in `docs/10-project-state/CURRENT_STATE.md`.
 
 ## [Unreleased]
 
+- Patched compatible locked brace-expansion, fast-uri and scoped Miniflare/Undici
+  dependencies before evaluation publication. October3 fresh capacity, independent
+  security review, remaining build-only advisories and release gates are recorded
+  in `docs/10-project-state/EVALUATION_RELEASE_2026-10-03.md`; no financial-method,
+  owner-activation, data-transfer or other-site change.
+
 - Restored exact, display-only asset sorting in the active unified/evaluation
   views without mutating purchases or financial methods. Added a fixed-scope
   read-only private release/capacity/retained-backup check and protected build
