@@ -17,3 +17,9 @@ test("the default test command builds first and enforces source coverage on Node
   assert.equal(manifest.scripts["local:run"], "node --experimental-strip-types scripts/start-local-app.mjs");
   assert.equal(manifest.scripts["ops:check-local"], "node --experimental-strip-types scripts/check-local-readiness.mjs");
 });
+
+test("local integration file workers fit the existing20connection cluster without skipping cases", async () => {
+  const source = await readFile(new URL("../scripts/local-postgres.mjs", import.meta.url), "utf8");
+  assert.match(source, /\["--experimental-strip-types", "--test-concurrency=2", "--test", "tests\/integration\/\*\.test\.mjs"\]/);
+  assert.match(source, /max_connections = 20/);
+});

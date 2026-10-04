@@ -4,6 +4,16 @@
 
 ## Immediate Next Step
 
+The locally validated implementation is described in
+[October4 quota/startup preparation](HOSTED_QUOTA_ACTIVATION_2026-10-04.md).
+Next: exact-SHA CI, candidate-bound backup and capacity check, then reviewed
+one-shot fenced quota cutover and guarded release. Hold the Windows metadata
+guard through source capture/transport; verify the saved capture before SSH.
+Do not retry ambiguous publication or re-enable source INSERT. Rollback must
+preserve the current target ledger. Actual source fencing/import is not yet done.
+
+### Starting evidence for this operation
+
 Start with [October4 actual approved transfer](HOSTED_KEY_TRANSFER_2026-10-04.md).
 The key already exists in its approved server destination and passed protected
 postverification. Do not repeat transfer, overwrite it, create another key, ask

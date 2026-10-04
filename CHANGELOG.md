@@ -7,6 +7,13 @@ state is recorded in `docs/10-project-state/CURRENT_STATE.md`.
 
 ## [Unreleased]
 
+- Implemented independently reviewed fenced quota-authority cutover and optional
+  guarded private-market startup. Preserves exact existing usage and fails closed
+  on unsafe activation evidence; no startup provider calls or public evaluation
+  access. Local full web and74real-PostgreSQL tests passed. The local integration
+  harness now uses2workers within its existing20connection budget. Actual cutover
+  and deployment are separate pending gates; see the October4 quota checkpoint.
+
 - Added a reviewed fixed Windows sender with independently bound source identity,
   retained handles and hash-pinned in-memory execution; the mutable checkout
   wrapper is inert. The owner-approved one-time provider-key transfer and protected

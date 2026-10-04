@@ -2,7 +2,17 @@
 
 **Source of truth for:** where the project stands right now.
 
-_Last reviewed: 2026-10-04 (approved key transfer verified; hosted acquisition still inactive)_
+_Last reviewed: 2026-10-04 (key delivered; quota/startup implementation validated locally, operation pending)_
+
+## October4 guarded quota/startup preparation
+
+Follow [quota cutover implementation and acceptance](HOSTED_QUOTA_ACTIVATION_2026-10-04.md).
+Source fencing/capture, atomic target import/grants and guarded private startup
+are implemented and independently reviewed. Full local web tests and74real-PG
+tests passed; exact-source CI and actual cutover/deployment are still pending.
+The key-delivery commit e7940e7 passed all three CI jobs. Do not repeat delivery
+or ask again about exclusive account usage. No new provider request was made.
+The website still serves50a9c3a; owner activation and private acceptance stay FINAL.
 
 ## October4 approved key-transfer checkpoint
 

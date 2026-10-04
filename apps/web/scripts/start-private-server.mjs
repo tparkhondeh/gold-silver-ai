@@ -14,6 +14,7 @@ import { createPgTransactionRunner } from "../db/postgres-runtime.ts";
 import { readMigrations } from "../db/migrations.ts";
 import { probePrivatePortfolioDatabase } from "../auth/private-database-readiness.ts";
 import { privateUiResponse } from "../auth/private-ui-response.ts";
+import { preparePrivateMarketActivation } from "./private-market-activation.ts";
 
 let pool, ui, gateway;
 const stop = async () => {
@@ -37,10 +38,13 @@ try {
   const runner = createPgTransactionRunner(pool), migrations = await readMigrations();
   const probe = await runner.transaction(database => probePrivatePortfolioDatabase(database, migrations));
   if (probe.state !== "ready") throw Error();
+  const binding = { origin: configuration.origin, issuer: configuration.version === 2 ? configuration.origin : "https://accounts.google.com", ownerSubject: configuration.ownerSubject, portfolioSubject: configuration.portfolioSubject };
+  // A key alone never activates prices. Missing receipt preserves auth-only;
+  // present unsafe evidence stops startup. Preparation performs no provider I/O.
+  const market = await preparePrivateMarketActivation({ binding, runner, migrations, fetcher: fetch });
   // Fixed private upstream in the same supervised process, not a development server.
   ui = await startProdServer({ host: "127.0.0.1", port: 0, outDir, silent: true, noCompression: true });
-  const binding = { origin: configuration.origin, issuer: configuration.version === 2 ? configuration.origin : "https://accounts.google.com", ownerSubject: configuration.ownerSubject, portfolioSubject: configuration.portfolioSubject };
-  const common = { binding, runner, release,
+  const common = { binding, runner, release, market,
     async publicUi(request) {
       const path = new URL(request.url).pathname;
       return privateUiResponse(await fetch(`http://127.0.0.1:${ui.port}${path}`, { headers: { accept: request.headers.get("accept") ?? "*/*", "accept-encoding": "identity" }, redirect: "error", signal: AbortSignal.timeout(10_000) }));

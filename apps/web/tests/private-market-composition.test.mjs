@@ -130,5 +130,7 @@ test("both runtime factories forward the optional dependency without environment
     assert.equal((await app(request)).status, 200); assert.equal(calls, 1);
   }
   const startup = await readFile(new URL("../scripts/start-private-server.mjs", import.meta.url), "utf8");
-  assert.doesNotMatch(startup, /market\s*:|managedMarketLatest|createManagedMarketService|FileManagedMarketCache|NAVASAN_API_KEY/);
+  assert.doesNotMatch(startup, /managedMarketLatest|createManagedMarketService|FileManagedMarketCache|NAVASAN_API_KEY/);
+  assert.match(startup, /await preparePrivateMarketActivation\(/);
+  assert.match(startup, /market/);
 });

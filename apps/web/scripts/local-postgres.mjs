@@ -348,7 +348,9 @@ try {
   else if (command === "test") {
     await start(secret);
     if (await exists(evidenceFile)) await unlink(evidenceFile);
-    execFileSync(process.execPath, ["--experimental-strip-types", "--test", "tests/integration/*.test.mjs"], { cwd: webRoot, windowsHide: true, stdio: "inherit", env: { ...process.env, ASHA_PG_BIN: runtime, ASHA_TEST_DATABASE_URL: url("postgres", secret.admin, "asha_integration") }, timeout: 120_000 });
+    // The unchanged local cluster allows20connections. Bound file workers rather
+    // than raising database capacity or skipping concurrent-transaction cases.
+    execFileSync(process.execPath, ["--experimental-strip-types", "--test-concurrency=2", "--test", "tests/integration/*.test.mjs"], { cwd: webRoot, windowsHide: true, stdio: "inherit", env: { ...process.env, ASHA_PG_BIN: runtime, ASHA_TEST_DATABASE_URL: url("postgres", secret.admin, "asha_integration") }, timeout: 180_000 });
     await writeFile(evidenceFile, JSON.stringify({ fingerprint: await sourceFingerprint(), completedAt: new Date().toISOString(), database: "asha_integration" }), { mode: 0o600 });
   } else {
     const client = await connect(url("asha_runtime", secret.runtime, "asha_local"));
