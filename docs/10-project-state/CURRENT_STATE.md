@@ -2,7 +2,16 @@
 
 **Source of truth for:** where the project stands right now.
 
-_Last reviewed: 2026-10-03 (hosted-market prerequisites and one actual local price test; no hosted activation)_
+_Last reviewed: 2026-10-04 (private key-delivery receiver preparation; no key transfer or hosted activation)_
+
+## October4 private delivery checkpoint
+
+Follow [private provider delivery preparation](HOSTED_KEY_DELIVERY_PREPARATION_2026-10-04.md).
+The fixed-file receiver and bounded stdin entry are prepared separately from
+actual key delivery. October3 quota/cache evidence is unchanged. Fresh server
+capacity/retained-backup preflight passed; HTTPS still serves50a9c3a. No key,
+holdings, quota authority or server configuration changed. Specific key-transfer
+approval remains absent; owner enrollment stays FINAL.
 
 ## October3 hosted-market checkpoint
 

@@ -234,6 +234,17 @@ Additional inactive October3 implementation:
   An interrupted fresh initialization after migration but before grants fails
   closed on retry; repair needs reviewed recovery, not automatic reactivation.
 
+October4 adds `scripts/private-market-config-receiver.ts` and operator entry
+`receive-private-market-config.mjs --receive-approved-key`. They accept only
+bounded binary stdin after fixed-destination checks and create an absent0600file
+exclusively. Never place payloads in command arguments, environment, a script,
+logs, Downloads or an intermediate file. Existing/partial destinations require
+reviewed recovery; no overwrite/delete/repair path exists. An invocation flag is
+not owner approval or quota/account proof. Do not invoke against a real key before
+recorded transfer approval, reviewed tool deployment and verified-host SSH.
+It is not mounted in startup/HTTP and does not activate acquisition. See the
+[October4 checkpoint](../10-project-state/HOSTED_KEY_DELIVERY_PREPARATION_2026-10-04.md).
+
 See [the October3 hosted-market checkpoint](../10-project-state/HOSTED_MARKET_PREPARATION_2026-10-03.md)
 for executed evidence and unexecuted operational gates. These modules are not
 permission to fence a source, transfer a key or activate the target.

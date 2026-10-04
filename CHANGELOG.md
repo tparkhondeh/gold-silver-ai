@@ -7,6 +7,12 @@ state is recorded in `docs/10-project-state/CURRENT_STATE.md`.
 
 ## [Unreleased]
 
+- Added a fixed-destination, exclusive Linux provider-config receiver and bounded
+  stdin-only operator command. Existing or interrupted files are preserved;
+  constant receipts cannot expose credentials or imply quota/runtime activation.
+  Actual key transfer still requires specific approval. See the October4 private
+  delivery checkpoint; no server, provider, portfolio or financial-method change.
+
 - Prepared fixed-path Linux latest-cache I/O with pinned descriptors and safe
   artifact preservation, reusing unchanged price/receipt rules. Added executable
   PostgreSQL quota capture/import verification and local lifecycle protections

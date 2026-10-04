@@ -8,7 +8,7 @@ import { PRIVATE_DATA_ROOT } from "./private-supervision.ts";
 
 export const PRIVATE_MARKET_CONFIG = `${PRIVATE_DATA_ROOT}/market-provider.json`;
 export const PRIVATE_MARKET_CONFIG_VERSION = "asha.private_market_config.v1";
-const MAX_BYTES = 16_384;
+export const PRIVATE_MARKET_CONFIG_MAX_BYTES = 16_384;
 const ORIGIN = "https://goldsilver.wealthos.ir";
 const failure = () => new Error("Private provider configuration unavailable or unsafe; contents withheld");
 /** Secret-bearing server value. Never serialize this object into a status, log or HTTP response. */
@@ -27,7 +27,7 @@ export type PrivateMarketConfiguration = Readonly<NotActivated & (
 export function parsePrivateMarketConfig(raw: string, ownerBinding: OwnerIdentityBinding): PrivateMarketConfig {
   try {
     const binding = inspectOwnerIdentityBinding(ownerBinding);
-    if (binding.origin !== ORIGIN || typeof raw !== "string" || Buffer.byteLength(raw) > MAX_BYTES) throw failure();
+    if (binding.origin !== ORIGIN || typeof raw !== "string" || Buffer.byteLength(raw) > PRIVATE_MARKET_CONFIG_MAX_BYTES) throw failure();
     const value = JSON.parse(raw);
     if (!value || typeof value !== "object" || Array.isArray(value)
       || Object.keys(value).sort().join(",") !== "apiKey,keyRotationConfirmed,origin,ownerBindingHash,plan,provider,refreshSeconds,valueUnit,version"
@@ -66,7 +66,7 @@ export function createPrivateMarketConfigReader(io: PrivateMarketConfigIo) {
       if (binding.origin !== ORIGIN || platform !== "linux" || uid === undefined || !Number.isSafeInteger(uid) || uid <= 0) throw failure();
       const metadata = (info: Metadata, kind: "ancestor" | "directory" | "file") => {
         assertPrivateMetadata({ uid: info.uid, mode: info.mode, nlink: info.nlink, directory: info.isDirectory(), file: info.isFile(), symlink: info.isSymbolicLink() }, uid, kind);
-        if (kind === "file" && (!Number.isSafeInteger(info.size) || info.size < 1 || info.size > MAX_BYTES || !Number.isFinite(info.mtimeMs) || !Number.isFinite(info.ctimeMs))) throw failure();
+        if (kind === "file" && (!Number.isSafeInteger(info.size) || info.size < 1 || info.size > PRIVATE_MARKET_CONFIG_MAX_BYTES || !Number.isFinite(info.mtimeMs) || !Number.isFinite(info.ctimeMs))) throw failure();
       };
       const anchored = (handle: Handle) => { if (!Number.isSafeInteger(handle.fd) || handle.fd < 0) throw failure(); return `/proc/self/fd/${handle.fd}`; };
       const flags = constants.O_RDONLY | constants.O_NOFOLLOW | constants.O_NONBLOCK;
@@ -88,7 +88,7 @@ export function createPrivateMarketConfigReader(io: PrivateMarketConfigIo) {
       else {
         metadata(before, "file"); file = await io.open(source, flags);
         const opened = await file.stat(); openedFile = opened; metadata(opened, "file"); if (!sameFile(before, opened)) throw failure();
-        const bytes = Buffer.alloc(MAX_BYTES + 1); let length = 0;
+        const bytes = Buffer.alloc(PRIVATE_MARKET_CONFIG_MAX_BYTES + 1); let length = 0;
         while (length < bytes.length) {
           const chunk = await file.read(bytes, length, bytes.length - length, length);
           if (!Number.isSafeInteger(chunk.bytesRead) || chunk.bytesRead < 0 || chunk.bytesRead > bytes.length - length) throw failure();

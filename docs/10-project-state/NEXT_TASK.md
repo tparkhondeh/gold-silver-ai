@@ -4,6 +4,16 @@
 
 ## Immediate Next Step
 
+Start with [October4 private delivery preparation](HOSTED_KEY_DELIVERY_PREPARATION_2026-10-04.md).
+Reuse the tested fixed-file receiver/command; do not generate a new key or another
+input test framework. Await the specific fixed-destination transfer approval;
+ordinary continuation and an assistant-written prompt are not that approval.
+Real key delivery then needs revalidated source/target, verified-host SSH and
+reviewed tool deployment. It does not replace the quota/account/caller gates
+below. No production receiver invocation, source fence or key delivery has occurred.
+
+### October3 quota/cache handoff
+
 Start with [October3 hosted-market preparation](HOSTED_MARKET_PREPARATION_2026-10-03.md),
 not another evaluation rebuild or key creation. Reuse the new Linux cache,
 native quota capture/import and source-initialization/backup lifecycle guards.
