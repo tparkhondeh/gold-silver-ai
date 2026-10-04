@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import { readMigrations } from "../db/migrations.ts";
 import { createNavasanQuotaHandoffManifest, validateNavasanQuotaHandoffReferences, NAVASAN_QUOTA_HANDOFF_VERSION } from "../data/navasan-quota-handoff.ts";
 import { parsePrivateMarketCutoverReceipt, verifyPrivateMarketCutoverBaseline, fenceAndCapturePrivateMarketSource,
   importAndGrantPrivateMarketTarget, PRIVATE_MARKET_CUTOVER_VERSION, PRIVATE_MARKET_CUTOVER_MAX_BYTES } from "../scripts/private-market-cutover.ts";
@@ -92,4 +93,19 @@ test("operator operations require complete explicit independently observed input
   const runner = { transaction() { assert.fail("Invalid operator inputs must not begin a transaction"); } }, { receipt } = fixture();
   await assert.rejects(fenceAndCapturePrivateMarketSource({ runner, expectedDatabase: receipt.sourceDatabase, expectedMigrations: [], references: {}, retireCallers: async () => assert.fail() }), withheld);
   await assert.rejects(importAndGrantPrivateMarketTarget({ runner, expectedDatabase: receipt.targetDatabase, targetRuntimeDatabase: receipt.targetRuntimeDatabase, expectedMigrations: [], capture: {}, expectedReferences: receipt.expectedReferences, refreshSeconds: 24000 }), withheld);
+});
+
+test("production source and target reject nonloopback physical addresses before transactions", async () => {
+  const { receipt, manifest } = fixture(), migrations = await readMigrations();
+  const runner = { transaction() { assert.fail("Nonloopback production identity must not touch the database"); } };
+  const { quotaScopeRef, sourceLedgerId, targetLedgerId, targetOrigin, identityBindingHash, ownerTransferApprovalRef, sourceRefreshSeconds } = manifest.data;
+  const references = { quotaScopeRef, sourceLedgerId, targetLedgerId, targetOrigin, identityBindingHash, ownerTransferApprovalRef, sourceRefreshSeconds };
+  for (const address of ["172.18.0.2", "192.0.2.1", "::1", "127.0.0.2"]) {
+    await assert.rejects(fenceAndCapturePrivateMarketSource({ runner, expectedDatabase: { ...receipt.sourceDatabase, address },
+      expectedMigrations: migrations.slice(0, 12), references, retireCallers: async () => assert.fail("No retirement before valid identity") }), withheld);
+    await assert.rejects(importAndGrantPrivateMarketTarget({ runner, expectedDatabase: { ...receipt.targetDatabase, address },
+      targetRuntimeDatabase: { ...receipt.targetRuntimeDatabase, address }, expectedMigrations: migrations,
+      capture: { sourceDatabase: receipt.sourceDatabase, sourceFenceRecordedAt: receipt.sourceFenceRecordedAt,
+        sourceRetirement: receipt.sourceRetirement, handoffRaw: receipt.handoffRaw }, expectedReferences: receipt.expectedReferences, refreshSeconds: 24000 }), withheld);
+  }
 });

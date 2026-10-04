@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { randomBytes } from "node:crypto";
+import { isIPv4 } from "node:net";
 import { Client, Pool } from "pg";
 import { applyMigrations, readMigrations } from "../../db/migrations.ts";
 import { createPgTransactionRunner, inspectOperatorDatabaseEnvironment } from "../../db/postgres-runtime.ts";
@@ -28,8 +29,21 @@ test("committed source retirement and atomic target import/grants preserve resta
     await admin.end();
   });
   const allMigrations = await readMigrations();
-  const physical = (await admin.query(`SELECT current_database() AS database,host(inet_server_addr()) AS address,
-    inet_server_port() AS port,(SELECT oid::text FROM pg_database WHERE datname=current_database()) AS "databaseOid",current_user AS role`)).rows[0];
+  const nativePhysical = Object.freeze((await admin.query(`SELECT current_database() AS database,host(inet_server_addr()) AS address,
+    inet_server_port() AS port,(SELECT oid::text FROM pg_database WHERE datname=current_database()) AS "databaseOid",current_user AS role`)).rows[0]);
+  assert.equal(nativePhysical.database, "asha_integration");
+  assert.equal(new URL(connectionString).hostname, "127.0.0.1");
+  assert.equal(nativePhysical.port, Number(new URL(connectionString).port || 5432));
+  assert.ok(isIPv4(nativePhysical.address));
+  const publishedContainerTransport = nativePhysical.address !== "127.0.0.1";
+  if (publishedContainerTransport) {
+    assert.equal(process.env.CI, "true");
+    assert.match(process.env.ASHA_PG_CONTAINER_ID ?? "", /^[a-f0-9]{12,64}$/);
+  }
+  // CI's loopback-published Docker service sees its bridge address server-side.
+  // Only that fixture transport field is normalized; the production operator's
+  // exact loopback rule is unchanged and explicitly rejected in unit tests.
+  const physical = Object.freeze({ ...nativePhysical, address: "127.0.0.1" });
   async function fixture(kind, fixedClock) {
     const suffix = randomBytes(8).toString("hex"), schema = `asha_market_readiness_${suffix}`, role = `asha_cutover_${kind}_${suffix}`;
     const scope = { schema, runtimeRole: role }, migrations = kind === "source" ? allMigrations.slice(0, 12) : allMigrations;
@@ -39,9 +53,20 @@ test("committed source retirement and atomic target import/grants preserve resta
     await admin.query(`GRANT USAGE ON SCHEMA "${schema}" TO "${role}"`);
     await admin.query(`GRANT SELECT ON asha_schema_migrations,provider_request_reservations TO "${role}"`);
     if (kind === "source") await admin.query(`GRANT INSERT ON provider_request_reservations TO "${role}"`);
-    const rawRunner = createPgTransactionRunner({ async connect() {
+    const nativeRunner = createPgTransactionRunner({ async connect() {
       const client = await pool.connect(); await client.query("RESET ROLE"); await client.query(`SET search_path TO "${schema}"`); return client;
     } });
+    const rawRunner = { transaction: work => nativeRunner.transaction(db => work({ async query(sql, values) {
+      const result = await db.query(sql, values);
+      if (publishedContainerTransport && sql.startsWith("SELECT current_database() AS database,host(inet_server_addr()) AS address,")) {
+        assert.equal(result.rows.length, 1);
+        const observed = result.rows[0];
+        assert.ok([nativePhysical.role, role].includes(observed.role));
+        assert.deepEqual({ ...observed, role: nativePhysical.role }, nativePhysical);
+        return { ...result, rows: [{ ...observed, address: "127.0.0.1" }] };
+      }
+      return result;
+    } })) };
     // The lifetime test's calendar is synthetic; only clock SELECT output changes.
     // Actual locks, privileges, commit/rollback, rows and timestamp SQL remain native.
     const runner = fixedClock ? { transaction: work => rawRunner.transaction(db => work({ query(sql, values) {

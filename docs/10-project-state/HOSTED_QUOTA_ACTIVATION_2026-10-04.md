@@ -73,7 +73,15 @@ contract checks passed2/2; lint/typecheck passed. Production dependency audit
 reported0vulnerabilities; the previously recorded full development audit is not
 claimed clean. Windows capture-guard synthetic tests passed.
 
-STATUS: exact-source CI and operational execution pending. Real source/target
+The first exact-source CI at414b64e passed the web/Linux-native and Python gates,
+but its new PostgreSQL fixture rejected Docker's server-side bridge address.
+The correction is tests-only: after verifying the actual integration database,
+OID/port/role and explicit CI/container scope, it normalizes only that fixture
+transport address. Production identity restrictions remain unchanged; new unit
+regressions reject nonloopback source/target identities before any transaction.
+Six focused unit tests pass and independent review accepted the bounded repair.
+
+STATUS: corrected exact-source CI and operational execution pending. Real source/target
 changes and release evidence will be recorded after execution, not inferred from
 tests. Test fixtures contain only explicit synthetic data. Retained local logs
 are under the ignored October4 hosted-market checkpoint.
