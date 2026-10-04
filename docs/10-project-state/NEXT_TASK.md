@@ -4,15 +4,28 @@
 
 ## Immediate Next Step
 
-The locally validated implementation is described in
-[October4 quota/startup preparation](HOSTED_QUOTA_ACTIVATION_2026-10-04.md).
-Next: exact-SHA CI, candidate-bound backup and capacity check, then reviewed
-one-shot fenced quota cutover and guarded release. Hold the Windows metadata
-guard through source capture/transport; verify the saved capture before SSH.
-Do not retry ambiguous publication or re-enable source INSERT. Rollback must
-preserve the current target ledger. Actual source fencing/import is not yet done.
+Continue from [completed quota/runtime attachment](HOSTED_QUOTA_ACTIVATION_2026-10-04.md).
+Live code is d588a8c with all three exact-SHA checks successful. Source admission
+is fenced; target baseline has9preserved current reservations and0hosted outcomes.
+Key delivery, capture/import/grants, protected receipt, private runtime wiring and
+deployment are complete. Do not repeat them or run local provider acquisition.
 
-### Starting evidence for this operation
+Next dependent acceptance is the deliberately FINAL owner stage: when the owner
+chooses to activate it, use the existing reviewed passkey/bootstrap workflow and
+specific sensitive-access approval, then test real owner login/logout/expiry,
+one quota-admitted latest request, licensed coverage against fictional holdings,
+and private save/reload/relogin/second-device recovery. Do not issue a bootstrap
+now or bypass identity to manufacture live-price evidence. Existing personal
+holdings still require separate migration approval. Public `/evaluation` stays
+nonprivate and without hosted market prices.
+
+Remaining external gates: licensed analytical history/cost/liquidity inputs,
+independent normal-browser/mobile testing, approved off-host recovery destination
+and actual reboot acceptance. Do not invent independent product features merely
+to postpone those gates. Rollback is code-only while preserving current target
+quota accounting; reverse source activation needs reconciled later target usage.
+
+### Earlier starting evidence for the completed operation
 
 Start with [October4 actual approved transfer](HOSTED_KEY_TRANSFER_2026-10-04.md).
 The key already exists in its approved server destination and passed protected

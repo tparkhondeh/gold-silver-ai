@@ -11,8 +11,10 @@ state is recorded in `docs/10-project-state/CURRENT_STATE.md`.
   guarded private-market startup. Preserves exact existing usage and fails closed
   on unsafe activation evidence; no startup provider calls or public evaluation
   access. Local full web and74real-PostgreSQL tests passed. The local integration
-  harness now uses2workers within its existing20connection budget. Actual cutover
-  and deployment are separate pending gates; see the October4 quota checkpoint.
+  harness now uses2workers within its existing20connection budget. Reviewed
+  cutover preserved9current reservations and source fencing; d588a8c was deployed
+  with exact-SHA CI, protected receipt and verified backup/restore. No provider
+  request or owner activation occurred; see the October4 quota checkpoint.
 
 - Added a reviewed fixed Windows sender with independently bound source identity,
   retained handles and hash-pinned in-memory execution; the mutable checkout

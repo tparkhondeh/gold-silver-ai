@@ -43,9 +43,9 @@ changes in this unit.
 
 ## Operational gates and rollback
 
-Implementation is not evidence that an operation occurred. Until the operational
-receipt below is completed, source fencing, target import, activation-file
-publication and production release remain unconfirmed.
+Implementation alone is not evidence that an operation occurred. The actual
+source fencing, target import, activation-file publication and release evidence
+are recorded separately below.
 
 Before execution: exact-source CI, independent security review, positive local
 caller inventory, safe target capacity, candidate-bound backup/separate restore,
@@ -81,12 +81,73 @@ transport address. Production identity restrictions remain unchanged; new unit
 regressions reject nonloopback source/target identities before any transaction.
 Six focused unit tests pass and independent review accepted the bounded repair.
 
-STATUS: corrected exact-source CI and operational execution pending. Real source/target
-changes and release evidence will be recorded after execution, not inferred from
-tests. Test fixtures contain only explicit synthetic data. Retained local logs
-are under the ignored October4 hosted-market checkpoint.
+Corrected source `d588a8cf1ac8c011097e3c550e03034a9d4a62a5` passed all three
+[exact-SHA CI jobs](https://github.com/tparkhondeh/gold-silver-ai/actions/runs/37215716318):
+web/build/security, real PostgreSQL integration/restore and synthetic Python lab.
+The corrected native local PostgreSQL rerun also passed74/74. Linux candidate
+locked installation, private build, identity-mode route/security smoke tests and
+production audit passed. Test fixtures contain only explicit synthetic data.
+Retained local logs are under the ignored October4 hosted-market checkpoint.
 
-Actual owner login and authenticated hosted acquisition are deliberately FINAL.
+## Actual one-time cutover and release
+
+The protected Windows capture and transfer succeeded on October4. The guard
+retained source/checkpoint ancestor and script/credential handles, rechecked
+identity and owner-only capture permissions, and allowed only hash-reviewed
+operator bytes. Independent review and native synthetic tests passed; this account
+could not create a file symlink, so hardlink/junction rejection was tested without
+claiming that unavailable case. Reviewed guard SHA256:
+`544d1b6040ca4ac137718fa1e1afb37e1d93d7e4a501c33509a4cc9c41e9a6a2`;
+operator SHA256:`4c3e962e8bac5dc3044277a5edd6f5b8499f054fbf8ec62c6d4aad342a9d3b0b`.
+No raw child errors, key, holdings or price data were transported or displayed.
+
+Actual fixed receipt: `quota_cutover_verified`, sourceFenced=true,
+insertedRows=9, used=9, cooldownPreserved=true, receiptStored=true,
+startupValidated=true, providerCalls=0. The source's13lifetime rows were not
+deleted;4expired rows remain there, while the9current rows and exact cooldown
+became the target baseline. No counter was reset. The protected source capture
+is retained in `.cache/postgres-local/navasan-hosted-handoff-20261004.json`;
+the target receipt is `PRIVATE_DATA_ROOT/market-activation.json`. Do not rerun
+the one-shot capture/import or overwrite either artifact.
+
+Candidate-bound server backup and separate restore passed both before the
+operation and after importing the ledger. At16:18:29Z,39,611,277,312bytes were
+available against the8GiB reserve. Only this project's supervision block was
+upgraded from50a9c3a to d588a8c; unrelated bytes/services were preserved. Protected
+rollback crontab: `PRIVATE_DATA_ROOT/crontab-before-1791130713507.txt`.
+Old supervisor3498024 was identified by UID, exact command and process-start
+identity before SIGTERM; PostgreSQL was not stopped. Existing minute recovery
+started the new service without an attached management session. Reboot recovery
+is configured but an actual shared-server reboot was not tested.
+
+At16:19:34Z, actual HTTPS health200 identified d588a8c. `/evaluation` returned200;
+anonymous `/api/portfolio`, `/api/portfolio/export` and `/api/managed-market`
+returned401; `/api/local-market` returned404. All sampled responses retained
+no-store. Post-release native adapter readiness passed with9reservations,
+0hosted outcomes and0provider requests. This proves guarded runtime attachment,
+**not successful authenticated acquisition, current account validity or a price**.
+
+## Browser regression and final-stage boundary
+
+The existing HTTPS evaluation interface was tested in a fresh in-app browser tab:
+negative quantity rejected; correction saved; two explicitly synthetic purchases
+(2units at100 with0.4fee,1unit at200 with0.6fee) produced3units and401total cost.
+Weighted price displayed133.3 and landed average133.7 with exact-cost disclosure.
+Same-tab reload retained both purchases and401; a separate tab started empty.
+Missing historical FX/current prices and both decision horizons stayed explicitly
+unavailable. These records did not write the private server portfolio. Previous
+unchanged Excel/export/deduplication browser evidence remains in the October3
+release report; those unchanged manual paths were not claimed newly repeated.
+
+Chrome was explicitly requested from the connected browser tool but unavailable.
+Independent Chrome/Edge/Firefox/mobile and real cross-device private recovery
+are therefore untested, not equivalent to this in-app/domain acceptance. A clean
+evaluation tab was retained for the owner. Storage remains same-tab temporary,
+not private account storage. Public evaluation deliberately has no provider-price
+adapter and cannot be used to bypass owner authorization.
+
+STATUS: quota authority and guarded hosted runtime attached; real private-user
+acceptance and authenticated acquisition remain deliberately FINAL.
 Do not issue bootstrap grants or bypass a session to manufacture a successful
 live-price test. Cross-device private persistence, private-user acceptance and
 financial-method validation remain separate. Existing audit, independent-browser,

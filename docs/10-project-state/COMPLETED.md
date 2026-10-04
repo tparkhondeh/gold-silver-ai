@@ -4,6 +4,17 @@
 merged to `main`. This is a log, not a plan — see `docs/01-product/ROADMAP.md` for
 what's ahead.
 
+## Fenced quota cutover and guarded hosted runtime (2026-10-04)
+
+The approved single-authority handoff preserved9current reservations/cooldown,
+disabled source admission, verified the protected target receipt and attached
+the existing adapter only behind private authentication. Reviewed d588a8c passed
+all three CI jobs and was deployed after candidate-bound backup/restore. Fresh
+HTTPS/browser and anonymous-denial checks passed. No provider request, owner
+activation or private holdings transfer occurred. See [evidence and remaining
+FINAL gates](HOSTED_QUOTA_ACTIVATION_2026-10-04.md); this is not whole-project or
+real-private-use completion. Main and unrelated services were not changed.
+
 ## Approved private Navasan-key delivery (2026-10-04)
 
 One direct verified-host SSH delivery to the fixed owner-only server configuration

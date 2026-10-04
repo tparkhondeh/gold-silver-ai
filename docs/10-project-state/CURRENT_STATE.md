@@ -2,9 +2,22 @@
 
 **Source of truth for:** where the project stands right now.
 
-_Last reviewed: 2026-10-04 (key delivered; quota/startup implementation validated locally, operation pending)_
+_Last reviewed: 2026-10-04 (quota cutover and guarded domain runtime verified; owner acquisition remains FINAL)_
 
-## October4 guarded quota/startup preparation
+## October4 live quota/runtime checkpoint
+
+[Actual quota cutover and release evidence](HOSTED_QUOTA_ACTIVATION_2026-10-04.md)
+is the current operational coordinate. The source is fenced;9current reservations
+and cooldown were preserved on the target, without deleting source history or
+resetting usage. The protected activation receipt and native private adapter
+checks passed. Actual HTTPS serves d588a8cf1ac8c011097e3c550e03034a9d4a62a5;
+all three exact-SHA CI jobs, candidate backup/separate restore and scoped release
+passed. No provider call or owner session was created. Public evaluation is still
+isolated and private endpoints return401. Real owner login/acquisition, independent
+browser/device acceptance and remaining licensed analytical inputs are not done.
+Do not repeat key delivery/cutover or re-enable local quota admission.
+
+## Earlier October4 guarded quota/startup preparation
 
 Follow [quota cutover implementation and acceptance](HOSTED_QUOTA_ACTIVATION_2026-10-04.md).
 Source fencing/capture, atomic target import/grants and guarded private startup
@@ -14,7 +27,7 @@ The key-delivery commit e7940e7 passed all three CI jobs. Do not repeat delivery
 or ask again about exclusive account usage. No new provider request was made.
 The website still serves50a9c3a; owner activation and private acceptance stay FINAL.
 
-## October4 approved key-transfer checkpoint
+## Earlier October4 approved key-transfer checkpoint
 
 Follow [actual transfer and quota evidence](HOSTED_KEY_TRANSFER_2026-10-04.md).
 The existing Navasan key was delivered once to the approved private server file;
