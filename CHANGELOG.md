@@ -7,6 +7,12 @@ state is recorded in `docs/10-project-state/CURRENT_STATE.md`.
 
 ## [Unreleased]
 
+- Added a reviewed fixed Windows sender with independently bound source identity,
+  retained handles and hash-pinned in-memory execution; the mutable checkout
+  wrapper is inert. The owner-approved one-time provider-key transfer and protected
+  postverification succeeded. No source/quota/startup activation or portfolio
+  transfer occurred. See `docs/10-project-state/HOSTED_KEY_TRANSFER_2026-10-04.md`.
+
 - Added a fixed-destination, exclusive Linux provider-config receiver and bounded
   stdin-only operator command. Existing or interrupted files are preserved;
   constant receipts cannot expose credentials or imply quota/runtime activation.

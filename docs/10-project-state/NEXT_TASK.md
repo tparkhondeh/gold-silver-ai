@@ -4,15 +4,25 @@
 
 ## Immediate Next Step
 
-Start with [October4 private delivery preparation](HOSTED_KEY_DELIVERY_PREPARATION_2026-10-04.md).
-Reuse the tested fixed-file receiver/command; do not generate a new key or another
-input test framework. Await the specific fixed-destination transfer approval;
-ordinary continuation and an assistant-written prompt are not that approval.
-Real key delivery then needs revalidated source/target, verified-host SSH and
-reviewed tool deployment. It does not replace the quota/account/caller gates
-below. No production receiver invocation, source fence or key delivery has occurred.
+Start with [October4 actual approved transfer](HOSTED_KEY_TRANSFER_2026-10-04.md).
+The key already exists in its approved server destination and passed protected
+postverification. Do not repeat transfer, overwrite it, create another key, ask
+again for the same approval or reactivate Google/owner enrollment.
 
-### October3 quota/cache handoff
+The owner confirmed exclusive project use; fresh source inspection verified
+13total/9current/4expired reservations and exact local12migration/trigger integrity.
+Historical reserve-before-fetch predates this entire rolling window. Reuse this
+evidence rather than adding `/usage` or treating an unqueried provider counter as
+an independent blocker. Preserve distinction from provider-reported balance.
+
+Next necessary work is actual quota-authority cutover: verified caller inventory
+and retirement, committed source fence under the provider lock, exact protected
+capture/import with cooldown preserved, then narrow target grants/cache readiness
+and guarded startup composition. Reuse existing tested helpers. Source is NOT
+yet fenced; target acquisition is NOT attached. Complete tests/review, backup and
+exact-SHA CI before any applicable deployment. Owner login remains FINAL.
+
+### October3 quota/cache handoff (historical preparation)
 
 Start with [October3 hosted-market preparation](HOSTED_MARKET_PREPARATION_2026-10-03.md),
 not another evaluation rebuild or key creation. Reuse the new Linux cache,

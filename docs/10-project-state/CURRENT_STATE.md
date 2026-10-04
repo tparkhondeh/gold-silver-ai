@@ -2,9 +2,21 @@
 
 **Source of truth for:** where the project stands right now.
 
-_Last reviewed: 2026-10-04 (private key-delivery receiver preparation; no key transfer or hosted activation)_
+_Last reviewed: 2026-10-04 (approved key transfer verified; hosted acquisition still inactive)_
 
-## October4 private delivery checkpoint
+## October4 approved key-transfer checkpoint
+
+Follow [actual transfer and quota evidence](HOSTED_KEY_TRANSFER_2026-10-04.md).
+The existing Navasan key was delivered once to the approved private server file;
+the exact receipt and protected-reader postverification succeeded. No secret was
+displayed or committed. The owner confirmed exclusive project account usage;
+fresh accounting remains13total/9current/4expired. Do not request the same transfer
+approval, repeat delivery or invent a `/usage` blocker. Source fencing, exact quota
+import and guarded runtime attachment remain technical work, not completed gates.
+The website remains50a9c3a; owner activation stays FINAL. Existing holdings, main
+and unrelated services were not changed.
+
+## Earlier October4 private delivery preparation (historical)
 
 Follow [private provider delivery preparation](HOSTED_KEY_DELIVERY_PREPARATION_2026-10-04.md).
 The fixed-file receiver and bounded stdin entry are prepared separately from

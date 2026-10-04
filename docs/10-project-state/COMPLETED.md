@@ -4,6 +4,14 @@
 merged to `main`. This is a log, not a plan — see `docs/01-product/ROADMAP.md` for
 what's ahead.
 
+## Approved private Navasan-key delivery (2026-10-04)
+
+One direct verified-host SSH delivery to the fixed owner-only server configuration
+passed protected-reader postverification. Source/key secrecy, namespace/code
+integrity and native Windows execution were independently reviewed/tested. This
+completes key delivery only, not quota cutover or hosted acquisition. Evidence:
+[October4 transfer](HOSTED_KEY_TRANSFER_2026-10-04.md). Main was not changed.
+
 ## Hosted evaluation release (2026-10-03)
 
 Published exact reviewed50a9c3a to the existing project's HTTPS `/evaluation`,
