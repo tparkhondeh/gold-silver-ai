@@ -1,12 +1,11 @@
 import assert from "node:assert/strict";
-import test from "node:test";
+import test, { after, before } from "node:test";
+import { createRenderedWorker } from "./helpers/rendered-worker.mjs";
 
-async function request(path = "/", headers = { accept: "text/html" }) {
-  const workerUrl = new URL("../dist/server/index.js", import.meta.url);
-  workerUrl.searchParams.set("test", `${process.pid}-${Date.now()}`);
-  const { default: worker } = await import(workerUrl.href);
-  return worker.fetch(new Request(`http://localhost${path}`, { headers }), { ASSETS: { fetch: async () => new Response("Not found", { status: 404 }) } }, { waitUntil() {}, passThroughOnException() {} });
-}
+let worker;
+before(async () => { worker = await createRenderedWorker(); });
+after(async () => { await worker?.dispose(); });
+const request = (...args) => worker.request(...args);
 
 async function render() {
   return request();
@@ -48,24 +47,9 @@ test("exposes an honest machine-readable readiness endpoint", async () => {
   assert.equal(health.engines.some((engine) => engine.id === "financial-decision" && engine.state === "blocked"), true);
 });
 
-test("serves the manual snapshot deterministically and never sends an unrotated Navasan key", async (t) => {
-  const previousEnvironment = { key: process.env.NAVASAN_API_KEY, unit: process.env.NAVASAN_VALUE_UNIT, rotation: process.env.NAVASAN_KEY_ROTATION_CONFIRMED, network: process.env.ASHA_MARKET_NETWORK_ENABLED };
-  process.env.ASHA_MARKET_NETWORK_ENABLED = "true";
-  process.env.NAVASAN_API_KEY = "synthetic-test-credential";
-  process.env.NAVASAN_VALUE_UNIT = "TOMAN";
-  process.env.NAVASAN_KEY_ROTATION_CONFIRMED = "false";
-  t.after(() => {
-    for (const [name, value] of Object.entries({ NAVASAN_API_KEY: previousEnvironment.key, NAVASAN_VALUE_UNIT: previousEnvironment.unit, NAVASAN_KEY_ROTATION_CONFIRMED: previousEnvironment.rotation, ASHA_MARKET_NETWORK_ENABLED: previousEnvironment.network })) {
-      if (value === undefined) delete process.env[name];
-      else process.env[name] = value;
-    }
-  });
-  const outboundRequests = [];
-  t.mock.method(globalThis, "fetch", async (input) => {
-    outboundRequests.push(String(input));
-    return new Response("Controlled offline fixture", { status: 503 });
-  });
-  const response = await request("/api/market", { accept: "application/json" });
+test("serves the manual snapshot deterministically and never sends an unrotated Navasan key", async () => {
+  const { outboundRequests } = worker;
+  const response = await request("/api/market", { accept: "application/json" }, true);
   assert.equal(response.status, 200);
   const feed = await response.json();
   const quoteByCode = new Map(feed.quotes.map((quote) => [quote.instrumentCode, quote]));
@@ -81,11 +65,15 @@ test("serves the manual snapshot deterministically and never sends an unrotated 
   assert.equal(feed.sources.some((source) => source.id === "gold-api-com"), true);
   assert.equal(feed.sources.some((source) => source.id === "tgju" && source.status === "needs_key"), true);
   assert.equal(feed.sources.some((source) => source.id === "navasan" && source.status === "needs_key" && source.message.includes("کلید قبلی")), true);
+  assert.equal(outboundRequests.some((url) => new URL(url).hostname === "xaus.com"), true);
+  assert.equal(outboundRequests.some((url) => new URL(url).hostname === "api.gold-api.com"), true);
   assert.equal(outboundRequests.some((url) => url.includes("navasan.tech")), false);
   assert.equal(JSON.stringify(feed).includes("synthetic-test-credential"), false);
-  // Disabling must bypass an already populated cache as well as provider calls.
-  process.env.ASHA_MARKET_NETWORK_ENABLED = "false";
   outboundRequests.length = 0;
+  const cached = await (await request("/api/market", { accept: "application/json" }, true)).json();
+  assert.deepEqual(cached, feed);
+  assert.deepEqual(outboundRequests, []);
+  // Disabling must bypass an already populated cache as well as provider calls.
   const offline = await (await request("/api/market", { accept: "application/json" })).json();
   assert.equal(offline.networkAllowed, false);
   assert.deepEqual(offline.quotes, []);

@@ -55,7 +55,7 @@ try {
   } else {
     const cacheDirectory = await prepareManagedMarketDirectory(managedMarketDirectory);
     console.log("برنامهٔ محلی در حال اجراست: http://127.0.0.1:4174/ (برای توقف Ctrl+C)");
-    const child = spawn(process.execPath, [vinextCli, "dev", "--port", "4174", "--hostname", "127.0.0.1"], {
+    const child = spawn(process.execPath, [vinextCli, "dev", "--port", "4174", "--host", "127.0.0.1"], {
       cwd: webRoot,
       env: {
         ...process.env,

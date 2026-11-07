@@ -4,6 +4,78 @@
 
 ## Immediate Next Step
 
+### November7 implemented local checkpoint
+
+Continue from [security/personal analysis](SECURITY_PERSONAL_ANALYSIS_2026-11-07.md).
+Minimal security patches and descriptive personal-analysis connection are tested.
+Do not repeat them or re-label the remaining11moderate entries as fixed. Server
+still runs d588a8c: no deployment, VPN or main change was authorized this turn.
+
+Next bounded R2 unit: add versioned authoritative spendable-cash and medium-term
+duration input/persistence contracts, with exact units and safe migration/replay.
+Never infer cash from purchase cost, USD holdings or portfolio value; never relabel
+long-term years as medium. Then bind sufficient licensed analytical inputs to the
+existing deterministic methods. Missing factors remain explicit; do not introduce
+synthetic factors or change financial methods to make an action appear.
+Full action/quantity/cost/before-after budget/alternatives/invalidation/replay,
+R5/R6 evidence-validation and R7 conversation are still incomplete.
+
+Before a separately authorized deployment, recheck residual advisories and
+capacity/backup/rollback. The new CI full-tree audit replaces omit-dev-only proof.
+Do not transfer the provider key again, reset quota, un-fence local acquisition,
+create owner bootstrap or move private holdings. Final real owner/device
+acceptance remains FINAL. Exact-Commit CI and deployment identity are separate.
+
+### November7 pre-development reconciliation (historical)
+
+Use the [November7 reconciliation](CURRENT_STATE.md#جمع‌بندی-نسخهٔ-واقعی--۷-نوامبر-۲۰۲۶)
+as the current coordinate; sections below are historical handoffs, not commands
+to repeat. Local and fresh GitHub HEAD match f008342; HTTPS reports d588a8c and
+the intervening commit is documentation-only. No code merge/recovery is needed.
+
+Fresh full dependency audit takes priority: 23 affected package entries (8 high,
+15 moderate, no critical), versus zero from omit-dev. Omit-dev is insufficient:
+the private entry executes Vinext although it is a devDependency. First triage
+actual private-build/runtime reachability, select minimal compatible patches,
+and require regression/private-build/security checks plus exact-SHA CI and a fresh
+full audit. No fix/install was authorized or performed by this audit; do not use
+forced broad upgrades or infer all 23 entries are exploitable in production.
+
+After that security gate, the next product unit is a bounded R2 gap closure: reuse the existing personal
+purchase/valuation contracts and deterministic engines, define acceptance for
+connecting supported analysis to the same personal portfolio, and retain explicit
+missing-history/cost/liquidity gates and a single budget. The real analytical
+inputs/validation (R5/R6) and conversational layer (R7, open A17) are unfinished;
+do not treat final owner login as completion of those requirements. Existing
+64-evidence intake/freeze artifacts must not be rebuilt or filled with invented
+data. Real vendor/model adoption, transfer and financial-method changes retain
+their approval gates. Actual owner enrollment/private acquisition/device tests
+remain deliberately FINAL; no bootstrap in this review.
+
+Before any future activation/release, recheck current dependency security,
+capacity/backup and align the stale operational guides identified in CURRENT_STATE
+with the completed October4 key/quota handoff. Never repeat transfer/cutover or
+un-fence local acquisition. No provider quota/balance, server capacity or backup
+freshness was established by today's public HTTP checks. This turn authorizes
+only audit/documentation, not implementation, deployment, Commit or Push.
+
+### October11 device-local connection handoff (historical)
+
+For the owner's current connection issue, continue from the
+[October11 exact-domain routing repair](DOMAIN_DIRECT_ROUTING_2026-10-11.md).
+Ordinary Edge now opens the hosted evaluation; Chrome acceptance is still untested.
+Do not repeat the network mutation blindly: verify the current exact-host exception
+if v2rayN has reloaded or updated geodata. Do not disable the VPN globally or change
+other routes. Product/security acceptance gates below remain unchanged.
+The exact-domain direct rule has been saved with a guarded transaction and fresh
+private backup; do not apply it again. Fresh reads confirm it, but original elevated
+processes still run and generated engines have not activated it. When normal app
+reload is available, verify both engines, exact routing/DNS and unchanged other
+routes, then close/reopen. Preserve the working exception until replacement passes.
+Do not repeat the same Exit request without changed evidence or bypass elevated UI.
+A later cached editor/reset could remove the rule: detect and report, never blindly
+restore over newer user settings. Actual update and Chrome acceptance remain open.
+
 Continue from [completed quota/runtime attachment](HOSTED_QUOTA_ACTIVATION_2026-10-04.md).
 Live code is d588a8c with all three exact-SHA checks successful. Source admission
 is fenced; target baseline has9preserved current reservations and0hosted outcomes.

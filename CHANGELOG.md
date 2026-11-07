@@ -7,6 +7,16 @@ state is recorded in `docs/10-project-state/CURRENT_STATE.md`.
 
 ## [Unreleased]
 
+- Applied scoped security corrections to Vinext/plugin-rsc/Vite and affected
+  transitive dependencies. Full audit now has0high/critical and11moderate residual
+  entries; CI checks the entire tree. Worker assertions run against real local
+  workerd, and the local launcher uses the supported loopback host flag. No server
+  release. See the November7 security/personal-analysis checkpoint.
+- Connected personal analysis to the same saved portfolio and exact valuation as
+  its overview: quantity, cost/quote coverage, complete-denominator concentration,
+  saved limits and provenance. Unknown cash/factors remain explicit, both horizons
+  stay no-decision and no financial methods or execution permissions changed.
+
 - Implemented independently reviewed fenced quota-authority cutover and optional
   guarded private-market startup. Preserves exact existing usage and fails closed
   on unsafe activation evidence; no startup provider calls or public evaluation

@@ -97,6 +97,12 @@ export function sumPersonalRatios(values: readonly (ExactRatio | null)[]): Exact
   if (!values.length || values.some((value) => value === null)) return null;
   return out(values.reduce<Fraction>((total, value) => add(total, read(value!)), ZERO));
 }
+// Descriptive percentage only. A missing/nonpositive denominator cannot become
+// a complete portfolio weight; callers must establish its coverage separately.
+export function personalRatioPercent(part: ExactRatio | null, total: ExactRatio | null): ExactRatio | null {
+  if (part === null || total === null || BigInt(total.numerator) <= 0n) return null;
+  return out(multiply(divide(read(part), read(total)), HUNDRED));
+}
 // Legacy numbers have already passed the existing numeric persistence contract.
 // Read their decimal representation exactly, including supported exponent forms.
 function legacyDecimal(value: number): Fraction {

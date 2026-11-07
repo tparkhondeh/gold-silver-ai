@@ -2,6 +2,22 @@
 
 **Source of truth for:** known limitations and gaps in the current state.
 
+## Current local limits — November 7, 2026
+
+[Security/personal-analysis checkpoint](SECURITY_PERSONAL_ANALYSIS_2026-11-07.md)
+supersedes older audit counts below: full tree has0high/critical and11moderate
+affected entries (7minimatch/lint,4Drizzle/esbuild). Scoped reachability and
+unsupported-major-fix constraints are recorded; warnings are not suppressed.
+The deployed d588a8c server is unchanged and has not received this patch.
+
+Personal overview and descriptive analysis share exact saved portfolio valuation.
+Full R2 decision generation remains incomplete: cash/medium-horizon contracts,
+licensed analytical inputs, costs/liquidity, validation and persisted actionable
+plan are missing. Both horizons remain no-decision with one unavailable budget.
+Browser acceptance used isolated nonprivate records and controlled quotes;
+real owner/private-device/financial acceptance is not established. Final owner
+activation, R5/R6 and R7 remain distinct unfinished work.
+
 ## Current delivery limits — October 3, 2026
 
 The [October3 checkpoint](EVALUATION_RELEASE_2026-10-03.md) supersedes older503,
@@ -116,6 +132,8 @@ connections failing. Exact evidence and retry boundary:
    the link is public and unauthenticated, testers must not enter real sensitive
    financial information.
 8. **Development-dependency audit findings remain; production audit is clean.**
+   November7 current local findings and runtime-aware correction are at the top
+   of this file and in its linked report. Counts below are historical.
    October3 supersedes the historical counts below: four compatible patches
    reduce the full audit to11entries (7high from one unpatched build/lint braces
    advisory,4moderate in the existing Drizzle/esbuild chain,0critical). Full audit

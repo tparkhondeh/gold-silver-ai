@@ -7,7 +7,9 @@ import { PurchaseBookPanel, PurchaseRatio } from "./purchase-book-panel";
 import { NumberValue } from "./number-value";
 import { fetchPortfolioSnapshot } from "./portfolio-persistence";
 import { PortfolioSaveError, saveUnifiedPortfolio } from "./unified-portfolio-client";
-import { evaluatePersonalMarketValuation, type PersonalQuoteState } from "./personal-market-valuation";
+import type { PersonalQuoteState } from "./personal-market-valuation";
+import { buildPersonalPortfolioAnalysis } from "./personal-portfolio-analysis";
+import { PersonalPortfolioAnalysisPanel } from "./personal-portfolio-analysis-panel";
 import { orderPersonalAssetRows, PERSONAL_ASSET_SORT_FIELDS, type PersonalAssetSortDirection, type PersonalAssetSortField } from "./personal-asset-order";
 import { requestManagedMarket, type ManagedMarketResponse } from "./managed-market-client";
 import { MARKET_TTL_MS } from "./market-test-contract";
@@ -121,10 +123,11 @@ export function UnifiedPortfolioWorkspace({ storageLocation = "local" }: { stora
   };
   const commitBook = async (purchaseBook: PurchaseBook) => { await commit({ purchaseBook }); };
   const commitHoldings = async (holdings: PortfolioHolding[]) => { await commit({ holdings }); return true; };
-  const valuation = useMemo(() => {
+  const analysis = useMemo(() => {
     if (!snapshot || prices.now === null) return null;
-    return evaluatePersonalMarketValuation(snapshot.purchaseBook ?? emptyPurchaseBook(), snapshot.holdings, prices.data?.snapshot ?? null, prices.now);
+    return buildPersonalPortfolioAnalysis(snapshot, prices.data?.snapshot ?? null, prices.now);
   }, [snapshot, prices.now, prices.data?.snapshot]);
+  const valuation = analysis?.state === "descriptive_only" ? analysis.valuation : null;
   const total = valuation?.totals;
   const [sortField, setSortField] = useState<PersonalAssetSortField>("original");
   const [sortDirection, setSortDirection] = useState<PersonalAssetSortDirection>("asc");
@@ -168,7 +171,7 @@ export function UnifiedPortfolioWorkspace({ storageLocation = "local" }: { stora
       {total && <details className="panel"><summary>جمع بخش دارای داده، نه کل سبد</summary><p>ارزش بخش دارای قیمت: <PurchaseRatio value={total.knownCurrentValueRial} unit="تومان" rialToToman /></p><p>سود ریالی بخش دارای قیمت و بهای خرید: <PurchaseRatio value={total.coveredProfitLossRial} unit="تومان" rialToToman /></p><p>پوشش سود ریالی: <NumberValue value={total.costCoveredLotCount} /> از <NumberValue value={total.totalLotCount} /> خرید</p><p>سود دلاری بخش پوشش‌داده‌شده: <PurchaseRatio value={total.coveredProfitLossUsd} unit="دلار" /></p><p>پوشش سود دلاری: <NumberValue value={total.usdCostCoveredLotCount} /> از <NumberValue value={total.totalLotCount} /> خرید</p></details>}
     </section>}
     <section hidden={tab !== "purchases"} aria-label="ثبت و ویرایش دارایی">{snapshot && <PurchaseBookPanel book={snapshot.purchaseBook ?? emptyPurchaseBook()} legacyHoldings={snapshot.holdings} onCommit={commitBook} onCommitHoldings={commitHoldings} busy={busy} />}</section>
-    {tab === "analysis" && <section className="panel"><h2>تحلیل و تصمیم همین سبد</h2><p>ارزش‌گذاری از خریدهای ثبت‌شده و قیمت معتبر انجام می‌شود. تصمیم ورود، خروج یا تبدیل هنوز دادهٔ کافی ندارد.</p><div className="unified-horizons">{["کوتاه‌مدت", "میان‌مدت"].map((horizon) => <article key={horizon}><h3>{horizon}</h3><b>تصمیم‌ناپذیر</b><p>کمبود: تاریخچهٔ مجاز، هزینه و نقدشوندگی قابل‌اعتماد و عوامل روش ثبت‌شده.</p></article>)}</div><details><summary>محدودیت تصمیم</summary><p>قیمت جاری به‌تنهایی برای محاسبهٔ مقدار یا شرط اقدام کافی نیست. روش مالی تغییر نکرده و استفادهٔ مالی فعال نشده است.</p></details></section>}
+    {tab === "analysis" && <PersonalPortfolioAnalysisPanel analysis={analysis} />}
     <section hidden={tab !== "settings"} className="panel"><h2>تنظیمات و پشتیبان</h2>{snapshot && <><a className="ghost-button" href={status === "saving" ? undefined : "/api/portfolio/export"} download="asha-portfolio-backup.json" aria-disabled={status === "saving"}>خروجی پشتیبان اطلاعات ثبت‌شده</a><p>فایل شامل اطلاعات شخصی سبد است؛ آن را در محل امن نگه دار. این خروجی فقط اطلاعات تأییدشدهٔ پایگاه داده را دارد.</p><details><summary>محدودیت‌ها و افق‌های ثبت‌شده</summary>{stalePreferences && <p role="alert" className="unified-warning">تنظیمات ذخیره‌شده از زمان شروع ویرایش تغییر کرده‌اند. ورودی شما حفظ شده، اما ثبت آن بسته است؛ ابتدا نسخهٔ ذخیره‌شده را ببین و تغییراتت را دوباره اعمال کن.</p>}{preferencesDraft && <button className="ghost-button" disabled={status === "saving" || status === "loading"} onClick={() => { setPreferencesDraft(null); setPreferencesDraftBase(""); }}>کنار گذاشتن ویرایش تنظیمات و دیدن نسخهٔ ذخیره‌شده</button>}{preferences && <form onSubmit={async (event) => { event.preventDefault(); if (stalePreferences) return; try { await commit({ preferences }); setPreferencesDraft(null); setPreferencesDraftBase(""); } catch { /* keep the edited draft */ } }}><fieldset disabled={busy || stalePreferences}>{Object.entries(preferenceLabels).map(([key, label]) => <label key={key}>{label}<input value={preferences[key as keyof typeof preferenceLabels]} inputMode="decimal" onChange={(event) => { if (!preferencesDraft) setPreferencesDraftBase(preferencesBase); setPreferencesDraft({ ...preferences, [key]: event.target.value }); }} /></label>)}<button className="primary-button" type="submit">ثبت تنظیمات</button></fieldset></form>}</details><small>نسخهٔ ذخیره‌شده: <NumberValue value={snapshot.version} />. برای بازیابی کامل، پشتیبان پایگاه داده جداگانه بررسی می‌شود.</small></>}</section>
   </main>;
 }
