@@ -37,8 +37,8 @@
     "drizzle-orm": "0.45.2",
     "openid-client": "6.8.8",
     "pg": "8.23.0",
-    "react": "19.2.8",
-    "react-dom": "19.2.8",
+    "react": "19.2.9",
+    "react-dom": "19.2.9",
     "react-loading-skeleton": "3.5.0"
   },
   "devDependencies": {
@@ -58,7 +58,7 @@
     "eslint-plugin-react": "7.37.5",
     "eslint-plugin-react-hooks": "7.1.1",
     "globals": "16.4.0",
-    "react-server-dom-webpack": "19.2.8",
+    "react-server-dom-webpack": "19.2.9",
     "tailwindcss": "4.2.1",
     "typescript": "5.9.3",
     "typescript-eslint": "8.59.3",
