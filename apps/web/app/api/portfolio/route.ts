@@ -75,7 +75,7 @@ export function createPortfolioPut(resolveRepository: ResolveRepository = resolv
     const resolution = await repositoryOrResponse(resolveRepository);
     if (resolution instanceof Response) return resolution;
     try {
-      const snapshot: PortfolioSnapshot = await resolution.repository.save(LOCAL_SUBJECT, input.expectedVersion, input.holdings, input.preferences, input.purchaseBook);
+      const snapshot: PortfolioSnapshot = await resolution.repository.save(LOCAL_SUBJECT, input.expectedVersion, input.holdings, input.preferences, input.purchaseBook, input.planning);
       return json({ ok: true, snapshot });
     } catch (error) {
       if (error instanceof PortfolioVersionConflictError) return json({ ok: false, code: "version_conflict", message: "Portfolio changed in another browser; reload before saving" }, 409);

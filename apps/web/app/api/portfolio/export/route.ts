@@ -25,7 +25,7 @@ export function createPortfolioExport(load = createPortfolioGet(), clock = Date.
       const snapshot = decodePortfolioSnapshot(body.snapshot);
       // The decoder preserves compatible fields for browser recovery. Export
       // must not forward accidental extra debug/runtime fields as private data.
-      onlyKeys(snapshot, ["version", "holdings", "preferences", "purchaseBook"]);
+      onlyKeys(snapshot, ["version", "holdings", "preferences", "purchaseBook", "planning"]);
       for (const holding of snapshot.holdings) onlyKeys(holding, ["id", "name", "amount", "unit", "costToman", "purchaseDate", "note"]);
       onlyKeys(snapshot.preferences, ["liquidityReservePercent", "maxSingleAssetPercent", "maxAcceptableDrawdownPercent", "shortTermMonths", "longTermYears", "analysisHorizon", "decisionHorizon"]);
       const text = personalBackup(snapshot, new Date(clock()).toISOString());

@@ -28,7 +28,8 @@ export function PersonalPortfolioAnalysisPanel({ analysis }: { analysis: Persona
         <article><span>جمع بخش دارای قیمت معتبر</span><strong><PurchaseRatio value={total.knownCurrentValueRial} unit="تومان" rialToToman /></strong><small>مقدار ناقص جای ارزش کل قرار نمی‌گیرد.</small></article>
         <article><span>بهای خرید با هزینه — پوشش کامل</span><strong><PurchaseRatio value={total.landedCostRial} unit="تومان" rialToToman /></strong><small>خرید دارای بهای کامل ریالی و قیمت معتبر: <NumberValue value={total.costCoveredLotCount} /> از <NumberValue value={total.totalLotCount} /></small></article>
       </div>
-      <p className="unified-warning">ماندهٔ نقد قابل‌خرج مستقل ثبت نشده است؛ بودجهٔ مشترک دو افق نامشخص است. دلارِ ثبت‌شده، ارزش دارایی و بهای خرید به‌جای نقد قابل‌خرج استفاده نمی‌شوند.</p>
+      <p data-testid="personal-analysis-cash">نقد اعلام‌شدهٔ مشترک دو افق: <PurchaseRatio value={analysis.budget.cashRial} unit="تومان" rialToToman /></p>
+      <p className="unified-warning">{analysis.budget.cashRial === null ? "نقد قابل‌خرج ثبت نشده است. " : "نقد ثبت شده، اما مقدار مجاز اقدام هنوز محاسبه نشده است. "}ارزش دارایی، دلار و بهای خرید به نقد اضافه نمی‌شوند؛ خریدهای گذشته از آن کم نمی‌شوند.</p>
     </div>
 
     <div className="unified-assets">{valuation.rows.map((row, index) => {

@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { EVALUATION_DOCUMENT_VERSION, EVALUATION_STORAGE_KEY, EVALUATION_MAX_BYTES, EvaluationStorageError, clearEvaluationState, decodeEvaluationDocument, emptyEvaluationDocument, encodeEvaluationDocument, readEvaluationState, saveEvaluationBook } from "../app/evaluation-client.ts";
+import { EVALUATION_DOCUMENT_VERSION, EVALUATION_STORAGE_KEY, EVALUATION_MAX_BYTES, EvaluationStorageError, clearEvaluationState, decodeEvaluationDocument, emptyEvaluationDocument, encodeEvaluationDocument, readEvaluationState, saveEvaluationBook, saveEvaluationPlanning } from "../app/evaluation-client.ts";
+import { emptyPersonalPlanning } from "../app/personal-planning.ts";
 import { emptyPurchaseBook } from "../app/purchase-book.ts";
 
 export const lot = (id = "synthetic-1", extra = {}) => ({ id, assetId: "GOLD_18K_IRR", assetClass: "gold", unit: "gram", purityPermille: 750, quantity: "1.000000000001", purchaseDate: "2000-01-01", purchaseTime: null, paymentCurrency: "TOMAN", unitPrice: "100.000000000001", fees: "0", note: "NONPRIVATE TEST", source: { kind: "manual", reference: null }, fx: null, ...extra });
@@ -18,11 +19,42 @@ export function fixture(initial = null) {
 }
 const book = (...lots) => ({ ...emptyPurchaseBook(), lots });
 
+test("legacy evaluation remains byte-identical until explicit save; planning and purchases share one revision", () => {
+  const legacy = JSON.stringify({ version: "asha.public_evaluation.v1", revision: 7, book: book(lot()) });
+  const f = fixture(legacy), read = readEvaluationState(f.storage);
+  assert.deepEqual(read.document.planning, emptyPersonalPlanning());
+  assert.equal(f.values.get(EVALUATION_STORAGE_KEY), legacy);
+  assert.equal(f.calls.some(([action]) => action === "write"), false);
+  const planning = { ...emptyPersonalPlanning(), spendableCashToman: "0", mediumTermMonths: 9 };
+  const saved = saveEvaluationPlanning(f.storage, legacy, planning);
+  assert.equal(saved.document.revision, 8); assert.deepEqual(saved.document.book, book(lot()));
+  assert.equal(saved.document.planning.spendableCashToman, "0");
+  assert.throws(() => saveEvaluationBook(f.storage, legacy, book()), error => error.reason === "conflict");
+  const purchaseSave = saveEvaluationBook(f.storage, saved.raw, book(lot("second")));
+  assert.deepEqual(purchaseSave.document.planning, planning);
+  assert.deepEqual(readEvaluationState(f.storage), purchaseSave);
+  for (const [key, value] of f.values) if (key !== EVALUATION_STORAGE_KEY) assert.equal(value, "PRIVATE-SENTINEL");
+});
+
+test("invalid planning, malformed v2 and failed storage do not replace existing evaluation", () => {
+  const valid = JSON.stringify(emptyEvaluationDocument());
+  for (const extra of [{ spendableCashToman: "-1" }, { spendableCashToman: "0.001" }, { mediumTermMonths: 0 }, { mediumTermMonths: 1.5 }, { mediumTermMonths: 32768 }]) {
+    const f = fixture(valid);
+    assert.throws(() => saveEvaluationPlanning(f.storage, valid, { ...emptyPersonalPlanning(), ...extra }), EvaluationStorageError);
+    assert.equal(f.values.get(EVALUATION_STORAGE_KEY), valid); assert.equal(f.calls.length, 0);
+  }
+  const f = fixture(valid); f.failures.write = true;
+  assert.throws(() => saveEvaluationPlanning(f.storage, valid, { ...emptyPersonalPlanning(), spendableCashToman: "100.01" }), error => error.reason === "unavailable");
+  assert.equal(f.values.get(EVALUATION_STORAGE_KEY), valid);
+  const malformed = { ...emptyEvaluationDocument() }; delete malformed.planning;
+  assert.throws(() => decodeEvaluationDocument(JSON.stringify(malformed)), EvaluationStorageError);
+});
+
 test("evaluation has one empty isolated namespace, no implicit storage write or personal recovery", () => {
   const f = fixture();
   assert.deepEqual(readEvaluationState(f.storage), { raw: null, document: emptyEvaluationDocument() });
   assert.deepEqual(f.calls, [["read", EVALUATION_STORAGE_KEY]]);
-  assert.deepEqual(emptyEvaluationDocument(), { version: EVALUATION_DOCUMENT_VERSION, revision: 0, book: emptyPurchaseBook() });
+  assert.deepEqual(emptyEvaluationDocument(), { version: EVALUATION_DOCUMENT_VERSION, revision: 0, book: emptyPurchaseBook(), planning: emptyPersonalPlanning() });
   assert.equal([...f.values.values()].every(value => value === "PRIVATE-SENTINEL"), true);
 });
 test("evaluation roundtrip preserves exact decimals, IDs, dated FX and import receipts", () => {

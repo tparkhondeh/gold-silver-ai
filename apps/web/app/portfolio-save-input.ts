@@ -1,6 +1,7 @@
 import type { PortfolioHolding, PortfolioPreferences } from "../data/postgres-portfolio-repository.ts";
 import { portfolioPreferenceLimits, validPortfolioAmount, validPortfolioCost, validPortfolioPreference } from "../data/portfolio-numeric-contract.ts";
 import { validatePurchaseBook, type PurchaseBook } from "./purchase-book.ts";
+import { validatePersonalPlanning, type PersonalPlanning } from "./personal-planning.ts";
 
 export const MAX_PORTFOLIO_SAVE_BYTES = 2_097_152;
 const MAX_HOLDINGS = 500;
@@ -12,6 +13,7 @@ export interface PortfolioSaveInput {
   holdings: PortfolioHolding[];
   preferences: PortfolioPreferences;
   purchaseBook?: PurchaseBook;
+  planning?: PersonalPlanning;
 }
 export class PortfolioSaveInputError extends Error {
   readonly code: string;
@@ -60,5 +62,10 @@ export function parsePortfolioSaveInput(body: string): PortfolioSaveInput {
     try { purchaseBook = validatePurchaseBook(input.purchaseBook); }
     catch { throw new PortfolioSaveInputError("invalid_purchase_book", 422, "اطلاعات خریدها معتبر نیست؛ مقدار، واحد، تاریخ و نرخ‌های واردشده را بررسی کنید. اطلاعات قبلی تغییر نکرده است."); }
   }
-  return { expectedVersion: input.expectedVersion as number, holdings: holdings as PortfolioHolding[], preferences, ...(purchaseBook === undefined ? {} : { purchaseBook }) };
+  let planning: PersonalPlanning | undefined;
+  if (Object.hasOwn(input, "planning")) {
+    try { planning = validatePersonalPlanning(input.planning); }
+    catch { throw new PortfolioSaveInputError("invalid_planning", 422, "نقد قابل‌خرج یا مدت میان‌مدت معتبر نیست؛ اطلاعات قبلی تغییر نکرده است."); }
+  }
+  return { expectedVersion: input.expectedVersion as number, holdings: holdings as PortfolioHolding[], preferences, ...(purchaseBook === undefined ? {} : { purchaseBook }), ...(planning === undefined ? {} : { planning }) };
 }

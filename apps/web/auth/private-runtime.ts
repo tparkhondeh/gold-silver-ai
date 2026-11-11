@@ -34,7 +34,7 @@ function composePrivateRuntime(input: RuntimeInput, binding: OwnerIdentityBindin
       const repository = new PostgresPortfolioRepository(createOwnerAuthorizedRunner(input.runner, proof, binding));
       const bound = createPrivatePortfolioHandlers({ origin: binding.origin, repository: {
         load: () => repository.load(binding.portfolioSubject),
-        save: (version, holdings, preferences, book) => repository.save(binding.portfolioSubject, version, holdings, preferences, book),
+        save: (version, holdings, preferences, book, planning) => repository.save(binding.portfolioSubject, version, holdings, preferences, book, planning),
       } });
       if (new URL(request.url).pathname === "/api/portfolio/export") return bound.export(request);
       if (request.method === "GET") return bound.get(request);

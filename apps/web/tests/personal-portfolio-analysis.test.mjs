@@ -95,7 +95,7 @@ test("only validated saved maximum is compared; absent and malformed values are 
   assert.ok(missing.horizons[0].missingInputs.includes("owner_constraints_missing"));
   for (const value of ["NaN", "60.001", "101", "0x40", null]) {
     snapshot.preferences.maxSingleAssetPercent = value;
-    assert.deepEqual(buildPersonalPortfolioAnalysis(snapshot, quotes(), now), { version: "asha.personal_portfolio_analysis.v1", financialUseAllowed: false, executionAllowed: false, state: "invalid_input" });
+    assert.deepEqual(buildPersonalPortfolioAnalysis(snapshot, quotes(), now), { version: "asha.personal_portfolio_analysis.v2", financialUseAllowed: false, executionAllowed: false, state: "invalid_input" });
   }
   for (const value of ["59.99", "+59.990", "5.999e1", " 59.99 "]) {
     snapshot.preferences.maxSingleAssetPercent = value;

@@ -43,12 +43,21 @@ const analyze = (input = snapshot(), quotes = market(), at = now) => analysisMod
 const render = analysis => renderToStaticMarkup(React.createElement(PersonalPortfolioAnalysisPanel, { analysis }));
 const segment = (html, id) => html.slice(html.indexOf(`data-testid="${id}"`)).split("</article>")[0];
 
+test("declared zero cash and recorded medium duration are visible without an executable allocation", () => {
+  const source = snapshot(); source.planning = { version: "asha.personal_planning.v1", spendableCashToman: "0", mediumTermMonths: 9 };
+  const html = render(analyze(source));
+  assert.match(html, /نقد اعلام‌شدهٔ مشترک دو افق/); assert.match(html, /نقد ثبت شده، اما مقدار مجاز اقدام هنوز محاسبه نشده/);
+  assert.doesNotMatch(html, /نقد قابل‌خرج ثبت نشده است|مدت میان‌مدت ثبت نشده است/);
+  assert.match(segment(html, "personal-analysis-medium"), /۹/);
+  assert.equal((html.match(/تصمیم‌ناپذیر/g) ?? []).length, 2);
+});
+
 test("rendered analysis names denominator, absent cash and descriptive-only limit comparison", () => {
   const result = analyze(), before = structuredClone(result), html = render(result);
   assert.match(html, /data-testid="personal-analysis"/);
   assert.match(html, /سهم از همهٔ دارایی‌های ثبت‌شده/);
   assert.match(html, /سهم از کل ثروت یا بودجهٔ قابل‌خرج نیست/);
-  assert.match(html, /ماندهٔ نقد قابل‌خرج مستقل ثبت نشده است/);
+  assert.match(html, /نقد قابل‌خرج ثبت نشده است/);
   assert.match(html, /سهم این دارایی از سقف واردشده بیشتر است/);
   assert.match(html, /این مقایسه دستور فروش نیست/);
   assert.match(html, /استفادهٔ مالی فعال نیست/);
@@ -61,7 +70,7 @@ test("per-purchase missing fields, quantities and quote identity/time remain rev
   assert.match(html, /نامشخص: هزینهٔ خرید، نرخ تاریخی دلار برای بهای دلاری/);
   assert.match(html, /navasan/); assert.match(html, /GOLD_18K_IRR/); assert.match(html, /2000-01-03T12:00:00.000Z/);
   assert.match(html, /مقدار دارای بهای کامل ریالی/); assert.match(html, /سود \/ زیان کل این دارایی/);
-  assert.match(html, /asha.personal_market_valuation.v2/); assert.match(html, /asha.personal_portfolio_analysis.v1/);
+  assert.match(html, /asha.personal_market_valuation.v2/); assert.match(html, /asha.personal_portfolio_analysis.v2/);
 });
 
 test("short and medium decisions disclose independent horizons and one unknown budget without controls", () => {
@@ -69,7 +78,7 @@ test("short and medium decisions disclose independent horizons and one unknown b
   const short = segment(html, "personal-analysis-short"), medium = segment(html, "personal-analysis-medium");
   assert.match(short, /مدت ذخیره‌شده/); assert.match(short, /۳/); assert.match(short, /ماه/);
   assert.doesNotMatch(short, /مدت میان‌مدت/);
-  assert.match(medium, /مدت میان‌مدت در قرارداد فعلی ثبت نمی‌شود/);
+  assert.match(medium, /مدت میان‌مدت ثبت نشده است/);
   assert.doesNotMatch(medium, /مدت ذخیره‌شده/);
   assert.equal((html.match(/تصمیم‌ناپذیر/g) ?? []).length, 2);
   assert.match(html, /هیچ سفارش یا بودجهٔ جداگانه‌ای ساخته نشده است/);

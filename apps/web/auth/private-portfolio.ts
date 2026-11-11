@@ -1,6 +1,7 @@
 import type { PortfolioHolding, PortfolioPreferences, PortfolioSnapshot } from "../data/postgres-portfolio-repository.ts";
 import { PortfolioVersionConflictError, PurchaseBookConflictError } from "../data/postgres-portfolio-repository.ts";
 import type { PurchaseBook } from "../app/purchase-book.ts";
+import type { PersonalPlanning } from "../app/personal-planning.ts";
 import { decodePortfolioSnapshot } from "../app/portfolio-persistence.ts";
 import { MAX_PORTFOLIO_SAVE_BYTES, parsePortfolioSaveInput, PortfolioSaveInputError } from "../app/portfolio-save-input.ts";
 import { createPortfolioExport } from "../app/api/portfolio/export/route.ts";
@@ -11,7 +12,7 @@ import { OwnerAuthorizationError } from "./postgres-owner-identity-store.ts";
  * authorized transaction runner; neither the browser nor this adapter selects it. */
 export interface BoundPrivatePortfolioRepository {
   load(): Promise<PortfolioSnapshot>;
-  save(expectedVersion: number, holdings: readonly PortfolioHolding[], preferences: PortfolioPreferences, purchaseBook?: PurchaseBook): Promise<PortfolioSnapshot>;
+  save(expectedVersion: number, holdings: readonly PortfolioHolding[], preferences: PortfolioPreferences, purchaseBook?: PurchaseBook, planning?: PersonalPlanning): Promise<PortfolioSnapshot>;
 }
 export interface PrivatePortfolioOptions {
   origin: string;
@@ -62,7 +63,7 @@ function safeSnapshot(value: unknown): PortfolioSnapshot {
   const exactKeys = (value: object, expected: readonly string[]) => {
     if (Object.keys(value).some(key => !expected.includes(key))) throw Error("Invalid private snapshot");
   };
-  exactKeys(snapshot, ["version", "holdings", "preferences", "purchaseBook"]);
+  exactKeys(snapshot, ["version", "holdings", "preferences", "purchaseBook", "planning"]);
   for (const holding of snapshot.holdings) exactKeys(holding, ["id", "name", "amount", "unit", "costToman", "purchaseDate", "note"]);
   exactKeys(snapshot.preferences, ["liquidityReservePercent", "maxSingleAssetPercent", "maxAcceptableDrawdownPercent", "shortTermMonths", "longTermYears", "analysisHorizon", "decisionHorizon"]);
   return snapshot;
@@ -106,7 +107,9 @@ export function createPrivatePortfolioHandlers(options: PrivatePortfolioOptions)
       try {
         const input = parsePortfolioSaveInput(await readBoundedBody(request));
         if (request.signal.aborted) throw invalidBody();
-        const snapshot = safeSnapshot(await save(input.expectedVersion, input.holdings, input.preferences, input.purchaseBook));
+        const snapshot = safeSnapshot(await (input.planning === undefined
+          ? save(input.expectedVersion, input.holdings, input.preferences, input.purchaseBook)
+          : save(input.expectedVersion, input.holdings, input.preferences, input.purchaseBook, input.planning)));
         return json({ ok: true, snapshot });
       } catch (error) { return failure(error); }
     },

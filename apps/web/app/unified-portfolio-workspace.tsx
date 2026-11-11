@@ -10,6 +10,7 @@ import { PortfolioSaveError, saveUnifiedPortfolio } from "./unified-portfolio-cl
 import type { PersonalQuoteState } from "./personal-market-valuation";
 import { buildPersonalPortfolioAnalysis } from "./personal-portfolio-analysis";
 import { PersonalPortfolioAnalysisPanel } from "./personal-portfolio-analysis-panel";
+import { PersonalPlanningPanel } from "./personal-planning-panel";
 import { orderPersonalAssetRows, PERSONAL_ASSET_SORT_FIELDS, type PersonalAssetSortDirection, type PersonalAssetSortField } from "./personal-asset-order";
 import { requestManagedMarket, type ManagedMarketResponse } from "./managed-market-client";
 import { MARKET_TTL_MS } from "./market-test-contract";
@@ -110,7 +111,7 @@ export function UnifiedPortfolioWorkspace({ storageLocation = "local" }: { stora
     return () => { controller.abort(); loadRequest.current?.abort(); loadRequest.current = null; window.clearTimeout(timer); };
   }, [load, storageLocation]);
 
-  const commit = async (change: Partial<Pick<PortfolioSnapshot, "holdings" | "preferences" | "purchaseBook">>) => {
+  const commit = async (change: Partial<Pick<PortfolioSnapshot, "holdings" | "preferences" | "purchaseBook" | "planning">>) => {
     if (!savedRef.current || writing.current || loadRequest.current || needsReload || status === "loading") throw new Error("ابتدا اتصال و وضعیت ذخیره را بررسی کن؛ ورودی فرم حفظ شده است.");
     writing.current = true; setStatus("saving"); setMessage("در حال ذخیره…");
     try {
@@ -151,6 +152,7 @@ export function UnifiedPortfolioWorkspace({ storageLocation = "local" }: { stora
 
     {tab === "overview" && <section aria-label="ارزش‌گذاری سبد">
       <div className="unified-metrics">
+        <article><span>نقد اعلام‌شده — جدا از ارزش دارایی‌ها</span><strong><PurchaseRatio value={analysis?.state === "descriptive_only" ? analysis.budget.cashRial : null} unit="تومان" rialToToman /></strong><small>یک مبلغ مشترک برای کوتاه‌مدت و میان‌مدت</small></article>
         <article><span>ارزش سبد — پوشش کامل</span><strong><PurchaseRatio value={total?.currentValueRial ?? null} unit="تومان" rialToToman /></strong><small>قیمت معتبر: <NumberValue value={total?.valuedAssetCount ?? 0} /> از <NumberValue value={total?.totalAssetCount ?? 0} /> دارایی</small></article>
         <article><span>بهای خرید با هزینه</span><strong><PurchaseRatio value={total?.landedCostRial ?? null} unit="تومان" rialToToman /></strong></article>
         <article><span>سود / زیان تحقق‌نیافته</span><strong><PurchaseRatio value={total?.profitLossRial ?? null} unit="تومان" rialToToman /></strong><small><PurchaseRatio value={total?.profitLossPercent ?? null} unit="٪ از بهای خرید با هزینه" /></small></article>
@@ -170,7 +172,7 @@ export function UnifiedPortfolioWorkspace({ storageLocation = "local" }: { stora
       </article>)}</div>
       {total && <details className="panel"><summary>جمع بخش دارای داده، نه کل سبد</summary><p>ارزش بخش دارای قیمت: <PurchaseRatio value={total.knownCurrentValueRial} unit="تومان" rialToToman /></p><p>سود ریالی بخش دارای قیمت و بهای خرید: <PurchaseRatio value={total.coveredProfitLossRial} unit="تومان" rialToToman /></p><p>پوشش سود ریالی: <NumberValue value={total.costCoveredLotCount} /> از <NumberValue value={total.totalLotCount} /> خرید</p><p>سود دلاری بخش پوشش‌داده‌شده: <PurchaseRatio value={total.coveredProfitLossUsd} unit="دلار" /></p><p>پوشش سود دلاری: <NumberValue value={total.usdCostCoveredLotCount} /> از <NumberValue value={total.totalLotCount} /> خرید</p></details>}
     </section>}
-    <section hidden={tab !== "purchases"} aria-label="ثبت و ویرایش دارایی">{snapshot && <PurchaseBookPanel book={snapshot.purchaseBook ?? emptyPurchaseBook()} legacyHoldings={snapshot.holdings} onCommit={commitBook} onCommitHoldings={commitHoldings} busy={busy} />}</section>
+    <section hidden={tab !== "purchases"} aria-label="ثبت و ویرایش دارایی">{snapshot && <><PersonalPlanningPanel planning={snapshot.planning} onCommit={planning => commit({ planning })} busy={busy} /><PurchaseBookPanel book={snapshot.purchaseBook ?? emptyPurchaseBook()} legacyHoldings={snapshot.holdings} onCommit={commitBook} onCommitHoldings={commitHoldings} busy={busy} /></>}</section>
     {tab === "analysis" && <PersonalPortfolioAnalysisPanel analysis={analysis} />}
     <section hidden={tab !== "settings"} className="panel"><h2>تنظیمات و پشتیبان</h2>{snapshot && <><a className="ghost-button" href={status === "saving" ? undefined : "/api/portfolio/export"} download="asha-portfolio-backup.json" aria-disabled={status === "saving"}>خروجی پشتیبان اطلاعات ثبت‌شده</a><p>فایل شامل اطلاعات شخصی سبد است؛ آن را در محل امن نگه دار. این خروجی فقط اطلاعات تأییدشدهٔ پایگاه داده را دارد.</p><details><summary>محدودیت‌ها و افق‌های ثبت‌شده</summary>{stalePreferences && <p role="alert" className="unified-warning">تنظیمات ذخیره‌شده از زمان شروع ویرایش تغییر کرده‌اند. ورودی شما حفظ شده، اما ثبت آن بسته است؛ ابتدا نسخهٔ ذخیره‌شده را ببین و تغییراتت را دوباره اعمال کن.</p>}{preferencesDraft && <button className="ghost-button" disabled={status === "saving" || status === "loading"} onClick={() => { setPreferencesDraft(null); setPreferencesDraftBase(""); }}>کنار گذاشتن ویرایش تنظیمات و دیدن نسخهٔ ذخیره‌شده</button>}{preferences && <form onSubmit={async (event) => { event.preventDefault(); if (stalePreferences) return; try { await commit({ preferences }); setPreferencesDraft(null); setPreferencesDraftBase(""); } catch { /* keep the edited draft */ } }}><fieldset disabled={busy || stalePreferences}>{Object.entries(preferenceLabels).map(([key, label]) => <label key={key}>{label}<input value={preferences[key as keyof typeof preferenceLabels]} inputMode="decimal" onChange={(event) => { if (!preferencesDraft) setPreferencesDraftBase(preferencesBase); setPreferencesDraft({ ...preferences, [key]: event.target.value }); }} /></label>)}<button className="primary-button" type="submit">ثبت تنظیمات</button></fieldset></form>}</details><small>نسخهٔ ذخیره‌شده: <NumberValue value={snapshot.version} />. برای بازیابی کامل، پشتیبان پایگاه داده جداگانه بررسی می‌شود.</small></>}</section>
   </main>;

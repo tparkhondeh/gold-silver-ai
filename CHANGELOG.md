@@ -7,6 +7,14 @@ state is recorded in `docs/10-project-state/CURRENT_STATE.md`.
 
 ## [Unreleased]
 
+- Added explicit exact spendable cash and medium-term months to the versioned personal
+  portfolio, persistence/export and shared analysis; isolated evaluation reuses the
+  same form and calculations with backward-compatible tab storage. Financial gates
+  remain closed. See the November11 cash/medium checkpoint for release evidence.
+- Patched React/ReactDOM/RSC19.2.9 and fixed secure Linux release-manifest traversal
+  through execute-only ancestors. Prepared schema15-compatible rollback preserving
+  planning and quota; no permission weakening or destructive downgrade.
+
 - Applied scoped security corrections to Vinext/plugin-rsc/Vite and affected
   transitive dependencies. Full audit now has0high/critical and11moderate residual
   entries; CI checks the entire tree. Worker assertions run against real local

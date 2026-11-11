@@ -1,6 +1,7 @@
 import { createHash } from "node:crypto";
 
 import { validatePurchaseBook, type PurchaseBook } from "../app/purchase-book.ts";
+import { validatePersonalPlanning, type PersonalPlanning } from "../app/personal-planning.ts";
 import type { SqlExecutor, TransactionRunner } from "./postgres-observation-repository.ts";
 
 export type PortfolioHolding = {
@@ -33,7 +34,7 @@ export const emptyPortfolioPreferences: PortfolioPreferences = {
   decisionHorizon: "short",
 };
 
-export type PortfolioSnapshot = { version: number; holdings: PortfolioHolding[]; preferences: PortfolioPreferences; purchaseBook?: PurchaseBook };
+export type PortfolioSnapshot = { version: number; holdings: PortfolioHolding[]; preferences: PortfolioPreferences; purchaseBook?: PurchaseBook; planning?: PersonalPlanning };
 
 export class PortfolioVersionConflictError extends Error {
   constructor() {
@@ -64,7 +65,7 @@ function assertPurchaseBookPreserved(previous: PurchaseBook | undefined, next: P
   }
 }
 
-type PortfolioRow = { id: string; version: number; purchase_book?: unknown };
+type PortfolioRow = { id: string; version: number; purchase_book?: unknown; planning?: unknown };
 type HoldingRow = { id: string; asset_name: string; amount: string; unit: string; cost_toman: string | null; purchase_date: string | null; note: string };
 type PreferenceRow = {
   liquidity_reserve_percent: string | null;
@@ -122,7 +123,7 @@ export class PostgresPortfolioRepository {
       await setSubject(executor, subjectId);
       // Saves update this parent before replacing its children. Hold a shared lock
       // until all reads finish, so holdings/preferences/book belong to one version.
-      const portfolio = await executor.query<PortfolioRow>("SELECT id, version, purchase_book FROM user_portfolios WHERE subject_id=$1 FOR SHARE", [subjectId]);
+      const portfolio = await executor.query<PortfolioRow>("SELECT id, version, purchase_book, planning FROM user_portfolios WHERE subject_id=$1 FOR SHARE", [subjectId]);
       const row = portfolio.rows?.[0];
       if (!row) return { version: 0, holdings: [], preferences: { ...emptyPortfolioPreferences } };
       const holdings = await executor.query<HoldingRow>(`
@@ -136,25 +137,34 @@ export class PostgresPortfolioRepository {
         FROM portfolio_preferences WHERE portfolio_id=$1
       `, [row.id]);
       return { version: row.version, holdings: (holdings.rows ?? []).map(toHolding), preferences: toPreferences(preferences.rows?.[0]),
-        ...(row.purchase_book == null ? {} : { purchaseBook: validatePurchaseBook(row.purchase_book) }) };
+        ...(row.purchase_book == null ? {} : { purchaseBook: validatePurchaseBook(row.purchase_book) }),
+        ...(row.planning == null ? {} : { planning: validatePersonalPlanning(row.planning) }) };
     });
   }
 
-  async save(subjectId: string, expectedVersion: number, holdings: readonly PortfolioHolding[], preferences: PortfolioPreferences, purchaseBook?: PurchaseBook): Promise<PortfolioSnapshot> {
+  async save(subjectId: string, expectedVersion: number, holdings: readonly PortfolioHolding[], preferences: PortfolioPreferences, purchaseBook?: PurchaseBook, planning?: PersonalPlanning): Promise<PortfolioSnapshot> {
     // Clone and validate before yielding, so caller edits cannot race persistence.
     const candidateBook = purchaseBook === undefined ? undefined : validatePurchaseBook(purchaseBook);
+    const candidatePlanning = planning === undefined ? undefined : validatePersonalPlanning(planning);
     return this.runner.transaction(async (executor) => {
       await setSubject(executor, subjectId);
       const id = portfolioId(subjectId);
       await executor.query("INSERT INTO user_portfolios (id, subject_id) VALUES ($1,$2) ON CONFLICT (subject_id) DO NOTHING", [id, subjectId]);
       const updated = await executor.query<PortfolioRow>(`
         UPDATE user_portfolios SET version=version+1, updated_at=clock_timestamp()
-        WHERE subject_id=$1 AND version=$2 RETURNING id, version, purchase_book
+        WHERE subject_id=$1 AND version=$2 RETURNING id, version, purchase_book, planning
       `, [subjectId, expectedVersion]);
       const portfolio = updated.rows?.[0];
       if (!portfolio) throw new PortfolioVersionConflictError();
       const previousBook = portfolio.purchase_book == null ? undefined : validatePurchaseBook(portfolio.purchase_book);
       const savedBook = candidateBook ?? previousBook;
+      // Omitted fields from older clients preserve the newest document. Recording
+      // historical purchases never changes this independent owner declaration.
+      const previousPlanning = portfolio.planning == null ? undefined : validatePersonalPlanning(portfolio.planning);
+      const savedPlanning = candidatePlanning ?? previousPlanning;
+      if (candidatePlanning) {
+        await executor.query("UPDATE user_portfolios SET planning=$2::jsonb WHERE id=$1", [portfolio.id, JSON.stringify(candidatePlanning)]);
+      }
       if (candidateBook) {
         assertPurchaseBookPreserved(previousBook, candidateBook);
         await executor.query("UPDATE user_portfolios SET purchase_book=$2::jsonb WHERE id=$1", [portfolio.id, JSON.stringify(candidateBook)]);
@@ -183,7 +193,7 @@ export class PostgresPortfolioRepository {
           decision_horizon=EXCLUDED.decision_horizon,
           updated_at=clock_timestamp()
       `, [portfolio.id, optionalNumber(preferences.liquidityReservePercent), optionalNumber(preferences.maxSingleAssetPercent), optionalNumber(preferences.maxAcceptableDrawdownPercent), optionalNumber(preferences.shortTermMonths), optionalNumber(preferences.longTermYears), preferences.analysisHorizon, preferences.decisionHorizon]);
-      return { version: portfolio.version, holdings: [...holdings], preferences: { ...preferences }, ...(savedBook ? { purchaseBook: savedBook } : {}) };
+      return { version: portfolio.version, holdings: [...holdings], preferences: { ...preferences }, ...(savedBook ? { purchaseBook: savedBook } : {}), ...(savedPlanning ? { planning: savedPlanning } : {}) };
     });
   }
 }

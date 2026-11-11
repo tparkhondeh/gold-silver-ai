@@ -7,7 +7,8 @@ import { renderToStaticMarkup } from "react-dom/server";
 import ts from "typescript";
 import * as client from "../app/evaluation-client.ts";
 import * as purchases from "../app/purchase-book.ts";
-import * as market from "../app/personal-market-valuation.ts";
+import { buildPersonalPortfolioAnalysis } from "../app/personal-portfolio-analysis.ts";
+import * as planning from "../app/personal-planning.ts";
 import * as assetOrder from "../app/personal-asset-order.ts";
 
 const source = readFileSync(new URL("../app/evaluation-workspace.tsx", import.meta.url), "utf8");
@@ -15,10 +16,12 @@ const compiled = ts.transpileModule(source, { compilerOptions: { target: ts.Scri
 const lot = (id, quantity, price, fees = "0") => ({ id, assetId: "GOLD_18K_IRR", assetClass: "gold", unit: "gram", purityPermille: 750, quantity, purchaseDate: "2000-01-01", purchaseTime: null, paymentCurrency: "TOMAN", unitPrice: price, fees, note: "NONPRIVATE TEST", source: { kind: "manual", reference: null }, fx: null });
 const book = (...lots) => ({ ...purchases.emptyPurchaseBook(), lots });
 function PurchaseBookPanel() { return null; }
+function PersonalPlanningPanel() { return null; }
+function PersonalPortfolioAnalysisPanel() { return null; }
 function PurchaseRatio({ value }) { return React.createElement("span", {}, value === null ? "نامشخص" : `${value.numerator}/${value.denominator}`); }
 function load(react, window, browser = { URL, Blob }) {
   const exports = {}, evaluations = [];
-  const dependencies = { react, "./purchase-book-panel": { PurchaseBookPanel, PurchaseRatio }, "./number-value": { NumberValue: ({ value }) => React.createElement("span", {}, value) }, "./purchase-book": purchases, "./personal-market-valuation": { evaluatePersonalMarketValuation: (...args) => { assert.deepEqual(args[1], []); assert.equal(args[2], null); const result = market.evaluatePersonalMarketValuation(...args); evaluations.push(result); return result; } }, "./evaluation-client": client, "./unified-portfolio.css": {}, "./evaluation.css": {} };
+  const dependencies = { react, "./purchase-book-panel": { PurchaseBookPanel, PurchaseRatio }, "./number-value": { NumberValue: ({ value }) => React.createElement("span", {}, value) }, "./purchase-book": purchases, "./personal-portfolio-analysis": { buildPersonalPortfolioAnalysis: (...args) => { assert.deepEqual(args[0].holdings, []); assert.equal(args[1], null); const result = buildPersonalPortfolioAnalysis(...args); if (result.state === "descriptive_only") evaluations.push(result.valuation); return result; } }, "./personal-planning": planning, "./personal-planning-panel": { PersonalPlanningPanel }, "./personal-portfolio-analysis-panel": { PersonalPortfolioAnalysisPanel }, "./evaluation-client": client, "./unified-portfolio.css": {}, "./evaluation.css": {} };
   dependencies["./personal-asset-order"] = assetOrder;
   new Function("require", "exports", "React", "window", "fetch", "URL", "Blob", compiled)(name => { assert.ok(Object.hasOwn(dependencies, name), `Unexpected dependency: ${name}`); return dependencies[name]; }, exports, React, window, () => assert.fail("evaluation must not fetch"), browser.URL, browser.Blob);
   return { component: exports.EvaluationWorkspace, evaluations };
@@ -71,7 +74,26 @@ function harness(initial = null, unavailable = false) {
 function nodes(tree) { return Array.isArray(tree) ? tree.flatMap(nodes) : tree && typeof tree === "object" && tree.props ? [tree, ...nodes(tree.props.children)] : []; }
 const byId = (tree, id) => nodes(tree).find(node => node.props["data-testid"] === id);
 const panel = tree => nodes(tree).find(node => node.type === PurchaseBookPanel);
+const planningPanel = tree => nodes(tree).find(node => node.type === PersonalPlanningPanel);
 const text = tree => typeof tree === "string" || typeof tree === "number" ? String(tree) : Array.isArray(tree) ? tree.map(text).join("") : tree?.props ? text(tree.props.children) : "";
+
+test("evaluation planning and purchases feed the shared analysis with no private request or independent budget", async () => {
+  const ui = harness(); let tree = ui.initialize();
+  const value = { ...planning.emptyPersonalPlanning(), spendableCashToman: "0", mediumTermMonths: 8 };
+  await planningPanel(tree).props.onCommit(value); tree = ui.render();
+  assert.deepEqual(planningPanel(tree).props.planning, value);
+  await panel(tree).props.onCommit(book(lot("cash-unchanged", "2", "20"))); tree = ui.render();
+  assert.deepEqual(planningPanel(tree).props.planning, value);
+  byId(tree, "evaluation-tab-analysis").props.onClick(); tree = ui.render();
+  const analysis = nodes(tree).find(node => node.type === PersonalPortfolioAnalysisPanel).props.analysis;
+  assert.deepEqual(analysis.budget.cashRial, { numerator: "0", denominator: "1" });
+  assert.equal(analysis.horizons[1].savedDuration.value, "8"); assert.deepEqual(analysis.budget.orders, []);
+  const persisted = client.decodeEvaluationDocument(ui.values.get(client.EVALUATION_STORAGE_KEY));
+  assert.deepEqual(persisted.planning, value); assert.equal(persisted.book.lots.length, 1);
+  ui.failWrite(); await assert.rejects(planningPanel(tree).props.onCommit({ ...value, spendableCashToman: "100" }));
+  assert.deepEqual(planningPanel(ui.render()).props.planning, value);
+  ui.unmount();
+});
 
 test("SSR public route has honest banner/marker and no private/auth or market client dependency", () => {
   const { component } = load(React, new Proxy({}, { get() { assert.fail("SSR browser access"); } }));
@@ -141,7 +163,10 @@ test("tabs preserve shared editor identity and both decision horizons stay locke
   const ui = harness(); let tree = ui.initialize(); const editorKey = panel(tree).key;
   for (const tab of ["purchases", "overview", "analysis", "storage"]) { byId(tree, `evaluation-tab-${tab}`).props.onClick(); tree = ui.render(); assert.equal(panel(tree).key, editorKey); }
   byId(tree, "evaluation-tab-analysis").props.onClick(); tree = ui.render();
-  assert.equal((text(tree).match(/تصمیم‌ناپذیر/g) ?? []).length, 2);
+  const analysis = nodes(tree).find(node => node.type === PersonalPortfolioAnalysisPanel).props.analysis;
+  assert.equal(analysis.horizons.length, 2);
+  assert.ok(analysis.horizons.every(horizon => horizon.state === "no_decision"));
+  assert.deepEqual(analysis.budget.orders, []);
   byId(tree, "evaluation-reset").props.onClick(); tree = ui.render(); assert.equal(panel(tree).props.busy, true);
   byId(tree, "evaluation-reset-confirm").props.onClick(); tree = ui.render(); assert.notEqual(panel(tree).key, editorKey); ui.unmount();
 });

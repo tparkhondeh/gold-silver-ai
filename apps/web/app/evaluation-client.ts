@@ -1,9 +1,10 @@
 import { emptyPurchaseBook, validatePurchaseBook, type PurchaseBook } from "./purchase-book.ts";
+import { emptyPersonalPlanning, validatePersonalPlanning, type PersonalPlanning } from "./personal-planning.ts";
 
 export const EVALUATION_STORAGE_KEY = "asha.public-evaluation.v1";
-export const EVALUATION_DOCUMENT_VERSION = "asha.public_evaluation.v1";
+export const EVALUATION_DOCUMENT_VERSION = "asha.public_evaluation.v2";
 export const EVALUATION_MAX_BYTES = 2 * 1024 * 1024;
-export type EvaluationDocument = { version: typeof EVALUATION_DOCUMENT_VERSION; revision: number; book: PurchaseBook };
+export type EvaluationDocument = { version: typeof EVALUATION_DOCUMENT_VERSION; revision: number; book: PurchaseBook; planning: PersonalPlanning };
 export type EvaluationStorage = Pick<Storage, "getItem" | "setItem" | "removeItem">;
 export type EvaluationState = { raw: string | null; document: EvaluationDocument | null };
 
@@ -17,15 +18,16 @@ export class EvaluationStorageError extends Error {
   }
 }
 export function emptyEvaluationDocument(): EvaluationDocument {
-  return { version: EVALUATION_DOCUMENT_VERSION, revision: 0, book: emptyPurchaseBook() };
+  return { version: EVALUATION_DOCUMENT_VERSION, revision: 0, book: emptyPurchaseBook(), planning: emptyPersonalPlanning() };
 }
 export function decodeEvaluationDocument(raw: string): EvaluationDocument {
   try {
     if (typeof raw !== "string" || new TextEncoder().encode(raw).byteLength > EVALUATION_MAX_BYTES) throw Error();
     const value = JSON.parse(raw);
-    if (!value || typeof value !== "object" || Array.isArray(value) || Object.keys(value).sort().join(",") !== "book,revision,version"
-      || value.version !== EVALUATION_DOCUMENT_VERSION || !Number.isSafeInteger(value.revision) || value.revision < 0) throw Error();
-    return { version: EVALUATION_DOCUMENT_VERSION, revision: value.revision, book: validatePurchaseBook(value.book) };
+    if (!value || typeof value !== "object" || Array.isArray(value) || !Number.isSafeInteger(value.revision) || value.revision < 0) throw Error();
+    const legacy = value.version === "asha.public_evaluation.v1";
+    if ((!legacy && value.version !== EVALUATION_DOCUMENT_VERSION) || Object.keys(value).sort().join(",") !== (legacy ? "book,revision,version" : "book,planning,revision,version")) throw Error();
+    return { version: EVALUATION_DOCUMENT_VERSION, revision: value.revision, book: validatePurchaseBook(value.book), planning: legacy ? emptyPersonalPlanning() : validatePersonalPlanning(value.planning) };
   } catch { throw new EvaluationStorageError("invalid"); }
 }
 export function encodeEvaluationDocument(document: EvaluationDocument): string {
@@ -46,10 +48,16 @@ export function readEvaluationState(storage: EvaluationStorage): EvaluationState
   catch { return { raw, document: null }; }
 }
 export function saveEvaluationBook(storage: EvaluationStorage, expectedRaw: string | null, book: PurchaseBook): EvaluationState {
+  return saveEvaluationChange(storage, expectedRaw, { book });
+}
+export function saveEvaluationPlanning(storage: EvaluationStorage, expectedRaw: string | null, planning: PersonalPlanning): EvaluationState {
+  return saveEvaluationChange(storage, expectedRaw, { planning });
+}
+function saveEvaluationChange(storage: EvaluationStorage, expectedRaw: string | null, change: Partial<Pick<EvaluationDocument, "book" | "planning">>): EvaluationState {
   let document: EvaluationDocument;
   try {
     const previous = expectedRaw === null ? emptyEvaluationDocument() : decodeEvaluationDocument(expectedRaw);
-    document = { version: EVALUATION_DOCUMENT_VERSION, revision: previous.revision + 1, book: validatePurchaseBook(book) };
+    document = { ...previous, ...change, revision: previous.revision + 1 };
   } catch { throw new EvaluationStorageError("invalid"); }
   const raw = encodeEvaluationDocument(document);
   if (read(storage) !== expectedRaw) throw new EvaluationStorageError("conflict");

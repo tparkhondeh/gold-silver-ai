@@ -14,6 +14,7 @@ import { PostgresObservationRepository } from "../../data/postgres-observation-r
 import { PortfolioVersionConflictError, PurchaseBookConflictError, PostgresPortfolioRepository, emptyPortfolioPreferences } from "../../data/postgres-portfolio-repository.ts";
 import { createPortfolioPut } from "../../app/api/portfolio/route.ts";
 import { emptyPurchaseBook } from "../../app/purchase-book.ts";
+import { emptyPersonalPlanning } from "../../app/personal-planning.ts";
 import { PostgresProvenanceRepository, buildArtifactVersion } from "../../data/provenance-registry.ts";
 import { PostgresSourceReconciliationRepository } from "../../data/source-reconciliation.ts";
 import { PostgresPortfolioLedgerRepository } from "../../data/portfolio-ledger.ts";
@@ -283,15 +284,15 @@ test("real PostgreSQL migration, isolation, persistence and restore", async (t) 
     const subject = "integration-snapshot-owner";
     const first = await portfolioRepository.save(subject, 0, [{ id: "snapshot-holding", name: "Synthetic snapshot", amount: 1, unit: "test", costToman: null, purchaseDate: null, note: "" }], {
       liquidityReservePercent: "10", maxSingleAssetPercent: "", maxAcceptableDrawdownPercent: "", shortTermMonths: "", longTermYears: "", analysisHorizon: "short", decisionHorizon: "short",
-    }, purchaseBook);
+    }, purchaseBook, { ...emptyPersonalPlanning(), spendableCashToman: "10.25", mediumTermMonths: 6 });
     const runner = createPgTransactionRunner(runtimePool);
-    let notifyRead, releaseRead;
+    let notifyRead, releaseRead, parentLocked = false;
     const parentRead = new Promise(resolve => { notifyRead = resolve; });
     const continueRead = new Promise(resolve => { releaseRead = resolve; });
     const reader = new PostgresPortfolioRepository({ transaction: work => runner.transaction(executor => work({
       async query(sql, parameters) {
         const result = await executor.query(sql, parameters);
-        if (sql.includes("SELECT id, version, purchase_book FROM user_portfolios")) { notifyRead(); await continueRead; }
+        if (sql.includes("SELECT id, version, purchase_book, planning FROM user_portfolios")) { parentLocked = true; notifyRead(); await continueRead; }
         return result;
       },
     })) });
@@ -303,12 +304,14 @@ test("real PostgreSQL migration, isolation, persistence and restore", async (t) 
     const changedHoldings = [{ ...first.holdings[0], amount: 2 }];
     const changedPreferences = { ...first.preferences, liquidityReservePercent: "20" };
     const changedBook = { ...purchaseBook, lots: [{ ...purchaseLot, quantity: "2.5" }] };
+    const changedPlanning = { ...first.planning, spendableCashToman: "20.35", mediumTermMonths: 9 };
     try {
       await Promise.race([parentRead, pendingRead]);
-      await assert.rejects(writer.save(subject, first.version, changedHoldings, changedPreferences, changedBook), /lock timeout/);
+      assert.equal(parentLocked, true, "the concurrency fixture must observe the parent FOR SHARE before starting a writer");
+      await assert.rejects(writer.save(subject, first.version, changedHoldings, changedPreferences, changedBook, changedPlanning), /lock timeout/);
     } finally { releaseRead(); }
     assert.deepEqual(await pendingRead, first);
-    const second = await writer.save(subject, first.version, changedHoldings, changedPreferences, changedBook);
+    const second = await writer.save(subject, first.version, changedHoldings, changedPreferences, changedBook, changedPlanning);
     assert.equal(second.version, first.version + 1);
     assert.deepEqual(await portfolioRepository.load(subject), second);
   });

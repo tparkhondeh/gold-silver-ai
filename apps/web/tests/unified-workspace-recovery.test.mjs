@@ -23,11 +23,27 @@ const panel = tree => nodes(tree).find(node => node.type?.name === "PurchaseBook
 const form = tree => nodes(tree).find(node => node.type === "form");
 const inputs = tree => nodes(tree).filter(node => node.type === "input");
 const analysisPanel = tree => nodes(tree).find(node => node.type?.name === "PersonalPortfolioAnalysisPanel");
+const planningPanel = tree => nodes(tree).find(node => node.type?.name === "PersonalPlanningPanel");
 function currentAnalysis(ui) {
   let tree = ui.render();
   if (!analysisPanel(tree)) { button(tree, "تحلیل و تصمیم").props.onClick(); tree = ui.render(); }
   return analysisPanel(tree).props.analysis;
 }
+
+test("planning confirmation advances the same portfolio and both horizons without changing purchases or spending cash", async () => {
+  const initial = snapshot(), proposed = { version: "asha.personal_planning.v1", spendableCashToman: "100.01", mediumTermMonths: 9 };
+  const ui = harness({ fetchSnapshot: async () => initial, saveSnapshot: async next => ({ ...next, version: next.version + 1 }) });
+  let tree = await ui.start(); await planningPanel(tree).props.onCommit(proposed); tree = ui.render();
+  assert.deepEqual(planningPanel(tree).props.planning, proposed);
+  const analysis = currentAnalysis(ui);
+  assert.equal(analysis.source.portfolioVersion, initial.version + 1);
+  assert.deepEqual(analysis.budget.cashRial, { numerator: "10001", denominator: "10" });
+  assert.deepEqual(analysis.budget.orders, []); assert.equal(analysis.budget.spendableRial, null);
+  assert.equal(analysis.horizons[1].savedDuration.value, "9");
+  await panel(tree).props.onCommit(initial.purchaseBook); tree = ui.render();
+  assert.deepEqual(planningPanel(tree).props.planning, proposed);
+  assert.deepEqual(panel(tree).props.book, initial.purchaseBook); ui.unmount();
+});
 
 // Execute the actual component and effects with controlled React hooks and
 // synthetic transport. Browser hydration/network/storage are not claimed here.
@@ -51,6 +67,7 @@ function harness({ fetchSnapshot, saveSnapshot, stored = {}, requestMarket }) {
   const exports = {};
   dependencies["./personal-asset-order"] = assetOrder;
   dependencies["./personal-portfolio-analysis"] = { buildPersonalPortfolioAnalysis };
+  dependencies["./personal-planning-panel"] = { PersonalPlanningPanel: function PersonalPlanningPanel() {} };
   dependencies["./personal-portfolio-analysis-panel"] = { PersonalPortfolioAnalysisPanel: function PersonalPortfolioAnalysisPanel() {} };
   if (requestMarket) dependencies["./managed-market-client"] = { requestManagedMarket: signal => { marketReads++; return requestMarket(marketReads, signal); } };
   new Function("require", "exports", "React", "window", "document", "sessionStorage", "Date", compiled)(name => { assert.ok(Object.hasOwn(dependencies, name), name); return dependencies[name]; }, exports, React, window, document, { getItem: key => stored[key] ?? null }, Clock);

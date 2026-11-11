@@ -9,7 +9,7 @@ export class PortfolioSaveError extends Error {
 }
 export function portfolioContent(snapshot: PortfolioSnapshot) {
   const checked = decodePortfolioSnapshot(snapshot);
-  return { holdings: checked.holdings, preferences: checked.preferences, purchaseBook: checked.purchaseBook ?? emptyPurchaseBook() };
+  return { holdings: checked.holdings, preferences: checked.preferences, purchaseBook: checked.purchaseBook ?? emptyPurchaseBook(), ...(checked.planning === undefined ? {} : { planning: checked.planning }) };
 }
 // JSONB can reorder properties; equality must not depend on their insertion order.
 function canonical(value: unknown): string {
@@ -37,7 +37,10 @@ export async function saveUnifiedPortfolio(next: PortfolioSnapshot, request: typ
     const payload = await response.json();
     if (payload.ok !== true) throw new Error();
     const saved = decodePortfolioSnapshot(payload.snapshot);
-    if (saved.version !== next.version + 1 || !samePortfolioContent(saved, next)) throw new Error();
+    // An old draft omitting planning does not request its removal. The repository
+    // preserves it atomically; retain the complete returned snapshot for next edits.
+    const expected = next.planning === undefined && saved.planning !== undefined ? { ...next, planning: saved.planning } : next;
+    if (saved.version !== next.version + 1 || !samePortfolioContent(saved, expected)) throw new Error();
     return saved;
   } catch { throw new PortfolioSaveError("پاسخ ذخیره با درخواست تطبیق ندارد؛ پیش از ادامه وضعیت ذخیره را بررسی کن.", true); }
 }

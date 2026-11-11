@@ -4,7 +4,21 @@
 
 ## Immediate Next Step
 
-### November7 implemented local checkpoint
+### November11 current checkpoint
+
+Continue from [cash/medium release](CASH_MEDIUM_RELEASE_2026-11-11.md).
+Versioned cash/medium input, same-portfolio persistence/analysis and isolated evaluation
+are implemented and locally tested. Complete the reviewed schema-upgrade rehearsal,
+exact-SHA CI, protected backup/restore and hosted browser acceptance before calling
+the release delivered. Schema15 requires compatible rollback456ac39; do not restart
+d588a8c against15, drop planning or rewind provider quota.
+
+Then continue bounded R2 analytical-input sufficiency and provenance using existing
+methods; no fabricated factors, price/history requests or local quota unfencing.
+Owner activation/private/device acceptance remains FINAL; this unit is not full R2,
+R5/R6 validation, R7 conversation or project completion.
+
+### November7 implemented local checkpoint (historical)
 
 Continue from [security/personal analysis](SECURITY_PERSONAL_ANALYSIS_2026-11-07.md).
 Minimal security patches and descriptive personal-analysis connection are tested.
