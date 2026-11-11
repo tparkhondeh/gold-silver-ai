@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { constants } from "node:fs";
-import { lstat, mkdir, mkdtemp, open, opendir, readFile, rename, rm, symlink, unlink } from "node:fs/promises";
+import { chmod, lstat, mkdir, mkdtemp, open, opendir, readFile, rename, rm, symlink, unlink } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { basename, dirname, join, posix, resolve, sep } from "node:path";
 import { makeNavasanSnapshot, MARKET_TTL_MS } from "../app/market-test-contract.ts";
@@ -39,7 +39,7 @@ function fixture(initial = null) {
   };
   const add = (path, value) => { lookup(posix.dirname(path)).children.set(posix.basename(path), value); return value; };
   const stat = value => ({ ...value, size: value.body.length, isDirectory: () => value.kind === "directory", isFile: () => value.kind === "file", isSymbolicLink: () => value.kind === "link" });
-  for (const path of ["/home", "/home/wealthos_dev", "/home/wealthos_dev/.asha-private", PRIVATE_DATA_ROOT, destination]) add(path, node("directory", path === "/home" ? { uid: 0, mode: 0o755 } : {}));
+  for (const path of ["/home", "/home/wealthos_dev", "/home/wealthos_dev/.asha-private", PRIVATE_DATA_ROOT, destination]) add(path, node("directory", path === "/home" ? { uid: 0, mode: 0o711 } : {}));
   const f = { calls, handles, lookup, add, node, hook: null, context: { platform: "linux", uid }, db: runner() };
   const invoke = async (operation, path, extra) => { calls.push({ operation, path, extra }); await f.hook?.(operation, path, extra); };
   const io = {
@@ -53,11 +53,12 @@ function fixture(initial = null) {
       if (!value) value = add(path, node("file", { mode }));
       if (value.kind === "link") throw errno("ELOOP");
       if ((flags & constants.O_DIRECTORY) && value.kind !== "directory") throw errno("ENOTDIR");
+      if (value.kind === "directory" && !(flags & 0x200000) && !(value.mode & (value.uid === uid ? 0o400 : 0o004))) throw errno("EACCES");
       const fd = descriptor++; handles.set(fd, value);
       return { fd,
         async stat() { await invoke("fstat", path); return stat(value); },
         async close() { handles.delete(fd); await invoke("close", path); },
-        async sync() { await invoke("sync", path); },
+        async sync() { if (flags & 0x200000) throw errno("EBADF"); await invoke("sync", path); },
         async read(buffer, offset, length, position) { await invoke("read", path); const bytesRead = Math.max(0, Math.min(length, value.body.length - position)); value.body.copy(buffer, offset, position, position + bytesRead); return { bytesRead }; },
         async writeFile(raw) { await invoke("write", path, raw); value.body = Buffer.from(raw); value.mtimeMs = tick++; value.ctimeMs = tick++; },
       };
@@ -233,6 +234,8 @@ test("Linux native descriptors exercise publication and no-follow rejection in a
   const map = value => /^\/proc\/self\/fd\/\d+(?:\/[^/]*)?$/.test(value) ? value : resolve(temporary, `.${value}`);
   try {
     for (const path of ["/home", "/home/wealthos_dev", "/home/wealthos_dev/.asha-private", PRIVATE_DATA_ROOT, destination]) await mkdir(map(path), { mode: 0o700 });
+    await chmod(map("/home"), 0o111);
+    await assert.rejects(open(map("/home"), constants.O_RDONLY | constants.O_DIRECTORY), { code: "EACCES" });
     let swap = false;
     const io = {
       context: () => ({ platform: process.platform, uid: process.getuid() }), lstat: path => lstat(map(path)),
@@ -253,6 +256,6 @@ test("Linux native descriptors exercise publication and no-follow rejection in a
   } finally {
     assert.equal(dirname(temporary), resolve(tmpdir())); assert.ok(basename(temporary).startsWith("asha-private-cache-test-"));
     assert.ok(resolve(temporary).startsWith(resolve(tmpdir()) + sep));
-    await rm(temporary, { recursive: true, force: false });
+    await chmod(map("/home"), 0o700); await rm(temporary, { recursive: true, force: false });
   }
 });

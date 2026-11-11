@@ -2,7 +2,7 @@ import { constants, type Stats } from "node:fs";
 import { lstat, mkdir, open, opendir } from "node:fs/promises";
 import { posix } from "node:path";
 import { MANAGED_CACHE_FILE } from "../data/managed-market-cache.ts";
-import { assertPrivateMetadata } from "./private-linux-plan.ts";
+import { assertPrivateMetadata, PRIVATE_ANCESTOR_OPEN_FLAG } from "./private-linux-plan.ts";
 import { PRIVATE_DATA_ROOT } from "./private-supervision.ts";
 
 // Sibling of database/backups, never part of either. No runtime attachment here.
@@ -70,7 +70,7 @@ export function createPrivateMarketCacheStorage(io: PrivateMarketCacheStorageIo)
       const directoryFlags = constants.O_RDONLY | constants.O_DIRECTORY | constants.O_NOFOLLOW | constants.O_NONBLOCK;
       async function pin(path: string, anchored: string, kind: Pin["kind"], code: Code) {
         const before = await io.lstat(anchored); metadata(before, uid!, kind, code);
-        const handle = await io.open(anchored, directoryFlags);
+        const handle = await io.open(anchored, kind === "ancestor" ? PRIVATE_ANCESTOR_OPEN_FLAG | constants.O_DIRECTORY | constants.O_NOFOLLOW : directoryFlags);
         // Register immediately so failed fstat/metadata checks still close the descriptor.
         const item: Pin = { path, handle, info: before, kind }; pins.push(item);
         const after = await handle.stat(); metadata(after, uid!, kind, code);

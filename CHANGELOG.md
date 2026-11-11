@@ -14,6 +14,9 @@ state is recorded in `docs/10-project-state/CURRENT_STATE.md`.
 - Patched React/ReactDOM/RSC19.2.9 and fixed secure Linux release-manifest traversal
   through execute-only ancestors. Prepared schema15-compatible rollback preserving
   planning and quota; no permission weakening or destructive downgrade.
+- Corrected protected market-startup readers to traverse metadata-pinned ancestors
+  without requiring directory-list permission; private leaf/file permission and
+  race checks remain enforced. See the November11 startup-recovery evidence.
 
 - Applied scoped security corrections to Vinext/plugin-rsc/Vite and affected
   transitive dependencies. Full audit now has0high/critical and11moderate residual

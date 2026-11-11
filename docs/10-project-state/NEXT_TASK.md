@@ -10,8 +10,10 @@ Continue from [cash/medium release](CASH_MEDIUM_RELEASE_2026-11-11.md).
 Versioned cash/medium input, same-portfolio persistence/analysis and isolated evaluation
 are implemented and locally tested. Complete the reviewed schema-upgrade rehearsal,
 exact-SHA CI, protected backup/restore and hosted browser acceptance before calling
-the release delivered. Schema15 requires compatible rollback456ac39; do not restart
-d588a8c against15, drop planning or rewind provider quota.
+the release delivered. Schema15 compatibility alone is insufficient:456ac39 also
+has the execute-only-ancestor market-startup failure observed onb11f09c. Complete
+the bounded startup correction and real startup check before claiming a healthy
+rollback/release. Do not restartd588a8c against15, drop planning or rewind quota.
 
 Then continue bounded R2 analytical-input sufficiency and provenance using existing
 methods; no fabricated factors, price/history requests or local quota unfencing.

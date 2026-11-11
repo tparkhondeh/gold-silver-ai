@@ -1,4 +1,7 @@
 /** Fixed project-only preparation policy. No I/O, secrets, enrollment or fallback. */
+// Linux O_PATH is not exposed by Node fs.constants. Only metadata-pinned
+// ancestors use it; private directories retain readable handles for listing/fsync.
+export const PRIVATE_ANCESTOR_OPEN_FLAG = 0x200000;
 export const PRIVATE_LINUX_PLAN = Object.freeze({
   account: "wealthos_dev", home: "/home/wealthos_dev", origin: "https://goldsilver.wealthos.ir",
   parent: "/home/wealthos_dev/.asha-private", root: "/home/wealthos_dev/.asha-private/goldsilver",

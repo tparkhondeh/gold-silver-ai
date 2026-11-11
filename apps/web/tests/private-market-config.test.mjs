@@ -27,7 +27,7 @@ function fixture() {
   const add = (path, entry) => { lookup(posix.dirname(path)).children.set(posix.basename(path), entry); return entry; };
   let parent = "/";
   for (const part of posix.dirname(PRIVATE_MARKET_CONFIG).split("/").filter(Boolean)) {
-    parent = posix.join(parent, part); add(parent, node("directory", parent === "/home" ? { uid: 0, mode: 0o755 } : {}));
+    parent = posix.join(parent, part); add(parent, node("directory", parent === "/home" ? { uid: 0, mode: 0o711 } : {}));
   }
   const bytes = Buffer.from(serialized()); add(PRIVATE_MARKET_CONFIG, node("file", { bytes, size: bytes.length }));
   const stat = entry => ({ ...entry, isFile: () => entry.kind === "file", isDirectory: () => entry.kind === "directory", isSymbolicLink: () => entry.kind === "link" });
@@ -39,6 +39,7 @@ function fixture() {
     open: async (path, flags) => {
       await invoke("open", path, flags); const entry = lookup(path);
       if (entry.kind === "link") throw Error("SYNTHETIC-SECRET-CANARY link");
+      if (entry.kind === "directory" && !(flags & 0x200000) && !(entry.mode & (entry.uid === uid ? 0o400 : 0o004))) throw Object.assign(Error("EACCES"), { code: "EACCES" });
       const number = fd++; handles.set(number, entry);
       return { fd: number, stat: async () => { await invoke("fstat", path); return stat(entry); },
         read: async (buffer, offset, length, position) => { await invoke("read", path); const bytesRead = Math.max(0, Math.min(length, f.chunkSize, entry.bytes.length - position)); entry.bytes.copy(buffer, offset, position, position + bytesRead); return { bytesRead }; },
@@ -64,13 +65,14 @@ test("other origins/owner bindings and arbitrary fields cannot authorize this pr
   for (const change of [{ ownerSubject: "other" }, { issuer: "https://identity.invalid" }, { portfolioSubject: "other" }, { portfolioSubject: "local-owner-v1" }, { origin: "http://goldsilver.wealthos.ir" }]) assert.throws(() => parsePrivateMarketConfig(serialized(), { ...binding, ...change }), safeError);
 });
 
-test("fixed protected reader pins readonly descriptors and reports configured-only, never ready", async () => {
+test("fixed protected reader traverses execute-only ancestors, pins readonly files and reports configured-only", async () => {
   const f = fixture(), result = await f.read(binding);
   assert.deepEqual(result, { state: "configured_only", configuration: value, quotaAuthorityVerified: false, keyTransferVerified: false, runtimeAttached: false });
   assert.equal(Object.isFrozen(result), true); assert.equal(Object.isFrozen(result.configuration), true); assert.equal(f.handles.size, 0);
   assert.equal(PRIVATE_MARKET_CONFIG, "/home/wealthos_dev/.asha-private/goldsilver/market-provider.json");
   for (const call of f.calls.filter(call => call.operation === "open")) {
-    assert.equal(call.flags, constants.O_RDONLY | constants.O_NOFOLLOW | constants.O_NONBLOCK | (call.path.endsWith("/market-provider.json") ? 0 : constants.O_DIRECTORY));
+    const ancestor = call.path === "/" || call.path.endsWith("/home") || call.path.endsWith("/wealthos_dev");
+    assert.equal(call.flags, ancestor ? 0x200000 | constants.O_NOFOLLOW | constants.O_DIRECTORY : constants.O_RDONLY | constants.O_NOFOLLOW | constants.O_NONBLOCK | (call.path.endsWith("/market-provider.json") ? 0 : constants.O_DIRECTORY));
     if (call.path !== "/") assert.match(call.path, /^\/proc\/self\/fd\/\d+\//);
   }
   assert.ok(f.calls.filter(call => call.operation === "read").every(call => call.path.endsWith("/market-provider.json")));

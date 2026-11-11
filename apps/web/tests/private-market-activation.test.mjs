@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { constants, readFileSync } from "node:fs";
-import { lstat, open, mkdtemp, mkdir, rm } from "node:fs/promises";
+import { chmod, lstat, open, mkdtemp, mkdir, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { posix, join, resolve, dirname, basename, sep } from "node:path";
 import { createPrivateMarketActivation, createPrivateMarketActivationStorage, PRIVATE_MARKET_ACTIVATION, PRIVATE_MARKET_ACTIVATION_MAX_BYTES } from "../scripts/private-market-activation.ts";
@@ -67,7 +67,7 @@ function fixture() {
   const add = (path, entry) => { lookup(posix.dirname(path)).children.set(posix.basename(path), entry); return entry; };
   let parent = "/";
   for (const part of directory.split("/").filter(Boolean)) {
-    parent = posix.join(parent, part); add(parent, node("directory", parent === "/home" ? { uid: 0, mode: 0o755 } : {}));
+    parent = posix.join(parent, part); add(parent, node("directory", parent === "/home" ? { uid: 0, mode: 0o711 } : {}));
   }
   const stat = entry => ({ ...entry, isFile: () => entry.kind === "file", isDirectory: () => entry.kind === "directory", isSymbolicLink: () => entry.kind === "link" });
   const f = { context: { platform: "linux", uid }, handles, calls, lookup, node, add, hook: null, chunkSize: 31, readCount: null, partialWrite: false };
@@ -83,6 +83,7 @@ function fixture() {
         if (entry) throw errno("EEXIST"); entry = add(path, node("file", { mode }));
       }
       if (!entry) throw errno("ENOENT"); if (entry.kind === "link") throw errno("ELOOP");
+      if (entry.kind === "directory" && !(flags & 0x200000) && !(entry.mode & (entry.uid === uid ? 0o400 : 0o004))) throw errno("EACCES");
       const fd = descriptor++; handles.set(fd, entry);
       return { fd, stat: async () => { await invoke("fstat", path); return stat(entry); },
         read: async (buffer, offset, length, position) => {
@@ -90,7 +91,7 @@ function fixture() {
           entry.bytes.copy(buffer, offset, position, position + bytesRead); return { bytesRead: f.readCount === null ? bytesRead : f.readCount };
         },
         writeFile: async value => { await invoke("write", path); entry.bytes = Buffer.from(value); if (f.partialWrite) entry.bytes = entry.bytes.subarray(0, 2); entry.size = entry.bytes.length; entry.mtimeMs++; entry.ctimeMs++; },
-        sync: async () => invoke("sync", path),
+        sync: async () => { if (flags & 0x200000) throw errno("EBADF"); await invoke("sync", path); },
         close: async () => { handles.delete(fd); await invoke("close", path); },
       };
     },
@@ -210,13 +211,15 @@ test("production wiring places only prepared adapter behind private runtime, nev
   assert.doesNotMatch(publicRoute, /private-market-activation|market-activation\.json/);
 });
 
-test("Linux native activation storage is exclusive, private and durable on an isolated mapped tree", {
+test("Linux native activation traverses execute-only ancestors while private publication remains durable", {
   skip: process.platform !== "linux" ? "Linux descriptors; adversarial synthetic tests run on all platforms" : process.getuid?.() === 0 ? "Nonroot Linux required" : false,
 }, async () => {
   const temporary = await mkdtemp(join(tmpdir(), "asha-activation-test-")), descriptors = new Set();
   const map = path => /^\/proc\/self\/fd\/\d+(?:\/[^/]*)?$/.test(path) ? path : resolve(temporary, `.${path}`);
   try {
     for (const path of ["/home", "/home/wealthos_dev", "/home/wealthos_dev/.asha-private", directory]) await mkdir(map(path), { mode: 0o700 });
+    await chmod(map("/home"), 0o111);
+    await assert.rejects(open(map("/home"), constants.O_RDONLY | constants.O_DIRECTORY), { code: "EACCES" });
     const io = { context: () => ({ platform: process.platform, uid: process.getuid() }), lstat: path => lstat(map(path)),
       async open(path, flags, mode) {
         const handle = await open(map(path), flags, mode); descriptors.add(handle.fd);
@@ -229,6 +232,7 @@ test("Linux native activation storage is exclusive, private and durable on an is
     await assert.rejects(storage.publish(async () => assert.fail("existing supplier")), { message: safeMessage }); assert.equal(descriptors.size, 0);
   } finally {
     assert.equal(dirname(temporary), resolve(tmpdir())); assert.ok(basename(temporary).startsWith("asha-activation-test-"));
-    assert.ok(resolve(temporary).startsWith(resolve(tmpdir()) + sep)); await rm(temporary, { recursive: true, force: false });
+    assert.ok(resolve(temporary).startsWith(resolve(tmpdir()) + sep));
+    await chmod(map("/home"), 0o700); await rm(temporary, { recursive: true, force: false });
   }
 });

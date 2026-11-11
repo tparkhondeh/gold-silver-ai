@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { constants } from "node:fs";
-import { lstat, mkdir, mkdtemp, open, opendir, readFile, rename, rm, symlink, unlink, writeFile } from "node:fs/promises";
+import { chmod, lstat, mkdir, mkdtemp, open, opendir, readFile, rename, rm, symlink, unlink, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { posix, join, resolve, sep, basename } from "node:path";
 import test from "node:test";
@@ -26,7 +26,7 @@ function fixture({ present = false, context = { platform: "linux", uid } } = {})
   const add = (path, value = node()) => { lookup(posix.dirname(path)).children.set(posix.basename(path), value); return value; };
   const stat = current => ({ ...current, isDirectory: () => current.kind === "directory", isFile: () => current.kind === "file", isSymbolicLink: () => current.kind === "link" });
   for (const path of ["/home", "/home/wealthos_dev", "/home/wealthos_dev/.asha-private", PRIVATE_DATA_ROOT]) {
-    add(path, node("directory", path === "/home" ? { uid: 0, mode: 0o755 } : {}));
+    add(path, node("directory", path === "/home" ? { uid: 0, mode: 0o711 } : {}));
   }
   if (present) add(destination);
   const f = { calls, handles, lookup, add, node, hook: null, mkdirCount: 0 };
@@ -37,6 +37,7 @@ function fixture({ present = false, context = { platform: "linux", uid } } = {})
     async open(path, flags) {
       await invoke("open", path, flags);
       const current = lookup(path); if (current.kind === "link") throw errno("ELOOP");
+      if (current.kind === "directory" && !(flags & 0x200000) && !(current.mode & (current.uid === uid ? 0o400 : 0o004))) throw errno("EACCES");
       const fd = descriptor++; handles.set(fd, { node: current });
       return { fd, async stat() { await invoke("fstat", path); return stat(current); }, async close() { calls.push({ operation: "close", path }); handles.delete(fd); } };
     },
@@ -218,7 +219,7 @@ test("unavailable proc descriptor or failed open never falls back to absolute wr
 test("Linux real filesystem: fixed-path mapping retains actual proc/no-follow anchoring and never redirects writes", {
   skip: process.platform !== "linux" ? "Linux /proc/self/fd semantics; virtual coverage runs on Windows" : process.getuid?.() === 0 ? "Requires a nonroot Linux test user" : false,
 }, async () => {
-  const temporary = await mkdtemp(join(tmpdir(), "asha-cache-storage-test-"));
+  const temporary = await mkdtemp(join(tmpdir(), "asha-cache-storage-test-")), executeOnlyHomes = [];
   // Every ordinary test path maps into this newly created tree. Descriptor paths
   // remain real Linux /proc/self/fd operations; no actual private path is touched.
   const mappedFixture = async name => {
@@ -229,6 +230,8 @@ test("Linux real filesystem: fixed-path mapping retains actual proc/no-follow an
       const result = resolve(tree, `.${path}`); assert.ok(result === tree || result.startsWith(tree + sep)); return result;
     };
     for (const path of ["/home", "/home/wealthos_dev", "/home/wealthos_dev/.asha-private", PRIVATE_DATA_ROOT]) await mkdir(map(path), { mode: 0o700 });
+    executeOnlyHomes.push(map("/home")); await chmod(map("/home"), 0o111);
+    await assert.rejects(open(map("/home"), constants.O_RDONLY | constants.O_DIRECTORY), { code: "EACCES" });
     const hooks = { beforeOpen: null, beforeMkdir: null }, descriptors = new Set();
     const io = {
       context: () => ({ platform: process.platform, uid: process.getuid() }),
@@ -274,6 +277,7 @@ test("Linux real filesystem: fixed-path mapping retains actual proc/no-follow an
     // Only this generated, validated synthetic test fixture is removed.
     assert.equal(resolve(temporary), temporary); assert.equal(resolve(posix.dirname(temporary)), resolve(tmpdir()));
     assert.ok(basename(temporary).startsWith("asha-cache-storage-test-"));
+    for (const home of executeOnlyHomes) await chmod(home, 0o700);
     await rm(temporary, { recursive: true, force: false });
   }
 });

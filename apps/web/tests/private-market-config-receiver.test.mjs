@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { constants, readFileSync } from "node:fs";
-import { lstat, open, mkdtemp, mkdir, readFile, rm, symlink, rename } from "node:fs/promises";
+import { chmod, lstat, open, mkdtemp, mkdir, readFile, rm, symlink, rename } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { posix, join, resolve, dirname, basename, sep } from "node:path";
 import { identityBindingHash } from "../auth/postgres-owner-identity-store.ts";
@@ -282,7 +282,10 @@ test("Linux native exclusive/no-follow descriptors and durability work on a disp
     };
     const receive = createPrivateMarketConfigReceiver(io);
     assert.deepEqual(await receive(binding, async () => raw), expectedReceipt);
+    await chmod(map("/home"), 0o111);
+    await assert.rejects(open(map("/home"), constants.O_RDONLY | constants.O_DIRECTORY), { code: "EACCES" });
     assert.deepEqual((await createPrivateMarketConfigReader(io)(binding)).configuration, value); assert.equal(descriptors.size, 0);
+    await chmod(map("/home"), 0o700);
     const metadata = await lstat(map(destination)); assert.equal(metadata.mode & 0o7777, 0o600); assert.equal(metadata.nlink, 1);
     await assert.rejects(receive(binding, async () => assert.fail("existing supplier called")), { message: safeMessage });
     await rename(map(destination), map(`${directory}/retained-synthetic.json`)); await symlink(map(`${directory}/retained-synthetic.json`), map(destination));
@@ -290,6 +293,7 @@ test("Linux native exclusive/no-follow descriptors and durability work on a disp
     assert.equal(await readFile(map(`${directory}/retained-synthetic.json`), "utf8"), raw); assert.equal(descriptors.size, 0);
   } finally {
     assert.equal(dirname(temporary), resolve(tmpdir())); assert.ok(basename(temporary).startsWith("asha-private-receiver-test-"));
-    assert.ok(resolve(temporary).startsWith(resolve(tmpdir()) + sep)); await rm(temporary, { recursive: true, force: false });
+    assert.ok(resolve(temporary).startsWith(resolve(tmpdir()) + sep));
+    await chmod(map("/home"), 0o700); await rm(temporary, { recursive: true, force: false });
   }
 });

@@ -5,7 +5,7 @@ import { createPrivateManagedMarketAdapter } from "../auth/private-managed-marke
 import { probePrivateMarketDatabase } from "../auth/private-market-readiness.ts";
 import type { TransactionRunner } from "../data/postgres-observation-repository.ts";
 import type { Migration } from "../db/migrations.ts";
-import { assertPrivateMetadata } from "./private-linux-plan.ts";
+import { assertPrivateMetadata, PRIVATE_ANCESTOR_OPEN_FLAG } from "./private-linux-plan.ts";
 import { PRIVATE_DATA_ROOT } from "./private-supervision.ts";
 import { readPrivateMarketConfig } from "./private-market-config.ts";
 import { nativePrivateMarketConfigReceiverIo, type PrivateMarketConfigReceiverIo } from "./private-market-config-receiver.ts";
@@ -47,7 +47,8 @@ export function createPrivateMarketActivationStorage(io: PrivateMarketConfigRece
       const pin = async (path: string, source: string) => {
         const kind = path === posix.dirname(PRIVATE_DATA_ROOT) || path === PRIVATE_DATA_ROOT ? "directory" : "ancestor";
         const before = await io.lstat(source); metadata(before, kind);
-        const handle = await io.open(source, constants.O_RDONLY | constants.O_DIRECTORY | constants.O_NOFOLLOW | constants.O_NONBLOCK); handles.push(handle);
+        const flags = (kind === "ancestor" ? PRIVATE_ANCESTOR_OPEN_FLAG : constants.O_RDONLY | constants.O_NONBLOCK) | constants.O_DIRECTORY | constants.O_NOFOLLOW;
+        const handle = await io.open(source, flags); handles.push(handle);
         const opened = await handle.stat(); metadata(opened, kind); if (!sameEntry(before, opened)) throw failure();
         const item: typeof pins[number] = { path, handle, info: opened, kind }; pins.push(item); fd(handle); return item;
       };

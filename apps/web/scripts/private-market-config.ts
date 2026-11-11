@@ -3,7 +3,7 @@ import { lstat, open } from "node:fs/promises";
 import { posix } from "node:path";
 import { inspectOwnerIdentityBinding, identityBindingHash, type OwnerIdentityBinding } from "../auth/postgres-owner-identity-store.ts";
 import { resolveNavasanRefreshPolicy } from "../data/navasan-refresh-policy.ts";
-import { assertPrivateMetadata } from "./private-linux-plan.ts";
+import { assertPrivateMetadata, PRIVATE_ANCESTOR_OPEN_FLAG } from "./private-linux-plan.ts";
 import { PRIVATE_DATA_ROOT } from "./private-supervision.ts";
 
 export const PRIVATE_MARKET_CONFIG = `${PRIVATE_DATA_ROOT}/market-provider.json`;
@@ -73,7 +73,8 @@ export function createPrivateMarketConfigReader(io: PrivateMarketConfigIo) {
       const pin = async (path: string, source: string) => {
         const kind = path === posix.dirname(PRIVATE_DATA_ROOT) || path === PRIVATE_DATA_ROOT ? "directory" : "ancestor";
         const before = await io.lstat(source); metadata(before, kind);
-        const handle = await io.open(source, flags | constants.O_DIRECTORY), item: typeof pins[number] = { path, handle, info: before, kind }; pins.push(item);
+        const directoryFlags = kind === "ancestor" ? PRIVATE_ANCESTOR_OPEN_FLAG | constants.O_DIRECTORY | constants.O_NOFOLLOW : flags | constants.O_DIRECTORY;
+        const handle = await io.open(source, directoryFlags), item: typeof pins[number] = { path, handle, info: before, kind }; pins.push(item);
         const opened = await handle.stat(); metadata(opened, kind); if (!sameEntry(before, opened)) throw failure(); anchored(handle); return item;
       };
       let parent = await pin("/", "/");
