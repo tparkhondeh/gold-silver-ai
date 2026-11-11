@@ -8,14 +8,18 @@
 
 Continue from [cash/medium release](CASH_MEDIUM_RELEASE_2026-11-11.md).
 Versioned cash/medium input, same-portfolio persistence/analysis and isolated evaluation
-are implemented and locally tested. Complete the reviewed schema-upgrade rehearsal,
-exact-SHA CI, protected backup/restore and hosted browser acceptance before calling
-the release delivered. Schema15 compatibility alone is insufficient:456ac39 also
-has the execute-only-ancestor market-startup failure observed onb11f09c. Complete
-the bounded startup correction and real startup check before claiming a healthy
-rollback/release. Do not restartd588a8c against15, drop planning or rewind quota.
+are implemented and tested locally and on the hosted domain. Deployed code is
+648d0d289fe0eb82182741b1c9e4ff5e2e2f90e7; all three exact-SHA CI jobs passed.
+Schema upgrade/backup/restore, actual startup and six installed-Chrome hosted journeys
+passed. Do not repeat this unit or reactivate local provider acquisition.
 
-Then continue bounded R2 analytical-input sufficiency and provenance using existing
+Retained healthy rollback is e31aece20462a64bd42c5ef70946f6b7fe7951f1, with a protected
+independent backup binding. Earlier456ac39/b11f09c have a startup failure on the
+host's execute-only ancestor and are not healthy rollback targets. Never restart
+d588a8c against15, drop planning or rewind quota. Before any future release, use
+the actual read-only startup check as well as capacity/backup and HTTP/browser gates.
+
+Next: continue bounded R2 analytical-input sufficiency and provenance using existing
 methods; no fabricated factors, price/history requests or local quota unfencing.
 Owner activation/private/device acceptance remains FINAL; this unit is not full R2,
 R5/R6 validation, R7 conversation or project completion.
