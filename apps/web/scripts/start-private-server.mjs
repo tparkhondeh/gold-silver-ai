@@ -17,16 +17,21 @@ import { privateUiResponse } from "../auth/private-ui-response.ts";
 import { preparePrivateMarketActivation } from "./private-market-activation.ts";
 
 let pool, ui, gateway;
+const args = process.argv.slice(2), checkStartup = args.includes("--check-startup");
+let stage = "arguments";
 const stop = async () => {
   gateway?.closeAllConnections(); ui?.server.closeAllConnections();
   await Promise.all([gateway && new Promise(done => gateway.close(done)), ui && new Promise(done => ui.server.close(done))]);
   await pool?.end();
 };
 try {
+  if (args.length !== 0 && !(args.length === 1 && args[0] === "--check-startup")) throw Error();
+  stage = "configuration";
   assertPrivateProcessEnvironment(process.env);
   const configuration = await readPrivateServerConfig();
   const root = fileURLToPath(new URL("../", import.meta.url));
   const outDir = resolve(root, "dist-private");
+  stage = "release";
   const manifest = JSON.parse(await readFile(resolve(outDir, "release.json"), "utf8"));
   const release = manifest.commit;
   if (manifest.target !== "private-node" || manifest.workingTreeClean !== true || manifest.deploymentEligible !== true || manifest.sourceBranch !== "codex/phase-2-decision-engine" || !/^[0-9a-f]{40}$/.test(release)) throw Error();
@@ -35,13 +40,28 @@ try {
   if (git("rev-parse", "HEAD") !== release || git("status", "--porcelain") !== "" || git("branch", "--show-current") !== "codex/phase-2-decision-engine") throw Error();
   pool = new Pool({ connectionString: configuration.databaseUrl, max: 4, connectionTimeoutMillis: 3000, statement_timeout: 5000, idle_in_transaction_session_timeout: 5000 });
   pool.on("error", () => { process.stderr.write("Private database connection unavailable.\n"); });
-  const runner = createPgTransactionRunner(pool), migrations = await readMigrations();
+  stage = "database";
+  const baseRunner = createPgTransactionRunner(pool), migrations = await readMigrations();
+  // The check follows actual startup preparation, under database-enforced
+  // read-only transactions. It cannot reserve quota or create identity state.
+  const runner = checkStartup ? { transaction: work => baseRunner.transaction(async database => {
+    await database.query("SET TRANSACTION READ ONLY");
+    return work(database);
+  }) } : baseRunner;
   const probe = await runner.transaction(database => probePrivatePortfolioDatabase(database, migrations));
   if (probe.state !== "ready") throw Error();
   const binding = { origin: configuration.origin, issuer: configuration.version === 2 ? configuration.origin : "https://accounts.google.com", ownerSubject: configuration.ownerSubject, portfolioSubject: configuration.portfolioSubject };
   // A key alone never activates prices. Missing receipt preserves auth-only;
   // present unsafe evidence stops startup. Preparation performs no provider I/O.
+  stage = "market_preparation";
+  const fetch = checkStartup ? async () => { throw Error("Provider acquisition is prohibited during startup check"); } : globalThis.fetch;
   const market = await preparePrivateMarketActivation({ binding, runner, migrations, fetcher: fetch });
+  if (checkStartup) {
+    await stop();
+    process.stdout.write(JSON.stringify({ version: "asha.private_startup_preflight.v1", startupChecksPass: true, release,
+      privateConfigurationChecked: true, databaseReady: true, marketPreparationChecked: true,
+      providerAcquisitionAllowed: false, listenersStarted: false, ownerLoginVerified: false }) + "\n");
+  } else {
   // Fixed private upstream in the same supervised process, not a development server.
   ui = await startProdServer({ host: "127.0.0.1", port: 0, outDir, silent: true, noCompression: true });
   const common = { binding, runner, release, market,
@@ -59,7 +79,10 @@ try {
   await new Promise((done, reject) => { gateway.once("error", reject); gateway.listen(3012, "127.0.0.1", done); });
   process.stdout.write(`Private service listening on loopback; release ${release}. Real login still requires acceptance verification.\n`);
   for (const signal of ["SIGINT", "SIGTERM"]) process.once(signal, () => { void stop(); });
+  }
 } catch {
+  if (checkStartup) process.stdout.write(JSON.stringify({ version: "asha.private_startup_preflight.v1", startupChecksPass: false, stage,
+    providerAcquisitionAllowed: false, listenersStarted: false, ownerLoginVerified: false }) + "\n");
   process.stderr.write("Private service NOT started: private configuration, database readiness or production build is unavailable. No secret details logged.\n");
   await stop(); process.exitCode = 1;
 }

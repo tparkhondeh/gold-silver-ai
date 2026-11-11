@@ -4,12 +4,18 @@
 
 ## Status
 
-Active scope: [September23 public evaluation](../10-project-state/PUBLIC_EVALUATION_2026-09-23.md).
-ADR0014 permits only an isolated `/evaluation` public route, not anonymous private
-portfolio access. Owner activation is deferred to final acceptance. Fresh server
-capacity is below the backup reserve; no new deployment until that gate is restored.
+Current execution: [November11 cash/medium release and startup recovery](../10-project-state/CASH_MEDIUM_RELEASE_2026-11-11.md).
+Use that dated record for deployed identity, capacity, backups and remaining gates;
+the September/October checkpoints below are historical. Existing server market
+key/quota authority must not be transferred/reset again or unfenced locally.
 
-Current execution: [September 21 passkey delivery](../10-project-state/PRIVATE_PASSKEY_DELIVERY_2026-09-21.md)
+Public scope: [September23 public evaluation](../10-project-state/PUBLIC_EVALUATION_2026-09-23.md).
+ADR0014 permits only an isolated `/evaluation` public route, not anonymous private
+portfolio access. Owner activation is deferred to final acceptance. Recheck current
+capacity and backup reserve before every release; old shortage reports are not
+evidence of today's capacity.
+
+Original setup: [September 21 passkey delivery](../10-project-state/PRIVATE_PASSKEY_DELIVERY_2026-09-21.md)
 and [project-only passkey operations](PRIVATE_PASSKEY_OPERATIONS.md).
 The owner has authorized an independent provider-free private login and scoped
 server deployment under ADR 0013. The earlier Google-only sequence below is

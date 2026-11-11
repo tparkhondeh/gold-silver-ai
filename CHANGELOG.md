@@ -17,6 +17,9 @@ state is recorded in `docs/10-project-state/CURRENT_STATE.md`.
 - Corrected protected market-startup readers to traverse metadata-pinned ancestors
   without requiring directory-list permission; private leaf/file permission and
   race checks remain enforced. See the November11 startup-recovery evidence.
+- Added a read-only check of the real private startup path before activation;
+  it blocks provider requests and starts no listeners. Operational instructions
+  distinguish this check from filesystem/backup readiness and HTTP acceptance.
 
 - Applied scoped security corrections to Vinext/plugin-rsc/Vite and affected
   transitive dependencies. Full audit now has0high/critical and11moderate residual

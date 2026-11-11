@@ -1,6 +1,7 @@
 # Project-only private passkey operations
 
-Current execution evidence: [September21 delivery](../10-project-state/PRIVATE_PASSKEY_DELIVERY_2026-09-21.md).
+Current execution evidence: [November11 release/recovery](../10-project-state/CASH_MEDIUM_RELEASE_2026-11-11.md).
+Original setup: [September21 delivery](../10-project-state/PRIVATE_PASSKEY_DELIVERY_2026-09-21.md).
 Identity contract: [ADR0013](../08-decisions/ADR/0013-owner-passkey-private-domain.md).
 These are scoped operator procedures, not permission to transfer owner data/keys.
 
@@ -53,7 +54,15 @@ These are scoped operator procedures, not permission to transfer owner data/keys
    compares all25persistent tables and verifies6authentication tables empty.
    Retain protected dump/receipt and verify its SHA; a receipt alone is inadequate.
    The temporary verification copy only is cleaned up; live DB/old backups remain.
-5. `install-private-supervision.mjs --activate-reviewed-release` requires reviewed
+5. Before changing supervision, run the exact candidate entrypoint with
+   `node --experimental-strip-types scripts/start-private-server.mjs --check-startup`
+   under the documented clean private-service environment. It checks actual
+   protected configuration, database and market receipt/cache preparation with
+   read-only transactions, blocked provider acquisition and no listeners. The
+   separate filesystem/capacity `ops:check-private` does not cover this path.
+   Require both checks for the candidate and any claimed healthy rollback; then
+   perform the bounded loopback HTTP trial and post-release browser acceptance.
+   `install-private-supervision.mjs --activate-reviewed-release` requires reviewed
    clean build, runtime readiness and a recent intact verified backup. Preserve
    existing crontab byte-for-byte outside this project's delimited additions.
    Project boot/minute supervision and daily verified backups are separate jobs;
