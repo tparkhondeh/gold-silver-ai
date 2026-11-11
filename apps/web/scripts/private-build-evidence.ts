@@ -16,6 +16,10 @@ export type PrivateBuildEvidenceIo = {
   open(path: string, flags: number): Promise<Handle>;
 };
 const failure = () => new Error("Private build evidence unavailable or unsafe; details withheld");
+// Linux O_PATH is not exposed by Node's fs.constants. It pins directories
+// without requiring permission to list their contents; the reader is Linux-only.
+// O_DIRECTORY + O_NOFOLLOW and the descriptor/path metadata checks still apply.
+const LINUX_O_PATH = 0x200000;
 const sameIdentity = (a: Metadata, b: Metadata) => a.dev === b.dev && a.ino === b.ino;
 const sameFile = (a: Metadata, b: Metadata) => sameIdentity(a, b) && a.uid === b.uid && a.mode === b.mode
   && a.nlink === b.nlink && a.size === b.size && a.mtimeMs === b.mtimeMs && a.ctimeMs === b.ctimeMs;
@@ -46,9 +50,10 @@ export function createPrivateBuildEvidenceReader(io: PrivateBuildEvidenceIo) {
         return `/proc/self/fd/${handle.fd}`;
       };
       const flags = constants.O_RDONLY | constants.O_NOFOLLOW | constants.O_NONBLOCK;
+      const directoryFlags = LINUX_O_PATH | constants.O_NOFOLLOW | constants.O_DIRECTORY;
       const pin = async (path: string, source: string) => {
         const before = await io.lstat(source); metadata(before, path, true);
-        const handle = await io.open(source, flags | constants.O_DIRECTORY);
+        const handle = await io.open(source, directoryFlags);
         const item = { path, handle, info: before }; directories.push(item);
         const opened = await handle.stat(); metadata(opened, path, true);
         if (!sameIdentity(before, opened)) throw failure();

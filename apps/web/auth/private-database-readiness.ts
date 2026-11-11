@@ -10,7 +10,7 @@ const columns: Readonly<Record<string, Readonly<Record<string, Column>>>> = {
   private_passkey_challenges: { hash: text, binding_hash: text, purpose: text, challenge: text, owner_revision: ["integer", true], created_at: time, expires_at: time, claimed: ["boolean", true], authority_kind: ["text", false], authority_hash: ["text", false] },
   private_owner_login_transactions: { hash: text, binding_hash: text, origin: text, issuer: text, subject: text, state: text, nonce: text, pkce_verifier: text, created_at: time, expires_at: time, claimed: ["boolean", true] },
   private_owner_sessions: { hash: text, binding_hash: text, login_transaction_hash: text, origin: text, issuer: text, subject: text, portfolio_subject: text, created_at: time, expires_at: time },
-  user_portfolios: { id: text, schema_version: ["smallint", true], subject_id: text, version: ["integer", true], created_at: time, updated_at: time, purchase_book: ["jsonb", false] },
+  user_portfolios: { id: text, schema_version: ["smallint", true], subject_id: text, version: ["integer", true], created_at: time, updated_at: time, purchase_book: ["jsonb", false], planning: ["jsonb", false] },
   portfolio_holdings: { id: text, portfolio_id: text, asset_name: text, amount: ["numeric(38,12)", true], unit: text, cost_toman: ["numeric(38,2)", false], purchase_date: ["text", false], note: text, created_at: time, updated_at: time },
   portfolio_preferences: { portfolio_id: text, liquidity_reserve_percent: ["numeric(5,2)", false], max_single_asset_percent: ["numeric(5,2)", false], max_acceptable_drawdown_percent: ["numeric(5,2)", false], short_term_months: ["smallint", false], long_term_years: ["smallint", false], analysis_horizon: text, decision_horizon: text, updated_at: time },
 };
